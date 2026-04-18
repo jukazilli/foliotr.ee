@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #F4F7FB;
+  --surface: #FFFFFF;
+  --border: rgba(15, 17, 21, 0.08);
+  --text: #0F1115;
+  --text-soft: rgba(15, 17, 21, 0.68);
+  --text-caption: rgba(15, 17, 21, 0.48);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: Inter, sans-serif;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #D5F221;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: Sora, sans-serif;
+  }
+}
