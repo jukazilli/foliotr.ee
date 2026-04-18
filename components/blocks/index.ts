@@ -34,4 +34,4 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   contact: "Contato",
 }
 
-export { BlockType, BlockProps } from "./types"
+export type { BlockType, BlockProps } from "./types"
