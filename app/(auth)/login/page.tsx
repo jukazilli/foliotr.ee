@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginSchema, type LoginFormData } from "@/lib/validations";
+import { loginSchema, type LoginInput } from "@/lib/validations";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,11 +19,11 @@ export default function LoginPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
+  } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(data: LoginInput) {
     setAuthError(null);
     const result = await signIn("credentials", {
       email: data.email,

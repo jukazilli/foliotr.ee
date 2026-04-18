@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { Sidebar } from "@/components/app/Sidebar";
 import { Header } from "@/components/app/Header";
 
@@ -10,17 +11,22 @@ export default async function AppLayout({
 }) {
   const session = await auth();
 
-  if (!session?.user) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
-  // Se o onboarding não foi concluído, redireciona
   const user = session.user as typeof session.user & {
+    id: string;
     username?: string;
-    onboardingDone?: boolean;
   };
 
-  if (!user.onboardingDone) {
+  // Verifica onboarding a partir do Profile no banco
+  const profile = await prisma.profile.findUnique({
+    where: { userId: user.id },
+    select: { onboardingDone: true },
+  });
+
+  if (!profile?.onboardingDone) {
     redirect("/onboarding");
   }
 

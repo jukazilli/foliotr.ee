@@ -9,7 +9,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { registerSchema, type RegisterFormData } from "@/lib/validations";
+import { registerSchema, type RegisterInput } from "@/lib/validations";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -19,11 +19,11 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<RegisterFormData>({
+  } = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
   });
 
-  async function onSubmit(data: RegisterFormData) {
+  async function onSubmit(data: RegisterInput) {
     setServerError(null);
 
     const res = await fetch("/api/register", {
