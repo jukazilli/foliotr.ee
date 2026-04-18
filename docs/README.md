@@ -6,7 +6,7 @@ Last updated: 2026-04-17
 
 ## Purpose
 
-This `/doc` folder stores the current source-of-truth documentation for the FolioTree brand discovery work completed so far.
+This `/docs` folder stores the current source-of-truth documentation for the FolioTree brand discovery and MVP foundation work completed so far.
 
 The goal is to make the project understandable for humans and AIs with minimal ambiguity.
 
@@ -55,12 +55,35 @@ Recommended use:
 - design direction
 - product/brand coherence checks
 
+### 3. `tonal system.md`
+Use this file when implementing color foundations.
+
+It contains the current tonal family prototype and application rules for:
+- neutral surfaces
+- landing page color usage
+- product color usage
+- same-family overlay rules
+- recommended contrast pairs
+
+### 4. `tipografia-system.md`
+Use this file when implementing typography foundations.
+
+It contains the current typography system:
+- Display: Sora
+- UI: Inter
+- Data/Meta: IBM Plex Mono
+- landing page type scale
+- product UI type scale
+- typography usage rules
+
 ## Reading order for AI systems
 
 1. Read `brand-core.md`
 2. Read `brand-deck.md`
-3. Treat unresolved topics as unresolved
-4. Do not invent product features, visual assets, or business decisions that are not explicitly documented
+3. Read `tonal system.md`
+4. Read `tipografia-system.md`
+5. Treat unresolved topics as unresolved
+6. Do not invent product features, visual assets, or business decisions that are not explicitly documented
 
 ## AI Operating Rules
 
@@ -104,6 +127,15 @@ These topics are not fully finalized yet and should not be treated as approved f
 - final UI system
 - final feature scope and roadmap
 - final category naming in the market
+
+## Current MVP Direction
+
+The active MVP direction is:
+- public landing, auth screens, and a light logged-in product shell
+- `Profile -> Versions -> Pages / Resumes` as the core navigation model
+- PostgreSQL with Prisma for persistence
+- data-oriented templates with editable, reorderable, removable, hidable blocks
+- resume mode generated from the same profile/version source as public pages
 
 ## Update Policy
 

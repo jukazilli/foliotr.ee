@@ -1,0 +1,26 @@
+{
+  "name": "foliotree",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.11.0",
+  "scripts": {
+    "dev": "pnpm --parallel --filter web --filter api dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:api": "pnpm --filter api dev",
+    "build": "pnpm -r build",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "prisma:validate": "pnpm --filter api prisma validate",
+    "prisma:generate": "pnpm --filter api prisma generate",
+    "seed": "pnpm --filter api seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@next/eslint-plugin-next": "^16.2.4",
+    "@types/node": "^22.14.0",
+    "eslint": "^9.39.4",
+    "globals": "^17.5.0",
+    "typescript": "^5.8.2",
+    "typescript-eslint": "^8.58.2"
+  }
+}

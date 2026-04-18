@@ -1,0 +1,305 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssetKind {
+  IMAGE
+  DOCUMENT
+  VIDEO
+  EXTERNAL
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+  UNLISTED
+}
+
+enum VersionGoal {
+  GENERAL
+  RECRUITER
+  CLIENT
+  FREELANCE
+  PORTFOLIO
+  CUSTOM
+}
+
+enum BlockType {
+  HERO
+  ABOUT
+  EXPERIENCE_TIMELINE
+  PROJECT_GRID
+  PROOF_LIST
+  LINKS
+  CONTACT
+  IMAGE
+  RESUME_CTA
+  SOCIAL_LINKS
+}
+
+enum ResumeDensity {
+  COMPACT
+  COMFORTABLE
+}
+
+model User {
+  id          String   @id @default(cuid())
+  clerkUserId String   @unique
+  email       String?  @unique
+  name        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile Profile?
+  assets  Asset[]
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  slug        String   @unique
+  displayName String
+  headline    String
+  location    String?
+  bio         String   @default("")
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  links        Link[]
+  proofs       Proof[]
+  projects     Project[]
+  experiences  Experience[]
+  achievements Achievement[]
+  highlights   Highlight[]
+  versions     Version[]
+}
+
+model Link {
+  id        String   @id @default(cuid())
+  profileId String
+  label     String
+  url       String
+  kind      String   @default("link")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Proof {
+  id          String   @id @default(cuid())
+  profileId   String
+  title       String
+  summary     String   @default("")
+  metricLabel String?
+  metricValue String?
+  url         String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  profileId String
+  title     String
+  summary   String   @default("")
+  role      String?
+  result    String?
+  imageUrl  String?
+  url       String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Experience {
+  id        String   @id @default(cuid())
+  profileId String
+  company   String
+  role      String
+  startDate String
+  endDate   String?
+  summary   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Achievement {
+  id        String   @id @default(cuid())
+  profileId String
+  title     String
+  summary   String   @default("")
+  year      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Highlight {
+  id        String   @id @default(cuid())
+  profileId String
+  title     String
+  body      String   @default("")
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Asset {
+  id        String    @id @default(cuid())
+  userId    String
+  kind      AssetKind
+  provider  String    @default("vercel-blob")
+  url       String
+  alt       String?
+  metadata  Json      @default("{}")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Version {
+  id        String        @id @default(cuid())
+  profileId String
+  name      String
+  goal      VersionGoal   @default(GENERAL)
+  status    PublishStatus @default(DRAFT)
+  audience  String?
+  summary   String        @default("")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  profile Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  items   VersionItem[]
+  pages   Page[]
+  resumes ResumeView[]
+}
+
+model VersionItem {
+  id         String   @id @default(cuid())
+  versionId  String
+  sourceType String
+  sourceId   String
+  visible    Boolean  @default(true)
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  version Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String   @default("")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  revisions TemplateRevision[]
+  pages     Page[]
+}
+
+model TemplateRevision {
+  id         String   @id @default(cuid())
+  templateId String
+  version    String
+  tokens     Json     @default("{}")
+  metadata   Json     @default("{}")
+  createdAt  DateTime @default(now())
+
+  template Template        @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  blocks   TemplateBlock[]
+  pages    Page[]
+}
+
+model TemplateBlock {
+  id                 String    @id @default(cuid())
+  templateRevisionId String
+  type               BlockType
+  name               String
+  sortOrder          Int       @default(0)
+  required           Boolean   @default(false)
+  defaultVisible     Boolean   @default(true)
+  contentSchema      Json      @default("{}")
+  styleSchema        Json      @default("{}")
+  defaultContent     Json      @default("{}")
+  createdAt          DateTime  @default(now())
+
+  templateRevision TemplateRevision @relation(fields: [templateRevisionId], references: [id], onDelete: Cascade)
+}
+
+model Page {
+  id                 String        @id @default(cuid())
+  versionId          String
+  templateId         String
+  templateRevisionId String
+  slug               String        @unique
+  title              String
+  status             PublishStatus @default(DRAFT)
+  visibility         Visibility    @default(UNLISTED)
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  publishedAt        DateTime?
+
+  version          Version          @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  template         Template         @relation(fields: [templateId], references: [id])
+  templateRevision TemplateRevision @relation(fields: [templateRevisionId], references: [id])
+  blocks           PageBlock[]
+}
+
+model PageBlock {
+  id            String    @id @default(cuid())
+  pageId        String
+  templateBlock String?
+  type          BlockType
+  name          String
+  sortOrder     Int       @default(0)
+  visible       Boolean   @default(true)
+  content       Json      @default("{}")
+  style         Json      @default("{}")
+  assetRefs     Json      @default("[]")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+}
+
+model ResumeView {
+  id              String        @id @default(cuid())
+  versionId       String
+  slug            String        @unique
+  title           String
+  status          PublishStatus @default(DRAFT)
+  visibility      Visibility    @default(UNLISTED)
+  density         ResumeDensity @default(COMFORTABLE)
+  visibleSections Json          @default("[]")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  publishedAt     DateTime?
+
+  version Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+}
