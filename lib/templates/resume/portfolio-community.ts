@@ -1,0 +1,190 @@
+import { derivePortfolioCommunitySemantics, buildPortfolioCommunityBlockStateFromBlocks } from "@/lib/templates/portfolio-community-semantics";
+import type {
+  ResumeProjection,
+  ResumeProjectionInput,
+  ResumeProjectionSection,
+} from "@/lib/templates/resume/types";
+
+export function projectPortfolioCommunityResume(
+  input: ResumeProjectionInput
+): ResumeProjection {
+  const blockState = buildPortfolioCommunityBlockStateFromBlocks(input.blocks);
+  const semantics = derivePortfolioCommunitySemantics({
+    profile: input.profile,
+    version: input.version,
+    blockConfigs: blockState.configs,
+    visibility: blockState.visibility,
+  });
+  const showPhoto = input.config?.showPhoto ?? false;
+  const showLinks = input.config?.showLinks ?? true;
+  const accent = input.config?.accentColor || "#474306";
+  const visibleSectionOrder = (input.config?.sections?.length
+    ? input.config.sections
+    : ["summary", "experience", "projects", "highlights", "skills", "links"]) as string[];
+
+  const sectionMap = new Map<string, ResumeProjectionSection>();
+
+  if (semantics.about.visible && semantics.about.body) {
+    sectionMap.set("summary", {
+      key: "summary",
+      title: semantics.about.title || "Resumo",
+      body: semantics.about.body,
+    });
+  }
+
+  if (semantics.experience.visible && semantics.experience.items.length > 0) {
+    sectionMap.set("experience", {
+      key: "experience",
+      title: semantics.experience.title || "Experience",
+      items: semantics.experience.items.map((experience) => ({
+        id: experience.id,
+        company: experience.company,
+        role: experience.role,
+        period: experience.period,
+        location: experience.location,
+        description: experience.description,
+        current: experience.current,
+      })),
+    });
+  }
+
+  if (semantics.work.visible && semantics.work.items.length > 0) {
+    const resumeProjects =
+      semantics.work.fallbackProjects.length > 0
+        ? semantics.work.fallbackProjects.map((item, index) => ({
+            id: `project-${index}`,
+            title: item.title,
+            description: item.description,
+            href: item.href ?? "",
+            tags: [],
+          }))
+        : semantics.work.items
+            .slice(0, semantics.work.maxItems)
+            .filter((item) => item.title.trim().length > 0)
+            .map((item) => ({
+              id: item.key,
+              title: item.title,
+              description: item.description,
+              href: item.href,
+              tags: [],
+            }));
+
+    sectionMap.set("projects", {
+      key: "projects",
+      title: semantics.work.title || "Work",
+      items: resumeProjects,
+    });
+  }
+
+  if (semantics.selections.achievements.length > 0) {
+    sectionMap.set("highlights", {
+      key: "highlights",
+      title: "Destaques",
+      items: semantics.selections.achievements.map((achievement) => ({
+        id: achievement.id,
+        title: achievement.title,
+        metric: achievement.metric ?? "",
+        description: achievement.description ?? "",
+      })),
+    });
+  }
+
+  if (semantics.selections.skills.length > 0) {
+    const groups = semantics.selections.skills.reduce<Record<string, string[]>>((acc, skill) => {
+      const category = skill.category || "Core";
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(skill.name);
+      return acc;
+    }, {});
+
+    sectionMap.set("skills", {
+      key: "skills",
+      title: "Competencias",
+      groups: Object.entries(groups).map(([category, items]) => ({ category, items })),
+    });
+  }
+
+  if (semantics.contact.visible && semantics.contact.links.length > 0) {
+    sectionMap.set("links", {
+      key: "links",
+      title: semantics.contact.title || "Contact",
+      items: semantics.contact.links.map((item) => ({
+        label: item.label,
+        href: item.href,
+        kind:
+          item.type === "contact"
+            ? "contact"
+            : item.type === "proof"
+              ? "proof"
+              : "link",
+      })),
+    });
+  }
+
+  const sections = visibleSectionOrder
+    .map((key) => sectionMap.get(key))
+    .filter((section): section is ResumeProjectionSection => Boolean(section));
+
+  return {
+    templateSlug: input.templateSlug,
+    theme: {
+      background: "#FFFBE6",
+      surface: "#FFFFFF",
+      ink: "#03045E",
+      muted: "#5C6784",
+      accent,
+      accentSoft: "#F5EE84",
+      border: "rgba(3,4,94,0.12)",
+      fontFamily: "var(--font-template-portfolio), Poppins, ui-sans-serif, system-ui, sans-serif",
+    },
+    header: {
+      displayName: semantics.header.displayName,
+      headline: semantics.header.headline,
+      summary: semantics.about.body,
+      location: semantics.header.location,
+      publicEmail: semantics.header.publicEmail,
+      phone: semantics.header.phone,
+      avatarUrl: showPhoto ? semantics.header.avatarUrl : "",
+      links: showLinks
+        ? semantics.contact.links.map((item) => ({
+            label: item.label,
+            href: item.href,
+            kind:
+              item.type === "contact"
+                ? "contact"
+                : item.type === "proof"
+                  ? "proof"
+                  : "link",
+          }))
+        : [],
+    },
+    sections,
+    showPhoto,
+    showLinks,
+    rules: {
+      enters: [
+        "hero -> cabecalho recruiter-friendly",
+        "about -> resumo textual",
+        "experience -> experiencia objetiva",
+        "work -> projetos concisos",
+        "contact -> links e provas",
+      ],
+      collapses: [
+        "hero image -> avatar opcional",
+        "work cards -> lista textual curta",
+        "contact image -> removida",
+      ],
+      hides: [
+        "ornamentos do hero",
+        "imagens decorativas do contato",
+        "imagens de projetos no modo impressao",
+      ],
+      textOnly: [
+        "about",
+        "experience descriptions",
+        "project descriptions",
+        "proof labels",
+      ],
+    },
+  };
+}

@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FolioTree — Tonal System v0.0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Page */
+    --page-bg:#F4F7FB;
+    --page-surface:#FFFFFF;
+    --page-border:rgba(15,17,21,0.08);
+    --page-text:#0F1115;
+    --page-text-soft:rgba(15,17,21,0.68);
+    --page-caption:rgba(15,17,21,0.48);
+    --page-shadow:0 20px 60px rgba(15,17,21,0.06);
+
+    /* Neutral */
+    --neutral-50:#F8FAFC; --neutral-100:#F4F7FB; --neutral-200:#E8EEF5;
+    --neutral-300:#D9E0EA; --neutral-400:#B7C0CC; --neutral-500:#8691A0;
+    --neutral-600:#5E6878; --neutral-700:#3D4757; --neutral-800:#1A1F29; --neutral-900:#0F1115;
+
+    /* Lime */
+    --lime-50:#F7FAE5; --lime-100:#EFF5CC; --lime-200:#E5EEAA;
+    --lime-300:#DAE788; --lime-400:#CDDF5D; --lime-500:#D5F221;
+    --lime-600:#AEC427; --lime-700:#90A220; --lime-800:#718019; --lime-900:#535E13;
+
+    /* Blue */
+    --blue-50:#EAF0FA; --blue-100:#CDDAF4; --blue-200:#ACC2EC;
+    --blue-300:#8BA9E5; --blue-400:#618BDB; --blue-500:#2F66D0;
+    --blue-600:#2756AF; --blue-700:#20458D; --blue-800:#18356C; --blue-900:#11254B;
+
+    /* Green */
+    --green-50:#ECFEE5; --green-100:#D5FFC7; --green-200:#B5FFA1;
+    --green-300:#98FF7F; --green-400:#88FF67; --green-500:#7DFF5A;
+    --green-600:#63D94A; --green-700:#4BA93B; --green-800:#357A2D; --green-900:#214E1E;
+
+    /* Cyan */
+    --cyan-50:#E8F9FF; --cyan-100:#CBF3FF; --cyan-200:#9DEAFF;
+    --cyan-300:#6DDEFF; --cyan-400:#3ED0FF; --cyan-500:#19C2FF;
+    --cyan-600:#11A1DA; --cyan-700:#0C7DAA; --cyan-800:#095B7A; --cyan-900:#063C52;
+
+    /* Violet */
+    --violet-50:#F3F0FF; --violet-100:#E7E0FF; --violet-200:#D6CAFF;
+    --violet-300:#C0B0FF; --violet-400:#9A7DFF; --violet-500:#7B61FF;
+    --violet-600:#654DE0; --violet-700:#503DB8; --violet-800:#3B2E88; --violet-900:#281F5E;
+
+    /* Brown */
+    --brown-50:#F9EEF1; --brown-100:#F0D7DE; --brown-200:#E2B8C5;
+    --brown-300:#D094A8; --brown-400:#B96F8B; --brown-500:#9A4F6D;
+    --brown-600:#833F5B; --brown-700:#6D334C; --brown-800:#57283C; --brown-900:#421D2D;
+
+    /* Coral */
+    --coral-50:#FFF4EF; --coral-100:#FFE2D6; --coral-200:#FFC8B4;
+    --coral-300:#FFAB8E; --coral-400:#FF8B6C; --coral-500:#FF6B57;
+    --coral-600:#E05143; --coral-700:#B93D34; --coral-800:#8A2B28; --coral-900:#5E1B1E;
+
+    --sans:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --display:'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page-bg);
+    color:var(--page-text);
+    font-family:var(--sans);
+    font-size:14px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .shell{max-width:1280px;margin:0 auto;padding:64px 40px 120px}
+
+  /* ---------- Header ---------- */
+  .masthead{
+    display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;
+    padding-bottom:28px;border-bottom:1px solid var(--page-border);margin-bottom:48px;
+  }
+  .brand-mark{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-text-soft);
+  }
+  .brand-mark .dot{width:10px;height:10px;border-radius:3px;background:var(--lime-500);display:inline-block}
+  h1.title{
+    font-family:var(--display);
+    font-size:64px;line-height:0.98;font-weight:800;letter-spacing:-0.035em;margin:14px 0 10px;
+  }
+  .lede{color:var(--page-text-soft);max-width:620px;font-size:16px;line-height:1.55}
+  .meta{
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+    text-align:right;display:flex;flex-direction:column;gap:4px;
+  }
+  .meta strong{color:var(--page-text);font-weight:500}
+
+  /* ---------- Section ---------- */
+  section{margin-bottom:80px}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;
+    gap:24px;margin-bottom:24px;
+  }
+  .section-head h2{
+    font-size:12px;font-family:var(--mono);font-weight:600;
+    letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-text);margin:0;
+  }
+  .section-head .idx{
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+  }
+  .section-head .rule{flex:1;height:1px;background:var(--page-border)}
+  .section-sub{
+    color:var(--page-text-soft);max-width:720px;margin:-8px 0 28px;font-size:14px;
+  }
+
+  /* ---------- Semantic page tokens ---------- */
+  .page-tokens{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  }
+  .page-token{
+    background:var(--page-surface);
+    border:1px solid var(--page-border);
+    border-radius:12px;padding:16px;
+    display:flex;flex-direction:column;gap:10px;min-height:120px;
+  }
+  .page-token .swatch{
+    height:44px;border-radius:8px;border:1px solid var(--page-border);
+  }
+  .page-token .name{
+    font-family:var(--mono);font-size:11px;color:var(--page-text);font-weight:600;
+  }
+  .page-token .val{
+    font-family:var(--mono);font-size:11px;color:var(--page-text-soft);
+    word-break:break-all;line-height:1.4;
+  }
+  .shadow-preview{
+    height:44px;border-radius:8px;background:#fff;box-shadow:var(--page-shadow);
+  }
+
+  /* ---------- Family block ---------- */
+  .family{
+    background:var(--page-surface);
+    border:1px solid var(--page-border);
+    border-radius:16px;
+    padding:24px;margin-bottom:16px;
+    box-shadow:var(--page-shadow);
+  }
+  .family-head{
+    display:grid;grid-template-columns:200px 1fr auto;gap:32px;
+    align-items:start;margin-bottom:18px;
+  }
+  .family-name{
+    display:flex;align-items:center;gap:12px;
+  }
+  .family-name .chip{width:28px;height:28px;border-radius:8px;border:1px solid var(--page-border)}
+  .family-name .label{
+    font-family:var(--display);
+    font-size:22px;font-weight:700;letter-spacing:-0.02em;
+  }
+  .family-name .code{
+    display:block;font-family:var(--mono);font-size:10px;
+    letter-spacing:0.12em;text-transform:uppercase;color:var(--page-caption);
+    margin-top:2px;
+  }
+  .family-desc{
+    color:var(--page-text-soft);font-size:13px;line-height:1.55;max-width:520px;
+  }
+  .family-pair{
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+    white-space:nowrap;text-align:right;
+  }
+  .family-pair .pair-swatches{
+    display:flex;gap:4px;margin-top:6px;justify-content:flex-end;
+  }
+  .family-pair .pair-swatches span{
+    width:22px;height:22px;border-radius:5px;border:1px solid var(--page-border);
+  }
+
+  .tones{
+    display:grid;grid-template-columns:repeat(10,1fr);gap:6px;
+  }
+  .tone{
+    border-radius:10px;overflow:hidden;
+    border:1px solid var(--page-border);
+    display:flex;flex-direction:column;
+    min-height:112px;
+    position:relative;
+  }
+  .tone .swatch{
+    flex:1;min-height:54px;
+  }
+  .tone .info{
+    padding:8px 8px 10px;background:#fff;
+    border-top:1px solid var(--page-border);
+  }
+  .tone .tone-id{
+    font-family:var(--mono);font-size:10px;font-weight:600;color:var(--page-text);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .tone .tone-id .lx{
+    font-weight:400;color:var(--page-caption);text-transform:lowercase;
+  }
+  .tone .hex{
+    font-family:var(--mono);font-size:10px;color:var(--page-text-soft);margin-top:2px;
+  }
+
+  /* usage text-in-swatch preview */
+  .tone .onswatch{
+    position:absolute;inset:0 0 auto 0;padding:8px 10px;
+    font-family:var(--mono);font-size:10px;
+    color:rgba(15,17,21,0.5);
+  }
+  .tone.dark .onswatch{color:rgba(255,255,255,0.55)}
+
+  /* ---------- Key pairs ---------- */
+  .pairs{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  }
+  .pair-card{
+    border-radius:14px;padding:22px;min-height:148px;
+    display:flex;flex-direction:column;justify-content:space-between;gap:16px;
+    border:1px solid var(--page-border);
+    position:relative;overflow:hidden;
+  }
+  .pair-card .pair-title{
+    font-family:var(--display);
+    font-size:22px;font-weight:800;letter-spacing:-0.025em;line-height:1.05;
+  }
+  .pair-card .pair-sample{
+    font-size:12px;line-height:1.5;opacity:0.78;
+  }
+  .pair-card .pair-hex{
+    display:flex;gap:10px;font-family:var(--mono);font-size:10px;opacity:0.8;
+  }
+  .pair-card .pair-hex span{display:inline-flex;align-items:center;gap:6px}
+  .pair-card .pair-hex i{
+    width:10px;height:10px;border-radius:3px;display:inline-block;
+    border:1px solid rgba(0,0,0,0.1);
+  }
+
+  /* ---------- Dark font palette ---------- */
+  .darkfonts{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;
+  }
+  .darkfont{
+    background:var(--page-surface);
+    border:1px solid var(--page-border);
+    border-radius:12px;padding:18px;
+    display:flex;flex-direction:column;gap:10px;
+  }
+  .darkfont .sample{
+    font-size:24px;font-weight:600;letter-spacing:-0.01em;line-height:1.1;
+  }
+  .darkfont .sample-sub{font-size:12px;font-weight:400;opacity:0.75;margin-top:2px}
+  .darkfont .meta-row{
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:10px;color:var(--page-text-soft);
+    padding-top:10px;border-top:1px solid var(--page-border);
+  }
+  .darkfont .chip{
+    width:14px;height:14px;border-radius:4px;border:1px solid var(--page-border);
+    display:inline-block;margin-right:8px;vertical-align:-2px;
+  }
+
+  /* ---------- Rules list ---------- */
+  .rules-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+  }
+  .rule-card{
+    background:var(--page-surface);
+    border:1px solid var(--page-border);
+    border-radius:12px;padding:20px 22px;
+  }
+  .rule-card h3{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-caption);margin:0 0 12px;font-weight:600;
+  }
+  .rule-card ul{margin:0;padding-left:0;list-style:none}
+  .rule-card li{
+    padding:8px 0;border-bottom:1px dashed var(--page-border);
+    display:flex;gap:10px;font-size:13px;line-height:1.5;
+  }
+  .rule-card li:last-child{border-bottom:0}
+  .rule-card li::before{
+    content:"→";font-family:var(--mono);color:var(--page-caption);flex:0 0 auto;
+  }
+  .rule-card li code{
+    font-family:var(--mono);font-size:12px;
+    background:var(--neutral-100);padding:1px 6px;border-radius:4px;
+    border:1px solid var(--page-border);
+  }
+
+  /* ---------- Application strip (landing vs product) ---------- */
+  .apps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .app-card{
+    border-radius:16px;overflow:hidden;border:1px solid var(--page-border);
+    background:var(--page-surface);
+  }
+  .app-head{
+    padding:16px 20px;border-bottom:1px solid var(--page-border);
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-text-soft);
+  }
+  .app-head strong{color:var(--page-text);font-weight:600}
+
+  /* Landing mock */
+  .mock-landing{
+    background:var(--blue-500);color:#fff;padding:28px;min-height:260px;
+    display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;
+  }
+  .mock-landing .headline{
+    font-family:var(--display);
+    font-size:34px;font-weight:800;letter-spacing:-0.035em;line-height:0.98;
+  }
+  .mock-landing .headline em{font-style:normal;color:var(--lime-500)}
+  .mock-landing .sub{opacity:0.82;font-size:13px;margin-top:10px;line-height:1.55;max-width:280px}
+  .mock-landing .cta{
+    display:inline-block;margin-top:18px;background:var(--lime-500);color:var(--lime-900);
+    padding:12px 20px;border-radius:999px;font-weight:600;font-size:13px;
+  }
+  .mock-landing .img-ph{
+    background:repeating-linear-gradient(45deg, rgba(255,255,255,0.14) 0 6px, transparent 6px 12px);
+    border:1px dashed rgba(255,255,255,0.4);
+    border-radius:12px;min-height:200px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;color:rgba(255,255,255,0.8);letter-spacing:0.1em;
+  }
+
+  /* Product mock */
+  .mock-product{
+    background:var(--neutral-100);padding:20px;min-height:260px;
+    display:grid;grid-template-columns:140px 1fr;gap:14px;
+  }
+  .mock-product .sidebar{
+    background:#fff;border:1px solid var(--page-border);border-radius:10px;padding:14px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .mock-product .sidebar .item{
+    font-size:12px;color:var(--page-text-soft);padding:6px 8px;border-radius:6px;
+  }
+  .mock-product .sidebar .item.active{background:var(--neutral-200);color:var(--page-text);font-weight:500}
+  .mock-product .workarea{display:flex;flex-direction:column;gap:10px}
+  .mock-product .card{
+    background:#fff;border:1px solid var(--page-border);border-radius:10px;padding:14px;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+  }
+  .mock-product .card .t{font-size:13px;font-weight:500}
+  .mock-product .card .s{font-size:11px;color:var(--page-text-soft);margin-top:2px}
+  .badge{
+    display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:500;
+    padding:4px 10px;border-radius:999px;font-family:var(--mono);
+  }
+  .badge.info{background:var(--cyan-100);color:var(--cyan-900)}
+  .badge.ver{background:var(--violet-100);color:var(--violet-900)}
+  .badge.act{background:var(--green-500);color:var(--green-900)}
+  .badge.warm{background:var(--coral-100);color:var(--coral-900)}
+  .badge.edit{background:var(--brown-100);color:var(--brown-900)}
+
+  /* ---------- Usage legend footer ---------- */
+  .legend{
+    display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;
+    font-family:var(--mono);font-size:11px;color:var(--page-text-soft);
+  }
+  .legend span{display:inline-flex;align-items:center;gap:8px}
+  .legend i{width:14px;height:14px;border-radius:4px;border:1px solid var(--page-border)}
+
+  /* ---------- Foot ---------- */
+  .foot{
+    margin-top:60px;padding-top:24px;border-top:1px solid var(--page-border);
+    display:flex;justify-content:space-between;
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+  }
+
+  /* ---------- Landing slide mocks (expressive) ---------- */
+  .slide{
+    border-radius:20px;overflow:hidden;border:1px solid var(--page-border);
+    box-shadow:var(--page-shadow);margin-bottom:18px;
+    display:grid;grid-template-columns:1.15fr 1fr;min-height:440px;
+    font-family:var(--sans);
+  }
+  .slide .left{
+    padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;gap:24px;
+  }
+  .slide .slide-meta{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    opacity:0.6;display:flex;gap:14px;align-items:center;
+  }
+  .slide .slide-meta .dot{width:6px;height:6px;border-radius:999px;background:currentColor;opacity:0.6}
+  .slide h3.slide-head{
+    font-family:var(--display);
+    font-size:64px;line-height:0.94;letter-spacing:-0.045em;
+    font-weight:800;margin:0;text-wrap:balance;
+  }
+  .slide .slide-sub{
+    font-size:15px;line-height:1.55;max-width:440px;opacity:0.82;margin-top:-8px;
+  }
+  .slide .cta-row{
+    display:flex;align-items:center;gap:0;background:rgba(255,255,255,0.94);
+    border-radius:999px;padding:6px;max-width:440px;
+    box-shadow:0 8px 24px rgba(15,17,21,0.1);
+  }
+  .slide .cta-row .prefix{
+    padding:10px 16px;font-family:var(--mono);font-size:13px;color:rgba(15,17,21,0.6);
+    white-space:nowrap;
+  }
+  .slide .cta-row .field{
+    flex:1;background:transparent;border:0;outline:none;
+    font-size:14px;font-weight:500;color:#0F1115;padding:10px 4px;
+    min-width:60px;
+  }
+  .slide .cta-row .btn{
+    padding:12px 22px;border-radius:999px;font-weight:700;font-size:14px;
+    white-space:nowrap;border:0;cursor:pointer;
+  }
+  .slide .right{
+    position:relative;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+    padding:28px;
+  }
+  .slide .carousel{
+    display:flex;gap:12px;width:100%;height:100%;align-items:stretch;
+  }
+  .slide .carousel .frame{
+    flex:1;border-radius:14px;overflow:hidden;position:relative;
+    border:1px solid rgba(255,255,255,0.3);
+    display:flex;flex-direction:column;justify-content:flex-end;
+    padding:14px;min-height:360px;
+  }
+  .slide .carousel .frame.tall{flex:1.2}
+  .slide .carousel .frame .ph-label{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.1em;
+    background:rgba(255,255,255,0.85);color:#0F1115;
+    padding:4px 8px;border-radius:4px;align-self:flex-start;
+    text-transform:uppercase;
+  }
+  .slide .carousel .frame .caption{
+    font-size:12px;color:#fff;margin-top:auto;font-weight:500;
+    text-shadow:0 1px 4px rgba(0,0,0,0.4);
+  }
+  /* striped placeholder variations */
+  .ph-a{background:repeating-linear-gradient(135deg,rgba(0,0,0,0.12) 0 10px, transparent 10px 20px), linear-gradient(135deg,#F0D7DE,#B96F8B)}
+  .ph-b{background:repeating-linear-gradient(135deg,rgba(255,255,255,0.18) 0 10px, transparent 10px 20px), linear-gradient(135deg,#D5F221,#90A220)}
+  .ph-c{background:repeating-linear-gradient(135deg,rgba(255,255,255,0.15) 0 10px, transparent 10px 20px), linear-gradient(135deg,#2F66D0,#11254B)}
+  .ph-d{background:repeating-linear-gradient(135deg,rgba(255,255,255,0.2) 0 10px, transparent 10px 20px), linear-gradient(135deg,#FF8B6C,#B93D34)}
+  .ph-e{background:repeating-linear-gradient(135deg,rgba(0,0,0,0.15) 0 10px, transparent 10px 20px), linear-gradient(135deg,#19C2FF,#095B7A)}
+  .ph-f{background:repeating-linear-gradient(135deg,rgba(255,255,255,0.18) 0 10px, transparent 10px 20px), linear-gradient(135deg,#7B61FF,#3B2E88)}
+
+  .slide .dots{display:flex;gap:6px;margin-top:14px}
+  .slide .dots span{width:22px;height:4px;border-radius:3px;background:rgba(255,255,255,0.4)}
+  .slide .dots span.on{background:rgba(255,255,255,0.95)}
+
+  /* Sanduíche indicator */
+  .sandwich-indicator{
+    display:flex;gap:4px;align-items:center;margin-bottom:8px;
+    font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.7;
+  }
+  .sandwich-indicator i{width:12px;height:12px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,0.1)}
+
+  @media (max-width:1100px){
+    .tones{grid-template-columns:repeat(5,1fr)}
+    .family-head{grid-template-columns:1fr}
+    .family-pair{text-align:left}
+    .family-pair .pair-swatches{justify-content:flex-start}
+    .pairs{grid-template-columns:repeat(2,1fr)}
+    .darkfonts{grid-template-columns:repeat(2,1fr)}
+    .page-tokens{grid-template-columns:repeat(2,1fr)}
+    .rules-grid{grid-template-columns:1fr}
+    .apps{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ================= Masthead ================= -->
+  <header class="masthead">
+    <div>
+      <div class="brand-mark"><span class="dot"></span> FolioTree · Color System</div>
+      <h1 class="title">Tonal System<br/><span style="color:var(--page-text-soft)">v0.0.1</span></h1>
+      <p class="lede">Fonte única de verdade para cor no FolioTree. Cada família tem tons de 50 a 900 para permitir sobreposições dentro da própria cor — sem recorrer a preto puro ou neutros quando a família já resolve hierarquia, texto e contraste.</p>
+    </div>
+    <div class="meta">
+      <span>DOC / tonal-system</span>
+      <span>STATUS / <strong>draft</strong></span>
+      <span>SCOPE / landing + product</span>
+      <span>UPDATED / 2026-04-18</span>
+    </div>
+  </header>
+
+  <!-- ================= 01 · Semantic page tokens ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">01</span>
+      <h2>Semantic Page Palette</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Tokens de aplicação direta na página. Use sempre via token — nunca referencie o hex diretamente em componentes.</p>
+
+    <div class="page-tokens">
+      <div class="page-token">
+        <div class="swatch" style="background:#F4F7FB"></div>
+        <div class="name">page.background</div>
+        <div class="val">#F4F7FB · neutral-100</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#FFFFFF"></div>
+        <div class="name">page.surface</div>
+        <div class="val">#FFFFFF</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#fff;border-color:rgba(15,17,21,0.08)"></div>
+        <div class="name">page.border</div>
+        <div class="val">rgba(15,17,21,0.08)</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#0F1115"></div>
+        <div class="name">page.text</div>
+        <div class="val">#0F1115 · neutral-900</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#fff;display:flex;align-items:center;justify-content:center;color:rgba(15,17,21,0.68);font-family:var(--mono);font-size:12px">Aa secondary</div>
+        <div class="name">page.textSoft</div>
+        <div class="val">rgba(15,17,21,0.68)</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#fff;display:flex;align-items:center;justify-content:center;color:rgba(15,17,21,0.48);font-family:var(--mono);font-size:12px">Aa caption</div>
+        <div class="name">page.caption</div>
+        <div class="val">rgba(15,17,21,0.48)</div>
+      </div>
+      <div class="page-token">
+        <div class="shadow-preview"></div>
+        <div class="name">page.shadow</div>
+        <div class="val">0 20px 60px rgba(15,17,21,0.06)</div>
+      </div>
+      <div class="page-token">
+        <div class="swatch" style="background:#fff;border:1px solid #D9E0EA;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:11px;color:var(--page-text-soft)">border · neutral-300</div>
+        <div class="name">border.soft</div>
+        <div class="val">#D9E0EA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 02 · Tonal families ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">02</span>
+      <h2>Tonal Families</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Cada família vai de 50 a 900. Tons 50–200 são light (superfícies, chips). 300–500 são accent (CTA, categoria). 600–900 são dark (texto, ícones, bordas fortes).</p>
+
+    <div class="legend">
+      <span><i style="background:#F4F7FB"></i> light · surfaces / chips / info blocks</span>
+      <span><i style="background:#618BDB"></i> mid · main accent / CTA / category</span>
+      <span><i style="background:#18356C"></i> dark · text / icons / strong borders</span>
+    </div>
+    <div style="height:24px"></div>
+
+    <!-- FAMILIES will be injected -->
+    <div id="families"></div>
+  </section>
+
+  <!-- ================= 03 · Key pairs ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">03</span>
+      <h2>Recommended Contrast Pairs</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Pares prontos para cards, badges, painéis, tags e superfícies leves. Evite texto preto puro sobre seções expressivas quando a família já oferece um dark próprio.</p>
+
+    <div class="pairs">
+      <div class="pair-card" style="background:#CBF3FF;color:#063C52">
+        <div>
+          <div class="pair-title">Info</div>
+          <div class="pair-sample">Soft information surface with its own dark typography tone.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#CBF3FF"></i>#CBF3FF</span><span><i style="background:#063C52"></i>#063C52</span></div>
+      </div>
+      <div class="pair-card" style="background:#E7E0FF;color:#281F5E">
+        <div>
+          <div class="pair-title">Version</div>
+          <div class="pair-sample">Creative differentiation layer · v2.3 · draft · published.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#E7E0FF"></i>#E7E0FF</span><span><i style="background:#281F5E"></i>#281F5E</span></div>
+      </div>
+      <div class="pair-card" style="background:#F4F7FB;color:#0F1115">
+        <div>
+          <div class="pair-title">Neutral</div>
+          <div class="pair-sample">Default system canvas. Calm, fast, easy to scan.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#F4F7FB"></i>#F4F7FB</span><span><i style="background:#0F1115"></i>#0F1115</span></div>
+      </div>
+      <div class="pair-card" style="background:#FFE2D6;color:#5E1B1E">
+        <div>
+          <div class="pair-title">Coral Sparkle</div>
+          <div class="pair-sample">Warm highlight. Peach on the light side, deep red on the dark.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#FFE2D6"></i>#FFE2D6</span><span><i style="background:#5E1B1E"></i>#5E1B1E</span></div>
+      </div>
+      <div class="pair-card" style="background:#F0D7DE;color:#421D2D">
+        <div>
+          <div class="pair-title">Brown</div>
+          <div class="pair-sample">Editorial and premium tags · deeper warm emphasis.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#F0D7DE"></i>#F0D7DE</span><span><i style="background:#421D2D"></i>#421D2D</span></div>
+      </div>
+      <div class="pair-card" style="background:#D5F221;color:#535E13">
+        <div>
+          <div class="pair-title">Lime / Hero</div>
+          <div class="pair-sample">Energetic headline and primary CTA. Never use black text here.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#D5F221"></i>#D5F221</span><span><i style="background:#535E13"></i>#535E13</span></div>
+      </div>
+      <div class="pair-card" style="background:#7DFF5A;color:#214E1E">
+        <div>
+          <div class="pair-title">Green / Action</div>
+          <div class="pair-sample">Buttons, active selection, positive states.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#7DFF5A"></i>#7DFF5A</span><span><i style="background:#214E1E"></i>#214E1E</span></div>
+      </div>
+      <div class="pair-card" style="background:#2F66D0;color:#FFFFFF">
+        <div>
+          <div class="pair-title">Blue / Hero</div>
+          <div class="pair-sample">Cold structural hero background. Landing base.</div>
+        </div>
+        <div class="pair-hex"><span><i style="background:#2F66D0"></i>#2F66D0</span><span><i style="background:#FFFFFF"></i>#FFFFFF</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 04 · Dark font palette ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">04</span>
+      <h2>Dark Font Palette</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Tipografia dark da própria família — use quando a seção é colorida e o preto puro quebraria a harmonia. Nunca `#000`.</p>
+
+    <div class="darkfonts" id="darkfonts"></div>
+  </section>
+
+  <!-- ================= 05 · Application rules ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">05</span>
+      <h2>Application Rules</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Como a cor deve se comportar no produto versus na landing. Essas regras valem como contrato de frontend.</p>
+
+    <div class="rules-grid">
+      <div class="rule-card">
+        <h3>Landing · expressive</h3>
+        <ul>
+          <li>Use <code>Blue 500</code> como hero estrutural frio.</li>
+          <li>Use <code>Lime 500</code> como cor de headline e CTA primário.</li>
+          <li>Em seção Lime 500, a tipografia é <code>Lime 900</code>.</li>
+          <li>Estrutura do hero: imagem à esquerda, texto à direita, um CTA principal.</li>
+          <li>Evite preto em seções expressivas se a família tem dark próprio.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Product · logged-in</h3>
+        <ul>
+          <li><code>Neutral 100</code> como background padrão.</li>
+          <li>Superfícies brancas para cards e áreas de trabalho.</li>
+          <li><code>Neutral 900</code> para títulos e texto primário.</li>
+          <li>Cor como acento — nunca como background de tela cheia.</li>
+          <li><code>Green</code> ação · <code>Cyan</code> info · <code>Violet</code> versão · <code>Coral</code> highlight · <code>Brown</code> editorial.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Same-family overlay rule</h3>
+        <ul>
+          <li><code>50–200</code> superfícies leves, chips, info, highlights sutis.</li>
+          <li><code>300–500</code> accent principal, CTA, cor da categoria.</li>
+          <li><code>600–900</code> texto, ícones, bordas fortes, estados pressed.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Important · restraint</h3>
+        <ul>
+          <li>O produto não deve parecer sobrecarregado de cor.</li>
+          <li>Cor organiza significado — não domina a interface.</li>
+          <li>Landing pode ser expressiva. Produto permanece leve, rápido, fácil de escanear.</li>
+          <li>Máx. 1–2 cores expressivas simultâneas por tela no produto.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div style="height:32px"></div>
+
+    <div class="apps" style="grid-template-columns:1fr">
+      <div class="app-card">
+        <div class="app-head"><span>Mock · product</span><strong>Neutral 100 + accent</strong></div>
+        <div class="mock-product">
+          <div class="sidebar">
+            <div class="item">Todos</div>
+            <div class="item active">Projetos</div>
+            <div class="item">Versões</div>
+            <div class="item">Arquivados</div>
+          </div>
+          <div class="workarea">
+            <div class="card">
+              <div><div class="t">Relatório Q1 · 2026</div><div class="s">atualizado há 2h</div></div>
+              <span class="badge ver">v2.3</span>
+            </div>
+            <div class="card">
+              <div><div class="t">Playbook de onboarding</div><div class="s">3 arquivos · 1 comentário</div></div>
+              <span class="badge info">info</span>
+            </div>
+            <div class="card">
+              <div><div class="t">Publicar versão final</div><div class="s">pronto para deploy</div></div>
+              <span class="badge act">publicar</span>
+            </div>
+            <div class="card">
+              <div><div class="t">Destaque editorial</div><div class="s">tag premium</div></div>
+              <span class="badge edit">premium</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 06 · Landing Expressive System ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">06</span>
+      <h2>Landing · Expressive System</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">A landing é a voz da marca: <strong>viva, energética, alegre e comunicativa</strong>. Cada tela é um slide com um único recado. A paleta é usada em formato <strong>sanduíche</strong> — topo, meio e base em famílias distintas — e pares livres são permitidos (ex. <code style="font-family:var(--mono);background:var(--neutral-100);padding:1px 6px;border-radius:4px;border:1px solid var(--page-border);font-size:12px">background #19C2FF + texto #F9EEF1</code>).</p>
+
+    <!-- Regras -->
+    <div class="rules-grid" style="margin-bottom:28px">
+      <div class="rule-card">
+        <h3>Essência da marca</h3>
+        <ul>
+          <li><strong>Viva</strong> — cor saturada ocupa toda a tela do slide.</li>
+          <li><strong>Energética</strong> — headline em extra bold (800–900), peso dominante.</li>
+          <li><strong>Alegre</strong> — carrossel de imagens à direita, trocas de tom entre slides.</li>
+          <li><strong>Comunicativa</strong> — máx. 3–4 elementos: headline, texto curto, CTA, imagem.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Regra sanduíche</h3>
+        <ul>
+          <li>A landing é uma pilha de slides — cada slide em uma família inteira.</li>
+          <li>Alterne famílias entre slides vizinhos: Lime → Blue → Cyan → Coral…</li>
+          <li>O próximo slide nunca repete a família do anterior.</li>
+          <li>A transição entre fatias do sanduíche é o "recheio" — é o que traz ritmo.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Anatomia do slide</h3>
+        <ul>
+          <li><code>1</code> headline · extra bold · tipografia dark da família (ou cruzada).</li>
+          <li><code>2</code> parágrafo curto · 2–3 linhas explicando o recado.</li>
+          <li><code>3</code> CTA pill + campo inline ("foliotree.co/" → botão).</li>
+          <li><code>4</code> carrossel de imagens à direita — placeholder vale.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Pares livres · regra de temperatura</h3>
+        <ul>
+          <li><strong>Sempre 1 cor fria + 1 cor vibrante/quente.</strong> Nunca duas vibrantes juntas.</li>
+          <li><strong>Frias</strong> → Blue, Cyan, Violet, Neutral.</li>
+          <li><strong>Vibrantes/quentes</strong> → Lime, Coral, Brown, Green.</li>
+          <li>✓ Ex. <code>#19C2FF</code> (Cyan 500, fria) + <code>#F9EEF1</code> (Brown 50, quente).</li>
+          <li>✗ Ex. <code>#7B61FF</code> (Violet, fria vibrante) + <code>#D5F221</code> (Lime, quente vibrante) — duas saturadas, excesso de contraste, leitura cansada.</li>
+          <li>Contraste ótico ≠ legibilidade. Valide ≥ 4.5 entre fundo e texto principal.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Slides empilhados -->
+    <div id="landing-slides"></div>
+
+    <!-- Matriz de combinações livres -->
+    <div style="margin-top:36px">
+      <h3 style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--page-caption);margin:0 0 6px;font-weight:600">Matriz de pares livres · ✓ fria + vibrante</h3>
+      <p style="font-size:13px;color:var(--page-text-soft);margin:0 0 14px;max-width:640px">Pares que respeitam a regra de temperatura: uma cor fria (Blue, Cyan, Violet, Neutral) acompanhada por uma vibrante ou quente (Lime, Coral, Brown, Green).</p>
+      <div id="free-pairs" class="pairs"></div>
+    </div>
+
+    <!-- Evitar -->
+    <div style="margin-top:36px">
+      <h3 style="font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#8A2B28;margin:0 0 6px;font-weight:600">A evitar · ✕ duas cores vibrantes</h3>
+      <p style="font-size:13px;color:var(--page-text-soft);margin:0 0 14px;max-width:640px">Duas cores saturadas juntas criam excesso de contraste e cansam a leitura. Mesmo quando "bonito" visualmente, quebra a hierarquia e compromete a escaneabilidade. Violet × Lime é o caso canônico.</p>
+      <div id="bad-pairs" class="pairs"></div>
+    </div>
+  </section>
+
+  <!-- ================= 07 · CSS variables reference ================= -->
+  <section>
+    <div class="section-head">
+      <span class="idx">07</span>
+      <h2>CSS Variables · Copy Block</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Cole isso no <code style="font-family:var(--mono);background:var(--neutral-100);padding:1px 6px;border-radius:4px;border:1px solid var(--page-border);font-size:12px">:root</code> do projeto. É a fonte oficial do tonal system.</p>
+
+    <pre id="css-dump" style="
+      background:var(--neutral-900);color:#E8EEF5;
+      padding:24px;border-radius:12px;
+      font-family:var(--mono);font-size:12px;line-height:1.65;
+      overflow:auto;max-height:440px;margin:0;
+      border:1px solid var(--page-border);
+    "></pre>
+  </section>
+
+  <div class="foot">
+    <span>FolioTree · Tonal System</span>
+    <span>v0.0.1 · reference document</span>
+  </div>
+</div>
+
+<script>
+/* ---------- Data ---------- */
+const FAMILIES = [
+  {
+    name:'Neutral', key:'neutral',
+    desc:'Base light/dark do sistema. Background, surface, borda e tipografia neutra.',
+    pair:['#F4F7FB','#0F1115'],
+    tones:[
+      ['50','#F8FAFC','light'],['100','#F4F7FB','light'],['200','#E8EEF5','light'],
+      ['300','#D9E0EA','light'],['400','#B7C0CC','light'],['500','#8691A0','light'],
+      ['600','#5E6878','dark'],['700','#3D4757','dark'],['800','#1A1F29','dark'],['900','#0F1115','dark']
+    ]
+  },
+  {
+    name:'Lime', key:'lime',
+    desc:'Família energética principal. Hero, CTA e seções vibrantes com dark da própria família.',
+    pair:['#D5F221','#535E13'],
+    tones:[
+      ['50','#F7FAE5','light'],['100','#EFF5CC','light'],['200','#E5EEAA','light'],
+      ['300','#DAE788','light'],['400','#CDDF5D','light'],['500','#D5F221','light'],
+      ['600','#AEC427','dark'],['700','#90A220','dark'],['800','#718019','dark'],['900','#535E13','dark']
+    ]
+  },
+  {
+    name:'Blue', key:'blue',
+    desc:'Família fria de estrutura e confiança. Landing, contraste e base de comunicação.',
+    pair:['#2F66D0','#FFFFFF'],
+    tones:[
+      ['50','#EAF0FA','light'],['100','#CDDAF4','light'],['200','#ACC2EC','light'],
+      ['300','#8BA9E5','light'],['400','#618BDB','light'],['500','#2F66D0','light'],
+      ['600','#2756AF','dark'],['700','#20458D','dark'],['800','#18356C','dark'],['900','#11254B','dark']
+    ]
+  },
+  {
+    name:'Green', key:'green',
+    desc:'Família de ação. Botões, seleção ativa e estados positivos.',
+    pair:['#7DFF5A','#214E1E'],
+    tones:[
+      ['50','#ECFEE5','light'],['100','#D5FFC7','light'],['200','#B5FFA1','light'],
+      ['300','#98FF7F','light'],['400','#88FF67','light'],['500','#7DFF5A','light'],
+      ['600','#63D94A','dark'],['700','#4BA93B','dark'],['800','#357A2D','dark'],['900','#214E1E','dark']
+    ]
+  },
+  {
+    name:'Cyan', key:'cyan',
+    desc:'Família de info. Light = informação suave. Dark = tipografia em blocos informativos.',
+    pair:['#CBF3FF','#063C52'],
+    tones:[
+      ['50','#E8F9FF','light'],['100','#CBF3FF','light'],['200','#9DEAFF','light'],
+      ['300','#6DDEFF','light'],['400','#3ED0FF','light'],['500','#19C2FF','light'],
+      ['600','#11A1DA','dark'],['700','#0C7DAA','dark'],['800','#095B7A','dark'],['900','#063C52','dark']
+    ]
+  },
+  {
+    name:'Violet', key:'violet',
+    desc:'Família de versão, camada criativa e diferenciação controlada.',
+    pair:['#E7E0FF','#281F5E'],
+    tones:[
+      ['50','#F3F0FF','light'],['100','#E7E0FF','light'],['200','#D6CAFF','light'],
+      ['300','#C0B0FF','light'],['400','#9A7DFF','light'],['500','#7B61FF','light'],
+      ['600','#654DE0','dark'],['700','#503DB8','dark'],['800','#3B2E88','dark'],['900','#281F5E','dark']
+    ]
+  },
+  {
+    name:'Brown', key:'brown',
+    desc:'Família marrom-vinho-bordô. Light tende ao vinho suave. Dark aprofunda para bordô fechado.',
+    pair:['#F0D7DE','#421D2D'],
+    tones:[
+      ['50','#F9EEF1','light'],['100','#F0D7DE','light'],['200','#E2B8C5','light'],
+      ['300','#D094A8','light'],['400','#B96F8B','light'],['500','#9A4F6D','light'],
+      ['600','#833F5B','dark'],['700','#6D334C','dark'],['800','#57283C','dark'],['900','#421D2D','dark']
+    ]
+  },
+  {
+    name:'Coral Sparkle', key:'coral',
+    desc:'Família coral. Light caminha para pêssego/laranja suave. Dark aprofunda para vermelho intenso.',
+    pair:['#FFE2D6','#5E1B1E'],
+    tones:[
+      ['50','#FFF4EF','light'],['100','#FFE2D6','light'],['200','#FFC8B4','light'],
+      ['300','#FFAB8E','light'],['400','#FF8B6C','light'],['500','#FF6B57','light'],
+      ['600','#E05143','dark'],['700','#B93D34','dark'],['800','#8A2B28','dark'],['900','#5E1B1E','dark']
+    ]
+  },
+];
+
+const DARK_FONTS = [
+  {name:'Blue',    hex:'#11254B', sample:'Aa', bg:'#EAF0FA'},
+  {name:'Green',   hex:'#214E1E', sample:'Aa', bg:'#ECFEE5'},
+  {name:'Lime',    hex:'#535E13', sample:'Aa', bg:'#F7FAE5'},
+  {name:'Brown',   hex:'#421D2D', sample:'Aa', bg:'#F9EEF1'},
+  {name:'Coral',   hex:'#5E1B1E', sample:'Aa', bg:'#FFF4EF'},
+  {name:'Info',    hex:'#063C52', sample:'Aa', bg:'#E8F9FF'},
+  {name:'Version', hex:'#281F5E', sample:'Aa', bg:'#F3F0FF'},
+  {name:'Neutral', hex:'#0F1115', sample:'Aa', bg:'#F8FAFC'},
+];
+
+/* ---------- Render families ---------- */
+const familiesEl = document.getElementById('families');
+familiesEl.innerHTML = FAMILIES.map(f => `
+  <article class="family">
+    <header class="family-head">
+      <div class="family-name">
+        <span class="chip" style="background:${f.pair[0]}"></span>
+        <div>
+          <div class="label">${f.name}</div>
+          <span class="code">--${f.key}-50 → 900</span>
+        </div>
+      </div>
+      <div class="family-desc">${f.desc}</div>
+      <div class="family-pair">
+        recommended pair<br/>
+        ${f.pair[0]} + ${f.pair[1]}
+        <div class="pair-swatches">
+          <span style="background:${f.pair[0]}"></span>
+          <span style="background:${f.pair[1]}"></span>
+        </div>
+      </div>
+    </header>
+    <div class="tones">
+      ${f.tones.map(([id,hex,usage]) => `
+        <div class="tone ${usage==='dark'?'dark':''}">
+          <div class="swatch" style="background:${hex}">
+            <div class="onswatch">${usage}</div>
+          </div>
+          <div class="info">
+            <div class="tone-id"><span>${id}</span><span class="lx">${usage}</span></div>
+            <div class="hex">${hex}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  </article>
+`).join('');
+
+/* ---------- Render dark fonts ---------- */
+const dfEl = document.getElementById('darkfonts');
+dfEl.innerHTML = DARK_FONTS.map(d => `
+  <div class="darkfont" style="background:${d.bg}">
+    <div class="sample" style="color:${d.hex}">${d.sample}
+      <div class="sample-sub">${d.name.toLowerCase()} / dark font</div>
+    </div>
+    <div class="meta-row">
+      <span><span class="chip" style="background:${d.hex}"></span>${d.name}</span>
+      <span>${d.hex}</span>
+    </div>
+  </div>
+`).join('');
+
+/* ---------- CSS dump ---------- */
+const lines = [];
+lines.push(':root {');
+lines.push('  /* ── Type families (see Typography System) ── */');
+lines.push("  --font-display: 'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;");
+lines.push("  --font-ui:      'Inter', ui-sans-serif, system-ui, sans-serif;");
+lines.push("  --font-data:    'IBM Plex Mono', ui-monospace, Menlo, monospace;");
+lines.push('');
+lines.push('  /* ── Page semantic ── */');
+lines.push("  --page-bg:#F4F7FB;");
+lines.push("  --page-surface:#FFFFFF;");
+lines.push("  --page-border:rgba(15,17,21,0.08);");
+lines.push("  --page-text:#0F1115;");
+lines.push("  --page-text-soft:rgba(15,17,21,0.68);");
+lines.push("  --page-caption:rgba(15,17,21,0.48);");
+lines.push("  --page-shadow:0 20px 60px rgba(15,17,21,0.06);");
+lines.push('');
+FAMILIES.forEach(f=>{
+  lines.push(`  /* ── ${f.name} ── */`);
+  f.tones.forEach(([id,hex])=>lines.push(`  --${f.key}-${id}:${hex};`));
+  lines.push('');
+});
+lines.push('}');
+document.getElementById('css-dump').textContent = lines.join('\n');
+
+/* ---------- Landing slides (expressive system) ---------- */
+const SLIDES = [
+  {
+    label:'01 · Hero',
+    family:'Lime',
+    bg:'#D5F221', fg:'#535E13', subFg:'rgba(83,94,19,0.78)',
+    btnBg:'#214E1E', btnFg:'#D5FFC7',
+    rightBg:'#11254B',
+    meta:'FolioTree · 2026',
+    head:'Sua carreira em uma árvore que cresce com você.',
+    sub:'Uma única página viva para reunir projetos, versões e provas do que você faz. Atualize uma vez — aparece em todo lugar.',
+    ctaPrefix:'foliotree.co/',
+    ctaField:'seunome',
+    ctaBtn:'Criar conta grátis',
+    frames:[
+      {cls:'ph-c tall', label:'RETRATO', cap:'Luna · fotógrafa'},
+      {cls:'ph-a', label:'CASE', cap:'Editorial VOGUE'},
+    ]
+  },
+  {
+    label:'02 · Customize',
+    family:'Blue',
+    bg:'#2F66D0', fg:'#D5F221', subFg:'rgba(255,255,255,0.82)',
+    btnBg:'#D5F221', btnFg:'#535E13',
+    rightBg:'#0F1115',
+    meta:'Personalização',
+    head:'Monte e ajuste seu FolioTree em minutos.',
+    sub:'Troque cores, tipografia e blocos sem abrir um editor técnico. Ou deixe a IA do FolioTree sugerir um visual que combina com você.',
+    ctaPrefix:'foliotree.co/',
+    ctaField:'seunome',
+    ctaBtn:'Começar grátis',
+    frames:[
+      {cls:'ph-b tall', label:'TEMA', cap:'Tema · Lime Sparkle'},
+      {cls:'ph-f', label:'MOBILE', cap:'Layout mobile'},
+    ]
+  },
+  {
+    label:'03 · Free pair · Cyan + Brown',
+    family:'Cyan × Brown',
+    bg:'#19C2FF', fg:'#F9EEF1', subFg:'rgba(249,238,241,0.82)',
+    btnBg:'#421D2D', btnFg:'#F9EEF1',
+    rightBg:'#F0D7DE',
+    meta:'Par livre',
+    head:'Compartilhe, meça, aprenda.',
+    sub:'Cada clique vira insight. Veja quem visitou, qual projeto chamou atenção e o que converter — tudo sem plugin, tudo em tempo real.',
+    ctaPrefix:'foliotree.co/',
+    ctaField:'seunome',
+    ctaBtn:'Entrar na lista',
+    frames:[
+      {cls:'ph-a tall', label:'ANALYTICS', cap:'Cliques · 7 dias'},
+      {cls:'ph-d', label:'ALERTA', cap:'+218% esta semana'},
+    ]
+  },
+  {
+    label:'04 · Coral × Violet',
+    family:'Coral × Violet',
+    bg:'#FF6B57', fg:'#281F5E', subFg:'rgba(40,31,94,0.78)',
+    btnBg:'#281F5E', btnFg:'#E7E0FF',
+    rightBg:'#7B61FF',
+    meta:'Comunidade',
+    head:'Descubra gente que cria como você.',
+    sub:'Navegue por árvores de criadores, siga projetos em progresso e deixe comentários em versões específicas — não no perfil inteiro.',
+    ctaPrefix:'foliotree.co/',
+    ctaField:'seunome',
+    ctaBtn:'Quero entrar',
+    frames:[
+      {cls:'ph-f tall', label:'FEED', cap:'Atualizações ao vivo'},
+      {cls:'ph-b', label:'TAG', cap:'#editorial'},
+    ]
+  },
+];
+
+const slidesEl = document.getElementById('landing-slides');
+slidesEl.innerHTML = SLIDES.map((s, i) => `
+  <article class="slide" style="background:${s.bg};color:${s.fg}">
+    <div class="left">
+      <div>
+        <div class="sandwich-indicator" style="color:${s.fg}">
+          <i style="background:${s.bg}"></i>
+          <i style="background:${s.rightBg}"></i>
+          <i style="background:${s.fg}"></i>
+          <span style="margin-left:8px">sandwich · ${s.family}</span>
+        </div>
+        <div class="slide-meta" style="color:${s.fg}">
+          <span>${s.label}</span>
+          <span class="dot"></span>
+          <span>${String(i+1).padStart(2,'0')} / ${String(SLIDES.length).padStart(2,'0')}</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <h3 class="slide-head">${s.head}</h3>
+        <p class="slide-sub" style="color:${s.subFg}">${s.sub}</p>
+      </div>
+      <div>
+        <div class="cta-row">
+          <span class="prefix">${s.ctaPrefix}</span>
+          <input class="field" value="${s.ctaField}" readonly />
+          <button class="btn" style="background:${s.btnBg};color:${s.btnFg}">${s.ctaBtn} →</button>
+        </div>
+      </div>
+    </div>
+    <div class="right" style="background:${s.rightBg}">
+      <div class="carousel">
+        ${s.frames.map(f=>`
+          <div class="frame ${f.cls}">
+            <span class="ph-label">${f.label}</span>
+            <span class="caption">${f.cap}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  </article>
+`).join('');
+
+/* ---------- Free pair matrix ---------- */
+/* REGRA: sempre 1 cor FRIA + 1 cor VIBRANTE/QUENTE. Duas vibrantes = excesso. */
+const COLD   = ['Blue','Cyan','Violet','Neutral'];
+const WARM   = ['Lime','Coral','Brown','Green'];
+const FREE_PAIRS = [
+  {bg:'#19C2FF', fg:'#F9EEF1', title:'Cyan 500 × Brown 50',    sample:'Frio + quente leve. Pêssego sobre azul — frescor equilibrado.',   ok:true},
+  {bg:'#2F66D0', fg:'#D5F221', title:'Blue 500 × Lime 500',    sample:'Par padrão do hero. Frio estrutural + vibrante energético.',     ok:true},
+  {bg:'#2F66D0', fg:'#FFE2D6', title:'Blue 500 × Coral 100',   sample:'Azul estrutural com coral leve — convite suave sobre frio.',     ok:true},
+  {bg:'#FFE2D6', fg:'#2F66D0', title:'Coral 100 × Blue 500',   sample:'Pêssego quente com título azul — amigável e confortável.',      ok:true},
+  {bg:'#FF6B57', fg:'#281F5E', title:'Coral 500 × Violet 900', sample:'Quente vibrante + frio profundo. Calor com profundidade.',       ok:true},
+  {bg:'#063C52', fg:'#CDDF5D', title:'Info 900 × Lime 400',    sample:'Petróleo profundo + verde pasto. Editorial, noturno, elegante.',ok:true},
+  {bg:'#D5F221', fg:'#281F5E', title:'Lime 500 × Violet 900',  sample:'Vibrante + frio escuro. Energia com voz tipográfica mais grave.',ok:true},
+  {bg:'#11254B', fg:'#FFAB8E', title:'Blue 900 × Coral 300',   sample:'Frio escuro + quente suave. Ótimo para depoimentos e editorial.',ok:true},
+];
+/* Exemplos a EVITAR — duas cores vibrantes juntas = excesso */
+const BAD_PAIRS = [
+  {bg:'#7B61FF', fg:'#D5F221', title:'Violet 500 × Lime 500',  reason:'Duas cores vibrantes juntas. Contraste excessivo cansa a leitura.'},
+  {bg:'#FF6B57', fg:'#D5F221', title:'Coral 500 × Lime 500',   reason:'Dois quentes vibrantes. Vibração visual, difícil de escanear.'},
+  {bg:'#7DFF5A', fg:'#FF6B57', title:'Green 500 × Coral 500',  reason:'Dois vibrantes complementares. Tremor ótico.'},
+  {bg:'#19C2FF', fg:'#7B61FF', title:'Cyan 500 × Violet 500',  reason:'Dois frios saturados. Baixa legibilidade.'},
+];
+const fpEl = document.getElementById('free-pairs');
+fpEl.innerHTML = FREE_PAIRS.map(p => `
+  <div class="pair-card" style="background:${p.bg};color:${p.fg}">
+    <div>
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;opacity:0.75;margin-bottom:8px">✓ Cold + Warm</div>
+      <div class="pair-title" style="font-weight:800">${p.title}</div>
+      <div class="pair-sample">${p.sample}</div>
+    </div>
+    <div class="pair-hex"><span><i style="background:${p.bg}"></i>${p.bg}</span><span><i style="background:${p.fg}"></i>${p.fg}</span></div>
+  </div>
+`).join('');
+
+/* Render BAD pairs with strike overlay */
+const bpEl = document.getElementById('bad-pairs');
+if (bpEl) {
+  bpEl.innerHTML = BAD_PAIRS.map(p => `
+    <div class="pair-card" style="background:${p.bg};color:${p.fg};position:relative">
+      <div style="position:absolute;top:12px;right:14px;background:rgba(255,255,255,0.92);color:#8A2B28;font-family:var(--mono);font-size:10px;letter-spacing:0.1em;padding:3px 8px;border-radius:999px;font-weight:600">✕ EVITAR</div>
+      <div>
+        <div class="pair-title" style="font-weight:800">${p.title}</div>
+        <div class="pair-sample">${p.reason}</div>
+      </div>
+      <div class="pair-hex"><span><i style="background:${p.bg}"></i>${p.bg}</span><span><i style="background:${p.fg}"></i>${p.fg}</span></div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>

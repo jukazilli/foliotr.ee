@@ -1,0 +1,207 @@
+import { z } from "zod";
+
+export const TEMPLATE_BLOCK_TYPES = [
+  "hero",
+  "about",
+  "experience",
+  "education",
+  "skills",
+  "projects",
+  "achievements",
+  "proof",
+  "links",
+  "contact",
+  "portfolio.hero",
+  "portfolio.about",
+  "portfolio.experience",
+  "portfolio.work",
+  "portfolio.contact",
+] as const;
+
+export type TemplateBlockType = (typeof TEMPLATE_BLOCK_TYPES)[number];
+
+export const templateBlockTypeSchema = z.enum(TEMPLATE_BLOCK_TYPES);
+
+function safeText(max: number) {
+  return z.string().max(max).refine((value) => !/<\/?[a-z][\s\S]*>/i.test(value), {
+    message: "HTML nao e permitido em campos de bloco",
+  });
+}
+
+const safeTextSchema = safeText(4000);
+const safeShortTextSchema = safeText(180);
+
+const safeUrlSchema = z
+  .string()
+  .url()
+  .refine((value) => ["http:", "https:"].includes(new URL(value).protocol), {
+    message: "URL deve usar HTTP ou HTTPS",
+  });
+
+const safeHrefSchema = z
+  .string()
+  .max(500)
+  .refine(
+    (value) =>
+      value.startsWith("/") ||
+      (value.startsWith("http://") || value.startsWith("https://")),
+    { message: "Link deve ser relativo ou usar HTTP/HTTPS" }
+  );
+
+const safeAssetPathSchema = z
+  .string()
+  .max(500)
+  .refine(
+    (value) =>
+      value.startsWith("/") ||
+      (value.startsWith("https://") && !value.toLowerCase().startsWith("javascript:")),
+    { message: "Imagem deve ser um caminho local publico ou URL HTTPS" }
+  );
+
+export const editableFieldSchema = z.object({
+  key: z.string().min(1).max(80),
+  label: z.string().min(1).max(120),
+  element: z.enum([
+    "section",
+    "div",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "text",
+    "image",
+    "link",
+    "button",
+    "list",
+    "group",
+    "repeater",
+  ]),
+  kind: z.enum(["text", "longText", "url", "image", "boolean", "list"]),
+  required: z.boolean().default(false),
+});
+
+export type EditableField = z.infer<typeof editableFieldSchema>;
+
+const imageSchema = z.object({
+  src: safeAssetPathSchema,
+  alt: safeShortTextSchema.default(""),
+});
+
+const linkSchema = z.object({
+  label: safeShortTextSchema,
+  href: safeUrlSchema,
+});
+
+const portfolioHeroConfigSchema = z.object({
+  eyebrow: safeShortTextSchema.default("Hello, I'm"),
+  name: safeShortTextSchema.optional(),
+  headline: safeShortTextSchema.optional(),
+  locationLine: safeShortTextSchema.optional(),
+  ctaLabel: safeShortTextSchema.default("Resume"),
+  ctaHref: safeHrefSchema.default("/resume"),
+  portrait: imageSchema.optional(),
+  navLinks: z.array(linkSchema).max(4).default([]),
+});
+
+const portfolioAboutConfigSchema = z.object({
+  title: safeShortTextSchema.default("about."),
+  body: safeTextSchema.optional(),
+});
+
+const portfolioExperienceConfigSchema = z.object({
+  title: safeShortTextSchema.default("experience"),
+  maxItems: z.number().int().min(1).max(8).default(3),
+});
+
+const portfolioWorkConfigSchema = z.object({
+  title: safeShortTextSchema.default("work."),
+  intro: safeTextSchema.optional(),
+  maxItems: z.number().int().min(1).max(6).default(2),
+  fallbackProjects: z
+    .array(
+      z.object({
+        title: safeShortTextSchema,
+        description: safeTextSchema,
+        date: safeShortTextSchema.default("November 24, 2019"),
+        image: imageSchema.optional(),
+        href: safeUrlSchema.optional(),
+      })
+    )
+    .max(6)
+    .default([]),
+});
+
+const portfolioContactConfigSchema = z.object({
+  title: safeShortTextSchema.default("contact."),
+  body: safeTextSchema.optional(),
+  image: imageSchema.optional(),
+  links: z.array(linkSchema).max(6).default([]),
+});
+
+const genericKnownConfigSchema = z
+  .object({
+    title: safeShortTextSchema.optional(),
+    layout: safeShortTextSchema.optional(),
+    maxItems: z.number().int().min(1).max(20).optional(),
+    showImages: z.boolean().optional(),
+    showLinks: z.boolean().optional(),
+    showLocation: z.boolean().optional(),
+    showAvatar: z.boolean().optional(),
+    showBanner: z.boolean().optional(),
+    ctaText: safeShortTextSchema.optional(),
+    ctaUrl: safeUrlSchema.optional(),
+  })
+  .passthrough();
+
+const blockConfigSchemas = {
+  "portfolio.hero": portfolioHeroConfigSchema,
+  "portfolio.about": portfolioAboutConfigSchema,
+  "portfolio.experience": portfolioExperienceConfigSchema,
+  "portfolio.work": portfolioWorkConfigSchema,
+  "portfolio.contact": portfolioContactConfigSchema,
+  hero: genericKnownConfigSchema,
+  about: genericKnownConfigSchema,
+  experience: genericKnownConfigSchema,
+  education: genericKnownConfigSchema,
+  skills: genericKnownConfigSchema,
+  projects: genericKnownConfigSchema,
+  achievements: genericKnownConfigSchema,
+  proof: genericKnownConfigSchema,
+  links: genericKnownConfigSchema,
+  contact: genericKnownConfigSchema,
+} satisfies Record<TemplateBlockType, z.ZodTypeAny>;
+
+export function getBlockConfigSchema(blockType: string) {
+  const typeResult = templateBlockTypeSchema.safeParse(blockType);
+
+  if (!typeResult.success) {
+    return null;
+  }
+
+  return blockConfigSchemas[typeResult.data];
+}
+
+export function validateBlockConfig(blockType: string, config: unknown) {
+  const schema = getBlockConfigSchema(blockType);
+
+  if (!schema) {
+    return null;
+  }
+
+  return schema.parse(config ?? {});
+}
+
+export function safeParseBlockConfig(blockType: string, config: unknown) {
+  const schema = getBlockConfigSchema(blockType);
+
+  if (!schema) {
+    return { success: false as const, data: null };
+  }
+
+  const result = schema.safeParse(config ?? {});
+  return result.success
+    ? { success: true as const, data: result.data }
+    : { success: false as const, data: null };
+}

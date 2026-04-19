@@ -6,7 +6,7 @@ Last updated: 2026-04-17
 
 ## Purpose
 
-This `/docs` folder stores the current source-of-truth documentation for the FolioTree brand discovery and MVP foundation work completed so far.
+This `/docs` folder stores the current source-of-truth documentation for the FolioTree brand discovery work completed so far.
 
 The goal is to make the project understandable for humans and AIs with minimal ambiguity.
 
@@ -15,9 +15,11 @@ These files are intentionally written in a stable, explicit style to reduce infe
 ## Documents
 
 ### 1. `brand-core.md`
+
 Use this file first.
 
 It contains the compact and approved brand foundation:
+
 - essence
 - purpose
 - positioning
@@ -29,15 +31,18 @@ It contains the compact and approved brand foundation:
 - messaging guardrails
 
 Recommended use:
+
 - onboarding a new AI assistant
 - writing homepage copy
 - writing product copy
 - checking whether a concept fits the current brand
 
 ### 2. `brand-deck.md`
+
 Use this file second.
 
 It expands the brand core into a broader strategic deck:
+
 - mission
 - vision
 - values
@@ -50,40 +55,37 @@ It expands the brand core into a broader strategic deck:
 - landing page guidance
 
 Recommended use:
+
 - strategic review
 - marketing alignment
 - design direction
 - product/brand coherence checks
 
-### 3. `tonal system.md`
-Use this file when implementing color foundations.
+### 3. `Design System/*.html`
 
-It contains the current tonal family prototype and application rules for:
-- neutral surfaces
-- landing page color usage
-- product color usage
-- same-family overlay rules
-- recommended contrast pairs
+Use these files as the current source of truth for visual design and public UI implementation:
 
-### 4. `tipografia-system.md`
-Use this file when implementing typography foundations.
+- `Design System/Brand Core.html`
+- `Design System/Tonal System.html`
+- `Design System/Typography System.html`
 
-It contains the current typography system:
-- Display: Sora
-- UI: Inter
-- Data/Meta: IBM Plex Mono
-- landing page type scale
-- product UI type scale
-- typography usage rules
+Current implementation rule:
+
+- color values and semantic color behavior come from `Tonal System.html`
+- brand interpretation, guardrails, and approved message hierarchy come from `Brand Core.html`
+- public typography uses Sora for display, Inter for UI, and IBM Plex Mono for data/meta
+- `Typography System.html` remains the typography reference, but the current product prompt explicitly requires Sora as the display font for this cut
+- public screens should feel like a social/professional platform: expressive, clear, light, and memorable, not a cold SaaS dashboard
 
 ## Reading order for AI systems
 
 1. Read `brand-core.md`
 2. Read `brand-deck.md`
-3. Read `tonal system.md`
-4. Read `tipografia-system.md`
-5. Treat unresolved topics as unresolved
-6. Do not invent product features, visual assets, or business decisions that are not explicitly documented
+3. Read `Design System/Brand Core.html`
+4. Read `Design System/Tonal System.html`
+5. Read `Design System/Typography System.html`
+6. Treat unresolved topics as unresolved
+7. Do not invent product features, visual assets, or business decisions that are not explicitly documented
 
 ## AI Operating Rules
 
@@ -100,6 +102,7 @@ When using this documentation, an AI assistant should follow these rules:
 ## Current Project Truths
 
 The current documented truths are:
+
 - FolioTree is not positioned as just a resume tool.
 - FolioTree is not positioned as just a page builder.
 - FolioTree is a structured professional identity layer.
@@ -110,6 +113,7 @@ The current documented truths are:
 ## Documentation Style Notes
 
 This documentation is intentionally:
+
 - explicit
 - repetitive where useful
 - stable in terminology
@@ -121,25 +125,17 @@ This is intentional and should be preserved when updating these files.
 ## Known Gaps
 
 These topics are not fully finalized yet and should not be treated as approved facts:
-- final visual identity system
-- final color palette values
-- final logo system
-- final UI system
+
+- final full visual identity system beyond the current public UI cut
+- final logo system beyond the current geometric wordmark/mark
+- final advanced product UI system for the logged-in area
 - final feature scope and roadmap
 - final category naming in the market
-
-## Current MVP Direction
-
-The active MVP direction is:
-- public landing, auth screens, and a light logged-in product shell
-- `Profile -> Versions -> Pages / Resumes` as the core navigation model
-- PostgreSQL with Prisma for persistence
-- data-oriented templates with editable, reorderable, removable, hidable blocks
-- resume mode generated from the same profile/version source as public pages
 
 ## Update Policy
 
 When updating these docs:
+
 - prefer additive updates over rewriting core meaning
 - keep naming consistent across files
 - mark major changes with a new version number

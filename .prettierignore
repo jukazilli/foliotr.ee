@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+.next
+**/.next
+out
+build
+dist
+**/dist
+coverage
+package-lock.json
+doc/Design System
+apps/**/dist
+packages/**/dist
+*.tsbuildinfo
