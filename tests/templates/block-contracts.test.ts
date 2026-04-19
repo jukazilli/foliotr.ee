@@ -61,4 +61,39 @@ describe("template block contracts", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("accepts mailto links in canonical contact blocks", () => {
+    const config = validateBlockConfig("portfolio.contact", {
+      title: "contact.",
+      links: [
+        {
+          label: "juliano@example.com",
+          href: "mailto:juliano@example.com",
+        },
+      ],
+    });
+
+    expect(config).toMatchObject({
+      links: [
+        {
+          label: "juliano@example.com",
+          href: "mailto:juliano@example.com",
+        },
+      ],
+    });
+  });
+
+  it("rejects unsafe links in canonical contact blocks", () => {
+    const result = safeParseBlockConfig("portfolio.contact", {
+      title: "contact.",
+      links: [
+        {
+          label: "Bad",
+          href: "javascript:alert(1)",
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+  });
 });

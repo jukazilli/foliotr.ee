@@ -38,6 +38,13 @@ const safeUrlSchema = z
     message: "URL deve usar HTTP ou HTTPS",
   });
 
+const safeContactUrlSchema = z
+  .string()
+  .url()
+  .refine((value) => ["http:", "https:", "mailto:"].includes(new URL(value).protocol), {
+    message: "URL deve usar HTTP, HTTPS ou mailto",
+  });
+
 const safeHrefSchema = z
   .string()
   .max(500)
@@ -137,7 +144,12 @@ const portfolioContactConfigSchema = z.object({
   title: safeShortTextSchema.default("contact."),
   body: safeTextSchema.optional(),
   image: imageSchema.optional(),
-  links: z.array(linkSchema).max(6).default([]),
+  links: z.array(
+    z.object({
+      label: safeShortTextSchema,
+      href: safeContactUrlSchema,
+    })
+  ).max(6).default([]),
 });
 
 const genericKnownConfigSchema = z

@@ -67,6 +67,25 @@ describe("template semantic mapper", () => {
           assetFields: [],
           allowedChildren: [],
         },
+        {
+          id: "def_contact",
+          templateId: "template_1",
+          key: "portfolio-contact",
+          blockType: "portfolio.contact",
+          label: "Contact",
+          category: "section",
+          version: 1,
+          defaultOrder: 4,
+          required: false,
+          repeatable: false,
+          defaultConfig: {
+            title: "contact.",
+          },
+          defaultProps: {},
+          editableFields: [],
+          assetFields: [],
+          allowedChildren: [],
+        },
       ] as never,
       context: {
         profile: {
@@ -173,7 +192,7 @@ describe("template semantic mapper", () => {
       },
     });
 
-    expect(blocks).toHaveLength(3);
+    expect(blocks).toHaveLength(4);
     expect(blocks[0]).toMatchObject({
       blockType: "portfolio.hero",
       config: expect.objectContaining({
@@ -208,6 +227,18 @@ describe("template semantic mapper", () => {
         fallbackProjects: [
           expect.objectContaining({
             title: "Case Study A",
+          }),
+        ],
+      }),
+    });
+    expect(blocks[3]).toMatchObject({
+      blockType: "portfolio.contact",
+      visible: true,
+      config: expect.objectContaining({
+        links: [
+          expect.objectContaining({
+            label: "juliano@example.com",
+            href: "mailto:juliano@example.com",
           }),
         ],
       }),

@@ -83,7 +83,7 @@ export async function useCanonicalTemplateAction(
 
   const currentPage = getPrimaryVersionPage(version);
 
-  await upsertOwnedPageOutput(prisma, session.user.id, version.id, {
+  const versionWithPage = await upsertOwnedPageOutput(prisma, session.user.id, version.id, {
     title: currentPage?.title ?? `${version.name} page`,
     slug: createPageSlug({
       username,
@@ -94,6 +94,7 @@ export async function useCanonicalTemplateAction(
     templateId: template.id,
     publishState: currentPage?.publishState ?? "DRAFT",
   });
+  const appliedPage = getPrimaryVersionPage(versionWithPage);
 
   await upsertOwnedResumeOutput(prisma, session.user.id, version.id, {
     sections:
@@ -112,6 +113,10 @@ export async function useCanonicalTemplateAction(
   revalidatePath(`/templates/${slug}`);
   revalidatePath("/pages");
   revalidatePath("/resumes");
+
+  if (appliedPage) {
+    redirect(`/pages/${appliedPage.id}/editor`);
+  }
 
   redirect(`/templates/${slug}?applied=1&version=${versionId}`);
 }
