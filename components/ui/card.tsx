@@ -6,7 +6,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     <div
       ref={ref}
       className={cn(
-        "rounded-2xl border border-[rgba(15,17,21,0.08)] bg-white shadow-sm",
+        "rounded-xl border border-[rgba(15,17,21,0.08)] bg-white shadow-sm",
         className
       )}
       {...props}
@@ -19,7 +19,7 @@ const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6", className)} {...props} />
+  <div ref={ref} className={cn("p-4", className)} {...props} />
 ));
 CardHeader.displayName = "CardHeader";
 
@@ -27,7 +27,7 @@ const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("px-6 pb-6", className)} {...props} />
+  <div ref={ref} className={cn("px-4 pb-4", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
 
@@ -35,7 +35,7 @@ const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("px-6 pb-6 flex items-center", className)} {...props} />
+  <div ref={ref} className={cn("flex items-center px-4 pb-4", className)} {...props} />
 ));
 CardFooter.displayName = "CardFooter";
 
@@ -45,7 +45,7 @@ const CardTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn("text-base font-semibold text-neutral-900", className)}
+    className={cn("text-sm font-semibold text-neutral-900", className)}
     {...props}
   />
 ));
@@ -55,7 +55,7 @@ const CardDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn("text-sm text-neutral-500 mt-1", className)} {...props} />
+  <p ref={ref} className={cn("mt-1 text-xs text-neutral-500", className)} {...props} />
 ));
 CardDescription.displayName = "CardDescription";
 

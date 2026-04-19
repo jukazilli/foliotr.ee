@@ -4,12 +4,13 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { readTemplateResumeDefaults } from "@/lib/server/domain/canonical-templates";
 import { getOwnedPageEditorData } from "@/lib/server/domain/templates";
+import { syncOwnedPageSnapshot } from "@/lib/server/domain/versions";
 import {
   upsertOwnedPageOutput,
   upsertOwnedResumeOutput,
 } from "@/lib/server/domain/versions";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
 
 async function requireEditorContext(pageId: string) {
   const session = await auth();
@@ -19,13 +20,8 @@ async function requireEditorContext(pageId: string) {
   }
 
   const page = await getOwnedPageEditorData(prisma, session.user.id, pageId);
-  const manifest = getCanonicalTemplateManifest(page.template.slug);
 
-  if (!manifest) {
-    throw new Error(`Manifest nao encontrado para template ${page.template.slug}`);
-  }
-
-  return { session, page, manifest };
+  return { session, page };
 }
 
 function revalidatePublicPaths(username: string | null | undefined, slug: string) {
@@ -53,22 +49,32 @@ export async function setPagePublishStateAction(pageId: string, nextState: "DRAF
   revalidatePublicPaths(session.user.username, page.slug);
 }
 
+export async function syncPageSnapshotAction(pageId: string) {
+  const { session, page } = await requireEditorContext(pageId);
+
+  await syncOwnedPageSnapshot(prisma, session.user.id, pageId);
+
+  revalidatePath(`/pages/${pageId}/editor`);
+  revalidatePath(`/pages/${pageId}/resume`);
+}
+
 export async function setResumePublishStateAction(
   pageId: string,
   nextState: "DRAFT" | "PUBLISHED"
 ) {
-  const { session, page, manifest } = await requireEditorContext(pageId);
+  const { session, page } = await requireEditorContext(pageId);
+  const resumeDefaults = readTemplateResumeDefaults(page.template.resumeDefaults);
 
   await upsertOwnedResumeOutput(prisma, session.user.id, page.versionId, {
     sections:
       page.version.resumeConfig?.sections?.length && page.version.resumeConfig.sections.length > 0
         ? page.version.resumeConfig.sections
-        : manifest.resumeDefaults.sections,
-    layout: page.version.resumeConfig?.layout ?? manifest.resumeDefaults.layout,
+        : resumeDefaults.sections,
+    layout: page.version.resumeConfig?.layout ?? resumeDefaults.layout,
     accentColor:
-      page.version.resumeConfig?.accentColor ?? manifest.resumeDefaults.accentColor ?? "",
-    showPhoto: page.version.resumeConfig?.showPhoto ?? manifest.resumeDefaults.showPhoto,
-    showLinks: page.version.resumeConfig?.showLinks ?? manifest.resumeDefaults.showLinks,
+      page.version.resumeConfig?.accentColor ?? resumeDefaults.accentColor ?? "",
+    showPhoto: page.version.resumeConfig?.showPhoto ?? resumeDefaults.showPhoto,
+    showLinks: page.version.resumeConfig?.showLinks ?? resumeDefaults.showLinks,
     publishState: nextState,
   });
 

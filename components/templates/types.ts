@@ -1,4 +1,4 @@
-import type { PageBlock, Profile } from "@prisma/client";
+import type { PageBlock, Profile } from "@/generated/prisma-client";
 import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/types";
 
 export type RenderablePageBlock = PageBlock & {
@@ -19,4 +19,5 @@ export interface TemplateRendererProps {
   blocks: RenderablePageBlock[];
   profile: TemplateProfile;
   version?: VersionForBlocks | null;
+  templateSourcePackage?: unknown;
 }

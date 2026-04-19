@@ -4,6 +4,7 @@ import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { getAppViewer, getOwnedResumeConfigs, getOwnedVersions } from "@/lib/server/app-viewer";
 import { formatDate } from "@/lib/utils";
 
@@ -49,8 +50,11 @@ export default async function ResumesPage() {
         />
       ) : (
         <section className="grid gap-4 xl:grid-cols-2">
-          {resumeConfigs.map((resume) => (
-            <Card key={resume.id} className="rounded-[28px]">
+          {resumeConfigs.map((resume) => {
+            const page = getPrimaryVersionPage(resume.version);
+
+            return (
+              <Card key={resume.id} className="rounded-[28px]">
               <CardHeader className="space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
@@ -96,9 +100,9 @@ export default async function ResumesPage() {
 
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap gap-2">
-                    {resume.version.page?.id ? (
+                    {page?.id ? (
                       <Button asChild variant="primary" size="sm">
-                        <Link href={`/pages/${resume.version.page.id}/resume`}>Abrir curriculo</Link>
+                        <Link href={`/pages/${page.id}/resume`}>Abrir curriculo</Link>
                       </Button>
                     ) : null}
                     <Button asChild variant="outline" size="sm">
@@ -107,8 +111,9 @@ export default async function ResumesPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </section>
       )}
 

@@ -1,4 +1,5 @@
 import type { AppProfile } from "@/lib/server/app-viewer";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 
 export function getProfileStrength(profile: AppProfile) {
   const checks = [
@@ -21,7 +22,10 @@ export function getProfileStrength(profile: AppProfile) {
 }
 
 export function getAppCounts(profile: AppProfile) {
-  const pages = profile.versions.flatMap((version) => (version.page ? [version.page] : []));
+  const pages = profile.versions.flatMap((version) => {
+    const page = getPrimaryVersionPage(version);
+    return page ? [page] : [];
+  });
   const resumeConfigs = profile.versions.flatMap((version) =>
     version.resumeConfig ? [version.resumeConfig] : []
   );

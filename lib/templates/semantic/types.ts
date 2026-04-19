@@ -1,12 +1,10 @@
-import type { TemplateBlockDef } from "@prisma/client";
+import type { TemplateBlockDef } from "@/generated/prisma-client";
 import type {
   ProfileAggregate,
   VersionAggregate,
 } from "@/lib/server/domain/includes";
-import type { CanonicalTemplateManifest } from "@/lib/templates/manifest";
 
 export interface SemanticSeedContext {
-  manifest: CanonicalTemplateManifest;
   profile: ProfileAggregate;
   version: VersionAggregate;
 }

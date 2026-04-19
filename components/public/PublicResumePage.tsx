@@ -1,30 +1,26 @@
 import Link from "next/link";
-import type { ResumeConfig } from "@prisma/client";
 import ResumeView from "@/components/resume/ResumeView";
 import PublicToolbar from "@/components/public/PublicToolbar";
 import type { PublicPageRecord } from "@/lib/server/domain/public-pages";
 import {
-  getPublicProfile,
   getPublicResumeHref,
   getPublicTemplateHref,
-  toPublicVersionSelection,
 } from "@/lib/server/domain/public-pages";
+import type { PublishedResumeSnapshot } from "@/lib/server/domain/page-snapshots";
 
 interface PublicResumePageProps {
   page: PublicPageRecord;
   username: string;
   pageSlug?: string | null;
-  resumeConfig: ResumeConfig;
+  snapshot: PublishedResumeSnapshot;
 }
 
 export default function PublicResumePage({
   page,
   username,
   pageSlug,
-  resumeConfig,
+  snapshot,
 }: PublicResumePageProps) {
-  const profile = getPublicProfile(page);
-  const version = toPublicVersionSelection(page);
   const templateHref = getPublicTemplateHref(username, pageSlug);
   const resumeHref = getPublicResumeHref(username, pageSlug);
 
@@ -39,10 +35,10 @@ export default function PublicResumePage({
       <main className="w-full px-4 pb-10 pt-24 print:max-w-none print:p-0 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
         <ResumeView
           templateSlug={page.template.slug}
-          blocks={page.blocks}
-          profile={profile}
-          version={version}
-          config={resumeConfig}
+          blocks={snapshot.blocks}
+          profile={snapshot.profile}
+          version={snapshot.version}
+          config={snapshot.config as never}
         />
       </main>
 

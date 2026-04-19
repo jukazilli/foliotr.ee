@@ -1,4 +1,4 @@
-import type { ResumeConfig } from "@prisma/client";
+import type { ResumeConfig } from "@/generated/prisma-client";
 import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/types";
 import type { RenderablePageBlock } from "@/components/templates/types";
 import { resolveTemplateResumeProjection } from "@/lib/templates/resume/resolver";

@@ -1,48 +1,43 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   evaluateTemplateEligibility,
   listCanonicalTemplates,
-  syncCanonicalTemplates,
 } from "@/lib/server/domain/canonical-templates";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
 
 function createDb() {
   return {
     template: {
-      upsert: vi.fn(),
       findMany: vi.fn(),
       findUnique: vi.fn(),
-    },
-    templateBlockDef: {
-      deleteMany: vi.fn(),
-      upsert: vi.fn(),
     },
   };
 }
 
 describe("canonical template library", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it("evaluates missing profile requirements for portfolio-community", () => {
-    const manifest = getCanonicalTemplateManifest("portfolio-community");
-
-    if (!manifest) {
-      throw new Error("Missing canonical manifest");
-    }
-
-    const eligibility = evaluateTemplateEligibility(manifest, {
-      displayName: "",
-      headline: "",
-      bio: "",
-      avatarUrl: null,
-      user: { name: null },
-      experiences: [],
-      projects: [],
-      links: [],
-      proofs: [],
-    });
+  it("evaluates missing profile requirements from persisted eligibility", () => {
+    const eligibility = evaluateTemplateEligibility(
+      {
+        requiredProfileFields: ["displayName", "headline", "bio"],
+        requiresAvatar: true,
+        minExperienceItems: 0,
+        minProjectItems: 0,
+        minExperienceOrProjectItems: 1,
+        minLinkItems: 1,
+        minProofItems: 0,
+        minLinkOrProofItems: 0,
+      },
+      {
+        displayName: "",
+        headline: "",
+        bio: "",
+        avatarUrl: null,
+        user: { name: null },
+        experiences: [],
+        projects: [],
+        links: [],
+        proofs: [],
+      }
+    );
 
     expect(eligibility.eligible).toBe(false);
     expect(eligibility.issues.map((issue) => issue.key)).toEqual(
@@ -57,60 +52,78 @@ describe("canonical template library", () => {
     );
   });
 
-  it("passes the gate when the profile satisfies the manifest", () => {
-    const manifest = getCanonicalTemplateManifest("portfolio-community");
-
-    if (!manifest) {
-      throw new Error("Missing canonical manifest");
-    }
-
-    const eligibility = evaluateTemplateEligibility(manifest, {
-      displayName: "Juliano Pedroso",
-      headline: "Product designer",
-      bio: "Designer focado em portfolio, produto e experiencia.",
-      avatarUrl: "/uploads/juliano/avatar.png",
-      user: { name: "Juliano Pedroso" },
-      experiences: [{ id: "exp_1" }],
-      projects: [],
-      links: [{ id: "link_1" }],
-      proofs: [],
-    });
+  it("passes the gate when the profile satisfies persisted eligibility", () => {
+    const eligibility = evaluateTemplateEligibility(
+      {
+        requiredProfileFields: ["displayName", "headline", "bio"],
+        requiresAvatar: true,
+        minExperienceItems: 0,
+        minProjectItems: 0,
+        minExperienceOrProjectItems: 1,
+        minLinkItems: 1,
+        minProofItems: 0,
+        minLinkOrProofItems: 0,
+      },
+      {
+        displayName: "Juliano Pedroso",
+        headline: "Product designer",
+        bio: "Designer focado em portfolio, produto e experiencia.",
+        avatarUrl: "/uploads/juliano/avatar.png",
+        user: { name: "Juliano Pedroso" },
+        experiences: [{ id: "exp_1" }],
+        projects: [],
+        links: [{ id: "link_1" }],
+        proofs: [],
+      }
+    );
 
     expect(eligibility.eligible).toBe(true);
     expect(eligibility.issues).toEqual([]);
   });
 
-  it("syncs the canonical template and its block definitions", async () => {
+  it("lists persisted canonical templates without source-package merge", async () => {
     const db = createDb();
 
-    db.template.upsert.mockResolvedValue({ id: "template_1" });
-    db.templateBlockDef.deleteMany.mockResolvedValue({ count: 0 });
-    db.templateBlockDef.upsert.mockResolvedValue({});
-
-    await syncCanonicalTemplates(db as never);
-
-    expect(db.template.upsert).toHaveBeenCalledTimes(1);
-    expect(db.template.upsert).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { slug: "portfolio-community" },
-      })
-    );
-    expect(db.templateBlockDef.upsert).toHaveBeenCalledTimes(5);
-  });
-
-  it("lists only canonical templates with merged library metadata", async () => {
-    const db = createDb();
-
-    db.template.upsert.mockResolvedValue({ id: "template_1" });
-    db.templateBlockDef.deleteMany.mockResolvedValue({ count: 0 });
-    db.templateBlockDef.upsert.mockResolvedValue({});
     db.template.findMany.mockResolvedValue([
       {
         id: "template_1",
         slug: "portfolio-community",
         name: "Portfolio Community",
         description: "Template canonico",
-        thumbnail: "/api/template-assets/portfolio-community/cover",
+        thumbnail: "/template-assets/portfolio-community/cover.png",
+        coverUrl: "/template-assets/portfolio-community/cover.png",
+        referenceUrl: null,
+        category: "Portfolio",
+        tags: ["canonico", "editor-ready"],
+        libraryStatus: "available",
+        origin: "Local bundle",
+        summary: "Resumo",
+        detail: "Detalhe",
+        sortOrder: 0,
+        eligibility: {
+          requiredProfileFields: ["displayName"],
+          requiresAvatar: true,
+          minExperienceItems: 0,
+          minProjectItems: 0,
+          minExperienceOrProjectItems: 1,
+          minLinkItems: 1,
+          minProofItems: 0,
+          minLinkOrProofItems: 0,
+        },
+        resumeDefaults: {
+          sections: ["summary"],
+          layout: "classic",
+          accentColor: "#474306",
+          showPhoto: false,
+          showLinks: true,
+        },
+        restrictions: {
+          themeLocked: true,
+          fontsLocked: true,
+          colorsLocked: true,
+          identityLocked: true,
+          layoutLocked: true,
+        },
         isActive: true,
         version: 1,
         source: "local-bundle",

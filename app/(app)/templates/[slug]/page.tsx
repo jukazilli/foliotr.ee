@@ -11,7 +11,7 @@ import {
   evaluateTemplateEligibility,
   getCanonicalTemplateBySlug,
 } from "@/lib/server/domain/canonical-templates";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { useCanonicalTemplateAction } from "../actions";
 
 interface TemplateDetailPageProps {
@@ -30,13 +30,11 @@ export default async function TemplateDetailPage({
     getOwnedVersions(user.id),
   ]);
 
-  const manifest = getCanonicalTemplateManifest(slug);
-
-  if (!template || !manifest) {
+  if (!template) {
     notFound();
   }
 
-  const baseEligibility = evaluateTemplateEligibility(manifest, profile);
+  const baseEligibility = evaluateTemplateEligibility(template, profile);
   const appliedVersionId = state.applied === "1" ? state.version ?? null : null;
 
   return (
@@ -80,7 +78,17 @@ export default async function TemplateDetailPage({
       <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
         <Card className="overflow-hidden rounded-[32px] border border-neutral-200">
           <div className="aspect-[16/10] bg-[#FBF8CC]">
-            <img src={template.coverUrl} alt={template.name} className="h-full w-full object-cover" />
+            {template.coverUrl ? (
+              <img
+                src={template.coverUrl}
+                alt={template.name}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-[#FBF8CC] px-6 text-center">
+                <p className="text-sm font-medium text-neutral-600">Capa indisponivel.</p>
+              </div>
+            )}
           </div>
         </Card>
 
@@ -202,8 +210,9 @@ export default async function TemplateDetailPage({
 
           <div className="grid gap-4 xl:grid-cols-2">
             {versions.map((version) => {
-              const eligibility = evaluateTemplateEligibility(manifest, profile, version);
-              const alreadyApplied = version.page?.template?.slug === template.slug;
+              const eligibility = evaluateTemplateEligibility(template, profile, version);
+              const page = getPrimaryVersionPage(version);
+              const alreadyApplied = page?.template?.slug === template.slug;
               const useAction = useCanonicalTemplateAction.bind(null, template.slug);
 
               return (
@@ -216,8 +225,8 @@ export default async function TemplateDetailPage({
                             {version.isDefault ? "principal" : "versao"}
                           </Badge>
                           {alreadyApplied ? <Badge variant="warning">aplicado</Badge> : null}
-                          {version.page?.publishState ? (
-                            <Badge variant="info">{version.page.publishState.toLowerCase()}</Badge>
+                          {page?.publishState ? (
+                            <Badge variant="info">{page.publishState.toLowerCase()}</Badge>
                           ) : null}
                         </div>
                         <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight text-neutral-950">

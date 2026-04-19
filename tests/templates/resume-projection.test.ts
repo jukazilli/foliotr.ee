@@ -149,4 +149,16 @@ describe("resume projection", () => {
     expect(projection.showPhoto).toBe(false);
     expect(projection.rules.hides).toContain("imagens decorativas do contato");
   });
+
+  it("fails clearly when a template slug has no registered resume implementation", () => {
+    expect(() =>
+      resolveTemplateResumeProjection({
+        templateSlug: "unknown-template",
+        blocks,
+        profile,
+        version: null,
+        config: null,
+      })
+    ).toThrow(/Missing template implementation for slug "unknown-template"/);
+  });
 });

@@ -1,16 +1,14 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
 import { z } from "zod";
 import { editableFieldSchema } from "@/lib/templates/contracts";
 
-const canonicalTemplateAssetSchema = z.object({
+export const canonicalTemplateAssetSchema = z.object({
   cover: z.string().trim().min(1).max(120),
   reference: z.string().trim().min(1).max(120).optional().nullable(),
   notes: z.string().trim().min(1).max(120).default("notes.md"),
   codeDir: z.string().trim().min(1).max(240),
 });
 
-const canonicalTemplateEligibilitySchema = z.object({
+export const canonicalTemplateEligibilitySchema = z.object({
   requiredProfileFields: z
     .array(z.enum(["displayName", "headline", "bio"]))
     .default([]),
@@ -23,7 +21,7 @@ const canonicalTemplateEligibilitySchema = z.object({
   minLinkOrProofItems: z.number().int().min(0).default(0),
 });
 
-const canonicalTemplateLibrarySchema = z.object({
+export const canonicalTemplateLibrarySchema = z.object({
   category: z.string().trim().min(1).max(80),
   tags: z.array(z.string().trim().min(1).max(40)).max(8).default([]),
   status: z.enum(["available", "editor-ready", "paused"]).default("available"),
@@ -33,7 +31,7 @@ const canonicalTemplateLibrarySchema = z.object({
   sortOrder: z.number().int().min(0).default(0),
 });
 
-const canonicalTemplateResumeDefaultsSchema = z.object({
+export const canonicalTemplateResumeDefaultsSchema = z.object({
   sections: z.array(z.string().trim().min(1).max(60)).max(12).default([]),
   layout: z.string().trim().min(1).max(40).default("classic"),
   accentColor: z.string().trim().max(40).optional().nullable(),
@@ -41,7 +39,7 @@ const canonicalTemplateResumeDefaultsSchema = z.object({
   showLinks: z.boolean().default(true),
 });
 
-const semanticSlotBindingSchema = z.object({
+export const semanticSlotBindingSchema = z.object({
   slot: z.string().trim().min(1).max(120),
   target: z.string().trim().min(1).max(120),
   source: z.enum(["profile", "version", "selection", "derived", "template"]),
@@ -50,7 +48,7 @@ const semanticSlotBindingSchema = z.object({
   description: z.string().trim().max(240).optional(),
 });
 
-const templateBlockManifestSchema = z.object({
+export const templateBlockManifestSchema = z.object({
   key: z.string().trim().min(1).max(120),
   blockType: z.string().trim().min(1).max(120),
   label: z.string().trim().min(1).max(120),
@@ -67,7 +65,7 @@ const templateBlockManifestSchema = z.object({
   semanticSlots: z.array(semanticSlotBindingSchema).default([]),
 });
 
-const canonicalTemplateRestrictionsSchema = z.object({
+export const canonicalTemplateRestrictionsSchema = z.object({
   themeLocked: z.boolean().default(true),
   fontsLocked: z.boolean().default(true),
   colorsLocked: z.boolean().default(true),
@@ -95,43 +93,3 @@ export type CanonicalTemplateManifest = z.infer<
 >;
 export type CanonicalTemplateBlockManifest = CanonicalTemplateManifest["blocks"][number];
 export type CanonicalTemplateEligibility = CanonicalTemplateManifest["eligibility"];
-
-export function getCanonicalTemplateRoot(slug: string) {
-  return path.join(process.cwd(), "assets", "template", slug);
-}
-
-export function resolveCanonicalTemplateAssetPath(
-  manifest: CanonicalTemplateManifest,
-  asset: keyof CanonicalTemplateManifest["assets"]
-) {
-  const assetValue = manifest.assets[asset];
-  if (!assetValue) return null;
-  return path.join(getCanonicalTemplateRoot(manifest.slug), assetValue);
-}
-
-export function assertCanonicalTemplateFiles(manifest: CanonicalTemplateManifest) {
-  const requiredPaths = [
-    resolveCanonicalTemplateAssetPath(manifest, "cover"),
-    resolveCanonicalTemplateAssetPath(manifest, "notes"),
-    resolveCanonicalTemplateAssetPath(manifest, "codeDir"),
-  ];
-
-  for (const targetPath of requiredPaths) {
-    if (!targetPath || !existsSync(targetPath)) {
-      throw new Error(
-        `Canonical template asset missing for ${manifest.slug}: ${targetPath ?? "unknown"}`
-      );
-    }
-  }
-
-  const referencePath = resolveCanonicalTemplateAssetPath(manifest, "reference");
-  if (referencePath && !existsSync(referencePath)) {
-    return {
-      referenceAvailable: false,
-    };
-  }
-
-  return {
-    referenceAvailable: Boolean(referencePath),
-  };
-}

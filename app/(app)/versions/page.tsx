@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAppViewer, getOwnedVersions } from "@/lib/server/app-viewer";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { formatDate } from "@/lib/utils";
 
 export default async function VersionsPage() {
@@ -41,7 +42,7 @@ export default async function VersionsPage() {
           <>
             <Badge variant="version">{versions.length} versoes</Badge>
             <Badge variant="info">
-              {versions.filter((version) => version.page).length} paginas
+              {versions.filter((version) => getPrimaryVersionPage(version)).length} paginas
             </Badge>
             <Badge variant="success">
               {versions.filter((version) => version.resumeConfig).length} curriculos
@@ -60,7 +61,7 @@ export default async function VersionsPage() {
 
       <section className="grid gap-4 xl:grid-cols-2">
         {versions.map((version) => {
-          const page = version.page;
+          const page = getPrimaryVersionPage(version);
           const hasResume = Boolean(version.resumeConfig);
           const selectedCount =
             version.experiences.length +

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma-client"
 }
 
 datasource db {
@@ -291,7 +292,7 @@ model Version {
 
   isDefault Boolean @default(false)
 
-  page         Page?
+  pages        Page[]
   resumeConfig ResumeConfig?
   experiences  VersionExperience[]
   projects     VersionProject[]
@@ -306,16 +307,29 @@ model Version {
 }
 
 model Template {
-  id           String  @id @default(cuid())
-  name         String
-  slug         String  @unique
-  description  String?
-  thumbnail    String?
-  isActive     Boolean @default(true)
-  version      Int     @default(1)
-  source       String?
-  sourceNodeId String?
-  theme        Json    @default("{}")
+  id              String  @id @default(cuid())
+  name            String
+  slug            String  @unique
+  description     String?
+  thumbnail       String?
+  coverUrl        String?
+  referenceUrl    String?
+  category        String  @default("general")
+  tags            String[]
+  libraryStatus   String  @default("available")
+  origin          String?
+  summary         String?
+  detail          String? @db.Text
+  sortOrder       Int     @default(0)
+  eligibility     Json    @default("{}")
+  resumeDefaults  Json    @default("{}")
+  restrictions    Json    @default("{}")
+  sourcePackage   Json    @default("{}")
+  isActive        Boolean @default(true)
+  version         Int     @default(1)
+  source          String?
+  sourceNodeId    String?
+  theme           Json    @default("{}")
 
   blockDefs TemplateBlockDef[]
   pages     Page[]
@@ -335,6 +349,7 @@ model TemplateBlockDef {
   version         Int         @default(1)
   defaultOrder    Int
   required        Boolean     @default(false)
+  repeatable      Boolean     @default(false)
   defaultConfig   Json        @default("{}")
   defaultProps    Json        @default("{}")
   editableFields  Json        @default("[]")
@@ -348,7 +363,7 @@ model TemplateBlockDef {
 
 model Page {
   id           String       @id @default(cuid())
-  versionId    String       @unique
+  versionId    String
   version      Version      @relation(fields: [versionId], references: [id], onDelete: Cascade)
   templateId   String
   template     Template     @relation(fields: [templateId], references: [id])
@@ -356,11 +371,18 @@ model Page {
   title        String?
   publishState PublishState @default(DRAFT)
   publishedAt  DateTime?
+  editorSnapshot    Json    @default("{}")
+  publishedSnapshot Json    @default("{}")
+  snapshotUpdatedAt DateTime?
+  publishedSnapshotAt DateTime?
 
   blocks PageBlock[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([versionId, templateId])
+  @@index([versionId, updatedAt])
 }
 
 model PageBlock {
@@ -399,6 +421,8 @@ model ResumeConfig {
   showLinks    Boolean      @default(true)
   publishState PublishState @default(DRAFT)
   publishedAt  DateTime?
+  publishedSnapshot Json    @default("{}")
+  publishedSnapshotAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

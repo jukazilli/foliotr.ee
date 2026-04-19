@@ -25,7 +25,8 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "db:migrate:status": "prisma migrate status",
     "db:studio": "prisma studio",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "templates:import": "tsx scripts/import-canonical-templates.ts"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.2.0",

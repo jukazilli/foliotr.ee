@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, PublishState } from "@prisma/client";
+import { Prisma, PrismaClient, PublishState } from "@/generated/prisma-client";
 import { ApiRouteError } from "@/lib/server/api";
 import {
   getVersionSelectionIds,
@@ -7,6 +7,13 @@ import {
   type ProfileAggregate,
   type VersionAggregate,
 } from "@/lib/server/domain/includes";
+import {
+  asInputJsonValue,
+  buildEditorSnapshot,
+  buildPublishedPageSnapshot,
+  buildPublishedResumeSnapshot,
+  readPageEditorSnapshot,
+} from "@/lib/server/domain/page-snapshots";
 import { seedPageBlocksFromTemplate } from "@/lib/server/domain/templates";
 import type {
   PageOutputInput,
@@ -18,6 +25,10 @@ import type {
 type DbClient = PrismaClient;
 type ReadClient = PrismaClient | Prisma.TransactionClient;
 type TxClient = Prisma.TransactionClient;
+const LONG_TRANSACTION_OPTIONS = {
+  maxWait: 10_000,
+  timeout: 20_000,
+} as const;
 
 function sanitizeNullable(value: string | null | undefined) {
   if (value === undefined) return undefined;
@@ -38,6 +49,17 @@ function resolvePublishedAt(
   }
 
   return null;
+}
+
+function resolvePublishedSnapshotAt(
+  publishState: PublishState,
+  currentPublishedSnapshotAt?: Date | null
+) {
+  if (publishState === "PUBLISHED") {
+    return new Date();
+  }
+
+  return currentPublishedSnapshotAt ?? null;
 }
 
 async function getOwnedProfileAggregateOrThrow(
@@ -401,74 +423,136 @@ export async function upsertOwnedPageOutput(
   versionId: string,
   input: PageOutputInput
 ): Promise<VersionAggregate> {
-  return db.$transaction(async (tx) => {
-    const version = await getOwnedVersionRecordOrThrow(tx, userId, versionId);
-    const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
-    const versionAggregate = await tx.version.findUniqueOrThrow({
-      where: { id: version.id },
-      include: versionAggregateInclude,
-    });
-
-    const template = await tx.template.findUnique({
-      where: { id: input.templateId },
-      select: { id: true, isActive: true },
-    });
-
-    if (!template?.isActive) {
-      throw new ApiRouteError("BAD_REQUEST", 400, {
-        message: "Template invalido ou inativo",
+  return db.$transaction(
+    async (tx) => {
+      const version = await getOwnedVersionRecordOrThrow(tx, userId, versionId);
+      const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
+      const versionAggregate = await tx.version.findUniqueOrThrow({
+        where: { id: version.id },
+        include: versionAggregateInclude,
       });
-    }
 
-    const existingSlug = await tx.page.findFirst({
-      where: {
-        slug: input.slug,
-        versionId: { not: version.id },
-      },
-      select: { id: true },
-    });
-
-    if (existingSlug) {
-      throw new ApiRouteError("CONFLICT", 409, {
-        message: "Slug ja utilizada por outra pagina",
+      const template = await tx.template.findUnique({
+        where: { id: input.templateId },
+        select: { id: true, isActive: true },
       });
-    }
 
-    const current = await tx.page.findUnique({
-      where: { versionId: version.id },
-      select: { publishedAt: true, templateId: true },
-    });
+      if (!template?.isActive) {
+        throw new ApiRouteError("BAD_REQUEST", 400, {
+          message: "Template invalido ou inativo",
+        });
+      }
 
-    const page = await tx.page.upsert({
-      where: { versionId: version.id },
-      update: {
-        title: sanitizeNullable(input.title),
-        slug: input.slug,
-        templateId: input.templateId,
-        publishState: input.publishState,
-        publishedAt: resolvePublishedAt(input.publishState, current?.publishedAt),
-      },
-      create: {
-        versionId: version.id,
-        title: sanitizeNullable(input.title),
-        slug: input.slug,
-        templateId: input.templateId,
-        publishState: input.publishState,
-        publishedAt: resolvePublishedAt(input.publishState, null),
-      },
-    });
+      const existingSlug = await tx.page.findFirst({
+        where: {
+          slug: input.slug,
+          NOT: {
+            versionId: version.id,
+            templateId: input.templateId,
+          },
+        },
+        select: { id: true },
+      });
 
-    await seedPageBlocksFromTemplate(tx, page.id, input.templateId, {
-      profile,
-      version: versionAggregate,
-      replaceExisting: current?.templateId ? current.templateId !== input.templateId : false,
-    });
+      if (existingSlug) {
+        throw new ApiRouteError("CONFLICT", 409, {
+          message: "Slug ja utilizada por outra pagina",
+        });
+      }
 
-    return tx.version.findUniqueOrThrow({
-      where: { id: version.id },
-      include: versionAggregateInclude,
-    });
-  });
+      const current = await tx.page.findFirst({
+        where: {
+          versionId: version.id,
+          templateId: input.templateId,
+        },
+        select: {
+          id: true,
+          publishedAt: true,
+          templateId: true,
+          editorSnapshot: true,
+          publishedSnapshotAt: true,
+        },
+      });
+      const nextEditorSnapshot =
+        current?.templateId === input.templateId
+          ? readPageEditorSnapshot(current?.editorSnapshot) ??
+            buildEditorSnapshot(profile, versionAggregate)
+          : buildEditorSnapshot(profile, versionAggregate);
+
+      const page = current
+        ? await tx.page.update({
+            where: { id: current.id },
+            data: {
+              title: sanitizeNullable(input.title),
+              slug: input.slug,
+              templateId: input.templateId,
+              publishState: input.publishState,
+              publishedAt: resolvePublishedAt(input.publishState, current.publishedAt),
+              editorSnapshot: asInputJsonValue(nextEditorSnapshot),
+              snapshotUpdatedAt: new Date(),
+            },
+          })
+        : await tx.page.create({
+            data: {
+              versionId: version.id,
+              title: sanitizeNullable(input.title),
+              slug: input.slug,
+              templateId: input.templateId,
+              publishState: input.publishState,
+              publishedAt: resolvePublishedAt(input.publishState, null),
+              editorSnapshot: asInputJsonValue(nextEditorSnapshot),
+              snapshotUpdatedAt: new Date(),
+            },
+          });
+
+      await seedPageBlocksFromTemplate(tx, page.id, input.templateId, {
+        profile,
+        version: versionAggregate,
+        replaceExisting: current?.templateId ? current.templateId !== input.templateId : false,
+      });
+
+      if (input.publishState === "PUBLISHED") {
+        const blocks = await tx.pageBlock.findMany({
+          where: {
+            pageId: page.id,
+            parentId: null,
+          },
+          orderBy: { order: "asc" },
+          include: {
+            templateBlockDef: true,
+            children: {
+              orderBy: { order: "asc" },
+              include: {
+                templateBlockDef: true,
+              },
+            },
+          },
+        });
+
+        await tx.page.update({
+          where: { id: page.id },
+          data: {
+            publishedSnapshot: asInputJsonValue(
+              buildPublishedPageSnapshot({
+                editorSnapshot: nextEditorSnapshot,
+                blocks,
+              })
+            ),
+            publishedSnapshotAt: resolvePublishedSnapshotAt(
+              input.publishState,
+              current?.publishedSnapshotAt
+            ),
+          },
+        });
+      }
+
+      return tx.version.findUniqueOrThrow({
+        where: { id: version.id },
+        include: versionAggregateInclude,
+      });
+    },
+    LONG_TRANSACTION_OPTIONS
+  );
 }
 
 export async function upsertOwnedResumeOutput(
@@ -477,38 +561,154 @@ export async function upsertOwnedResumeOutput(
   versionId: string,
   input: ResumeOutputInput
 ): Promise<VersionAggregate> {
+  return db.$transaction(
+    async (tx) => {
+      const version = await getOwnedVersionRecordOrThrow(tx, userId, versionId);
+      const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
+      const versionAggregate = await tx.version.findUniqueOrThrow({
+        where: { id: version.id },
+        include: versionAggregateInclude,
+      });
+      const current = await tx.resumeConfig.findUnique({
+        where: { versionId: version.id },
+        select: { publishedAt: true, publishedSnapshotAt: true },
+      });
+
+      const resumeConfig = await tx.resumeConfig.upsert({
+        where: { versionId: version.id },
+        update: {
+          sections: input.sections,
+          layout: input.layout,
+          accentColor: sanitizeNullable(input.accentColor),
+          showPhoto: input.showPhoto,
+          showLinks: input.showLinks,
+          publishState: input.publishState,
+          publishedAt: resolvePublishedAt(input.publishState, current?.publishedAt),
+        },
+        create: {
+          versionId: version.id,
+          sections: input.sections,
+          layout: input.layout,
+          accentColor: sanitizeNullable(input.accentColor),
+          showPhoto: input.showPhoto,
+          showLinks: input.showLinks,
+          publishState: input.publishState,
+          publishedAt: resolvePublishedAt(input.publishState, null),
+        },
+      });
+
+      if (input.publishState === "PUBLISHED") {
+        const page = await tx.page.findFirst({
+          where: { versionId: version.id },
+          orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+          select: {
+            id: true,
+            editorSnapshot: true,
+          },
+        });
+
+        if (!page) {
+          throw new ApiRouteError("BAD_REQUEST", 400, {
+            message: "Pagina obrigatoria antes de publicar curriculo",
+          });
+        }
+
+        const editorSnapshot =
+          readPageEditorSnapshot(page.editorSnapshot) ??
+          buildEditorSnapshot(profile, versionAggregate);
+        const blocks = await tx.pageBlock.findMany({
+          where: {
+            pageId: page.id,
+            parentId: null,
+          },
+          orderBy: { order: "asc" },
+          include: {
+            templateBlockDef: true,
+            children: {
+              orderBy: { order: "asc" },
+              include: {
+                templateBlockDef: true,
+              },
+            },
+          },
+        });
+
+        await tx.resumeConfig.update({
+          where: { versionId: version.id },
+          data: {
+            publishedSnapshot: asInputJsonValue(
+              buildPublishedResumeSnapshot({
+                editorSnapshot,
+                blocks,
+                config: resumeConfig,
+              })
+            ),
+            publishedSnapshotAt: resolvePublishedSnapshotAt(
+              input.publishState,
+              current?.publishedSnapshotAt
+            ),
+          },
+        });
+      }
+
+      return tx.version.findUniqueOrThrow({
+        where: { id: version.id },
+        include: versionAggregateInclude,
+      });
+    },
+    LONG_TRANSACTION_OPTIONS
+  );
+}
+
+export async function syncOwnedPageSnapshot(
+  db: DbClient,
+  userId: string,
+  pageId: string
+): Promise<VersionAggregate> {
   return db.$transaction(async (tx) => {
-    const version = await getOwnedVersionRecordOrThrow(tx, userId, versionId);
-    const current = await tx.resumeConfig.findUnique({
-      where: { versionId: version.id },
-      select: { publishedAt: true },
+    const page = await tx.page.findFirst({
+      where: {
+        id: pageId,
+        version: {
+          profile: {
+            userId,
+          },
+        },
+      },
+      select: {
+        id: true,
+        versionId: true,
+        templateId: true,
+      },
     });
 
-    await tx.resumeConfig.upsert({
-      where: { versionId: version.id },
-      update: {
-        sections: input.sections,
-        layout: input.layout,
-        accentColor: sanitizeNullable(input.accentColor),
-        showPhoto: input.showPhoto,
-        showLinks: input.showLinks,
-        publishState: input.publishState,
-        publishedAt: resolvePublishedAt(input.publishState, current?.publishedAt),
+    if (!page) {
+      throw new ApiRouteError("NOT_FOUND", 404);
+    }
+
+    const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
+    const versionAggregate = await tx.version.findUniqueOrThrow({
+      where: { id: page.versionId },
+      include: versionAggregateInclude,
+    });
+    const editorSnapshot = buildEditorSnapshot(profile, versionAggregate);
+
+    await tx.page.update({
+      where: { id: page.id },
+      data: {
+        editorSnapshot: asInputJsonValue(editorSnapshot),
+        snapshotUpdatedAt: new Date(),
       },
-      create: {
-        versionId: version.id,
-        sections: input.sections,
-        layout: input.layout,
-        accentColor: sanitizeNullable(input.accentColor),
-        showPhoto: input.showPhoto,
-        showLinks: input.showLinks,
-        publishState: input.publishState,
-        publishedAt: resolvePublishedAt(input.publishState, null),
-      },
+    });
+
+    await seedPageBlocksFromTemplate(tx, page.id, page.templateId, {
+      profile,
+      version: versionAggregate,
+      replaceExisting: true,
     });
 
     return tx.version.findUniqueOrThrow({
-      where: { id: version.id },
+      where: { id: page.versionId },
       include: versionAggregateInclude,
     });
   });

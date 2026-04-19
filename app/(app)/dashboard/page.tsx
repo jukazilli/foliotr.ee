@@ -5,12 +5,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardViewer } from "@/lib/server/app-viewer";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const profile = await getDashboardViewer();
   const firstName = (profile.displayName || profile.user.name || "voce").split(" ")[0];
-  const pages = profile.versions.flatMap((version) => (version.page ? [version.page] : []));
+  const pages = profile.versions.flatMap((version) => {
+    const page = getPrimaryVersionPage(version);
+    return page ? [page] : [];
+  });
   const resumeConfigs = profile.versions.flatMap((version) =>
     version.resumeConfig ? [version.resumeConfig] : []
   );

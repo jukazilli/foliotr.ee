@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
+import { useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -49,7 +49,7 @@ type EditableProfile = {
     id: string;
     name: string;
     isDefault: boolean;
-    page: unknown | null;
+    pages: unknown[];
     resumeConfig: unknown | null;
   }>;
 };
@@ -141,7 +141,6 @@ type StoredProfilePhoto = {
   size: number;
 };
 
-const PROFILE_PHOTO_STORAGE_KEY = "foliotree.profile-photo";
 const PROFILE_PHOTO_MAX_SIZE = 5 * 1024 * 1024;
 const PROFILE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -184,39 +183,6 @@ function cleanUrl(value: string | null | undefined) {
   } catch {
     return "";
   }
-}
-
-function loadStoredProfilePhoto() {
-  if (typeof window === "undefined") return null;
-
-  const raw = window.localStorage.getItem(PROFILE_PHOTO_STORAGE_KEY);
-  if (!raw) return null;
-
-  try {
-    const parsed = JSON.parse(raw) as StoredProfilePhoto;
-    if (
-      typeof parsed?.dataUrl === "string" &&
-      typeof parsed?.name === "string" &&
-      typeof parsed?.type === "string" &&
-      typeof parsed?.size === "number"
-    ) {
-      return parsed;
-    }
-  } catch {}
-
-  window.localStorage.removeItem(PROFILE_PHOTO_STORAGE_KEY);
-  return null;
-}
-
-function saveStoredProfilePhoto(photo: StoredProfilePhoto | null) {
-  if (typeof window === "undefined") return;
-
-  if (!photo) {
-    window.localStorage.removeItem(PROFILE_PHOTO_STORAGE_KEY);
-    return;
-  }
-
-  window.localStorage.setItem(PROFILE_PHOTO_STORAGE_KEY, JSON.stringify(photo));
 }
 
 const ERROR_LABELS: Record<string, string> = {
@@ -452,8 +418,8 @@ type CollectionField =
   | "proofs"
   | "links";
 
-function buildPayload(profile: EditableProfile, dirtyCollections: Set<CollectionField>) {
-  const payload: Record<string, unknown> = {
+function buildBasePayload(profile: EditableProfile) {
+  return {
     displayName: profile.displayName ?? "",
     avatarUrl: cleanUrl(profile.avatarUrl),
     headline: profile.headline ?? "",
@@ -465,9 +431,11 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
     phone: profile.phone ?? "",
     birthDate: profile.birthDate || null,
   };
+}
 
-  if (dirtyCollections.has("highlights")) {
-    payload.highlights = profile.highlights
+function buildCollectionPayload(profile: EditableProfile, collection: CollectionField) {
+  if (collection === "highlights") {
+    return profile.highlights
       .filter((item) => item.title.trim())
       .map((item) => ({
         id: persistedId(item.id),
@@ -478,8 +446,8 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("experiences")) {
-    payload.experiences = profile.experiences
+  if (collection === "experiences") {
+    return profile.experiences
       .filter((item) => item.company.trim() && item.role.trim() && item.startDate)
       .map((item) => ({
         id: persistedId(item.id),
@@ -495,8 +463,8 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("skills")) {
-    payload.skills = profile.skills
+  if (collection === "skills") {
+    return profile.skills
       .filter((item) => item.name.trim())
       .map((item) => ({
         id: persistedId(item.id),
@@ -506,8 +474,8 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("projects")) {
-    payload.projects = profile.projects
+  if (collection === "projects") {
+    return profile.projects
       .filter((item) => item.title.trim())
       .map((item) => ({
         id: persistedId(item.id),
@@ -524,8 +492,8 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("achievements")) {
-    payload.achievements = profile.achievements
+  if (collection === "achievements") {
+    return profile.achievements
       .filter((item) => item.title.trim())
       .map((item) => ({
         id: persistedId(item.id),
@@ -538,8 +506,8 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("proofs")) {
-    payload.proofs = profile.proofs
+  if (collection === "proofs") {
+    return profile.proofs
       .filter((item) => item.title.trim())
       .map((item) => ({
         id: persistedId(item.id),
@@ -553,8 +521,7 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
       }));
   }
 
-  if (dirtyCollections.has("links")) {
-    payload.links = profile.links
+  return profile.links
       .filter((item) => item.platform.trim() && cleanUrl(item.url))
       .map((item) => ({
         id: persistedId(item.id),
@@ -562,9 +529,6 @@ function buildPayload(profile: EditableProfile, dirtyCollections: Set<Collection
         label: item.label,
         url: cleanUrl(item.url),
       }));
-  }
-
-  return payload;
 }
 
 function Field({
@@ -650,7 +614,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     () => profile.versions.find((version) => version.isDefault) ?? profile.versions[0],
     [profile.versions]
   );
-  const pagesCount = profile.versions.filter((version) => version.page).length;
+  const pagesCount = profile.versions.filter((version) => version.pages.length > 0).length;
   const resumesCount = profile.versions.filter((version) => version.resumeConfig).length;
   const username = profile.user.username;
   const age = useMemo(() => {
@@ -668,10 +632,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
     return years >= 0 ? years : null;
   }, [profile.birthDate]);
-
-  useEffect(() => {
-    setProfilePhoto(loadStoredProfilePhoto());
-  }, []);
 
   function setBase<K extends keyof EditableProfile>(field: K, value: EditableProfile[K]) {
     setProfile((current) => ({ ...current, [field]: value }));
@@ -721,21 +681,58 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     setStatus("saving");
     setError("");
 
-    const response = await fetch("/api/profile", {
-      method: "PUT",
+    const baseResponse = await fetch("/api/profile", {
+      method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(buildPayload(profile, dirtyCollections)),
+      body: JSON.stringify(buildBasePayload(profile)),
     });
 
-    if (!response.ok) {
-      const body = await response.json().catch(() => null);
+    if (!baseResponse.ok) {
+      const body = await baseResponse.json().catch(() => null);
       setError(formatApiError(body));
       setStatus("error");
       return;
     }
 
-    const body = (await response.json()) as { profile: Partial<EditableProfile> };
-    setProfile((current) => normalizeProfile({ ...current, ...body.profile } as EditableProfile));
+    const baseBody = (await baseResponse.json()) as { profile: Partial<EditableProfile> };
+    const savedCollections = new Set<CollectionField>();
+    const profilePatch: Record<string, unknown> = { ...baseBody.profile };
+
+    for (const collection of dirtyCollections) {
+      const response = await fetch(`/api/profile/collections/${collection}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: buildCollectionPayload(profile, collection) }),
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => null);
+        setProfile((current) =>
+          normalizeProfile({ ...current, ...profilePatch } as EditableProfile)
+        );
+        setDirtyCollections((current) => {
+          const next = new Set(current);
+          for (const savedCollection of savedCollections) {
+            next.delete(savedCollection);
+          }
+          return next;
+        });
+        setError(formatApiError(body));
+        setStatus("error");
+        router.refresh();
+        return;
+      }
+
+      const body = (await response.json()) as {
+        collection: CollectionField;
+        items: EditableProfile[CollectionField];
+      };
+
+      profilePatch[body.collection] = body.items;
+      savedCollections.add(body.collection);
+    }
+
+    setProfile((current) => normalizeProfile({ ...current, ...profilePatch } as EditableProfile));
     setDirtyCollections(new Set());
     setStatus("saved");
     router.refresh();
@@ -754,7 +751,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
   function removeProfilePhoto() {
     setProfilePhoto(null);
-    saveStoredProfilePhoto(null);
     setBase("avatarUrl", "" as EditableProfile["avatarUrl"]);
     setPhotoError("");
   }
@@ -783,7 +779,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     const avatarUrl = body.profile?.avatarUrl ?? body.asset.url;
 
     setProfilePhoto(null);
-    saveStoredProfilePhoto(null);
     setBase("avatarUrl", avatarUrl as EditableProfile["avatarUrl"]);
     setPhotoError("");
     setStatus("saved");
@@ -823,10 +818,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       };
 
       setProfilePhoto(nextPhoto);
-      saveStoredProfilePhoto(nextPhoto);
       setPhotoError("");
       void uploadProfilePhoto(file)
         .catch((error: unknown) => {
+          setProfilePhoto(null);
           setPhotoError(error instanceof Error ? error.message : "Nao foi possivel enviar a foto.");
         })
         .finally(() => {

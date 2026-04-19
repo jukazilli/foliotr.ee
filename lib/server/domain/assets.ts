@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma-client";
 import { ApiRouteError } from "@/lib/server/api";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
 import type { AssetInput } from "@/lib/validations";

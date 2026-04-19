@@ -1,7 +1,8 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma-client";
 
 export const versionAggregateInclude = Prisma.validator<Prisma.VersionInclude>()({
-  page: {
+  pages: {
+    orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
     include: {
       template: true,
       blocks: {
@@ -144,4 +145,8 @@ export function getVersionSelectionIds(version: VersionAggregate) {
     selectedHighlightIds: version.highlights.map((item) => item.highlightId),
     selectedLinkIds: version.links.map((item) => item.linkId),
   };
+}
+
+export function getPrimaryVersionPage<TPage>(version: { pages: TPage[] }) {
+  return version.pages[0] ?? null;
 }

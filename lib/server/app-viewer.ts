@@ -1,4 +1,4 @@
-import { Prisma, PublishState } from "@prisma/client";
+import { Prisma, PublishState } from "@/generated/prisma-client";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
@@ -123,7 +123,9 @@ export const getDashboardViewer = cache(async () => {
           name: true,
           isDefault: true,
           updatedAt: true,
-          page: {
+          pages: {
+            orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+            take: 1,
             select: {
               id: true,
               publishState: true,
@@ -265,7 +267,9 @@ export const getProfileEditorViewer = cache(async () => {
           id: true,
           name: true,
           isDefault: true,
-          page: {
+          pages: {
+            orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+            take: 1,
             select: {
               id: true,
             },
@@ -363,7 +367,9 @@ export async function getOwnedResumeConfigs(userId: string) {
           name: true,
           context: true,
           updatedAt: true,
-          page: {
+          pages: {
+            orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
+            take: 1,
             select: {
               id: true,
               slug: true,

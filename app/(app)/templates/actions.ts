@@ -7,15 +7,14 @@ import { prisma } from "@/lib/prisma";
 import {
   evaluateTemplateEligibility,
   getCanonicalTemplateBySlug,
-  syncCanonicalTemplates,
 } from "@/lib/server/domain/canonical-templates";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
 import {
   getOwnedVersion,
   upsertOwnedPageOutput,
   upsertOwnedResumeOutput,
 } from "@/lib/server/domain/versions";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
 
 function createPageSlug(args: {
   username: string;
@@ -59,12 +58,9 @@ export async function useCanonicalTemplateAction(
     redirect(`/templates/${slug}?error=missing-version`);
   }
 
-  await syncCanonicalTemplates(prisma);
-
-  const manifest = getCanonicalTemplateManifest(slug);
   const template = await getCanonicalTemplateBySlug(prisma, slug);
 
-  if (!manifest || !template) {
+  if (!template) {
     redirect("/templates?error=template-not-found");
   }
 
@@ -73,7 +69,7 @@ export async function useCanonicalTemplateAction(
     getOwnedVersion(prisma, session.user.id, versionId),
   ]);
 
-  const eligibility = evaluateTemplateEligibility(manifest, profile, version);
+  const eligibility = evaluateTemplateEligibility(template, profile, version);
 
   if (!eligibility.eligible) {
     redirect(`/templates/${slug}?error=ineligible&version=${versionId}`);
@@ -85,28 +81,30 @@ export async function useCanonicalTemplateAction(
     redirect(`/templates/${slug}?error=missing-username`);
   }
 
+  const currentPage = getPrimaryVersionPage(version);
+
   await upsertOwnedPageOutput(prisma, session.user.id, version.id, {
-    title: version.page?.title ?? `${version.name} page`,
+    title: currentPage?.title ?? `${version.name} page`,
     slug: createPageSlug({
       username,
       versionId: version.id,
       isDefault: version.isDefault,
-      currentSlug: version.page?.slug,
+      currentSlug: currentPage?.slug,
     }),
     templateId: template.id,
-    publishState: version.page?.publishState ?? "DRAFT",
+    publishState: currentPage?.publishState ?? "DRAFT",
   });
 
   await upsertOwnedResumeOutput(prisma, session.user.id, version.id, {
     sections:
       version.resumeConfig?.sections?.length && version.resumeConfig.sections.length > 0
         ? version.resumeConfig.sections
-        : manifest.resumeDefaults.sections,
-    layout: version.resumeConfig?.layout ?? manifest.resumeDefaults.layout,
+        : template.resumeDefaults.sections,
+    layout: version.resumeConfig?.layout ?? template.resumeDefaults.layout,
     accentColor:
-      version.resumeConfig?.accentColor ?? manifest.resumeDefaults.accentColor ?? "",
-    showPhoto: version.resumeConfig?.showPhoto ?? manifest.resumeDefaults.showPhoto,
-    showLinks: version.resumeConfig?.showLinks ?? manifest.resumeDefaults.showLinks,
+      version.resumeConfig?.accentColor ?? template.resumeDefaults.accentColor ?? "",
+    showPhoto: version.resumeConfig?.showPhoto ?? template.resumeDefaults.showPhoto,
+    showLinks: version.resumeConfig?.showLinks ?? template.resumeDefaults.showLinks,
     publishState: version.resumeConfig?.publishState ?? "DRAFT",
   });
 
@@ -117,4 +115,3 @@ export async function useCanonicalTemplateAction(
 
   redirect(`/templates/${slug}?applied=1&version=${versionId}`);
 }
-

@@ -1,15 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { mapTemplateInitialBlocks } from "@/lib/templates/template-content-mapper";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
 
 describe("template semantic mapper", () => {
   it("maps profile and version data into portfolio-community semantic blocks", () => {
-    const manifest = getCanonicalTemplateManifest("portfolio-community");
-
-    if (!manifest) {
-      throw new Error("Missing portfolio-community manifest");
-    }
-
     const blocks = mapTemplateInitialBlocks({
       templateSlug: "portfolio-community",
       blockDefs: [
@@ -23,6 +16,7 @@ describe("template semantic mapper", () => {
           version: 1,
           defaultOrder: 0,
           required: true,
+          repeatable: false,
           defaultConfig: {
             eyebrow: "Hello, I'm",
             ctaLabel: "Resume",
@@ -43,6 +37,7 @@ describe("template semantic mapper", () => {
           version: 1,
           defaultOrder: 1,
           required: false,
+          repeatable: false,
           defaultConfig: {
             title: "about.",
           },
@@ -61,6 +56,7 @@ describe("template semantic mapper", () => {
           version: 1,
           defaultOrder: 3,
           required: false,
+          repeatable: false,
           defaultConfig: {
             title: "work.",
             maxItems: 2,
@@ -73,7 +69,6 @@ describe("template semantic mapper", () => {
         },
       ] as never,
       context: {
-        manifest,
         profile: {
           id: "profile_1",
           displayName: "Juliano Pedroso",
@@ -217,5 +212,18 @@ describe("template semantic mapper", () => {
         ],
       }),
     });
+  });
+
+  it("fails clearly when a template slug has no registered semantic implementation", () => {
+    expect(() =>
+      mapTemplateInitialBlocks({
+        templateSlug: "unknown-template",
+        blockDefs: [],
+        context: {
+          profile: {} as never,
+          version: {} as never,
+        },
+      })
+    ).toThrow(/Missing template implementation for slug "unknown-template"/);
   });
 });

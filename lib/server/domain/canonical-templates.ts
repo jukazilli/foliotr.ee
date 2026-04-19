@@ -1,23 +1,14 @@
-import { copyFile, mkdir } from "node:fs/promises";
-import path from "node:path";
-import { Prisma, PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@/generated/prisma-client";
 import {
-  getCanonicalTemplateManifest,
-  listCanonicalTemplateManifests,
-} from "@/lib/templates/registry";
-import {
-  resolveCanonicalTemplateAssetPath,
-  type CanonicalTemplateManifest,
+  canonicalTemplateEligibilitySchema,
+  canonicalTemplateRestrictionsSchema,
+  canonicalTemplateResumeDefaultsSchema,
+  type CanonicalTemplateEligibility,
 } from "@/lib/templates/manifest";
 import { templateListInclude, type TemplateListItem } from "@/lib/server/domain/templates";
 import type { VersionAggregate } from "@/lib/server/domain/includes";
 
 type DbClient = PrismaClient;
-let canonicalTemplateSyncPromise: Promise<void> | null = null;
-
-function asInputJsonValue(value: unknown): Prisma.InputJsonValue {
-  return value as Prisma.InputJsonValue;
-}
 
 export interface TemplateEligibilityIssue {
   key: string;
@@ -46,60 +37,10 @@ type EligibilityProfile = {
   proofs: Array<{ id: string }>;
 };
 
-export interface CanonicalTemplateListItem extends TemplateListItem {
-  category: string;
-  tags: string[];
-  libraryStatus: CanonicalTemplateManifest["library"]["status"];
-  origin: string | null;
-  summary: string;
-  detail: string;
-  sortOrder: number;
-  coverUrl: string;
-  referenceUrl: string | null;
-  detailHref: string;
-  useHref: string;
-  editorReady: boolean;
-  isCanonical: true;
-}
-
-function createTemplateAssetUrl(
-  manifest: CanonicalTemplateManifest,
-  asset: "cover" | "reference"
-) {
-  const assetFile = manifest.assets[asset];
-  if (!assetFile) return null;
-
-  return `/template-assets/${manifest.slug}/${path.basename(assetFile)}`;
-}
-
-async function ensureCanonicalTemplatePublicAssets(
-  manifest: CanonicalTemplateManifest
-) {
-  const outputDir = path.join(
-    process.cwd(),
-    "public",
-    "template-assets",
-    manifest.slug
-  );
-
-  await mkdir(outputDir, { recursive: true });
-
-  const coverSource = resolveCanonicalTemplateAssetPath(manifest, "cover");
-  const referenceSource = resolveCanonicalTemplateAssetPath(manifest, "reference");
-
-  if (coverSource) {
-    await copyFile(
-      coverSource,
-      path.join(outputDir, path.basename(manifest.assets.cover))
-    );
-  }
-
-  if (referenceSource && manifest.assets.reference) {
-    await copyFile(
-      referenceSource,
-      path.join(outputDir, path.basename(manifest.assets.reference))
-    );
-  }
+function asRecord(value: unknown) {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
 }
 
 function countSelected(total: number, selectedIds: string[] | undefined) {
@@ -111,18 +52,84 @@ function hasText(value: string | null | undefined) {
   return Boolean(value && value.trim());
 }
 
+function parseEligibility(value: unknown) {
+  return canonicalTemplateEligibilitySchema.parse(asRecord(value));
+}
+
+export function readTemplateResumeDefaults(value: unknown) {
+  return canonicalTemplateResumeDefaultsSchema.parse(asRecord(value));
+}
+
+function parseRestrictions(value: unknown) {
+  return canonicalTemplateRestrictionsSchema.parse(asRecord(value));
+}
+
+export interface CanonicalTemplateListItem extends TemplateListItem {
+  category: string;
+  tags: string[];
+  libraryStatus: "available" | "editor-ready" | "paused";
+  origin: string | null;
+  summary: string;
+  detail: string;
+  sortOrder: number;
+  coverUrl: string;
+  referenceUrl: string | null;
+  detailHref: string;
+  useHref: string;
+  editorReady: boolean;
+  isCanonical: true;
+  eligibility: CanonicalTemplateEligibility;
+  resumeDefaults: ReturnType<typeof readTemplateResumeDefaults>;
+  restrictions: ReturnType<typeof parseRestrictions>;
+}
+
+function hydrateCanonicalTemplate(template: TemplateListItem): CanonicalTemplateListItem {
+  const eligibility = parseEligibility(template.eligibility);
+  const resumeDefaults = readTemplateResumeDefaults(template.resumeDefaults);
+  const restrictions = parseRestrictions(template.restrictions);
+  const category = template.category?.trim() || "general";
+  const tags = Array.isArray(template.tags) ? template.tags : [];
+  const libraryStatus =
+    template.libraryStatus === "editor-ready" ||
+    template.libraryStatus === "paused" ||
+    template.libraryStatus === "available"
+      ? template.libraryStatus
+      : "available";
+
+  return {
+    ...template,
+    category,
+    tags,
+    libraryStatus,
+    origin: template.origin ?? null,
+    summary: template.summary?.trim() || template.description?.trim() || "",
+    detail: template.detail?.trim() || template.description?.trim() || "",
+    sortOrder: template.sortOrder ?? 0,
+    coverUrl: template.coverUrl ?? template.thumbnail ?? "",
+    referenceUrl: template.referenceUrl ?? null,
+    detailHref: `/templates/${template.slug}`,
+    useHref: `/templates/${template.slug}`,
+    editorReady: libraryStatus === "editor-ready" || libraryStatus === "available",
+    isCanonical: true as const,
+    eligibility,
+    resumeDefaults,
+    restrictions,
+  };
+}
+
 export function evaluateTemplateEligibility(
-  manifest: CanonicalTemplateManifest,
+  source: CanonicalTemplateEligibility | Pick<CanonicalTemplateListItem, "eligibility">,
   profile: EligibilityProfile,
   version?: VersionAggregate | null
 ): TemplateEligibilityResult {
+  const eligibility = "eligibility" in source ? source.eligibility : source;
   const issues: TemplateEligibilityIssue[] = [];
 
   const displayName = profile.displayName ?? profile.user?.name ?? null;
   const headline = version?.customHeadline ?? profile.headline ?? null;
   const bio = version?.customBio ?? profile.bio ?? null;
 
-  if (manifest.eligibility.requiredProfileFields.includes("displayName") && !hasText(displayName)) {
+  if (eligibility.requiredProfileFields.includes("displayName") && !hasText(displayName)) {
     issues.push({
       key: "displayName",
       label: "Nome publico",
@@ -130,7 +137,7 @@ export function evaluateTemplateEligibility(
     });
   }
 
-  if (manifest.eligibility.requiredProfileFields.includes("headline") && !hasText(headline)) {
+  if (eligibility.requiredProfileFields.includes("headline") && !hasText(headline)) {
     issues.push({
       key: "headline",
       label: "Headline",
@@ -138,7 +145,7 @@ export function evaluateTemplateEligibility(
     });
   }
 
-  if (manifest.eligibility.requiredProfileFields.includes("bio") && !hasText(bio)) {
+  if (eligibility.requiredProfileFields.includes("bio") && !hasText(bio)) {
     issues.push({
       key: "bio",
       label: "Sobre",
@@ -146,7 +153,7 @@ export function evaluateTemplateEligibility(
     });
   }
 
-  if (manifest.eligibility.requiresAvatar && !hasText(profile.avatarUrl)) {
+  if (eligibility.requiresAvatar && !hasText(profile.avatarUrl)) {
     issues.push({
       key: "avatarUrl",
       label: "Imagem de perfil",
@@ -171,54 +178,51 @@ export function evaluateTemplateEligibility(
     version?.proofs.map((item) => item.proofId)
   );
 
-  if (experienceCount < manifest.eligibility.minExperienceItems) {
+  if (experienceCount < eligibility.minExperienceItems) {
     issues.push({
       key: "experiences",
       label: "Experiencias",
-      description: `Adicione pelo menos ${manifest.eligibility.minExperienceItems} experiencias.`,
+      description: `Adicione pelo menos ${eligibility.minExperienceItems} experiencias.`,
     });
   }
 
-  if (projectCount < manifest.eligibility.minProjectItems) {
+  if (projectCount < eligibility.minProjectItems) {
     issues.push({
       key: "projects",
       label: "Projetos",
-      description: `Adicione pelo menos ${manifest.eligibility.minProjectItems} projetos.`,
+      description: `Adicione pelo menos ${eligibility.minProjectItems} projetos.`,
     });
   }
 
-  if (
-    experienceCount + projectCount <
-    manifest.eligibility.minExperienceOrProjectItems
-  ) {
+  if (experienceCount + projectCount < eligibility.minExperienceOrProjectItems) {
     issues.push({
       key: "experienceOrProject",
       label: "Experiencias ou projetos",
-      description: `Garanta pelo menos ${manifest.eligibility.minExperienceOrProjectItems} experiencia ou projeto para preencher a area central do template.`,
+      description: `Garanta pelo menos ${eligibility.minExperienceOrProjectItems} experiencia ou projeto para preencher a area central do template.`,
     });
   }
 
-  if (linkCount < manifest.eligibility.minLinkItems) {
+  if (linkCount < eligibility.minLinkItems) {
     issues.push({
       key: "links",
       label: "Links",
-      description: `Adicione pelo menos ${manifest.eligibility.minLinkItems} links publicos para a secao de contato.`,
+      description: `Adicione pelo menos ${eligibility.minLinkItems} links publicos para a secao de contato.`,
     });
   }
 
-  if (proofCount < manifest.eligibility.minProofItems) {
+  if (proofCount < eligibility.minProofItems) {
     issues.push({
       key: "proofs",
       label: "Provas",
-      description: `Adicione pelo menos ${manifest.eligibility.minProofItems} provas publicas.`,
+      description: `Adicione pelo menos ${eligibility.minProofItems} provas publicas.`,
     });
   }
 
-  if (linkCount + proofCount < manifest.eligibility.minLinkOrProofItems) {
+  if (linkCount + proofCount < eligibility.minLinkOrProofItems) {
     issues.push({
       key: "linksOrProofs",
       label: "Links ou provas",
-      description: `Garanta pelo menos ${manifest.eligibility.minLinkOrProofItems} links ou provas publicas.`,
+      description: `Garanta pelo menos ${eligibility.minLinkOrProofItems} links ou provas publicas.`,
     });
   }
 
@@ -231,151 +235,22 @@ export function evaluateTemplateEligibility(
   };
 }
 
-async function upsertCanonicalTemplate(
-  db: DbClient,
-  manifest: CanonicalTemplateManifest
-) {
-  await ensureCanonicalTemplatePublicAssets(manifest);
-
-  const template = await db.template.upsert({
-    where: { slug: manifest.slug },
-    update: {
-      name: manifest.name,
-      description: manifest.description,
-      thumbnail: createTemplateAssetUrl(manifest, "cover"),
-      version: manifest.version,
-      source: manifest.source,
-      sourceNodeId: null,
-      theme: asInputJsonValue(manifest.theme),
-      isActive: true,
-    },
-    create: {
-      name: manifest.name,
-      slug: manifest.slug,
-      description: manifest.description,
-      thumbnail: createTemplateAssetUrl(manifest, "cover"),
-      version: manifest.version,
-      source: manifest.source,
-      sourceNodeId: null,
-      theme: asInputJsonValue(manifest.theme),
-      isActive: true,
-    },
-  });
-
-  const blockKeys = manifest.blocks.map((block) => block.key);
-  await db.templateBlockDef.deleteMany({
-    where: {
-      templateId: template.id,
-      key: { notIn: blockKeys },
-    },
-  });
-
-  for (const block of manifest.blocks) {
-    await db.templateBlockDef.upsert({
-      where: {
-        templateId_key: {
-          templateId: template.id,
-          key: block.key,
-        },
-      },
-      update: {
-        blockType: block.blockType,
-        label: block.label,
-        category: block.category,
-        version: block.version,
-        defaultOrder: block.defaultOrder,
-        required: block.required,
-        defaultConfig: asInputJsonValue(block.defaultConfig),
-        defaultProps: asInputJsonValue(block.defaultProps),
-        editableFields: asInputJsonValue(block.editableFields),
-        assetFields: asInputJsonValue(block.assetFields),
-        allowedChildren: asInputJsonValue(block.allowedChildren),
-      },
-      create: {
-        templateId: template.id,
-        key: block.key,
-        blockType: block.blockType,
-        label: block.label,
-        category: block.category,
-        version: block.version,
-        defaultOrder: block.defaultOrder,
-        required: block.required,
-        defaultConfig: asInputJsonValue(block.defaultConfig),
-        defaultProps: asInputJsonValue(block.defaultProps),
-        editableFields: asInputJsonValue(block.editableFields),
-        assetFields: asInputJsonValue(block.assetFields),
-        allowedChildren: asInputJsonValue(block.allowedChildren),
-      },
-    });
-  }
-}
-
-export async function syncCanonicalTemplates(db: DbClient) {
-  for (const manifest of listCanonicalTemplateManifests()) {
-    await upsertCanonicalTemplate(db, manifest);
-  }
-}
-
-export function syncCanonicalTemplatesOnce(db: DbClient) {
-  canonicalTemplateSyncPromise ??= syncCanonicalTemplates(db);
-  return canonicalTemplateSyncPromise;
-}
-
 export async function listCanonicalTemplates(
   db: DbClient
 ): Promise<CanonicalTemplateListItem[]> {
-  await syncCanonicalTemplatesOnce(db);
-
-  const manifests = listCanonicalTemplateManifests();
-  const manifestMap = new Map(manifests.map((manifest) => [manifest.slug, manifest]));
   const templates = await db.template.findMany({
-    where: {
-      isActive: true,
-      slug: {
-        in: manifests.map((manifest) => manifest.slug),
-      },
-    },
+    where: { isActive: true },
     include: templateListInclude,
-    orderBy: [{ slug: "asc" }],
+    orderBy: [{ sortOrder: "asc" }, { slug: "asc" }],
   });
 
-  return templates
-    .map((template) => {
-      const manifest = manifestMap.get(template.slug);
-      if (!manifest) return null;
-
-      return {
-        ...template,
-        category: manifest.library.category,
-        tags: manifest.library.tags,
-        libraryStatus: manifest.library.status,
-        origin: manifest.library.origin ?? null,
-        summary: manifest.library.summary,
-        detail: manifest.library.detail,
-        sortOrder: manifest.library.sortOrder,
-        coverUrl: createTemplateAssetUrl(manifest, "cover") ?? "",
-        referenceUrl: manifest.assets.reference
-          ? createTemplateAssetUrl(manifest, "reference")
-          : null,
-        detailHref: `/templates/${template.slug}`,
-        useHref: `/templates/${template.slug}`,
-        editorReady: manifest.library.status === "editor-ready" || manifest.library.status === "available",
-        isCanonical: true as const,
-      };
-    })
-    .filter((template): template is CanonicalTemplateListItem => template !== null)
-    .sort((left, right) => left.sortOrder - right.sortOrder);
+  return templates.map(hydrateCanonicalTemplate);
 }
 
 export async function getCanonicalTemplateBySlug(
   db: DbClient,
   slug: string
 ): Promise<CanonicalTemplateListItem | null> {
-  await syncCanonicalTemplatesOnce(db);
-
-  const manifest = getCanonicalTemplateManifest(slug);
-  if (!manifest) return null;
-
   const template = await db.template.findUnique({
     where: { slug },
     include: templateListInclude,
@@ -383,22 +258,5 @@ export async function getCanonicalTemplateBySlug(
 
   if (!template || !template.isActive) return null;
 
-  return {
-    ...template,
-    category: manifest.library.category,
-    tags: manifest.library.tags,
-    libraryStatus: manifest.library.status,
-    origin: manifest.library.origin ?? null,
-    summary: manifest.library.summary,
-    detail: manifest.library.detail,
-    sortOrder: manifest.library.sortOrder,
-    coverUrl: createTemplateAssetUrl(manifest, "cover") ?? "",
-    referenceUrl: manifest.assets.reference
-      ? createTemplateAssetUrl(manifest, "reference")
-      : null,
-    detailHref: `/templates/${template.slug}`,
-    useHref: `/templates/${template.slug}`,
-    editorReady: manifest.library.status === "editor-ready" || manifest.library.status === "available",
-    isCanonical: true as const,
-  };
+  return hydrateCanonicalTemplate(template);
 }

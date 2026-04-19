@@ -5,12 +5,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getAppViewer, getOwnedPages, getOwnedVersions } from "@/lib/server/app-viewer";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { formatDate } from "@/lib/utils";
 
 export default async function PagesPage() {
   const { user } = await getAppViewer();
   const [pages, versions] = await Promise.all([getOwnedPages(user.id), getOwnedVersions(user.id)]);
-  const versionsWithoutPage = versions.filter((version) => !version.page);
+  const versionsWithoutPage = versions.filter((version) => !getPrimaryVersionPage(version));
 
   return (
     <div className="space-y-8">

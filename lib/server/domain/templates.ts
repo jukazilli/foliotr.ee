@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@/generated/prisma-client";
 import { ApiRouteError } from "@/lib/server/api";
 import {
   versionAggregateInclude,
@@ -6,7 +6,6 @@ import {
   type VersionAggregate,
 } from "@/lib/server/domain/includes";
 import { validateBlockConfig } from "@/lib/templates/contracts";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
 import { mapTemplateInitialBlocks } from "@/lib/templates/template-content-mapper";
 import type {
   PageBlockCreateInput,
@@ -126,27 +125,22 @@ async function assertOwnedAssetIds(tx: TxClient, userId: string, assetIds: strin
   }
 }
 
-function sanitizeCanonicalBlockAssets(
-  templateSlug: string | null | undefined,
-  blockKey: string,
+function sanitizeBlockAssets(
+  assetFields: unknown,
   assets: unknown
 ) {
-  const manifest = templateSlug ? getCanonicalTemplateManifest(templateSlug) : null;
+  const editableAssetFields = Array.isArray(assetFields) ? assetFields : [];
 
-  if (!manifest) {
-    return asRecord(assets);
-  }
-
-  const blockManifest =
-    manifest.blocks.find((item) => item.key === blockKey) ??
-    manifest.blocks.find((item) => item.blockType === blockKey);
-
-  if (!blockManifest || blockManifest.assetFields.length === 0) {
+  if (editableAssetFields.length === 0) {
     return {};
   }
 
   const allowedRoots = new Set(
-    blockManifest.assetFields.map((field) => field.key.split(".")[0]).filter(Boolean)
+    editableAssetFields
+      .map((field) => asRecord(field).key)
+      .filter((key): key is string => typeof key === "string" && key.length > 0)
+      .map((key) => key.split(".")[0])
+      .filter(Boolean)
   );
   const source = asRecord(assets);
 
@@ -204,14 +198,12 @@ export async function seedPageBlocksFromTemplate(
     orderBy: { defaultOrder: "asc" },
   });
 
-  const manifest = getCanonicalTemplateManifest(template.slug);
   const seededBlocks =
-    manifest && options?.profile && options?.version
+    options?.profile && options?.version
       ? mapTemplateInitialBlocks({
           templateSlug: template.slug,
           blockDefs,
           context: {
-            manifest,
             profile: options.profile,
             version: options.version,
           },
@@ -375,11 +367,7 @@ export async function addOwnedPageBlock(
         assets: undefined,
       })
     );
-    const assets = sanitizeCanonicalBlockAssets(
-      page.template.slug,
-      blockDef.key,
-      input.assets
-    );
+    const assets = sanitizeBlockAssets(blockDef.assetFields, input.assets);
 
     return tx.pageBlock.create({
       data: {
@@ -427,9 +415,8 @@ export async function updateOwnedPageBlock(
           });
     const config = validateAllowedBlockConfig(block.blockType, configInput);
     const currentProps = asRecord(block.props);
-    const assets = sanitizeCanonicalBlockAssets(
-      page.template.slug,
-      block.templateBlockDef?.key ?? block.key,
+    const assets = sanitizeBlockAssets(
+      block.templateBlockDef?.assetFields ?? [],
       input.assets ?? block.assets
     );
 

@@ -1,7 +1,6 @@
-import { Prisma, PrismaClient } from "@prisma/client";
-import { PORTFOLIO_COMMUNITY_TEMPLATE } from "../lib/templates/portfolio-community";
-
-const prisma = new PrismaClient();
+import { Prisma } from "../generated/prisma-client";
+import { prisma } from "../lib/prisma";
+import { portfolioCommunityManifest } from "../assets/template/portfolio-community/manifest";
 
 type SeedBlock = {
   key: string;
@@ -22,6 +21,19 @@ async function upsertTemplate(args: {
   name: string;
   description: string;
   thumbnail?: string | null;
+  coverUrl?: string | null;
+  referenceUrl?: string | null;
+  category?: string;
+  tags?: string[];
+  libraryStatus?: string;
+  origin?: string | null;
+  summary?: string | null;
+  detail?: string | null;
+  sortOrder?: number;
+  eligibility?: Prisma.InputJsonValue;
+  resumeDefaults?: Prisma.InputJsonValue;
+  restrictions?: Prisma.InputJsonValue;
+  sourcePackage?: Prisma.InputJsonValue;
   version?: number;
   source?: string | null;
   sourceNodeId?: string | null;
@@ -34,6 +46,19 @@ async function upsertTemplate(args: {
       name: args.name,
       description: args.description,
       thumbnail: args.thumbnail,
+      coverUrl: args.coverUrl,
+      referenceUrl: args.referenceUrl,
+      category: args.category ?? "general",
+      tags: args.tags ?? [],
+      libraryStatus: args.libraryStatus ?? "available",
+      origin: args.origin,
+      summary: args.summary,
+      detail: args.detail,
+      sortOrder: args.sortOrder ?? 0,
+      eligibility: args.eligibility ?? {},
+      resumeDefaults: args.resumeDefaults ?? {},
+      restrictions: args.restrictions ?? {},
+      sourcePackage: args.sourcePackage ?? {},
       version: args.version ?? 1,
       source: args.source,
       sourceNodeId: args.sourceNodeId,
@@ -45,6 +70,19 @@ async function upsertTemplate(args: {
       slug: args.slug,
       description: args.description,
       thumbnail: args.thumbnail,
+      coverUrl: args.coverUrl,
+      referenceUrl: args.referenceUrl,
+      category: args.category ?? "general",
+      tags: args.tags ?? [],
+      libraryStatus: args.libraryStatus ?? "available",
+      origin: args.origin,
+      summary: args.summary,
+      detail: args.detail,
+      sortOrder: args.sortOrder ?? 0,
+      eligibility: args.eligibility ?? {},
+      resumeDefaults: args.resumeDefaults ?? {},
+      restrictions: args.restrictions ?? {},
+      sourcePackage: args.sourcePackage ?? {},
       version: args.version ?? 1,
       source: args.source,
       sourceNodeId: args.sourceNodeId,
@@ -67,6 +105,7 @@ async function upsertTemplate(args: {
         category: block.category ?? "section",
         defaultOrder: block.defaultOrder,
         required: block.required,
+        repeatable: false,
         defaultConfig: block.defaultConfig,
         defaultProps: block.defaultProps ?? {},
         editableFields: block.editableFields ?? [],
@@ -81,6 +120,7 @@ async function upsertTemplate(args: {
         category: block.category ?? "section",
         defaultOrder: block.defaultOrder,
         required: block.required,
+        repeatable: false,
         defaultConfig: block.defaultConfig,
         defaultProps: block.defaultProps ?? {},
         editableFields: block.editableFields ?? [],
@@ -94,93 +134,45 @@ async function upsertTemplate(args: {
 }
 
 async function main() {
-  await upsertTemplate({
-    slug: "classic",
-    name: "Classico",
-    description: "Template limpo e profissional",
-    theme: {
-      fontFamily: "FolioTree system",
-      background: "#FFFFFF",
-      ink: "#0F1115",
-      accent: "#D5F221",
-    },
-    blocks: [
-      {
-        key: "classic-hero",
-        blockType: "hero",
-        label: "Apresentacao",
-        defaultOrder: 0,
-        required: true,
-        defaultConfig: {
-          showAvatar: true,
-          showBanner: false,
-          ctaText: "Entre em contato",
-          layout: "centered",
-        },
-      },
-      {
-        key: "classic-about",
-        blockType: "about",
-        label: "Sobre mim",
-        defaultOrder: 1,
-        required: false,
-        defaultConfig: {
-          title: "Sobre mim",
-          showLocation: true,
-          showLinks: true,
-        },
-      },
-      {
-        key: "classic-experience",
-        blockType: "experience",
-        label: "Experiencia",
-        defaultOrder: 2,
-        required: false,
-        defaultConfig: {
-          title: "Experiencia",
-          maxItems: 5,
-          showCompanyLogo: true,
-          showCurrentBadge: true,
-        },
-      },
-      {
-        key: "classic-projects",
-        blockType: "projects",
-        label: "Projetos",
-        defaultOrder: 3,
-        required: false,
-        defaultConfig: {
-          title: "Projetos",
-          layout: "grid",
-          maxItems: 6,
-          showImages: true,
-        },
-      },
-      {
-        key: "classic-contact",
-        blockType: "contact",
-        label: "Contato",
-        defaultOrder: 4,
-        required: false,
-        defaultConfig: {
-          title: "Contato",
-          showEmail: true,
-          showPhone: false,
-        },
-      },
-    ],
+  await prisma.template.updateMany({
+    where: { slug: "classic" },
+    data: { isActive: false },
   });
 
   await upsertTemplate({
-    slug: PORTFOLIO_COMMUNITY_TEMPLATE.slug,
-    name: PORTFOLIO_COMMUNITY_TEMPLATE.name,
-    description: PORTFOLIO_COMMUNITY_TEMPLATE.description,
-    thumbnail: PORTFOLIO_COMMUNITY_TEMPLATE.thumbnail,
-    version: PORTFOLIO_COMMUNITY_TEMPLATE.version,
-    source: PORTFOLIO_COMMUNITY_TEMPLATE.source,
-    sourceNodeId: PORTFOLIO_COMMUNITY_TEMPLATE.sourceNodeId,
-    theme: PORTFOLIO_COMMUNITY_TEMPLATE.theme,
-    blocks: PORTFOLIO_COMMUNITY_TEMPLATE.blocks,
+    slug: portfolioCommunityManifest.slug,
+    name: portfolioCommunityManifest.name,
+    description: portfolioCommunityManifest.description,
+    thumbnail: "/template-assets/portfolio-community/cover.png",
+    coverUrl: "/template-assets/portfolio-community/cover.png",
+    referenceUrl: null,
+    category: portfolioCommunityManifest.library.category,
+    tags: [...portfolioCommunityManifest.library.tags],
+    libraryStatus: portfolioCommunityManifest.library.status,
+    origin: portfolioCommunityManifest.library.origin ?? null,
+    summary: portfolioCommunityManifest.library.summary,
+    detail: portfolioCommunityManifest.library.detail,
+    sortOrder: portfolioCommunityManifest.library.sortOrder,
+    eligibility: portfolioCommunityManifest.eligibility,
+    resumeDefaults: portfolioCommunityManifest.resumeDefaults,
+    restrictions: portfolioCommunityManifest.restrictions,
+    version: portfolioCommunityManifest.version,
+    source: portfolioCommunityManifest.source,
+    sourceNodeId: null,
+    theme: portfolioCommunityManifest.theme,
+    blocks: portfolioCommunityManifest.blocks.map((block) => ({
+      key: block.key,
+      blockType: block.blockType,
+      label: block.label,
+      category: block.category,
+      defaultOrder: block.defaultOrder,
+      required: block.required,
+      defaultConfig: block.defaultConfig,
+      defaultProps: ("defaultProps" in block ? block.defaultProps : {}) ?? {},
+      editableFields: [...block.editableFields],
+      assetFields: [...block.assetFields],
+      allowedChildren: [...block.allowedChildren],
+    })),
   });
 
   console.log("Seed completed");

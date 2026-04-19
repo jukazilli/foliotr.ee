@@ -59,6 +59,7 @@ interface CanonicalPageEditorProps {
   manifestBlocks: ManifestBlockLike[];
   initialProfile: TemplateProfile;
   initialVersion: VersionSelectionLike;
+  initialTemplateSourcePackage?: unknown;
 }
 
 interface UploadedAsset {
@@ -187,6 +188,7 @@ export default function CanonicalPageEditor({
   manifestBlocks,
   initialProfile,
   initialVersion,
+  initialTemplateSourcePackage,
 }: CanonicalPageEditorProps) {
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
@@ -1123,6 +1125,7 @@ export default function CanonicalPageEditor({
                 blocks={previewBlocks}
                 profile={initialProfile}
                 version={initialVersion}
+                templateSourcePackage={initialTemplateSourcePackage}
               />
             </div>
           </CardContent>

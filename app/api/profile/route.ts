@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getOwnedProfileBase, updateOwnedProfileBase } from "@/lib/server/domain/profile-base";
+import { getOwnedProfileBase, updateOwnedProfileFields } from "@/lib/server/domain/profile-base";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import { profileBaseSchema, profileSchema } from "@/lib/validations";
 
@@ -18,12 +18,6 @@ const collectionPayloadKeys = [
 
 function hasCollectionPayload(input: Record<string, unknown>) {
   return collectionPayloadKeys.some((key) => Object.prototype.hasOwnProperty.call(input, key));
-}
-
-function sanitizeNullable(value: string | null | undefined) {
-  if (value === undefined) return undefined;
-  if (value === "") return null;
-  return value;
 }
 
 export async function GET() {
@@ -51,7 +45,7 @@ export async function PATCH(request: NextRequest) {
 
     const body = await request.json();
     const input = profileSchema.parse(body);
-    const profile = await updateOwnedProfileBase(prisma, session.user.id, input);
+    const profile = await updateOwnedProfileFields(prisma, session.user.id, input);
 
     return jsonOk({ profile }, { status: 200 });
   } catch (error) {
@@ -70,40 +64,13 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const input = profileBaseSchema.parse(body);
 
-    if (!hasCollectionPayload(input)) {
-      const profile = await prisma.profile.update({
-        where: { userId: session.user.id },
-        data: {
-          displayName: sanitizeNullable(input.displayName),
-          avatarUrl: sanitizeNullable(input.avatarUrl),
-          headline: sanitizeNullable(input.headline),
-          bio: sanitizeNullable(input.bio),
-          location: sanitizeNullable(input.location),
-          pronouns: sanitizeNullable(input.pronouns),
-          websiteUrl: sanitizeNullable(input.websiteUrl),
-          publicEmail: sanitizeNullable(input.publicEmail),
-          phone: sanitizeNullable(input.phone),
-          birthDate: input.birthDate ?? null,
-        },
-        select: {
-          id: true,
-          displayName: true,
-          avatarUrl: true,
-          headline: true,
-          bio: true,
-          location: true,
-          pronouns: true,
-          websiteUrl: true,
-          publicEmail: true,
-          phone: true,
-          birthDate: true,
-        },
+    if (hasCollectionPayload(input)) {
+      return jsonError("BAD_REQUEST", 400, {
+        message: "Colecoes grandes devem ser atualizadas por /api/profile/collections/[collection]",
       });
-
-      return jsonOk({ profile }, { status: 200 });
     }
 
-    const profile = await updateOwnedProfileBase(prisma, session.user.id, input);
+    const profile = await updateOwnedProfileFields(prisma, session.user.id, input);
 
     return jsonOk({ profile }, { status: 200 });
   } catch (error) {

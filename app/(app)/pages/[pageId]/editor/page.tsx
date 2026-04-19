@@ -9,10 +9,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { ApiRouteError } from "@/lib/server/api";
 import { getAppViewer } from "@/lib/server/app-viewer";
+import { readPageEditorSnapshot } from "@/lib/server/domain/page-snapshots";
 import { getOwnedPageEditorData } from "@/lib/server/domain/templates";
 import { toLegacyVersionSelection } from "@/lib/server/domain/versions";
-import { getCanonicalTemplateManifest } from "@/lib/templates/registry";
-import { setPagePublishStateAction, setResumePublishStateAction } from "./actions";
+import {
+  setPagePublishStateAction,
+  setResumePublishStateAction,
+  syncPageSnapshotAction,
+} from "./actions";
 
 interface PageEditorRouteProps {
   params: Promise<{ pageId: string }>;
@@ -27,11 +31,16 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
-    const manifest = getCanonicalTemplateManifest(page.template.slug);
-
-    if (!manifest) {
-      notFound();
-    }
+    const editorSnapshot =
+      readPageEditorSnapshot(page.editorSnapshot) ??
+      {
+        profile: viewer.profile,
+        version: {
+          customHeadline: page.version.customHeadline,
+          customBio: page.version.customBio,
+          ...toLegacyVersionSelection(page.version),
+        },
+      };
 
     const publicUsername = viewer.user.username;
     const publicTemplateHref = publicUsername ? `/${publicUsername}/${page.slug}` : null;
@@ -63,6 +72,11 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
                   Curriculo
                 </Link>
               </Button>
+              <form action={syncPageSnapshotAction.bind(null, page.id)}>
+                <Button type="submit" variant="outline">
+                  Sincronizar com perfil
+                </Button>
+              </form>
               {publicTemplateHref ? (
                 <Button asChild variant="ghost">
                   <Link href={publicTemplateHref} target="_blank" rel="noopener noreferrer">
@@ -196,9 +210,16 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
               editableFields: Array.isArray(blockDef.editableFields) ? blockDef.editableFields : [],
             }))
           )}
-          manifestBlocks={toSerializable(manifest.blocks)}
-          initialProfile={toSerializable(viewer.profile)}
-          initialVersion={toSerializable(toLegacyVersionSelection(page.version))}
+          manifestBlocks={toSerializable(
+            page.template.blockDefs.map((blockDef) => ({
+              key: blockDef.key,
+              blockType: blockDef.blockType,
+              repeatable: blockDef.repeatable,
+            }))
+          )}
+          initialProfile={toSerializable(editorSnapshot.profile)}
+          initialVersion={toSerializable(editorSnapshot.version)}
+          initialTemplateSourcePackage={toSerializable(page.template.sourcePackage)}
         />
       </div>
     );

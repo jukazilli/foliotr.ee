@@ -1,14 +1,36 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@/generated/prisma-client";
 import { ApiRouteError } from "@/lib/server/api";
 import {
   profileAggregateInclude,
   type ProfileAggregateWithBirthDate,
 } from "@/lib/server/domain/includes";
-import type { ProfileBaseInput } from "@/lib/validations";
+import type { ProfileBaseInput, ProfileInput } from "@/lib/validations";
 
 type DbClient = PrismaClient;
 type ReadClient = PrismaClient | Prisma.TransactionClient;
 type TxClient = Prisma.TransactionClient;
+export type ProfileCollectionKey =
+  | "highlights"
+  | "experiences"
+  | "skills"
+  | "projects"
+  | "achievements"
+  | "proofs"
+  | "links";
+
+const profileBaseSelect = {
+  id: true,
+  displayName: true,
+  avatarUrl: true,
+  headline: true,
+  bio: true,
+  location: true,
+  pronouns: true,
+  websiteUrl: true,
+  publicEmail: true,
+  phone: true,
+  birthDate: true,
+} satisfies Prisma.ProfileSelect;
 
 async function withProfileBirthDate<TProfile extends { birthDate: Date | null }>(
   _db: ReadClient,
@@ -166,6 +188,551 @@ export async function getOwnedProfileBase(
   }
 
   return withProfileBirthDate(db, profile);
+}
+
+export async function updateOwnedProfileFields(
+  db: DbClient,
+  userId: string,
+  input: ProfileInput
+) {
+  return db.$transaction(async (tx) => {
+    const profile = await getOwnedProfileRecordOrThrow(tx, userId);
+
+    return tx.profile.update({
+      where: { id: profile.id },
+      data: {
+        displayName: sanitizeNullable(input.displayName),
+        avatarUrl: sanitizeNullable(input.avatarUrl),
+        headline: sanitizeNullable(input.headline),
+        bio: sanitizeNullable(input.bio),
+        location: sanitizeNullable(input.location),
+        pronouns: sanitizeNullable(input.pronouns),
+        websiteUrl: sanitizeNullable(input.websiteUrl),
+        publicEmail: sanitizeNullable(input.publicEmail),
+        phone: sanitizeNullable(input.phone),
+        birthDate: input.birthDate ?? null,
+      },
+      select: profileBaseSelect,
+    });
+  });
+}
+
+export async function updateOwnedProfileCollection(
+  db: DbClient,
+  userId: string,
+  collection: ProfileCollectionKey,
+  items: NonNullable<ProfileBaseInput[ProfileCollectionKey]>
+) {
+  return db.$transaction(async (tx) => {
+    const profile = await getOwnedProfileRecordOrThrow(tx, userId);
+
+    if (collection === "highlights") {
+      const typedItems = items as NonNullable<ProfileBaseInput["highlights"]>;
+      const referencedAssetIds = dedupeIds(
+        typedItems.flatMap((item) => (item.assetId ? [item.assetId] : []))
+      );
+
+      await assertOwnedIds(
+        profile.id,
+        referencedAssetIds,
+        async (ids) =>
+          tx.asset.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Assets"
+      );
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Highlights",
+        findExistingIds: () =>
+          tx.highlight.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.highlight.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.highlight.update({
+            where: { id },
+            data: {
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              metric: sanitizeNullable(item.metric),
+              assetId: item.assetId ?? null,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.highlight.create({
+            data: {
+              profileId: profile.id,
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              metric: sanitizeNullable(item.metric),
+              assetId: item.assetId ?? null,
+              order: index,
+            },
+          }),
+      });
+
+      return tx.highlight.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          metric: true,
+          assetId: true,
+        },
+      });
+    }
+
+    if (collection === "experiences") {
+      const typedItems = items as NonNullable<ProfileBaseInput["experiences"]>;
+      const referencedAssetIds = dedupeIds(
+        typedItems.flatMap((item) => (item.logoAssetId ? [item.logoAssetId] : []))
+      );
+
+      await assertOwnedIds(
+        profile.id,
+        referencedAssetIds,
+        async (ids) =>
+          tx.asset.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Assets"
+      );
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Experiencias",
+        findExistingIds: () =>
+          tx.experience.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.experience.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.experience.update({
+            where: { id },
+            data: {
+              company: item.company,
+              role: item.role,
+              description: sanitizeNullable(item.description),
+              startDate: item.startDate,
+              endDate: item.current ? null : item.endDate ?? null,
+              current: item.current,
+              location: sanitizeNullable(item.location),
+              logoUrl: sanitizeNullable(item.logoUrl),
+              logoAssetId: item.logoAssetId ?? null,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.experience.create({
+            data: {
+              profileId: profile.id,
+              company: item.company,
+              role: item.role,
+              description: sanitizeNullable(item.description),
+              startDate: item.startDate,
+              endDate: item.current ? null : item.endDate ?? null,
+              current: item.current,
+              location: sanitizeNullable(item.location),
+              logoUrl: sanitizeNullable(item.logoUrl),
+              logoAssetId: item.logoAssetId ?? null,
+              order: index,
+            },
+          }),
+      });
+
+      return tx.experience.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { startDate: "desc" }],
+        select: {
+          id: true,
+          company: true,
+          role: true,
+          description: true,
+          startDate: true,
+          endDate: true,
+          current: true,
+          location: true,
+          logoUrl: true,
+          logoAssetId: true,
+        },
+      });
+    }
+
+    if (collection === "skills") {
+      const typedItems = items as NonNullable<ProfileBaseInput["skills"]>;
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Skills",
+        findExistingIds: () =>
+          tx.skill.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.skill.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.skill.update({
+            where: { id },
+            data: {
+              name: item.name,
+              category: sanitizeNullable(item.category),
+              level: sanitizeNullable(item.level),
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.skill.create({
+            data: {
+              profileId: profile.id,
+              name: item.name,
+              category: sanitizeNullable(item.category),
+              level: sanitizeNullable(item.level),
+              order: index,
+            },
+          }),
+      });
+
+      return tx.skill.findMany({
+        where: { profileId: profile.id },
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          level: true,
+        },
+      });
+    }
+
+    if (collection === "projects") {
+      const typedItems = items as NonNullable<ProfileBaseInput["projects"]>;
+      const referencedAssetIds = dedupeIds(
+        typedItems.flatMap((item) => (item.coverAssetId ? [item.coverAssetId] : []))
+      );
+
+      await assertOwnedIds(
+        profile.id,
+        referencedAssetIds,
+        async (ids) =>
+          tx.asset.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Assets"
+      );
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Projetos",
+        findExistingIds: () =>
+          tx.project.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.project.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.project.update({
+            where: { id },
+            data: {
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              url: sanitizeNullable(item.url),
+              repoUrl: sanitizeNullable(item.repoUrl),
+              tags: item.tags,
+              featured: item.featured,
+              coverAssetId: item.coverAssetId ?? null,
+              startDate: item.startDate ?? null,
+              endDate: item.endDate ?? null,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.project.create({
+            data: {
+              profileId: profile.id,
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              url: sanitizeNullable(item.url),
+              repoUrl: sanitizeNullable(item.repoUrl),
+              tags: item.tags,
+              featured: item.featured,
+              coverAssetId: item.coverAssetId ?? null,
+              startDate: item.startDate ?? null,
+              endDate: item.endDate ?? null,
+              order: index,
+            },
+          }),
+      });
+
+      return tx.project.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { updatedAt: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          imageUrl: true,
+          url: true,
+          repoUrl: true,
+          tags: true,
+          featured: true,
+          coverAssetId: true,
+          startDate: true,
+          endDate: true,
+        },
+      });
+    }
+
+    if (collection === "achievements") {
+      const typedItems = items as NonNullable<ProfileBaseInput["achievements"]>;
+      const referencedAssetIds = dedupeIds(
+        typedItems.flatMap((item) => (item.assetId ? [item.assetId] : []))
+      );
+
+      await assertOwnedIds(
+        profile.id,
+        referencedAssetIds,
+        async (ids) =>
+          tx.asset.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Assets"
+      );
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Achievements",
+        findExistingIds: () =>
+          tx.achievement.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.achievement.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.achievement.update({
+            where: { id },
+            data: {
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              date: item.date ?? null,
+              metric: sanitizeNullable(item.metric),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              assetId: item.assetId ?? null,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.achievement.create({
+            data: {
+              profileId: profile.id,
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              date: item.date ?? null,
+              metric: sanitizeNullable(item.metric),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              assetId: item.assetId ?? null,
+              order: index,
+            },
+          }),
+      });
+
+      return tx.achievement.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { date: "desc" }],
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          date: true,
+          metric: true,
+          imageUrl: true,
+          assetId: true,
+        },
+      });
+    }
+
+    if (collection === "proofs") {
+      const typedItems = items as NonNullable<ProfileBaseInput["proofs"]>;
+      const referencedAssetIds = dedupeIds(
+        typedItems.flatMap((item) => (item.assetId ? [item.assetId] : []))
+      );
+
+      await assertOwnedIds(
+        profile.id,
+        referencedAssetIds,
+        async (ids) =>
+          tx.asset.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Assets"
+      );
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Proofs",
+        findExistingIds: () =>
+          tx.proof.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.proof.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.proof.update({
+            where: { id },
+            data: {
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              metric: sanitizeNullable(item.metric),
+              url: sanitizeNullable(item.url),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              assetId: item.assetId ?? null,
+              tags: item.tags,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.proof.create({
+            data: {
+              profileId: profile.id,
+              title: item.title,
+              description: sanitizeNullable(item.description),
+              metric: sanitizeNullable(item.metric),
+              url: sanitizeNullable(item.url),
+              imageUrl: sanitizeNullable(item.imageUrl),
+              assetId: item.assetId ?? null,
+              tags: item.tags,
+              order: index,
+            },
+          }),
+      });
+
+      return tx.proof.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          metric: true,
+          url: true,
+          imageUrl: true,
+          tags: true,
+          assetId: true,
+        },
+      });
+    }
+
+    const typedItems = items as NonNullable<ProfileBaseInput["links"]>;
+    await syncCollection({
+      tx,
+      profileId: profile.id,
+      items: typedItems,
+      label: "Links",
+      findExistingIds: () =>
+        tx.profileLink.findMany({
+          where: { profileId: profile.id },
+          select: { id: true },
+        }),
+      deleteMissing: (keepIds) =>
+        tx.profileLink.deleteMany({
+          where: {
+            profileId: profile.id,
+            id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+          },
+        }),
+      updateItem: (id, item, index) =>
+        tx.profileLink.update({
+          where: { id },
+          data: {
+            platform: item.platform,
+            url: item.url,
+            label: sanitizeNullable(item.label),
+            order: index,
+          },
+        }),
+      createItem: (item, index) =>
+        tx.profileLink.create({
+          data: {
+            profileId: profile.id,
+            platform: item.platform,
+            url: item.url,
+            label: sanitizeNullable(item.label),
+            order: index,
+          },
+        }),
+    });
+
+    return tx.profileLink.findMany({
+      where: { profileId: profile.id },
+      orderBy: { order: "asc" },
+      select: {
+        id: true,
+        platform: true,
+        label: true,
+        url: true,
+      },
+    });
+  });
 }
 
 export async function updateOwnedProfileBase(

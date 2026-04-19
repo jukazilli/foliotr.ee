@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "@/generated/prisma-client";
+import { PrismaClient as GeneratedPrismaClient } from "@/generated/prisma-client";
 import { getEnv } from "@/lib/env";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
@@ -6,9 +7,9 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 function createPrismaClient(): PrismaClient {
   getEnv();
 
-  return new PrismaClient({
+  return new GeneratedPrismaClient({
     log: ["warn", "error"],
-  });
+  }) as unknown as PrismaClient;
 }
 
 export function getPrismaClient(): PrismaClient {

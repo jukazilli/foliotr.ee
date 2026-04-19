@@ -42,6 +42,7 @@ export default function PublicTemplatePage({
         blocks={getPublicPageBlocks(page)}
         profile={profile}
         version={version}
+        templateSourcePackage={page.template.sourcePackage}
       />
 
       <div className="border-t border-black/5 py-6 text-center print:hidden">

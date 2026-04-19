@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import PublicResumePage from "@/components/public/PublicResumePage";
 import {
   getPrimaryPublishedPage,
+  getPublicProfile,
   requirePublishedResume,
 } from "@/lib/server/domain/public-pages";
 
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: ResumePageProps): Promise<Met
     return { title: "Curriculo nao encontrado - FolioTree" };
   }
 
-  const displayName = page.version.profile.displayName ?? username;
+  const displayName = getPublicProfile(page).displayName ?? username;
 
   return {
     title: `Curriculo - ${displayName} | FolioTree`,
@@ -34,6 +35,6 @@ export default async function ResumePage({ params }: ResumePageProps) {
     notFound();
   }
 
-  const resumeConfig = requirePublishedResume(page);
-  return <PublicResumePage page={page} username={username} resumeConfig={resumeConfig} />;
+  const { snapshot } = requirePublishedResume(page);
+  return <PublicResumePage page={page} username={username} snapshot={snapshot} />;
 }

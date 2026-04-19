@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PublicResumePage from "@/components/public/PublicResumePage";
 import {
+  getPublicProfile,
   getPublishedPageByUsernameAndSlug,
   requirePublishedResume,
 } from "@/lib/server/domain/public-pages";
@@ -20,7 +21,7 @@ export async function generateMetadata({
     return { title: "Curriculo nao encontrado - FolioTree" };
   }
 
-  const displayName = page.version.profile.displayName ?? username;
+  const displayName = getPublicProfile(page).displayName ?? username;
 
   return {
     title: `Curriculo - ${displayName} | FolioTree`,
@@ -38,13 +39,13 @@ export default async function PublicResumeSlugPage({
     notFound();
   }
 
-  const resumeConfig = requirePublishedResume(page);
+  const { snapshot } = requirePublishedResume(page);
   return (
     <PublicResumePage
       page={page}
       username={username}
       pageSlug={pageSlug}
-      resumeConfig={resumeConfig}
+      snapshot={snapshot}
     />
   );
 }
