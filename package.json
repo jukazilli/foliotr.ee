@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "node scripts/serve-port-3000.mjs dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "node scripts/serve-port-3000.mjs start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
