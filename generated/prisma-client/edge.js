@@ -519,7 +519,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\projetos\\foliotree-merge\\generated\\prisma-client",
+      "value": "C:\\projetos\\foliotree\\generated\\prisma-client",
       "fromEnvVar": null
     },
     "config": {
@@ -533,11 +533,12 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\projetos\\foliotree-merge\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\projetos\\foliotree\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": null
+    "rootEnvPath": null,
+    "schemaEnvPath": "../../.env"
   },
   "relativePath": "../../prisma",
   "clientVersion": "5.22.0",

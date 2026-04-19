@@ -77,6 +77,17 @@ Current implementation rule:
 - `Typography System.html` remains the typography reference, but the current product prompt explicitly requires Sora as the display font for this cut
 - public screens should feel like a social/professional platform: expressive, clear, light, and memorable, not a cold SaaS dashboard
 
+### 4. `runtime-architecture-decision.md`
+
+Use this file when deciding where API routes should run.
+
+It records the current approved runtime model:
+
+- FolioTree is currently a fullstack Next.js app on Vercel
+- `app/api/*` routes are the active production API surface
+- Render is not the active API dependency for the current MVP
+- Render should be reconsidered only at the documented cut points, such as mobile clients, public API needs, workers, queues, WebSockets, or measurable serverless limits
+
 ## Reading order for AI systems
 
 1. Read `brand-core.md`
@@ -84,8 +95,9 @@ Current implementation rule:
 3. Read `Design System/Brand Core.html`
 4. Read `Design System/Tonal System.html`
 5. Read `Design System/Typography System.html`
-6. Treat unresolved topics as unresolved
-7. Do not invent product features, visual assets, or business decisions that are not explicitly documented
+6. Read `runtime-architecture-decision.md` before changing API/deployment architecture
+7. Treat unresolved topics as unresolved
+8. Do not invent product features, visual assets, or business decisions that are not explicitly documented
 
 ## AI Operating Rules
 
