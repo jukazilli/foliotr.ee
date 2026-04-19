@@ -1,13 +1,13 @@
-import { MapPin, ExternalLink, ArrowRight } from "lucide-react"
-import { getPlatformLabel, getPlatformUrl, getInitials } from "@/lib/utils"
-import type { BlockProps } from "./types"
+import { MapPin, ExternalLink, ArrowRight } from "lucide-react";
+import { getPlatformLabel, getPlatformUrl, getInitials } from "@/lib/utils";
+import type { BlockProps } from "./types";
 
 interface HeroConfig {
-  showAvatar?: boolean
-  showBanner?: boolean
-  ctaText?: string
-  ctaUrl?: string
-  layout?: "centered" | "left"
+  showAvatar?: boolean;
+  showBanner?: boolean;
+  ctaText?: string;
+  ctaUrl?: string;
+  layout?: "centered" | "left";
 }
 
 export default function HeroBlock({ profile, config, version }: BlockProps) {
@@ -16,21 +16,23 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
     ctaText = "Entre em contato",
     ctaUrl,
     layout = "centered",
-  } = config as HeroConfig
+  } = config as HeroConfig;
 
-  const displayName = profile?.displayName ?? profile?.user?.name ?? "Sem nome"
-  const headline = version?.customHeadline ?? profile?.headline
-  const location = profile?.location
-  const avatarUrl = profile?.avatarUrl
-  const links: any[] = profile?.links ?? []
+  const displayName = profile?.displayName ?? profile?.user?.name ?? "Sem nome";
+  const headline = version?.customHeadline ?? profile?.headline;
+  const location = profile?.location;
+  const avatarUrl = profile?.avatarUrl;
+  const links = profile.links;
 
-  const isCentered = layout === "centered"
+  const isCentered = layout === "centered";
 
   return (
     <section className="bg-white py-16">
       <div
         className={`mx-auto max-w-4xl px-4 sm:px-6 ${
-          isCentered ? "flex flex-col items-center text-center" : "flex flex-col items-start"
+          isCentered
+            ? "flex flex-col items-center text-center"
+            : "flex flex-col items-start"
         }`}
       >
         {/* Avatar */}
@@ -57,7 +59,9 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
 
         {/* Headline */}
         {headline && (
-          <p className="mt-3 text-xl font-medium text-neutral-500 sm:text-2xl">{headline}</p>
+          <p className="mt-3 text-xl font-medium text-neutral-500 sm:text-2xl">
+            {headline}
+          </p>
         )}
 
         {/* Location */}
@@ -70,10 +74,12 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
 
         {/* Social links */}
         {links.length > 0 && (
-          <div className={`mt-6 flex flex-wrap gap-2 ${isCentered ? "justify-center" : ""}`}>
-            {links.map((link: any) => {
-              const url = getPlatformUrl(link.platform, link.url)
-              const label = link.label ?? getPlatformLabel(link.platform)
+          <div
+            className={`mt-6 flex flex-wrap gap-2 ${isCentered ? "justify-center" : ""}`}
+          >
+            {links.map((link) => {
+              const url = getPlatformUrl(link.platform, link.url);
+              const label = link.label ?? getPlatformLabel(link.platform);
               return (
                 <a
                   key={link.id}
@@ -85,7 +91,7 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
                   {label}
                   <ExternalLink size={12} className="text-neutral-400" />
                 </a>
-              )
+              );
             })}
           </div>
         )}
@@ -104,5 +110,5 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
         )}
       </div>
     </section>
-  )
+  );
 }

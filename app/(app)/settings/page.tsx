@@ -27,9 +27,7 @@ export default async function SettingsPage() {
         <h1 className="font-display text-3xl font-bold text-neutral-900">
           Configurações
         </h1>
-        <p className="mt-1 text-neutral-500">
-          Gerencie sua conta e preferências.
-        </p>
+        <p className="mt-1 text-neutral-500">Gerencie sua conta e preferências.</p>
       </div>
 
       {/* Conta */}
@@ -41,22 +39,16 @@ export default async function SettingsPage() {
             </div>
             <div>
               <CardTitle>Conta</CardTitle>
-              <CardDescription>
-                Informações de login e credenciais
-              </CardDescription>
+              <CardDescription>Informações de login e credenciais</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Email */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-neutral-700">
-              Email
-            </label>
+            <label className="text-sm font-medium text-neutral-700">Email</label>
             <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-              <span className="text-sm text-neutral-700">
-                {user.email ?? "—"}
-              </span>
+              <span className="text-sm text-neutral-700">{user.email ?? "—"}</span>
               <Button variant="ghost" size="sm">
                 Alterar
               </Button>
@@ -88,18 +80,14 @@ export default async function SettingsPage() {
             </div>
             <div>
               <CardTitle>Perfil público</CardTitle>
-              <CardDescription>
-                Controle como você aparece publicamente
-              </CardDescription>
+              <CardDescription>Controle como você aparece publicamente</CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Username */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-neutral-700">
-              Username
-            </label>
+            <label className="text-sm font-medium text-neutral-700">Username</label>
             <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
               <div>
                 <span className="text-sm text-neutral-700 font-mono">
@@ -156,19 +144,13 @@ export default async function SettingsPage() {
           <div className="rounded-xl border border-coral-100 bg-coral-50 p-4">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-sm font-medium text-coral-800">
-                  Deletar conta
-                </p>
+                <p className="text-sm font-medium text-coral-800">Deletar conta</p>
                 <p className="mt-1 text-xs text-coral-600">
-                  Remove permanentemente sua conta, perfil, versões e páginas.
-                  Esta ação não pode ser desfeita.
+                  Remove permanentemente sua conta, perfil, versões e páginas. Esta ação
+                  não pode ser desfeita.
                 </p>
               </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="shrink-0"
-              >
+              <Button variant="destructive" size="sm" className="shrink-0">
                 <Trash2 className="h-3.5 w-3.5" />
                 Deletar conta
               </Button>

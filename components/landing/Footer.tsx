@@ -1,43 +1,32 @@
-import Link from "next/link"
+import Link from "next/link";
+import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
 
 export default function Footer() {
   return (
-    <footer className="bg-neutral-900 py-12">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
-          {/* Logo */}
-          <span className="font-display text-xl font-bold text-white tracking-tight">
-            FolioTree
-          </span>
-
-          {/* Links */}
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/sobre"
-              className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
-            >
-              Sobre
-            </Link>
-            <Link
-              href="/privacidade"
-              className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
-            >
-              Privacidade
-            </Link>
-            <Link
-              href="/termos"
-              className="text-sm text-neutral-400 hover:text-neutral-200 transition-colors"
-            >
-              Termos
-            </Link>
-          </nav>
-
-          {/* Copyright */}
-          <p className="text-sm text-neutral-500">
-            &copy; 2026 FolioTree. Todos os direitos reservados.
+    <footer className="border-t border-neutral-200 bg-white py-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
+        <div>
+          <FolioTreeLogo />
+          <p className="mt-3 max-w-sm text-sm font-medium leading-6 text-neutral-500">
+            Evidência profissional viva, organizada para páginas, versões e currículos.
           </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-5 text-sm font-semibold text-neutral-600">
+          <Link href="/templates" className="hover:text-neutral-950">
+            Templates
+          </Link>
+          <Link href="/login" className="hover:text-neutral-950">
+            Entrar
+          </Link>
+          <Link href="/register" className="hover:text-neutral-950">
+            Criar conta
+          </Link>
+          <span className="font-data text-xs uppercase text-neutral-400">
+            2026 FolioTree
+          </span>
         </div>
       </div>
     </footer>
-  )
+  );
 }

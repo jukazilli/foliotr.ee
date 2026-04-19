@@ -11,8 +11,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "w-full rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 transition-colors",
-          "focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent",
+          "w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors",
+          "focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500",
           "disabled:cursor-not-allowed disabled:opacity-50",
           error && "border-coral-500 focus:ring-coral-500",
           className

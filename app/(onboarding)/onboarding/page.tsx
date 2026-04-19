@@ -16,10 +16,7 @@ const step1Schema = z.object({
     .string()
     .min(3, "Username deve ter pelo menos 3 caracteres")
     .max(20, "Username deve ter no máximo 20 caracteres")
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Apenas letras minúsculas, números e hifens são permitidos"
-    ),
+    .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens são permitidos"),
 });
 
 const step2Schema = z.object({
@@ -53,15 +50,11 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
               i < current
                 ? "bg-lime-500 text-lime-900"
                 : i === current
-                ? "bg-neutral-900 text-white"
-                : "bg-neutral-200 text-neutral-500"
+                  ? "bg-green-500 text-green-900"
+                  : "bg-neutral-200 text-neutral-500"
             )}
           >
-            {i < current ? (
-              <CheckCircle2 className="h-4 w-4" />
-            ) : (
-              i + 1
-            )}
+            {i < current ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
           </div>
           {i < total - 1 && (
             <div
@@ -181,12 +174,7 @@ export default function OnboardingPage() {
               )}
             </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              className="w-full"
-            >
+            <Button type="submit" variant="primary" size="lg" className="w-full">
               Continuar
               <ChevronRight className="h-4 w-4" />
             </Button>

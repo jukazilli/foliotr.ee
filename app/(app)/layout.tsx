@@ -1,50 +1,21 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
-import { prisma } from "@/lib/prisma";
-import { Sidebar } from "@/components/app/Sidebar";
 import { Header } from "@/components/app/Header";
+import { getAppShellViewer } from "@/lib/server/app-viewer";
 
-export default async function AppLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const session = await auth();
-
-  if (!session?.user?.id) {
-    redirect("/login");
-  }
-
-  const user = session.user as typeof session.user & {
-    id: string;
-    username?: string;
-  };
-
-  // Verifica onboarding a partir do Profile no banco
-  const profile = await prisma.profile.findUnique({
-    where: { userId: user.id },
-    select: { onboardingDone: true },
-  });
-
-  if (!profile?.onboardingDone) {
-    redirect("/onboarding");
-  }
+export default async function AppLayout({ children }: { children: React.ReactNode }) {
+  const viewer = await getAppShellViewer();
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-100">
-      <Sidebar
-        userName={user.name ?? undefined}
-        userImage={user.image ?? undefined}
-        userUsername={user.username}
-      />
-
-      <div className="flex flex-1 flex-col overflow-hidden">
+    <div className="soft-grid-bg min-h-screen bg-neutral-100">
+      <div className="flex min-h-screen w-full flex-col gap-4 pb-4">
         <Header
-          userName={user.name ?? undefined}
-          userImage={user.image ?? undefined}
-          userUsername={user.username}
+          userName={viewer.user.name ?? viewer.profile.displayName ?? undefined}
+          userImage={viewer.profile.avatarUrl ?? undefined}
+          userUsername={viewer.user.username}
         />
-        <main className="flex-1 overflow-y-auto px-6 py-8">{children}</main>
+
+        <main className="mx-3 min-w-0 flex-1 rounded-[32px] border border-white/70 bg-white/82 px-5 py-6 shadow-sm backdrop-blur sm:mx-5 sm:px-6 lg:px-8 xl:mx-6 2xl:mx-8">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -1,81 +1,84 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { BadgeCheck, FileText, Layers3, Link2 } from "lucide-react";
+import { auth } from "@/auth";
+import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
 
 export const metadata: Metadata = {
-  title: "FolioTree — Acesso",
+  title: "FolioTree - Acesso",
 };
 
-export default function AuthLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex min-h-screen">
-      {/* Metade esquerda — branding */}
-      <div className="hidden lg:flex lg:w-1/2 flex-col justify-between bg-blue-900 px-12 py-14">
-        <div>
-          <span className="font-display text-2xl font-bold text-white tracking-tight">
-            FolioTree
-          </span>
-        </div>
+const previewItems = [
+  { icon: BadgeCheck, label: "Provas", text: "resultados e links" },
+  { icon: Layers3, label: "Versoes", text: "objetivos diferentes" },
+  { icon: FileText, label: "Curriculo", text: "versao resumida" },
+];
 
-        <div className="space-y-10">
-          <div className="space-y-4">
-            <h1 className="font-display text-4xl font-bold text-white leading-tight">
-              LinkedIn mostra.{" "}
-              <span className="text-lime-500">FolioTree prova.</span>
+export default async function AuthLayout({ children }: { children: React.ReactNode }) {
+  const session = await auth();
+
+  if (session?.user?.id) {
+    redirect("/dashboard");
+  }
+
+  return (
+    <main className="soft-grid-bg min-h-screen px-4 py-5 sm:px-6 lg:px-8">
+      <div className="mx-auto grid min-h-[calc(100vh-2.5rem)] max-w-7xl gap-5 lg:grid-cols-[0.96fr_1.04fr]">
+        <aside className="relative hidden overflow-hidden rounded-[2rem] bg-blue-500 p-8 text-white lg:flex lg:flex-col lg:justify-between">
+          <FolioTreeLogo href="/" className="text-white" wordmarkClassName="text-white" />
+
+          <div className="max-w-xl">
+            <h1 className="mt-5 font-display text-5xl font-extrabold leading-none xl:text-6xl">
+              Organize seu perfil.
+              <span className="mt-2 block text-lime-500">Publique quando quiser.</span>
             </h1>
-            <p className="text-blue-200 text-lg leading-relaxed max-w-sm">
-              Mostre quem você é de verdade — com uma trajetória clara, versões
-              adaptadas e páginas que impressionam.
+            <p className="mt-7 max-w-md text-base font-semibold leading-7 text-white/78">
+              Reuna suas informacoes, crie versoes e escolha como mostrar seu trabalho.
             </p>
           </div>
 
-          <ul className="space-y-4">
-            {[
-              {
-                icon: "✦",
-                title: "Um perfil, múltiplos contextos",
-                desc: "Crie versões diferentes para cada oportunidade.",
-              },
-              {
-                icon: "✦",
-                title: "Currículo pronto em segundos",
-                desc: "Gerado automaticamente a partir do seu perfil.",
-              },
-              {
-                icon: "✦",
-                title: "Página pública profissional",
-                desc: "Seu portfólio com URL personalizada.",
-              },
-            ].map((item) => (
-              <li key={item.title} className="flex items-start gap-3">
-                <span className="text-lime-500 text-lg mt-0.5 shrink-0">{item.icon}</span>
+          <div className="grid gap-2">
+            {previewItems.map(({ icon: Icon, label, text }) => (
+              <div
+                key={label}
+                className="flex items-center gap-3 rounded-2xl border border-white/24 bg-white/14 p-2.5 backdrop-blur"
+              >
+                <Icon className="h-5 w-5 text-lime-500" aria-hidden="true" />
                 <div>
-                  <p className="text-white font-medium text-sm">{item.title}</p>
-                  <p className="text-blue-300 text-sm mt-0.5">{item.desc}</p>
+                  <p className="text-sm font-bold text-white">{label}</p>
+                  <p className="text-xs font-medium text-white/64">{text}</p>
                 </div>
-              </li>
+              </div>
             ))}
-          </ul>
-        </div>
+          </div>
+        </aside>
 
-        <p className="text-blue-400 text-xs">
-          © {new Date().getFullYear()} FolioTree. Todos os direitos reservados.
-        </p>
+        <section className="flex min-h-[calc(100vh-2.5rem)] flex-col">
+          <div className="mb-5 flex items-center justify-between rounded-2xl border border-white/74 bg-white/70 px-4 py-3 backdrop-blur lg:hidden">
+            <FolioTreeLogo href="/" />
+            <Link href="/" className="text-sm font-bold text-neutral-600 hover:text-neutral-950">
+              Home
+            </Link>
+          </div>
+
+          <div className="flex flex-1 items-center justify-center">
+            <div className="glass-panel w-full max-w-[30rem] rounded-[2rem] p-5 sm:p-8">
+              <div className="mb-8 hidden items-center justify-between lg:flex">
+                <FolioTreeLogo href="/" compact />
+                <Link
+                  href="/"
+                  className="inline-flex items-center gap-2 text-sm font-bold text-neutral-600 hover:text-neutral-950"
+                >
+                  <Link2 className="h-4 w-4" aria-hidden="true" />
+                  Home
+                </Link>
+              </div>
+              {children}
+            </div>
+          </div>
+        </section>
       </div>
-
-      {/* Metade direita — formulário */}
-      <div className="flex w-full lg:w-1/2 flex-col items-center justify-center bg-white px-6 py-12">
-        {/* Logo mobile */}
-        <div className="mb-8 lg:hidden">
-          <span className="font-display text-2xl font-bold text-neutral-900">
-            FolioTree
-          </span>
-        </div>
-
-        <div className="w-full max-w-sm">{children}</div>
-      </div>
-    </div>
+    </main>
   );
 }

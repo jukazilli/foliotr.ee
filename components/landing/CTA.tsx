@@ -1,29 +1,26 @@
-import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 export default function CTA() {
   return (
-    <section className="bg-blue-900 py-28">
-      <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-        <h2 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-          Sua trajetória tem valor.
-        </h2>
-        <h2 className="font-display mt-2 text-4xl font-extrabold leading-tight tracking-tight text-lime-500 sm:text-5xl lg:text-6xl">
-          Faça esse valor aparecer.
-        </h2>
-        <p className="mx-auto mt-6 max-w-md text-lg text-white/70">
-          Crie sua página FolioTree hoje. É gratuito.
-        </p>
-        <div className="mt-10">
-          <Link
-            href="/cadastro"
-            className="inline-flex items-center gap-2 rounded-xl bg-lime-500 px-9 py-4 text-lg font-bold text-lime-900 shadow-xl shadow-lime-500/20 hover:bg-lime-400 transition-colors"
-          >
-            Criar minha conta
-            <ArrowRight size={20} />
-          </Link>
+    <section className="bg-lime-500 py-16 text-lime-900 sm:py-20">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-end lg:px-8">
+        <div>
+          <p className="font-data text-xs font-bold uppercase text-lime-800">
+            Comece pelo essencial
+          </p>
+          <h2 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-none sm:text-6xl">
+            Sua trajetória tem valor. Faça esse valor aparecer.
+          </h2>
         </div>
+        <Link
+          href="/register"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-lime-900 px-6 py-3 text-base font-bold text-white shadow-xl shadow-lime-900/20 transition-transform hover:-translate-y-0.5"
+        >
+          Criar minha conta
+          <ArrowRight className="h-5 w-5" aria-hidden="true" />
+        </Link>
       </div>
     </section>
-  )
+  );
 }

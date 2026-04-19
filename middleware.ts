@@ -1,23 +1,34 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const PROTECTED = [
+export const PROTECTED_PREFIXES = [
   "/dashboard",
   "/profile",
   "/versions",
   "/pages",
   "/resumes",
+  "/templates",
   "/settings",
   "/onboarding",
 ];
-const AUTH_PAGES = ["/login", "/register", "/forgot-password"];
+const SESSION_COOKIE_NAMES = [
+  "authjs.session-token",
+  "__Secure-authjs.session-token",
+  "next-auth.session-token",
+  "__Secure-next-auth.session-token",
+];
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+export function hasSessionCookie(request: NextRequest) {
+  return SESSION_COOKIE_NAMES.some((name) => Boolean(request.cookies.get(name)?.value));
+}
 
-  const isProtected = PROTECTED.some((p) => nextUrl.pathname.startsWith(p));
-  const isAuthPage = AUTH_PAGES.some((p) => nextUrl.pathname.startsWith(p));
+export function isProtectedPath(pathname: string) {
+  return PROTECTED_PREFIXES.some((prefix) => pathname.startsWith(prefix));
+}
+
+export default function middleware(request: NextRequest) {
+  const { nextUrl } = request;
+  const isLoggedIn = hasSessionCookie(request);
+  const isProtected = isProtectedPath(nextUrl.pathname);
 
   if (isProtected && !isLoggedIn) {
     const loginUrl = new URL("/login", nextUrl);
@@ -25,12 +36,8 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuthPage && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
-  }
-
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],

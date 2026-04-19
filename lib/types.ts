@@ -133,26 +133,24 @@ export type ProfileFocus =
 // NextAuth session type extensions
 // ---------------------------------------------------------------------------
 
+import type { DefaultSession } from "next-auth";
+
 declare module "next-auth" {
   interface User {
-    id: string;
     username?: string | null;
   }
 
   interface Session {
-    user: {
+    user: DefaultSession["user"] & {
       id: string;
       username?: string | null;
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
     };
   }
 }
 
-declare module "next-auth/jwt" {
+declare module "@auth/core/jwt" {
   interface JWT {
-    id: string;
+    id?: string;
     username?: string | null;
   }
 }

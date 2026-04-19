@@ -1,10 +1,10 @@
-import type { BlockProps } from "./types"
+import type { BlockProps } from "./types";
 
 interface SkillsConfig {
-  title?: string
-  layout?: "tags" | "grid" | "list"
-  showLevel?: boolean
-  showCategory?: boolean
+  title?: string;
+  layout?: "tags" | "grid" | "list";
+  showLevel?: boolean;
+  showCategory?: boolean;
 }
 
 const LEVEL_LABELS: Record<string, string> = {
@@ -12,7 +12,7 @@ const LEVEL_LABELS: Record<string, string> = {
   intermediate: "Intermediário",
   advanced: "Avançado",
   expert: "Especialista",
-}
+};
 
 export default function SkillsBlock({ profile, config, version }: BlockProps) {
   const {
@@ -20,28 +20,28 @@ export default function SkillsBlock({ profile, config, version }: BlockProps) {
     layout = "tags",
     showLevel = false,
     showCategory = true,
-  } = config as SkillsConfig
+  } = config as SkillsConfig;
 
-  let skills: any[] = profile?.skills ?? []
+  let skills = profile.skills;
 
   // Filter by version selectedSkillIds if present
   if (version?.selectedSkillIds?.length) {
-    skills = skills.filter((s: any) => version.selectedSkillIds.includes(s.id))
+    skills = skills.filter((s) => version.selectedSkillIds.includes(s.id));
   }
 
-  skills = [...skills].sort((a, b) => a.order - b.order)
+  skills = [...skills].sort((a, b) => a.order - b.order);
 
-  if (skills.length === 0) return null
+  if (skills.length === 0) return null;
 
   // Group by category
-  const grouped = skills.reduce<Record<string, any[]>>((acc, skill) => {
-    const cat = skill.category ?? "Geral"
-    if (!acc[cat]) acc[cat] = []
-    acc[cat].push(skill)
-    return acc
-  }, {})
+  const grouped = skills.reduce<Record<string, typeof skills>>((acc, skill) => {
+    const cat = skill.category ?? "Geral";
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(skill);
+    return acc;
+  }, {});
 
-  const categories = Object.entries(grouped)
+  const categories = Object.entries(grouped);
 
   return (
     <section className="bg-white py-12">
@@ -83,7 +83,9 @@ export default function SkillsBlock({ profile, config, version }: BlockProps) {
                       key={skill.id}
                       className="rounded-lg border border-neutral-100 bg-neutral-50 px-3 py-2"
                     >
-                      <span className="text-sm font-medium text-neutral-800">{skill.name}</span>
+                      <span className="text-sm font-medium text-neutral-800">
+                        {skill.name}
+                      </span>
                       {showLevel && skill.level && (
                         <p className="mt-0.5 text-xs text-neutral-400">
                           {LEVEL_LABELS[skill.level] ?? skill.level}
@@ -97,7 +99,10 @@ export default function SkillsBlock({ profile, config, version }: BlockProps) {
               {layout === "list" && (
                 <ul className="space-y-1.5">
                   {items.map((skill) => (
-                    <li key={skill.id} className="flex items-center gap-2 text-sm text-neutral-700">
+                    <li
+                      key={skill.id}
+                      className="flex items-center gap-2 text-sm text-neutral-700"
+                    >
                       <span className="h-1.5 w-1.5 rounded-full bg-lime-500 flex-shrink-0" />
                       <span className="font-medium">{skill.name}</span>
                       {showLevel && skill.level && (
@@ -114,5 +119,5 @@ export default function SkillsBlock({ profile, config, version }: BlockProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

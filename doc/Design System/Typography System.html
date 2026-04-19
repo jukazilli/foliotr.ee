@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FolioTree — Typography System v0.0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500;600;700;800;900&family=Sora:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Page — herdado do Tonal System */
+    --page-bg:#F4F7FB;
+    --page-surface:#FFFFFF;
+    --page-border:rgba(15,17,21,0.08);
+    --page-text:#0F1115;
+    --page-text-soft:rgba(15,17,21,0.68);
+    --page-caption:rgba(15,17,21,0.48);
+    --page-shadow:0 20px 60px rgba(15,17,21,0.06);
+
+    /* Type families */
+    --font-display:'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;
+    --font-ui:'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-data:'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+    /* Cores usadas nos exemplos */
+    --lime-500:#D5F221; --lime-900:#535E13;
+    --blue-500:#2F66D0; --blue-900:#11254B;
+    --cyan-500:#19C2FF; --cyan-900:#063C52;
+    --coral-500:#FF6B57; --coral-900:#5E1B1E;
+    --violet-500:#7B61FF; --violet-900:#281F5E;
+    --brown-100:#F0D7DE; --brown-900:#421D2D;
+    --neutral-100:#F4F7FB; --neutral-200:#E8EEF5; --neutral-300:#D9E0EA;
+    --neutral-700:#3D4757; --neutral-900:#0F1115;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page-bg);color:var(--page-text);
+    font-family:var(--font-ui);font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .shell{max-width:1280px;margin:0 auto;padding:64px 40px 120px}
+
+  /* Masthead */
+  .masthead{
+    display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;
+    padding-bottom:28px;border-bottom:1px solid var(--page-border);margin-bottom:48px;
+  }
+  .brand-mark{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--font-data);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-text-soft);
+  }
+  .brand-mark .dot{width:10px;height:10px;border-radius:3px;background:var(--lime-500)}
+  h1.title{
+    font-family:var(--font-display);
+    font-size:64px;line-height:0.98;font-weight:800;letter-spacing:-0.035em;
+    margin:14px 0 12px;
+  }
+  .lede{color:var(--page-text-soft);max-width:640px;font-size:16px;line-height:1.55}
+  .meta{
+    font-family:var(--font-data);font-size:11px;color:var(--page-caption);
+    text-align:right;display:flex;flex-direction:column;gap:4px;
+  }
+  .meta strong{color:var(--page-text);font-weight:500}
+
+  /* Section chrome */
+  section{margin-bottom:80px}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:20px;
+  }
+  .section-head h2{
+    font-family:var(--font-data);font-size:12px;font-weight:600;
+    letter-spacing:0.14em;text-transform:uppercase;margin:0;
+  }
+  .section-head .idx{font-family:var(--font-data);font-size:11px;color:var(--page-caption)}
+  .section-head .rule{flex:1;height:1px;background:var(--page-border)}
+  .section-sub{color:var(--page-text-soft);max-width:720px;margin:-6px 0 28px;font-size:14px}
+
+  code.chip{
+    font-family:var(--font-data);font-size:12px;
+    background:var(--neutral-100);padding:1px 6px;border-radius:4px;
+    border:1px solid var(--page-border);
+  }
+
+  /* ---------- Font families ---------- */
+  .families{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .family{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:14px;padding:24px;box-shadow:var(--page-shadow);
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .family .role{
+    font-family:var(--font-data);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-caption);
+  }
+  .family .big{
+    font-size:84px;line-height:0.9;letter-spacing:-0.04em;
+    color:var(--page-text);
+  }
+  .family .fname{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    border-top:1px solid var(--page-border);padding-top:12px;
+  }
+  .family .fname .n{font-weight:600;font-size:15px}
+  .family .fname .src{font-family:var(--font-data);font-size:11px;color:var(--page-text-soft)}
+  .family ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+  .family li{
+    font-size:12.5px;color:var(--page-text-soft);line-height:1.5;
+    padding-left:14px;position:relative;
+  }
+  .family li::before{content:"—";position:absolute;left:0;color:var(--page-caption)}
+  .family .token{
+    font-family:var(--font-data);font-size:11px;color:var(--page-text);
+    background:var(--neutral-100);border:1px solid var(--page-border);
+    padding:8px 10px;border-radius:8px;word-break:break-all;
+  }
+
+  /* ---------- Weight scale ---------- */
+  .weights{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:16px;box-shadow:var(--page-shadow);overflow:hidden;
+  }
+  .weight-row{
+    display:grid;grid-template-columns:100px 1fr 260px;gap:24px;
+    padding:22px 24px;align-items:center;
+    border-bottom:1px solid var(--page-border);
+  }
+  .weight-row:last-child{border-bottom:0}
+  .weight-row .num{
+    font-family:var(--font-data);font-size:13px;color:var(--page-text);
+    display:flex;flex-direction:column;gap:2px;
+  }
+  .weight-row .num strong{font-size:22px;font-weight:600;letter-spacing:-0.01em}
+  .weight-row .sample{
+    font-family:var(--font-display);font-size:40px;line-height:1;letter-spacing:-0.025em;color:var(--page-text);
+  }
+  .weight-row .when{font-size:12.5px;color:var(--page-text-soft);line-height:1.55}
+
+  /* ---------- Scale specimen ---------- */
+  .scale{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:16px;box-shadow:var(--page-shadow);overflow:hidden;
+  }
+  .spec{
+    display:grid;grid-template-columns:180px 1fr 280px;gap:24px;
+    padding:28px 26px;border-bottom:1px solid var(--page-border);align-items:start;
+  }
+  .spec:last-child{border-bottom:0}
+  .spec .tag{
+    font-family:var(--font-data);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-caption);
+  }
+  .spec .name{
+    font-family:var(--font-ui);font-size:14px;font-weight:600;margin-top:4px;
+  }
+  .spec .role{color:var(--page-text-soft);font-size:12px;line-height:1.5;margin-top:6px}
+  .spec .body{min-width:0}
+  .spec .body .sample{color:var(--page-text);text-wrap:balance}
+  .spec .meta-list{
+    font-family:var(--font-data);font-size:11px;line-height:1.6;color:var(--page-text-soft);
+  }
+  .spec .meta-list b{color:var(--page-text);font-weight:500}
+
+  /* Landing sample variants */
+  .sample-display-xl{
+    font-family:var(--font-display);font-weight:800;
+    font-size:clamp(3.25rem, 7vw, 5rem);
+    line-height:0.94;letter-spacing:-0.055em;
+  }
+  .sample-display-l{
+    font-family:var(--font-display);font-weight:800;
+    font-size:clamp(2.25rem, 4vw, 3.5rem);
+    line-height:0.98;letter-spacing:-0.048em;
+  }
+  .sample-h1{
+    font-family:var(--font-display);font-weight:700;
+    font-size:clamp(1.875rem, 3vw, 2.5rem);
+    line-height:1.05;letter-spacing:-0.035em;
+  }
+  .sample-lead{
+    font-family:var(--font-ui);font-weight:500;
+    font-size:1.25rem;line-height:1.5;letter-spacing:-0.01em;max-width:40ch;
+  }
+  .sample-body-landing{
+    font-family:var(--font-ui);font-weight:500;
+    font-size:0.9375rem;line-height:1.65;max-width:500px;color:var(--page-text-soft);
+  }
+  .sample-eyebrow{
+    font-family:var(--font-ui);font-weight:700;text-transform:uppercase;
+    font-size:0.75rem;letter-spacing:0.08em;color:var(--page-text-soft);
+  }
+  .sample-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-ui);font-weight:600;font-size:0.9375rem;line-height:1;
+    background:var(--neutral-900);color:#fff;padding:14px 22px;border-radius:999px;
+  }
+
+  .sample-page-title{
+    font-family:var(--font-display);font-weight:700;
+    font-size:2.25rem;line-height:1.05;letter-spacing:-0.03em;
+  }
+  .sample-section-title{
+    font-family:var(--font-ui);font-weight:700;
+    font-size:1.5rem;line-height:1.2;letter-spacing:-0.012em;
+  }
+  .sample-card-title{
+    font-family:var(--font-ui);font-weight:600;
+    font-size:1.125rem;line-height:1.3;
+  }
+  .sample-body-ui{
+    font-family:var(--font-ui);font-weight:500;
+    font-size:0.875rem;line-height:1.6;
+  }
+  .sample-meta{
+    font-family:var(--font-ui);font-weight:500;
+    font-size:0.8125rem;line-height:1.5;color:var(--page-text-soft);
+  }
+  .sample-label{
+    font-family:var(--font-ui);font-weight:700;
+    font-size:0.75rem;line-height:1.2;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--violet-900);background:#E7E0FF;padding:4px 10px;border-radius:999px;display:inline-block;
+  }
+  .sample-data{
+    font-family:var(--font-data);font-weight:600;
+    font-size:1.5rem;line-height:1.1;letter-spacing:-0.01em;
+  }
+  .sample-data-line{
+    font-family:var(--font-data);font-weight:500;
+    font-size:0.875rem;line-height:1.5;color:var(--page-text-soft);
+  }
+
+  /* Special hero treatment */
+  .hero-showcase{
+    background:var(--blue-500);color:var(--lime-500);
+    border-radius:20px;padding:56px 48px;
+    min-height:400px;display:grid;grid-template-columns:1.2fr 1fr;gap:32px;align-items:center;
+    box-shadow:var(--page-shadow);border:1px solid var(--page-border);
+  }
+  .hero-showcase .headline{
+    font-family:var(--font-display);font-weight:800;
+    font-size:clamp(48px, 6.5vw, 82px);
+    line-height:0.92;letter-spacing:-0.04em;text-wrap:balance;
+  }
+  .hero-showcase .support{
+    font-family:var(--font-ui);font-weight:500;
+    font-size:18px;line-height:1.5;letter-spacing:-0.01em;
+    color:#fff;max-width:40ch;margin-top:20px;
+  }
+  .hero-showcase .cta{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--lime-500);color:var(--lime-900);
+    padding:16px 28px;border-radius:999px;
+    font-family:var(--font-ui);font-weight:700;font-size:16px;
+    margin-top:28px;
+  }
+  .hero-showcase .ph{
+    background:repeating-linear-gradient(135deg, rgba(255,255,255,0.14) 0 10px, transparent 10px 20px);
+    border:1px dashed rgba(255,255,255,0.4);border-radius:16px;min-height:320px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-data);font-size:11px;color:rgba(255,255,255,0.8);letter-spacing:0.12em;
+  }
+
+  /* Pairing grid */
+  .pairs{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .pair{
+    border-radius:16px;padding:28px;min-height:180px;
+    display:flex;flex-direction:column;gap:14px;justify-content:space-between;
+    border:1px solid var(--page-border);
+  }
+  .pair .h{font-family:var(--font-display);font-weight:800;font-size:28px;line-height:1;letter-spacing:-0.03em;text-wrap:balance}
+  .pair .s{font-family:var(--font-ui);font-weight:500;font-size:13px;line-height:1.55;opacity:0.85}
+  .pair .m{font-family:var(--font-data);font-size:10px;display:flex;gap:10px;opacity:0.8}
+  .pair .m i{width:10px;height:10px;border-radius:3px;display:inline-block;border:1px solid rgba(0,0,0,0.1);margin-right:6px;vertical-align:-1px}
+
+  /* Rules grid */
+  .rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .rule-card{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:12px;padding:20px 22px;
+  }
+  .rule-card h3{
+    font-family:var(--font-data);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-caption);margin:0 0 12px;font-weight:600;
+  }
+  .rule-card ul{margin:0;padding-left:0;list-style:none}
+  .rule-card li{
+    padding:8px 0;border-bottom:1px dashed var(--page-border);
+    display:flex;gap:10px;font-size:13px;line-height:1.5;
+  }
+  .rule-card li:last-child{border-bottom:0}
+  .rule-card li::before{content:"→";font-family:var(--font-data);color:var(--page-caption);flex:0 0 auto}
+
+  /* Stack comparison */
+  .compare{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  }
+  .compare .card{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:14px;padding:30px 28px;
+  }
+  .compare .card .role{
+    font-family:var(--font-data);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-caption);margin-bottom:14px;
+  }
+  .compare .card .ex{
+    font-family:var(--font-display);font-weight:800;
+    font-size:54px;line-height:0.94;letter-spacing:-0.04em;text-wrap:balance;
+  }
+  .compare .card .note{
+    font-family:var(--font-ui);font-size:12.5px;color:var(--page-text-soft);
+    margin-top:16px;line-height:1.55;
+  }
+
+  pre.css-dump{
+    background:var(--neutral-900);color:#E8EEF5;
+    padding:24px;border-radius:12px;
+    font-family:var(--font-data);font-size:12px;line-height:1.65;
+    overflow:auto;max-height:460px;margin:0;border:1px solid var(--page-border);
+  }
+
+  .foot{
+    margin-top:60px;padding-top:24px;border-top:1px solid var(--page-border);
+    display:flex;justify-content:space-between;
+    font-family:var(--font-data);font-size:11px;color:var(--page-caption);
+  }
+
+  @media (max-width:1100px){
+    .families{grid-template-columns:1fr}
+    .weight-row,.spec{grid-template-columns:1fr}
+    .pairs,.compare,.rules-grid{grid-template-columns:1fr}
+    .hero-showcase{grid-template-columns:1fr}
+    h1.title{font-size:44px}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div>
+      <div class="brand-mark"><span class="dot"></span> FolioTree · Typography System</div>
+      <h1 class="title">Typography<br/>System <span style="color:var(--page-text-soft);font-weight:500">v0.0.1</span></h1>
+      <p class="lede">Fonte única de verdade para tipografia no FolioTree. Presença editorial para a landing, leitura limpa para o produto, e números monoespaçados como evidência. A marca é <strong>viva, clara, ousada, próxima, inteligente e atual</strong>.</p>
+    </div>
+    <div class="meta">
+      <span>DOC / typography-system</span>
+      <span>STATUS / <strong>draft</strong></span>
+      <span>PAIR / tonal-system v0.0.1</span>
+      <span>UPDATED / 2026-04-18</span>
+    </div>
+  </header>
+
+  <!-- 00 · Font choice note -->
+  <section>
+    <div class="section-head">
+      <span class="idx">00</span>
+      <h2>Font choice · Bricolage Grotesque (display)</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Substituímos <code class="chip">Sora</code> por <code class="chip">Bricolage Grotesque</code> como fonte de display. Ela entrega a mesma família de grotesk contemporâneo, mas com <strong>bojo mais redondo, terminações suaves e peso ótico "gordinho"</strong> — o que dá o tom alegre e comunicativo que a marca pede. Sora fica como fallback.</p>
+
+    <div class="compare">
+      <div class="card">
+        <div class="role">Antes · Sora 800</div>
+        <div class="ex" style="font-family:'Sora',sans-serif;font-weight:800">Mostre mais que um perfil.</div>
+        <div class="note">Sora é excelente, porém com terminações mais retas e geométricas. Funciona bem em tom tech.</div>
+      </div>
+      <div class="card" style="background:#EAF0FA">
+        <div class="role">Agora · Bricolage Grotesque 800</div>
+        <div class="ex" style="color:var(--blue-900)">Mostre mais que um perfil.</div>
+        <div class="note" style="color:var(--blue-900);opacity:0.7">Bojo arredondado, altura-x generosa, terminações macias. Mesmo esqueleto do grotesk, mas mais quente.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 · Font stack -->
+  <section>
+    <div class="section-head">
+      <span class="idx">01</span>
+      <h2>Font stack</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Três fontes, três funções: presença, leitura, evidência.</p>
+
+    <div class="families">
+      <div class="family">
+        <span class="role">Display</span>
+        <div class="big" style="font-family:var(--font-display);font-weight:800">Aa</div>
+        <div class="fname"><span class="n">Bricolage Grotesque</span><span class="src">Google · var</span></div>
+        <div class="token">--font-display: 'Bricolage Grotesque', 'Sora', sans-serif;</div>
+        <ul>
+          <li>Hero headlines e declarações grandes</li>
+          <li>Títulos de seção expressivos</li>
+          <li>Onboarding e estados com presença de marca</li>
+          <li>Somente em texto curto e impactante</li>
+        </ul>
+      </div>
+      <div class="family">
+        <span class="role">UI</span>
+        <div class="big" style="font-family:var(--font-ui);font-weight:600">Aa</div>
+        <div class="fname"><span class="n">Inter</span><span class="src">Google · var</span></div>
+        <div class="token">--font-ui: 'Inter', sans-serif;</div>
+        <ul>
+          <li>Navegação, botões, formulários, cards</li>
+          <li>Descrições e labels do produto</li>
+          <li>Long-running flows · leitura extensa</li>
+          <li>Neutro o bastante pra produto, vivo o bastante pra não virar ERP</li>
+        </ul>
+      </div>
+      <div class="family">
+        <span class="role">Data</span>
+        <div class="big" style="font-family:var(--font-data);font-weight:600">Aa</div>
+        <div class="fname"><span class="n">IBM Plex Mono</span><span class="src">Google · mono</span></div>
+        <div class="token">--font-data: 'IBM Plex Mono', monospace;</div>
+        <ul>
+          <li>Métricas, links brutos, analytics</li>
+          <li>Provas, validação técnica</li>
+          <li>Números com peso de evidência</li>
+          <li>Precisa sem dominar a interface</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Weight scale -->
+  <section>
+    <div class="section-head">
+      <span class="idx">02</span>
+      <h2>Weight scale</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Sete pesos com função clara. <code class="chip">900</code> é especial, não padrão. <code class="chip">200</code> é decorativo, não funcional.</p>
+
+    <div class="weights" id="weight-scale"></div>
+  </section>
+
+  <!-- 03 · Landing scale -->
+  <section>
+    <div class="section-head">
+      <span class="idx">03</span>
+      <h2>Landing · type scale</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Escala expressiva. Frases curtas, alta presença, poucos elementos por slide.</p>
+
+    <div class="scale">
+
+      <div class="spec">
+        <div>
+          <span class="tag">Display XL</span>
+          <div class="name">Hero headline</div>
+          <div class="role">Primeira dobra. Campanha. Nunca em texto longo.</div>
+        </div>
+        <div class="body"><div class="sample sample-display-xl">Mostre mais que um perfil.</div></div>
+        <div class="meta-list">
+          <b>family</b> display · Bricolage<br/>
+          <b>weight</b> 800<br/>
+          <b>size</b> clamp(3.25rem, 7vw, 5rem)<br/>
+          <b>line-height</b> 0.94<br/>
+          <b>tracking</b> -0.055em
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Display L</span>
+          <div class="name">Section headline</div>
+          <div class="role">Títulos grandes de seção em landing.</div>
+        </div>
+        <div class="body"><div class="sample sample-display-l">Sua carreira em uma árvore que cresce com você.</div></div>
+        <div class="meta-list">
+          <b>family</b> display<br/>
+          <b>weight</b> 800<br/>
+          <b>size</b> clamp(2.25rem, 4vw, 3.5rem)<br/>
+          <b>line-height</b> 0.98<br/>
+          <b>tracking</b> -0.048em
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Heading 1</span>
+          <div class="name">Block title</div>
+          <div class="role">Feature grids, provas, "como funciona".</div>
+        </div>
+        <div class="body"><div class="sample sample-h1">Compartilhe, meça, aprenda em tempo real.</div></div>
+        <div class="meta-list">
+          <b>family</b> display<br/>
+          <b>weight</b> 700<br/>
+          <b>size</b> clamp(1.875rem, 3vw, 2.5rem)<br/>
+          <b>line-height</b> 1.05<br/>
+          <b>tracking</b> -0.035em
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Lead</span>
+          <div class="name">Hero support</div>
+          <div class="role">2–3 linhas visuais. Curto. Nunca explica o produto inteiro.</div>
+        </div>
+        <div class="body"><div class="sample sample-lead">Uma única página viva para reunir projetos, versões e provas do que você faz.</div></div>
+        <div class="meta-list">
+          <b>family</b> ui · Inter<br/>
+          <b>weight</b> 500<br/>
+          <b>size</b> 1.25rem<br/>
+          <b>line-height</b> 1.5<br/>
+          <b>max-width</b> 40ch
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Body · landing</span>
+          <div class="name">Supporting paragraph</div>
+          <div class="role">Explicação moderada. Limite de linha.</div>
+        </div>
+        <div class="body"><div class="sample sample-body-landing">Conecte tudo que você cria, publica e compartilha — projetos, redes, provas, versões — em uma única página viva que se atualiza com você.</div></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 500<br/>
+          <b>size</b> 0.9375rem<br/>
+          <b>line-height</b> 1.65<br/>
+          <b>max-width</b> 500px
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Eyebrow</span>
+          <div class="name">Context marker</div>
+          <div class="role">Rótulo acima de títulos grandes.</div>
+        </div>
+        <div class="body"><div class="sample sample-eyebrow">Novo · FolioTree 2026</div></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 700<br/>
+          <b>size</b> 0.75rem<br/>
+          <b>tracking</b> 0.08em<br/>
+          <b>case</b> UPPERCASE
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">CTA</span>
+          <div class="name">Action text</div>
+          <div class="role">Botões primários.</div>
+        </div>
+        <div class="body"><a class="sample sample-cta">Criar conta grátis →</a></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 600<br/>
+          <b>size</b> 0.9375rem<br/>
+          <b>line-height</b> 1
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 04 · Product scale -->
+  <section>
+    <div class="section-head">
+      <span class="idx">04</span>
+      <h2>Product · type scale</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Controlado, estável, fácil de escanear. Cor e tipografia organizam significado, não dominam a tela.</p>
+
+    <div class="scale">
+
+      <div class="spec">
+        <div>
+          <span class="tag">Page title</span>
+          <div class="name">Internal page</div>
+          <div class="role">Overview, Versões, Output de currículo/portfólio.</div>
+        </div>
+        <div class="body"><div class="sample sample-page-title">Versões publicadas</div></div>
+        <div class="meta-list">
+          <b>family</b> display · Bricolage<br/>
+          <b>weight</b> 700<br/>
+          <b>size</b> 2.25rem<br/>
+          <b>line-height</b> 1.05<br/>
+          <b>tracking</b> -0.03em
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Section title</span>
+          <div class="name">Large section</div>
+          <div class="role">Blocos dentro de uma página de produto.</div>
+        </div>
+        <div class="body"><div class="sample sample-section-title">Atividade recente</div></div>
+        <div class="meta-list">
+          <b>family</b> ui · Inter<br/>
+          <b>weight</b> 700<br/>
+          <b>size</b> 1.5rem<br/>
+          <b>line-height</b> 1.2
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Card title</span>
+          <div class="name">Item title</div>
+          <div class="role">Cards, itens repetidos, módulos compactos.</div>
+        </div>
+        <div class="body"><div class="sample sample-card-title">Relatório Q1 · 2026</div></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 600<br/>
+          <b>size</b> 1.125rem<br/>
+          <b>line-height</b> 1.3
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Body · ui</span>
+          <div class="name">Default text</div>
+          <div class="role">Descrições, parágrafos de produto, conteúdo geral.</div>
+        </div>
+        <div class="body"><div class="sample sample-body-ui">Descrição padrão do produto. Peso 500 em 0.875rem dá leitura confortável sem enfraquecer a hierarquia. Use em blocos curtos e médios, dentro de cards ou áreas de trabalho.</div></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 500<br/>
+          <b>size</b> 0.875rem<br/>
+          <b>line-height</b> 1.6
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Meta</span>
+          <div class="name">Secondary metadata</div>
+          <div class="role">Timestamps, contadores, helpers.</div>
+        </div>
+        <div class="body"><div class="sample sample-meta">atualizado há 2h · 3 arquivos · 1 comentário</div></div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 500<br/>
+          <b>size</b> 0.8125rem<br/>
+          <b>color</b> neutral-700
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Label · status</span>
+          <div class="name">Chips & badges</div>
+          <div class="role">Tags, categorias, status, micro-navegação.</div>
+        </div>
+        <div class="body">
+          <span class="sample-label">v2.3 · draft</span>
+          <span class="sample-label" style="color:var(--cyan-900);background:#CBF3FF;margin-left:8px">info</span>
+          <span class="sample-label" style="color:var(--coral-900);background:#FFE2D6;margin-left:8px">premium</span>
+        </div>
+        <div class="meta-list">
+          <b>family</b> ui<br/>
+          <b>weight</b> 700<br/>
+          <b>size</b> 0.75rem (0.625rem compact)<br/>
+          <b>tracking</b> 0.06em<br/>
+          <b>case</b> UPPERCASE
+        </div>
+      </div>
+
+      <div class="spec">
+        <div>
+          <span class="tag">Data · stat</span>
+          <div class="name">Metrics & proof</div>
+          <div class="role">Números, validação, analytics, links brutos.</div>
+        </div>
+        <div class="body">
+          <div class="sample sample-data">+38% views</div>
+          <div class="sample sample-data-line" style="margin-top:6px">foliotree.co/luna · 1,284 clicks · 7 days</div>
+        </div>
+        <div class="meta-list">
+          <b>family</b> data · IBM Plex Mono<br/>
+          <b>weight</b> 600<br/>
+          <b>highlight</b> 1.5rem<br/>
+          <b>line</b> 0.875rem
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 05 · Special hero -->
+  <section>
+    <div class="section-head">
+      <span class="idx">05</span>
+      <h2>Special hero treatment · 900</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Tratamento reservado para campanhas e impacto. Display <code class="chip">800</code> da Bricolage sobre fundo expressivo, em texto muito curto.</p>
+
+    <div class="hero-showcase">
+      <div>
+        <div class="headline">Crie e personalize seu FolioTree em minutos.</div>
+        <div class="support">Conecte tudo que você cria em uma única página viva. Personalize cada detalhe — ou deixe a IA do FolioTree ajustar por você.</div>
+        <a class="cta">Criar conta grátis →</a>
+      </div>
+      <div class="ph">[ CARROSSEL · PRODUTO ]</div>
+    </div>
+  </section>
+
+  <!-- 06 · Type × color pairing -->
+  <section>
+    <div class="section-head">
+      <span class="idx">06</span>
+      <h2>Tipografia × cor</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Prefira o tom dark da própria família para tipografia sobre superfícies coloridas. Evite preto puro em seção expressiva se a família tem dark próprio.</p>
+
+    <div class="pairs">
+      <div class="pair" style="background:var(--blue-500);color:var(--lime-500)">
+        <div class="h">Sua carreira em uma árvore.</div>
+        <div class="s" style="color:#fff">Blue 500 + Lime 500 — energia estrutural. Hero padrão da landing.</div>
+        <div class="m"><span><i style="background:#2F66D0"></i>#2F66D0</span><span><i style="background:#D5F221"></i>#D5F221</span></div>
+      </div>
+      <div class="pair" style="background:var(--lime-500);color:var(--lime-900)">
+        <div class="h">Seu link em bio, mas vivo.</div>
+        <div class="s">Lime 500 + Lime 900 — recados positivos. Dark da própria família como tipografia.</div>
+        <div class="m"><span><i style="background:#D5F221"></i>#D5F221</span><span><i style="background:#535E13"></i>#535E13</span></div>
+      </div>
+      <div class="pair" style="background:var(--cyan-500);color:#F9EEF1">
+        <div class="h">Compartilhe. Meça. Aprenda.</div>
+        <div class="s">Cyan 500 + Brown 50 — par livre. Texto quente pêssego sobre azul frio.</div>
+        <div class="m"><span><i style="background:#19C2FF"></i>#19C2FF</span><span><i style="background:#F9EEF1"></i>#F9EEF1</span></div>
+      </div>
+      <div class="pair" style="background:var(--coral-500);color:var(--violet-900)">
+        <div class="h">Descubra gente que cria como você.</div>
+        <div class="s">Coral 500 + Violet 900 — par livre. Calor com profundidade.</div>
+        <div class="m"><span><i style="background:#FF6B57"></i>#FF6B57</span><span><i style="background:#281F5E"></i>#281F5E</span></div>
+      </div>
+      <div class="pair" style="background:var(--brown-100);color:var(--blue-900)">
+        <div class="h">Sua evidência, sempre atual.</div>
+        <div class="s">Brown 100 + Blue 900 — editorial com profundidade. Ótimo para depoimentos.</div>
+        <div class="m"><span><i style="background:#F0D7DE"></i>#F0D7DE</span><span><i style="background:#11254B"></i>#11254B</span></div>
+      </div>
+      <div class="pair" style="background:#E7E0FF;color:var(--violet-900)">
+        <div class="h">Versão v2.3 · publicada.</div>
+        <div class="s">Violet 100 + Violet 900 — camada de versão dentro do produto.</div>
+        <div class="m"><span><i style="background:#E7E0FF"></i>#E7E0FF</span><span><i style="background:#281F5E"></i>#281F5E</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Rules -->
+  <section>
+    <div class="section-head">
+      <span class="idx">07</span>
+      <h2>Usage rules</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="rules-grid">
+      <div class="rule-card">
+        <h3>Do</h3>
+        <ul>
+          <li>Use Bricolage para presença — não para preencher UI densa.</li>
+          <li>Use Inter como camada padrão de leitura do produto.</li>
+          <li>Use IBM Plex Mono só onde dados, provas, links ou métricas precisam de ênfase.</li>
+          <li>Mantenha headlines da landing curtos e visualmente fortes.</li>
+          <li>Mantenha o produto estável, legível, modular.</li>
+          <li>Aplique max-width em lead e body (40ch / 500px).</li>
+          <li>Uppercase + tracking só em labels, eyebrows e badges.</li>
+        </ul>
+      </div>
+      <div class="rule-card">
+        <h3>Don't</h3>
+        <ul>
+          <li>Não use 900 como padrão da interface.</li>
+          <li>Não use 200 em conteúdo funcional.</li>
+          <li>Não escreva parágrafos longos com display type.</li>
+          <li>Não use preto puro sobre seções coloridas que têm dark próprio.</li>
+          <li>Não transforme o produto em dashboard frio de SaaS.</li>
+          <li>Não misture mais de 2 famílias tipográficas no mesmo bloco.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · CSS dump -->
+  <section>
+    <div class="section-head">
+      <span class="idx">08</span>
+      <h2>CSS variables · copy block</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Cole no <code class="chip">:root</code> do projeto. Funciona junto com o Tonal System.</p>
+
+    <pre class="css-dump" id="css-dump"></pre>
+  </section>
+
+  <div class="foot">
+    <span>FolioTree · Typography System</span>
+    <span>v0.0.1 · reference document</span>
+  </div>
+</div>
+
+<script>
+/* ---------- Weight scale data ---------- */
+const WEIGHTS = [
+  {w:900, name:'Black', sample:'Impact headline', when:'Headlines de hero especiais, números gigantes, momentos de campanha. Usar só em texto curto. Reservado para impacto.'},
+  {w:800, name:'Extra Bold', sample:'Display padrão', when:'Peso expressivo padrão dos displays em landing. Sempre preferir 800 a 900 para hierarquia normal.'},
+  {w:700, name:'Bold', sample:'CTAs e H1', when:'Chamadas de ação, títulos de bloco, heading 1. Peso funcional mais forte do UI.'},
+  {w:650, name:'Semibold+', sample:'Produto · section', when:'Títulos controlados dentro do produto. Mantém hierarquia sem endurecer a interface. (custom weight em fontes variáveis)'},
+  {w:600, name:'Semibold', sample:'Card titles · data', when:'Títulos de cards, repetições compactas, métricas, labels de dados.'},
+  {w:500, name:'Medium', sample:'Lead · body · paragraph', when:'Leitura principal. Body landing e produto. Peso com presença sem pesar.'},
+  {w:400, name:'Regular', sample:'Long reading · descriptions', when:'Quando legibilidade importa mais que presença de marca. Secundário.'},
+  {w:200, name:'Extra Light', sample:'Editorial · watermark', when:'Decoração, números de fundo, marca d\'água. Raro. Nunca em texto funcional.'},
+];
+const wEl = document.getElementById('weight-scale');
+wEl.innerHTML = WEIGHTS.map(w=>`
+  <div class="weight-row">
+    <div class="num"><strong>${w.w}</strong><span>${w.name}</span></div>
+    <div class="sample" style="font-weight:${w.w === 650 ? 600 : w.w}; ${w.w === 650 ? 'font-variation-settings:\"wght\" 650;' : ''}">${w.sample}</div>
+    <div class="when">${w.when}</div>
+  </div>
+`).join('');
+
+/* ---------- CSS dump ---------- */
+const css = `:root {
+  /* ── Type families ── */
+  --font-display: 'Bricolage Grotesque', 'Sora', ui-sans-serif, system-ui, sans-serif;
+  --font-ui:      'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-data:    'IBM Plex Mono', ui-monospace, Menlo, monospace;
+
+  /* ── Landing scale ── */
+  --t-display-xl-size: clamp(3.25rem, 7vw, 5rem);
+  --t-display-xl-lh:   0.94;
+  --t-display-xl-tr:  -0.055em;
+  --t-display-xl-w:    800;
+
+  --t-display-l-size:  clamp(2.25rem, 4vw, 3.5rem);
+  --t-display-l-lh:    0.98;
+  --t-display-l-tr:   -0.048em;
+  --t-display-l-w:     800;
+
+  --t-h1-size:         clamp(1.875rem, 3vw, 2.5rem);
+  --t-h1-lh:           1.05;
+  --t-h1-tr:          -0.035em;
+  --t-h1-w:            700;
+
+  --t-lead-size:       1.25rem;
+  --t-lead-lh:         1.5;
+  --t-lead-tr:        -0.01em;
+  --t-lead-w:          500;
+
+  --t-body-landing:    0.9375rem;
+  --t-body-landing-lh: 1.65;
+
+  --t-eyebrow-size:    0.75rem;
+  --t-eyebrow-tr:      0.08em;
+  --t-eyebrow-w:       700;
+
+  --t-cta-size:        0.9375rem;
+  --t-cta-w:           600;
+
+  /* ── Product scale ── */
+  --t-page-title:      2.25rem;
+  --t-page-title-lh:   1.05;
+  --t-page-title-tr:  -0.03em;
+  --t-page-title-w:    700;
+
+  --t-section-title:   1.5rem;
+  --t-section-title-w: 700;
+
+  --t-card-title:      1.125rem;
+  --t-card-title-w:    600;
+
+  --t-body-ui:         0.875rem;
+  --t-body-ui-lh:      1.6;
+  --t-body-ui-w:       500;
+
+  --t-meta:            0.8125rem;
+  --t-meta-w:          500;
+
+  --t-label:           0.75rem;
+  --t-label-compact:   0.625rem;
+  --t-label-tr:        0.06em;
+  --t-label-w:         700;
+
+  --t-data-line:       0.875rem;
+  --t-data-highlight:  1.5rem;
+  --t-data-w:          600;
+}
+
+/* utility classes */
+.t-display-xl   { font-family:var(--font-display); font-weight:var(--t-display-xl-w); font-size:var(--t-display-xl-size); line-height:var(--t-display-xl-lh); letter-spacing:var(--t-display-xl-tr); }
+.t-display-l    { font-family:var(--font-display); font-weight:var(--t-display-l-w);  font-size:var(--t-display-l-size);  line-height:var(--t-display-l-lh);  letter-spacing:var(--t-display-l-tr); }
+.t-h1           { font-family:var(--font-display); font-weight:var(--t-h1-w);         font-size:var(--t-h1-size);         line-height:var(--t-h1-lh);         letter-spacing:var(--t-h1-tr); }
+.t-lead         { font-family:var(--font-ui);      font-weight:var(--t-lead-w);       font-size:var(--t-lead-size);       line-height:var(--t-lead-lh);       letter-spacing:var(--t-lead-tr); max-width:40ch; }
+.t-body-landing { font-family:var(--font-ui);      font-weight:500;                   font-size:var(--t-body-landing);    line-height:var(--t-body-landing-lh); max-width:500px; }
+.t-eyebrow      { font-family:var(--font-ui);      font-weight:var(--t-eyebrow-w);    font-size:var(--t-eyebrow-size);    letter-spacing:var(--t-eyebrow-tr); text-transform:uppercase; }
+.t-cta          { font-family:var(--font-ui);      font-weight:var(--t-cta-w);        font-size:var(--t-cta-size);        line-height:1; }
+
+.t-page-title   { font-family:var(--font-display); font-weight:var(--t-page-title-w); font-size:var(--t-page-title);      line-height:var(--t-page-title-lh); letter-spacing:var(--t-page-title-tr); }
+.t-section      { font-family:var(--font-ui);      font-weight:var(--t-section-title-w); font-size:var(--t-section-title); line-height:1.2; }
+.t-card         { font-family:var(--font-ui);      font-weight:var(--t-card-title-w); font-size:var(--t-card-title);      line-height:1.3; }
+.t-body-ui      { font-family:var(--font-ui);      font-weight:var(--t-body-ui-w);    font-size:var(--t-body-ui);         line-height:var(--t-body-ui-lh); }
+.t-meta         { font-family:var(--font-ui);      font-weight:var(--t-meta-w);       font-size:var(--t-meta); }
+.t-label        { font-family:var(--font-ui);      font-weight:var(--t-label-w);      font-size:var(--t-label);           letter-spacing:var(--t-label-tr); text-transform:uppercase; }
+.t-data         { font-family:var(--font-data);    font-weight:var(--t-data-w);       font-size:var(--t-data-highlight); }
+.t-data-line    { font-family:var(--font-data);    font-weight:500;                   font-size:var(--t-data-line); }`;
+document.getElementById('css-dump').textContent = css;
+</script>
+</body>
+</html>

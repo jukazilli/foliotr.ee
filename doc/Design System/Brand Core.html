@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>FolioTree — Brand Core v0.0.1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Page */
+    --page-bg:#F4F7FB;
+    --page-surface:#FFFFFF;
+    --page-border:rgba(15,17,21,0.08);
+    --page-text:#0F1115;
+    --page-text-soft:rgba(15,17,21,0.68);
+    --page-caption:rgba(15,17,21,0.48);
+    --page-shadow:0 20px 60px rgba(15,17,21,0.06);
+
+    /* Cores do tonal system */
+    --lime-100:#EFF5CC; --lime-500:#D5F221; --lime-900:#535E13;
+    --blue-100:#CDDAF4; --blue-500:#2F66D0; --blue-900:#11254B;
+    --cyan-100:#CBF3FF; --cyan-500:#19C2FF; --cyan-900:#063C52;
+    --coral-100:#FFE2D6; --coral-500:#FF6B57; --coral-900:#5E1B1E;
+    --violet-100:#E7E0FF; --violet-500:#7B61FF; --violet-900:#281F5E;
+    --brown-50:#F9EEF1; --brown-100:#F0D7DE; --brown-900:#421D2D;
+    --green-500:#7DFF5A; --green-900:#214E1E;
+    --neutral-100:#F4F7FB; --neutral-200:#E8EEF5; --neutral-300:#D9E0EA;
+    --neutral-700:#3D4757; --neutral-800:#1A1F29; --neutral-900:#0F1115;
+
+    /* Type */
+    --display:'Bricolage Grotesque','Sora',ui-sans-serif,system-ui,sans-serif;
+    --sans:'Inter',-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--page-bg);color:var(--page-text);
+    font-family:var(--sans);font-size:14px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .shell{max-width:1280px;margin:0 auto;padding:64px 40px 120px}
+
+  /* Masthead */
+  .masthead{
+    display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end;
+    padding-bottom:28px;border-bottom:1px solid var(--page-border);margin-bottom:48px;
+  }
+  .brand-mark{
+    display:inline-flex;align-items:center;gap:10px;
+    font-family:var(--mono);font-size:12px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-text-soft);
+  }
+  .brand-mark .dot{width:10px;height:10px;border-radius:3px;background:var(--lime-500)}
+  h1.title{
+    font-family:var(--display);
+    font-size:64px;line-height:0.96;font-weight:800;letter-spacing:-0.04em;margin:14px 0 12px;
+  }
+  h1.title em{font-style:normal;color:var(--blue-500)}
+  .lede{color:var(--page-text-soft);max-width:640px;font-size:16px;line-height:1.55}
+  .meta{
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+    text-align:right;display:flex;flex-direction:column;gap:4px;
+  }
+  .meta strong{color:var(--page-text);font-weight:500}
+
+  /* Section chrome */
+  section{margin-bottom:72px}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:24px;margin-bottom:20px;
+  }
+  .section-head h2{
+    font-family:var(--mono);font-size:12px;font-weight:600;
+    letter-spacing:0.14em;text-transform:uppercase;margin:0;
+  }
+  .section-head .idx{font-family:var(--mono);font-size:11px;color:var(--page-caption)}
+  .section-head .rule{flex:1;height:1px;background:var(--page-border)}
+  .section-sub{color:var(--page-text-soft);max-width:720px;margin:-6px 0 24px;font-size:14px}
+  code.chip{
+    font-family:var(--mono);font-size:12px;
+    background:var(--neutral-100);padding:1px 6px;border-radius:4px;
+    border:1px solid var(--page-border);
+  }
+
+  /* Big statement card */
+  .hero-card{
+    background:var(--blue-500);color:var(--lime-500);
+    border-radius:20px;padding:56px 48px;
+    box-shadow:var(--page-shadow);border:1px solid var(--page-border);
+    display:grid;grid-template-columns:1fr auto;gap:28px;align-items:end;
+    min-height:260px;
+  }
+  .hero-card .headline{
+    font-family:var(--display);font-weight:800;
+    font-size:clamp(40px,5vw,68px);line-height:0.94;letter-spacing:-0.045em;
+    text-wrap:balance;max-width:18ch;
+  }
+  .hero-card .corner{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+    color:#fff;opacity:0.7;text-align:right;line-height:1.5;
+  }
+
+  /* Cards */
+  .cards{display:grid;gap:14px}
+  .cards.col-2{grid-template-columns:1fr 1fr}
+  .cards.col-3{grid-template-columns:repeat(3,1fr)}
+  .cards.col-4{grid-template-columns:repeat(4,1fr)}
+  .card{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:14px;padding:22px 24px;box-shadow:var(--page-shadow);
+  }
+  .card .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-caption);margin-bottom:10px;
+  }
+  .card h3{
+    font-family:var(--display);font-weight:700;
+    font-size:22px;line-height:1.1;letter-spacing:-0.02em;
+    margin:0 0 10px;
+  }
+  .card p{margin:0;font-size:13.5px;line-height:1.55;color:var(--page-text-soft)}
+  .card ul{margin:10px 0 0;padding:0;list-style:none}
+  .card ul li{
+    padding:7px 0;font-size:13.5px;line-height:1.5;color:var(--page-text-soft);
+    display:flex;gap:10px;border-bottom:1px dashed var(--page-border);
+  }
+  .card ul li:last-child{border-bottom:0}
+  .card ul li::before{content:"—";color:var(--page-caption);flex:0 0 auto}
+
+  /* Dualidade is/is-not */
+  .duality{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .duality .yes{
+    background:var(--lime-100);border:1px solid var(--page-border);
+    border-radius:14px;padding:22px 24px;box-shadow:var(--page-shadow);
+  }
+  .duality .yes h3, .duality .no h3{
+    font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-0.02em;
+    margin:0 0 10px;
+  }
+  .duality .yes .tag, .duality .no .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    margin-bottom:10px;display:inline-block;
+  }
+  .duality .yes .tag{color:var(--lime-900)}
+  .duality .yes h3{color:var(--lime-900)}
+  .duality .yes ul li{color:var(--lime-900);opacity:0.85}
+  .duality .no{
+    background:var(--coral-100);border:1px solid var(--page-border);
+    border-radius:14px;padding:22px 24px;box-shadow:var(--page-shadow);
+  }
+  .duality .no .tag{color:var(--coral-900)}
+  .duality .no h3{color:var(--coral-900)}
+  .duality .no ul li{color:var(--coral-900);opacity:0.85}
+  .duality ul{margin:10px 0 0;padding:0;list-style:none}
+  .duality ul li{
+    padding:7px 0;font-size:13.5px;line-height:1.5;
+    display:flex;gap:10px;border-bottom:1px dashed rgba(0,0,0,0.1);
+  }
+  .duality ul li:last-child{border-bottom:0}
+  .duality .yes ul li::before{content:"✓";font-family:var(--mono);color:var(--lime-900);flex:0 0 auto;font-weight:700}
+  .duality .no ul li::before{content:"✕";font-family:var(--mono);color:var(--coral-900);flex:0 0 auto;font-weight:700}
+
+  /* Key-value rows */
+  .kv{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:18px 0;border-bottom:1px dashed var(--page-border)}
+  .kv:last-child{border-bottom:0}
+  .kv .k{
+    font-family:var(--mono);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--page-text);font-weight:600;
+  }
+  .kv .v{font-size:15px;line-height:1.55;color:var(--page-text)}
+  .kv .v em{font-style:normal;color:var(--page-text-soft)}
+
+  /* Tone ring */
+  .tone-ring{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:16px;padding:32px;box-shadow:var(--page-shadow);
+  }
+  .donut{
+    width:100%;max-width:320px;aspect-ratio:1;margin:auto;
+    border-radius:999px;position:relative;
+    background:conic-gradient(
+      var(--blue-500) 0 40%,
+      var(--lime-500) 40% 70%,
+      var(--violet-500) 70% 90%,
+      var(--coral-500) 90% 100%
+    );
+  }
+  .donut::after{
+    content:"";position:absolute;inset:24%;background:var(--page-surface);
+    border-radius:999px;box-shadow:inset 0 0 0 1px var(--page-border);
+  }
+  .donut-center{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:11px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-text);z-index:1;
+  }
+  .tone-legend{display:flex;flex-direction:column;gap:12px}
+  .tone-row{
+    display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center;
+    padding:12px 14px;border:1px solid var(--page-border);border-radius:10px;
+  }
+  .tone-row .sw{width:14px;height:14px;border-radius:4px}
+  .tone-row .name{font-weight:600;font-size:14px}
+  .tone-row .pct{font-family:var(--mono);font-size:13px;color:var(--page-text-soft)}
+
+  /* Archetype */
+  .arch{display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:14px}
+  .arch .ac{
+    border-radius:14px;padding:28px;box-shadow:var(--page-shadow);border:1px solid var(--page-border);
+    display:flex;flex-direction:column;gap:14px;min-height:200px;
+  }
+  .arch .ac .badge{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.75;
+  }
+  .arch .ac h3{
+    font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:-0.04em;line-height:0.98;
+    margin:0;
+  }
+  .arch .ac .note{font-size:13px;line-height:1.55;opacity:0.85}
+  .arch .primary  {background:var(--lime-500);color:var(--lime-900)}
+  .arch .secondary{background:var(--violet-100);color:var(--violet-900)}
+  .arch .combined {background:var(--blue-500);color:var(--lime-500);position:relative}
+  .arch .combined .note{color:#fff;opacity:0.85}
+  .arch .combined .op{
+    font-family:var(--mono);font-size:28px;font-weight:600;opacity:0.7;line-height:1;
+    position:absolute;top:22px;right:24px;
+  }
+
+  /* Lines */
+  .lines{display:grid;grid-template-columns:1fr;gap:10px}
+  .line-card{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:14px;padding:20px 24px;
+    display:grid;grid-template-columns:140px 1fr auto;gap:20px;align-items:center;
+  }
+  .line-card.master{background:var(--blue-500);color:var(--lime-500);border-color:transparent}
+  .line-card.master .role{color:#fff;opacity:0.7}
+  .line-card .role{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    color:var(--page-caption);
+  }
+  .line-card .text{
+    font-family:var(--display);font-weight:800;font-size:30px;letter-spacing:-0.03em;line-height:1.05;
+    text-wrap:balance;
+  }
+  .line-card.master .text{color:var(--lime-500)}
+  .line-card .len{
+    font-family:var(--mono);font-size:10px;color:var(--page-caption);
+    white-space:nowrap;
+  }
+  .line-card.master .len{color:#fff;opacity:0.6}
+
+  /* Manifesto */
+  .manifesto{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:20px;padding:56px 60px;box-shadow:var(--page-shadow);
+    display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start;
+  }
+  .manifesto .body p{
+    font-family:var(--display);font-weight:600;
+    font-size:22px;line-height:1.35;letter-spacing:-0.01em;
+    margin:0 0 18px;color:var(--page-text);text-wrap:pretty;
+  }
+  .manifesto .body p.lead{
+    font-family:var(--display);font-weight:800;font-size:34px;line-height:1.1;letter-spacing:-0.03em;
+    color:var(--blue-900);max-width:18ch;
+  }
+  .manifesto .body p.kicker{
+    font-family:var(--display);font-weight:800;font-size:28px;line-height:1.1;letter-spacing:-0.03em;
+    color:var(--coral-900);
+  }
+  .manifesto .aside{
+    background:var(--brown-100);border-radius:14px;padding:28px;color:var(--brown-900);
+    align-self:stretch;
+  }
+  .manifesto .aside .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.65;
+  }
+  .manifesto .aside h4{
+    font-family:var(--display);font-weight:800;font-size:28px;line-height:1.05;letter-spacing:-0.03em;
+    margin:10px 0 18px;
+  }
+  .manifesto .aside ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+  .manifesto .aside li{
+    font-size:13.5px;line-height:1.5;padding-left:18px;position:relative;
+  }
+  .manifesto .aside li::before{content:"·";position:absolute;left:0;font-weight:700}
+
+  /* Language table */
+  .lang{
+    display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  }
+  .lang-card{
+    background:var(--page-surface);border:1px solid var(--page-border);
+    border-radius:14px;padding:22px 24px;box-shadow:var(--page-shadow);
+  }
+  .lang-card .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;
+    margin-bottom:12px;
+  }
+  .lang-card.prefer .tag{color:var(--lime-900)}
+  .lang-card.avoid  .tag{color:var(--coral-900)}
+  .lang-card table{width:100%;border-collapse:collapse}
+  .lang-card td{
+    padding:10px 0;font-size:13.5px;line-height:1.4;border-bottom:1px dashed var(--page-border);
+    vertical-align:top;
+  }
+  .lang-card tr:last-child td{border-bottom:0}
+  .lang-card td.name{
+    font-weight:600;font-family:var(--sans);width:36%;color:var(--page-text);
+  }
+  .lang-card td.desc{color:var(--page-text-soft)}
+
+  /* Guardrails */
+  .guards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .guards .col{
+    border-radius:14px;padding:24px;box-shadow:var(--page-shadow);
+  }
+  .guards .keep{background:var(--cyan-100);color:var(--cyan-900)}
+  .guards .drift{background:var(--neutral-900);color:#fff}
+  .guards .col .tag{
+    font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.7;
+  }
+  .guards .col h3{
+    font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:-0.03em;
+    margin:8px 0 14px;line-height:1;
+  }
+  .guards .col ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+  .guards .col li{padding-left:22px;position:relative;font-size:14px;line-height:1.5}
+  .guards .keep li::before{content:"✓";font-family:var(--mono);position:absolute;left:0;font-weight:700}
+  .guards .drift li::before{content:"✕";font-family:var(--mono);position:absolute;left:0;font-weight:700}
+
+  .foot{
+    margin-top:60px;padding-top:24px;border-top:1px solid var(--page-border);
+    display:flex;justify-content:space-between;
+    font-family:var(--mono);font-size:11px;color:var(--page-caption);
+  }
+
+  @media (max-width:1100px){
+    .cards.col-2,.cards.col-3,.cards.col-4{grid-template-columns:1fr}
+    .duality,.arch,.lang,.guards,.tone-ring,.manifesto{grid-template-columns:1fr}
+    .hero-card{grid-template-columns:1fr}
+    h1.title{font-size:44px}
+    .line-card{grid-template-columns:1fr}
+    .kv{grid-template-columns:1fr;gap:6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div>
+      <div class="brand-mark"><span class="dot"></span> FolioTree · Brand Core</div>
+      <h1 class="title">Living<br/><em>professional</em><br/>evidence.</h1>
+      <p class="lede">Fonte compacta da fundação de marca do FolioTree. O que a marca é, o que não é, como soa e como se comunica. Usado por humanos e IA como referência curta e confiável.</p>
+    </div>
+    <div class="meta">
+      <span>DOC / brand-core</span>
+      <span>STATUS / <strong>approved</strong></span>
+      <span>VERSION / v0.0.1</span>
+      <span>UPDATED / 2026-04-17</span>
+      <span>PAIR / tonal + typography</span>
+    </div>
+  </header>
+
+  <!-- 01 · One-line -->
+  <section>
+    <div class="section-head">
+      <span class="idx">01</span>
+      <h2>One-line brand definition</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="hero-card">
+      <div class="headline">FolioTree transforma trajetória profissional em evidência clara, viva e rápida de entender.</div>
+      <div class="corner">
+        Source<br/>
+        brand-core v0.0.1<br/>
+        2026-04-17
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 · Is / Is not -->
+  <section>
+    <div class="section-head">
+      <span class="idx">02</span>
+      <h2>O que FolioTree é · e o que não é</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Preserve essas fronteiras ao escrever copy, projetar telas ou descrever o produto. Não reduzir. Não inflar.</p>
+    <div class="duality">
+      <div class="yes">
+        <span class="tag">✓ é</span>
+        <h3>Living professional evidence.</h3>
+        <ul>
+          <li>Uma camada central de identidade profissional.</li>
+          <li>Base estruturada para experiências, conquistas, links, provas e narrativa.</li>
+          <li>Sistema que gera múltiplos outputs: páginas, currículos, portfólios, versões por oportunidade.</li>
+          <li>Plataforma de marca de carreira, viva e clara.</li>
+        </ul>
+      </div>
+      <div class="no">
+        <span class="tag">✕ não é</span>
+        <h3>Nem só mais um perfil.</h3>
+        <ul>
+          <li>Apenas um construtor de currículo.</li>
+          <li>Apenas um construtor de portfólio.</li>
+          <li>Apenas uma página pública de perfil.</li>
+          <li>Um Linktree para carreiras.</li>
+          <li>Substituto estático de PDF, plataforma genérica de site, HR system frio.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 · Essence / Promise / Purpose / Positioning -->
+  <section>
+    <div class="section-head">
+      <span class="idx">03</span>
+      <h2>Essência · promessa · propósito · posicionamento</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="card" style="padding:8px 32px">
+      <div class="kv">
+        <span class="k">Essence</span>
+        <span class="v"><strong>Living professional evidence.</strong> <em>· living</em> atualizado, dinâmico, evolutivo. <em>· professional</em> trabalho, reputação, credibilidade, oportunidade. <em>· evidence</em> mais que presença — mostra por que a pessoa importa.</span>
+      </div>
+      <div class="kv">
+        <span class="k">Promise</span>
+        <span class="v"><strong>Você já tem história.</strong> O FolioTree faz essa história aparecer com clareza, rapidez e convicção.</span>
+      </div>
+      <div class="kv">
+        <span class="k">Purpose</span>
+        <span class="v"><strong>Tornar valor profissional visível em poucos segundos.</strong></span>
+      </div>
+      <div class="kv">
+        <span class="k">Positioning</span>
+        <span class="v">A plataforma que transforma uma trajetória profissional espalhada em <strong>uma presença clara, viva e convincente</strong> para recrutadores, clientes e oportunidades.</span>
+      </div>
+      <div class="kv">
+        <span class="k">Strategic contrast</span>
+        <span class="v"><strong>LinkedIn mostra. FolioTree comprova.</strong> <em>Contraste conceitual — não um mandato para atacar concorrentes em cada peça.</em></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · Archetype -->
+  <section>
+    <div class="section-head">
+      <span class="idx">04</span>
+      <h2>Archetype</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">A marca é um <strong>Amigo que cria</strong>: simplifica, energiza e transforma informação em apresentação.</p>
+
+    <div class="arch">
+      <div class="ac primary">
+        <span class="badge">Primary</span>
+        <h3>Friend</h3>
+        <p class="note">Fácil de entender, acessível, comunicativo, acolhedor, nada intimidador.</p>
+      </div>
+      <div class="ac secondary">
+        <span class="badge">Secondary</span>
+        <h3>Creator</h3>
+        <p class="note">Transforma informação crua em apresentação e significado. Valoriza individualidade e expressão.</p>
+      </div>
+      <div class="ac combined">
+        <span class="op">+</span>
+        <span class="badge" style="color:#fff;opacity:0.8">Combined</span>
+        <h3 style="color:var(--lime-500)">Friend × Creator</h3>
+        <p class="note">Simplifica, energiza e transforma. É o amigo que te ajuda a mostrar sua carreira com estilo — sem deixar a coisa virar ostentação ou complicação.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · Personality -->
+  <section>
+    <div class="section-head">
+      <span class="idx">05</span>
+      <h2>Personality</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Se o FolioTree fosse uma pessoa, ela seria:</p>
+
+    <div class="cards col-3">
+      <div class="card" style="background:var(--lime-100)">
+        <div class="tag" style="color:var(--lime-900)">Tom curto</div>
+        <h3 style="color:var(--lime-900)">Vibrant, clear, bold,<br/>close, intelligent, current.</h3>
+      </div>
+      <div class="card">
+        <div class="tag">Traços</div>
+        <ul>
+          <li>Alegre · energético</li>
+          <li>Comunicativo · fácil de entender</li>
+          <li>Visualmente marcante</li>
+          <li>Inteligente sem rigidez</li>
+          <li>Profissional sem ser duro</li>
+          <li>Conversa com várias gerações</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="tag">Não ser</div>
+        <ul>
+          <li>Burocracia de RH</li>
+          <li>Linguagem de consultoria fria</li>
+          <li>Jargão vazio de startup</li>
+          <li>Coach motivacional genérico</li>
+          <li>Slang de internet pesado</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 · Tone of voice -->
+  <section>
+    <div class="section-head">
+      <span class="idx">06</span>
+      <h2>Tone of voice</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Fórmula de tom. Cada peça deve soar assim na proporção.</p>
+
+    <div class="tone-ring">
+      <div style="position:relative">
+        <div class="donut"></div>
+        <div class="donut-center">Tone mix</div>
+      </div>
+      <div class="tone-legend">
+        <div class="tone-row"><span class="sw" style="background:var(--blue-500)"></span><span class="name">Energy</span><span class="pct">40%</span></div>
+        <div class="tone-row"><span class="sw" style="background:var(--lime-500)"></span><span class="name">Clarity</span><span class="pct">30%</span></div>
+        <div class="tone-row"><span class="sw" style="background:var(--violet-500)"></span><span class="name">Intelligence</span><span class="pct">20%</span></div>
+        <div class="tone-row"><span class="sw" style="background:var(--coral-500)"></span><span class="name">Community</span><span class="pct">10%</span></div>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div class="cards col-2">
+      <div class="card">
+        <div class="tag">Deve soar</div>
+        <ul>
+          <li>Direto, otimista, claro, confiante</li>
+          <li>Humano, vívido, estruturado</li>
+          <li>Orientado à ação</li>
+          <li>Compreensível na primeira leitura</li>
+          <li>Expressivo mas não caótico</li>
+          <li>Moderno mas não infantil</li>
+          <li>Amigável mas não frágil</li>
+        </ul>
+      </div>
+      <div class="card" style="background:var(--coral-100);border-color:transparent">
+        <div class="tag" style="color:var(--coral-900)">Não deve soar</div>
+        <ul style="color:var(--coral-900);opacity:0.85">
+          <li>Como RH burocrático</li>
+          <li>Como consultoria fria</li>
+          <li>Como jargão vazio de startup</li>
+          <li>Como coach motivacional genérico</li>
+          <li>Como meme-speak da internet</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 · Copy rules -->
+  <section>
+    <div class="section-head">
+      <span class="idx">07</span>
+      <h2>Copy rules</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="duality">
+      <div class="yes">
+        <span class="tag">✓ prefira</span>
+        <h3>Clareza com ritmo.</h3>
+        <ul>
+          <li>Frases curtas</li>
+          <li>Verbos de ação</li>
+          <li>Valor óbvio cedo</li>
+          <li>Clareza acima de ornamento</li>
+          <li>Ritmo acima de densidade</li>
+          <li>Prova acima de abstração</li>
+          <li>Energia emocional alta, controlada</li>
+        </ul>
+      </div>
+      <div class="no">
+        <span class="tag">✕ evite</span>
+        <h3>Texto que trava.</h3>
+        <ul>
+          <li>Jargão técnico sem necessidade</li>
+          <li>Explicações longas antes do valor</li>
+          <li>Promessas infladas sem prova</li>
+          <li>Linguagem infantil ou random de internet</li>
+          <li>Adjetivos de catálogo</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 · Brand lines -->
+  <section>
+    <div class="section-head">
+      <span class="idx">08</span>
+      <h2>Brand lines · aprovadas</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Linhas oficiais. A <strong>master</strong> governa; as secundárias são usadas em copy específica (onboarding, campanha, materiais de apoio).</p>
+
+    <div class="lines">
+      <div class="line-card master">
+        <span class="role">Master line</span>
+        <span class="text">Show more than a profile.</span>
+        <span class="len">EN · master</span>
+      </div>
+      <div class="line-card">
+        <span class="role">Product line</span>
+        <span class="text" style="color:var(--blue-900)">Your trajectory, clear in seconds.</span>
+        <span class="len">EN · produto</span>
+      </div>
+      <div class="line-card">
+        <span class="role">Concept line</span>
+        <span class="text" style="color:var(--violet-900)">Living professional evidence.</span>
+        <span class="len">EN · conceito</span>
+      </div>
+      <div class="line-card" style="background:var(--lime-100);border-color:transparent">
+        <span class="role" style="color:var(--lime-900)">Secondary</span>
+        <span class="text" style="color:var(--lime-900)">Your career has value. Make it visible.</span>
+        <span class="len" style="color:var(--lime-900);opacity:0.7">EN · apoio</span>
+      </div>
+      <div class="line-card" style="background:var(--cyan-100);border-color:transparent">
+        <span class="role" style="color:var(--cyan-900)">Secondary</span>
+        <span class="text" style="color:var(--cyan-900)">Turn trajectory into visible value.</span>
+        <span class="len" style="color:var(--cyan-900);opacity:0.7">EN · apoio</span>
+      </div>
+      <div class="line-card" style="background:var(--coral-100);border-color:transparent">
+        <span class="role" style="color:var(--coral-900)">Secondary</span>
+        <span class="text" style="color:var(--coral-900)">The link that proves your value.</span>
+        <span class="len" style="color:var(--coral-900);opacity:0.7">EN · apoio</span>
+      </div>
+      <div class="line-card" style="background:var(--brown-100);border-color:transparent">
+        <span class="role" style="color:var(--brown-900)">Secondary</span>
+        <span class="text" style="color:var(--brown-900)">Where your trajectory becomes evidence.</span>
+        <span class="len" style="color:var(--brown-900);opacity:0.7">EN · apoio</span>
+      </div>
+      <div class="line-card" style="background:var(--violet-100);border-color:transparent">
+        <span class="role" style="color:var(--violet-900)">Secondary</span>
+        <span class="text" style="color:var(--violet-900)">Your experience, with presence.</span>
+        <span class="len" style="color:var(--violet-900);opacity:0.7">EN · apoio</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 · Manifesto -->
+  <section>
+    <div class="section-head">
+      <span class="idx">09</span>
+      <h2>Manifesto</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="manifesto">
+      <div class="body">
+        <p class="lead">Você não é só mais um perfil.</p>
+        <p>Sua trajetória tem contexto. Suas conquistas têm peso. Seus projetos, resultados e experiências dizem mais do que uma lista de cargos.</p>
+        <p>Ainda assim, a maior parte da vida profissional segue dispersa, fragmentada e difícil de apresentar do jeito certo.</p>
+        <p>FolioTree existe para mudar isso.</p>
+        <p>Aqui, trajetória ganha estrutura, presença e impacto. Tudo que comprova seu valor vive em um único lugar — pronto pra virar página, currículo, portfólio ou versão para a oportunidade certa.</p>
+        <p class="kicker">O mundo já tem perfis demais. O que falta é evidência clara.</p>
+      </div>
+      <aside class="aside">
+        <span class="tag">Product language</span>
+        <h4>Nouns<br/>aprovados.</h4>
+        <ul>
+          <li><strong>Profile</strong> · base central</li>
+          <li><strong>Versions</strong> · adaptações por contexto</li>
+          <li><strong>Page</strong> · output público</li>
+          <li><strong>Resume</strong> · output de currículo</li>
+          <li><strong>Highlights</strong> · conquistas mais fortes</li>
+          <li><strong>Proof</strong> · cases, métricas, links, resultados</li>
+          <li><strong>Snapshot</strong> · versão congelada para oportunidade específica</li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 10 · Visual direction summary -->
+  <section>
+    <div class="section-head">
+      <span class="idx">10</span>
+      <h2>Visual direction · sumário</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Princípio central: <strong>Linktree na energia. FolioTree na profundidade.</strong> Paleta exata vive no <code class="chip">Tonal System</code>, tipografia no <code class="chip">Typography System</code>.</p>
+
+    <div class="cards col-3">
+      <div class="card">
+        <div class="tag">Direção aprovada</div>
+        <ul>
+          <li>Vibrante · estruturada</li>
+          <li>Clara · modular</li>
+          <li>Ousada · contemporânea</li>
+          <li>Fácil de escanear</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="tag">Composição</div>
+        <ul>
+          <li>Grid forte, espaçamento generoso</li>
+          <li>Hierarquia clara, headlines grandes</li>
+          <li>Módulos visíveis para prova</li>
+          <li>Cards com presença</li>
+          <li>Seções que escaneiam rápido</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="tag">Motion</div>
+        <ul>
+          <li>Curto · responsivo · snappy</li>
+          <li>Reforça progresso e clareza</li>
+          <li>Sem decoração sem função</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 · Product language -->
+  <section>
+    <div class="section-head">
+      <span class="idx">11</span>
+      <h2>Product language</h2>
+      <div class="rule"></div>
+    </div>
+    <p class="section-sub">Vocabulário do produto. Preserve os <strong>nouns preferidos</strong>; evite os termos abaixo para não derivar de categoria.</p>
+
+    <div class="lang">
+      <div class="lang-card prefer">
+        <div class="tag">✓ preferir</div>
+        <table>
+          <tr><td class="name">Profile</td><td class="desc">Base central do usuário</td></tr>
+          <tr><td class="name">Versions</td><td class="desc">Adaptações para contextos diferentes</td></tr>
+          <tr><td class="name">Page</td><td class="desc">Output de presença pública</td></tr>
+          <tr><td class="name">Resume</td><td class="desc">Output de currículo</td></tr>
+          <tr><td class="name">Highlights</td><td class="desc">Conquistas mais fortes</td></tr>
+          <tr><td class="name">Proof</td><td class="desc">Cases, métricas, links, resultados</td></tr>
+          <tr><td class="name">Snapshot</td><td class="desc">Versão congelada para uma oportunidade</td></tr>
+        </table>
+      </div>
+      <div class="lang-card avoid">
+        <div class="tag">✕ evitar</div>
+        <table>
+          <tr><td class="name">Naming abstrato</td><td class="desc">Termos genéricos sem função clara no produto</td></tr>
+          <tr><td class="name">Builder jargon</td><td class="desc">"Drag-and-drop", "widget", "module builder" em copy de usuário</td></tr>
+          <tr><td class="name">Arquitetura técnica</td><td class="desc">"Schema", "entity", "object" — fica no backoffice, não na UI final</td></tr>
+          <tr><td class="name">Linguagem de RH</td><td class="desc">"Talent pipeline", "candidate tracking" — o usuário é dono da carreira, não um recurso</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 · Guardrails -->
+  <section>
+    <div class="section-head">
+      <span class="idx">12</span>
+      <h2>Guardrails</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="guards">
+      <div class="col keep">
+        <div class="tag">Always preserve</div>
+        <h3>Mantenha</h3>
+        <ul>
+          <li>Clareza</li>
+          <li>Evidência</li>
+          <li>Velocidade de entendimento</li>
+          <li>Estrutura</li>
+          <li>Profissionalismo expressivo</li>
+        </ul>
+      </div>
+      <div class="col drift">
+        <div class="tag">Never drift into</div>
+        <h3>Nunca vire</h3>
+        <ul>
+          <li>Rigidez corporativa</li>
+          <li>Caos visual</li>
+          <li>Copy vaga</li>
+          <li>Invenção de feature</li>
+          <li>Confusão de categoria</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 · AI notes -->
+  <section>
+    <div class="section-head">
+      <span class="idx">13</span>
+      <h2>AI notes</h2>
+      <div class="rule"></div>
+    </div>
+    <div class="card" style="background:var(--neutral-900);color:#E8EEF5;border-color:transparent">
+      <div class="tag" style="color:rgba(255,255,255,0.55)">instructions for AI assistants</div>
+      <ul style="margin-top:4px">
+        <li style="color:rgba(255,255,255,0.82)">Tratar este documento como guidance atual aprovado.</li>
+        <li style="color:rgba(255,255,255,0.82)">Não inventar escopo de produto além do documentado.</li>
+        <li style="color:rgba(255,255,255,0.82)">Não reenquadrar o FolioTree como ferramenta de propósito único.</li>
+        <li style="color:rgba(255,255,255,0.82)">Preservar a distinção entre <strong>presence</strong> e <strong>evidence</strong>.</li>
+        <li style="color:rgba(255,255,255,0.82)">Preservar a combinação de <strong>vibração + estrutura</strong>.</li>
+        <li style="color:rgba(255,255,255,0.82)">Se um tópico não está documentado, declare como <em>unresolved</em> em vez de chutar.</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="foot">
+    <span>FolioTree · Brand Core</span>
+    <span>v0.0.1 · approved · 2026-04-17</span>
+  </div>
+</div>
+
+</body>
+</html>

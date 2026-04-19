@@ -1,296 +1,275 @@
-import { formatDate, getPlatformLabel, getPlatformUrl } from "@/lib/utils"
+import type { ResumeConfig } from "@prisma/client";
+import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/types";
+import type { RenderablePageBlock } from "@/components/templates/types";
+import { resolveTemplateResumeProjection } from "@/lib/templates/resume/resolver";
 
 interface ResumeViewProps {
-  profile: any
-  version?: any
-  config?: any
+  templateSlug: string;
+  blocks: RenderablePageBlock[];
+  profile: ProfileForBlocks;
+  version?: VersionForBlocks | null;
+  config?: ResumeConfig | null;
 }
 
-function formatPeriod(startDate: string | Date, endDate: string | Date | null, current: boolean): string {
-  const start = formatDate(startDate, "year-month")
-  if (current) return `${start} – Atual`
-  if (!endDate) return start
-  const end = formatDate(endDate, "year-month")
-  return `${start} – ${end}`
-}
-
-export default function ResumeView({ profile, version, config }: ResumeViewProps) {
-  const accentColor = config?.accentColor ?? "#2756AF" // blue-600 default
-  const showPhoto = config?.showPhoto ?? false // resume: sem foto por padrão
-  const showLinks = config?.showLinks ?? true
-
-  const displayName = profile?.displayName ?? profile?.user?.name ?? ""
-  const headline = version?.customHeadline ?? profile?.headline
-  const bio = version?.customBio ?? profile?.bio
-  const location = profile?.location
-  const publicEmail = profile?.publicEmail ?? profile?.user?.email
-  const phone = profile?.phone
-  const links: any[] = profile?.links ?? []
-
-  // Gather all data, then filter by version if needed
-  let experiences: any[] = profile?.experiences ?? []
-  let educations: any[] = profile?.educations ?? []
-  let skills: any[] = profile?.skills ?? []
-  let projects: any[] = profile?.projects ?? []
-  let achievements: any[] = profile?.achievements ?? []
-
-  if (version?.selectedExperienceIds?.length) {
-    experiences = experiences.filter((e: any) => version.selectedExperienceIds.includes(e.id))
-  }
-  if (version?.selectedProjectIds?.length) {
-    projects = projects.filter((p: any) => version.selectedProjectIds.includes(p.id))
-  }
-  if (version?.selectedSkillIds?.length) {
-    skills = skills.filter((s: any) => version.selectedSkillIds.includes(s.id))
-  }
-  if (version?.selectedAchievementIds?.length) {
-    achievements = achievements.filter((a: any) => version.selectedAchievementIds.includes(a.id))
-  }
-
-  // Sort
-  experiences = [...experiences].sort((a, b) => {
-    if (a.order !== b.order) return a.order - b.order
-    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-  })
-  educations = [...educations].sort((a, b) => {
-    if (a.order !== b.order) return a.order - b.order
-    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-  })
-  skills = [...skills].sort((a, b) => a.order - b.order)
-  projects = [...projects].sort((a, b) => {
-    if (a.featured !== b.featured) return b.featured ? 1 : -1
-    return a.order - b.order
-  })
-  achievements = [...achievements].sort((a, b) => a.order - b.order)
-
-  // Group skills by category
-  const skillGroups = skills.reduce<Record<string, any[]>>((acc, skill) => {
-    const cat = skill.category ?? "Geral"
-    if (!acc[cat]) acc[cat] = []
-    acc[cat].push(skill)
-    return acc
-  }, {})
+export default function ResumeView({
+  templateSlug,
+  blocks,
+  profile,
+  version,
+  config,
+}: ResumeViewProps) {
+  const projection = resolveTemplateResumeProjection({
+    templateSlug,
+    blocks,
+    profile,
+    version,
+    config,
+  });
 
   return (
     <div
-      className="bg-white font-sans text-neutral-900 print:text-black"
-      style={{ "--accent": accentColor } as React.CSSProperties}
+      className="rounded-[28px] border px-6 py-6 print:rounded-none print:border-0 print:px-0 print:py-0 sm:px-8"
+      style={{
+        background: projection.theme.background,
+        borderColor: projection.theme.border,
+        color: projection.theme.ink,
+        fontFamily: projection.theme.fontFamily,
+      }}
     >
-      {/* ── HEADER ─────────────────────────────────────────────────── */}
-      <header className="border-b border-neutral-200 pb-6 print:pb-4">
-        <h1
-          className="font-display text-3xl font-extrabold tracking-tight"
-          style={{ color: accentColor }}
-        >
-          {displayName}
-        </h1>
-
-        {headline && (
-          <p className="mt-1 text-lg font-medium text-neutral-600">{headline}</p>
-        )}
-
-        {/* Contact line */}
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
-          {location && <span>{location}</span>}
-          {publicEmail && (
-            <a
-              href={`mailto:${publicEmail}`}
-              className="hover:text-neutral-700 transition-colors"
-              style={{ color: accentColor }}
+      <header className="border-b pb-6 print:pb-4" style={{ borderColor: projection.theme.border }}>
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <p
+              className="text-[11px] font-semibold uppercase tracking-[0.24em]"
+              style={{ color: projection.theme.accent }}
             >
-              {publicEmail}
-            </a>
-          )}
-          {phone && <span>{phone}</span>}
-          {showLinks &&
-            links.map((link: any) => {
-              const url = getPlatformUrl(link.platform, link.url)
-              const label = link.label ?? getPlatformLabel(link.platform)
-              return (
+              Curriculo derivado do template
+            </p>
+            <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
+              {projection.header.displayName}
+            </h1>
+            {projection.header.headline ? (
+              <p className="mt-2 text-base font-medium sm:text-lg" style={{ color: projection.theme.muted }}>
+                {projection.header.headline}
+              </p>
+            ) : null}
+          </div>
+
+          {projection.showPhoto && projection.header.avatarUrl ? (
+            <img
+              src={projection.header.avatarUrl}
+              alt={projection.header.displayName}
+              className="h-20 w-20 rounded-[28px] object-cover print:hidden"
+            />
+          ) : null}
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm" style={{ color: projection.theme.muted }}>
+          {projection.header.location ? <span>{projection.header.location}</span> : null}
+          {projection.header.publicEmail ? <span>{projection.header.publicEmail}</span> : null}
+          {projection.header.phone ? <span>{projection.header.phone}</span> : null}
+          {projection.showLinks
+            ? projection.header.links.slice(0, 4).map((link) => (
                 <a
-                  key={link.id}
-                  href={url}
+                  key={`${link.kind}-${link.label}-${link.href}`}
+                  href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:underline"
-                  style={{ color: accentColor }}
+                  className="transition-opacity hover:opacity-80"
+                  style={{ color: projection.theme.accent }}
                 >
-                  {label}
+                  {link.label}
                 </a>
-              )
-            })}
+              ))
+            : null}
         </div>
       </header>
 
-      {/* ── BODY ───────────────────────────────────────────────────── */}
-      <div className="mt-6 flex flex-col gap-8 print:gap-6">
-        {/* Resumo profissional */}
-        {bio && (
-          <section>
-            <SectionTitle color={accentColor}>Resumo profissional</SectionTitle>
-            <p className="mt-2 text-sm leading-7 text-neutral-700 whitespace-pre-line">{bio}</p>
-          </section>
-        )}
+      <div className="mt-8 space-y-8 print:mt-6 print:space-y-6">
+        {projection.sections.map((section) => {
+          if (section.key === "summary") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <p className="whitespace-pre-line text-sm leading-7 sm:text-[15px]" style={{ color: projection.theme.ink }}>
+                  {section.body}
+                </p>
+              </SectionShell>
+            );
+          }
 
-        {/* Experiência */}
-        {experiences.length > 0 && (
-          <section>
-            <SectionTitle color={accentColor}>Experiência</SectionTitle>
-            <div className="mt-3 flex flex-col gap-5">
-              {experiences.map((exp: any) => (
-                <div key={exp.id}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <div>
-                      <span className="font-semibold text-neutral-900">{exp.company}</span>
-                      <span className="mx-2 text-neutral-300">·</span>
-                      <span className="text-neutral-700">{exp.role}</span>
-                      {exp.current && (
-                        <span
-                          className="ml-2 rounded px-1.5 py-0.5 text-xs font-bold"
-                          style={{ backgroundColor: `${accentColor}15`, color: accentColor }}
-                        >
-                          Atual
-                        </span>
-                      )}
-                    </div>
-                    <span className="flex-shrink-0 text-xs text-neutral-400">
-                      {formatPeriod(exp.startDate, exp.endDate, exp.current)}
-                      {exp.location ? ` · ${exp.location}` : ""}
-                    </span>
-                  </div>
-                  {exp.description && (
-                    <p className="mt-1.5 text-sm leading-6 text-neutral-600 whitespace-pre-line">
-                      {exp.description}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Formação */}
-        {educations.length > 0 && (
-          <section>
-            <SectionTitle color={accentColor}>Formação</SectionTitle>
-            <div className="mt-3 flex flex-col gap-4">
-              {educations.map((edu: any) => (
-                <div key={edu.id}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <div>
-                      <span className="font-semibold text-neutral-900">{edu.institution}</span>
-                      {(edu.degree || edu.field) && (
-                        <>
-                          <span className="mx-2 text-neutral-300">·</span>
-                          <span className="text-neutral-700">
-                            {[edu.degree, edu.field].filter(Boolean).join(", ")}
+          if (section.key === "experience") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <div className="space-y-5">
+                  {section.items.map((item) => (
+                    <article key={item.id} className="grid gap-2 sm:grid-cols-[1fr_auto] sm:gap-3">
+                      <div>
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          <h3 className="text-base font-semibold">{item.role}</h3>
+                          <span className="text-sm" style={{ color: projection.theme.muted }}>
+                            {item.company}
                           </span>
-                        </>
-                      )}
+                          {item.current ? (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                              style={{
+                                background: `${projection.theme.accent}18`,
+                                color: projection.theme.accent,
+                              }}
+                            >
+                              Atual
+                            </span>
+                          ) : null}
+                        </div>
+                        {item.description ? (
+                          <p className="mt-2 whitespace-pre-line text-sm leading-6" style={{ color: projection.theme.muted }}>
+                            {item.description}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="text-sm sm:text-right" style={{ color: projection.theme.muted }}>
+                        <p>{item.period}</p>
+                        {item.location ? <p>{item.location}</p> : null}
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </SectionShell>
+            );
+          }
+
+          if (section.key === "projects") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <div className="space-y-4">
+                  {section.items.map((item) => (
+                    <article key={item.id} className="space-y-1">
+                      <div className="flex flex-wrap items-baseline justify-between gap-2">
+                        <h3 className="text-base font-semibold">{item.title}</h3>
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm transition-opacity hover:opacity-80"
+                            style={{ color: projection.theme.accent }}
+                          >
+                            {item.href}
+                          </a>
+                        ) : null}
+                      </div>
+                      {item.description ? (
+                        <p className="text-sm leading-6" style={{ color: projection.theme.muted }}>
+                          {item.description}
+                        </p>
+                      ) : null}
+                      {item.tags.length > 0 ? (
+                        <p className="text-xs uppercase tracking-[0.16em]" style={{ color: projection.theme.muted }}>
+                          {item.tags.join(" · ")}
+                        </p>
+                      ) : null}
+                    </article>
+                  ))}
+                </div>
+              </SectionShell>
+            );
+          }
+
+          if (section.key === "highlights") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {section.items.map((item) => (
+                    <article
+                      key={item.id}
+                      className="rounded-[20px] border bg-white/72 px-4 py-4 print:bg-transparent"
+                      style={{ borderColor: projection.theme.border }}
+                    >
+                      <h3 className="text-sm font-semibold">{item.title}</h3>
+                      {item.metric ? (
+                        <p className="mt-2 text-sm font-semibold" style={{ color: projection.theme.accent }}>
+                          {item.metric}
+                        </p>
+                      ) : null}
+                      {item.description ? (
+                        <p className="mt-2 text-sm leading-6" style={{ color: projection.theme.muted }}>
+                          {item.description}
+                        </p>
+                      ) : null}
+                    </article>
+                  ))}
+                </div>
+              </SectionShell>
+            );
+          }
+
+          if (section.key === "skills") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <div className="space-y-3">
+                  {section.groups.map((group) => (
+                    <div key={group.category} className="grid gap-1 sm:grid-cols-[140px_1fr]">
+                      <p className="text-sm font-semibold">{group.category}</p>
+                      <p className="text-sm leading-6" style={{ color: projection.theme.muted }}>
+                        {group.items.join(", ")}
+                      </p>
                     </div>
-                    <span className="flex-shrink-0 text-xs text-neutral-400">
-                      {formatPeriod(edu.startDate, edu.endDate, edu.current)}
-                    </span>
-                  </div>
-                  {edu.description && (
-                    <p className="mt-1 text-sm text-neutral-600">{edu.description}</p>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </SectionShell>
+            );
+          }
 
-        {/* Habilidades */}
-        {skills.length > 0 && (
-          <section>
-            <SectionTitle color={accentColor}>Habilidades</SectionTitle>
-            <div className="mt-3 flex flex-col gap-2">
-              {Object.entries(skillGroups).map(([cat, items]) => (
-                <div key={cat} className="flex flex-wrap items-start gap-x-1 text-sm">
-                  {Object.keys(skillGroups).length > 1 && (
-                    <span className="font-semibold text-neutral-700 mr-1">{cat}:</span>
-                  )}
-                  <span className="text-neutral-600">{items.map((s) => s.name).join(", ")}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Projetos */}
-        {projects.length > 0 && (
-          <section>
-            <SectionTitle color={accentColor}>Projetos</SectionTitle>
-            <div className="mt-3 flex flex-col gap-4">
-              {projects.map((proj: any) => (
-                <div key={proj.id}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-semibold text-neutral-900">{proj.title}</span>
-                    {proj.url && (
-                      <a
-                        href={proj.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs hover:underline"
-                        style={{ color: accentColor }}
-                      >
-                        {proj.url}
-                      </a>
-                    )}
-                  </div>
-                  {proj.description && (
-                    <p className="mt-1 text-sm leading-6 text-neutral-600">{proj.description}</p>
-                  )}
-                  {proj.tags?.length > 0 && (
-                    <p className="mt-1 text-xs text-neutral-400">{proj.tags.join(" · ")}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Conquistas */}
-        {achievements.length > 0 && (
-          <section>
-            <SectionTitle color={accentColor}>Conquistas</SectionTitle>
-            <div className="mt-3 flex flex-col gap-4">
-              {achievements.map((ach: any) => (
-                <div key={ach.id}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-semibold text-neutral-900">{ach.title}</span>
-                    {ach.date && (
-                      <span className="text-xs text-neutral-400">
-                        {formatDate(ach.date, "year-month")}
-                      </span>
-                    )}
-                  </div>
-                  {ach.metric && (
-                    <p className="text-sm font-medium" style={{ color: accentColor }}>
-                      {ach.metric}
+          return (
+            <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {section.items.map((item) => (
+                  <a
+                    key={`${item.kind}-${item.label}-${item.href}`}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="rounded-[20px] border bg-white/72 px-4 py-3 text-sm transition hover:bg-white print:bg-transparent"
+                    style={{ borderColor: projection.theme.border }}
+                  >
+                    <p className="font-semibold">{item.label}</p>
+                    <p className="mt-1 break-all text-xs uppercase tracking-[0.12em]" style={{ color: projection.theme.muted }}>
+                      {item.kind}
                     </p>
-                  )}
-                  {ach.description && (
-                    <p className="mt-1 text-sm text-neutral-600">{ach.description}</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
+                  </a>
+                ))}
+              </div>
+            </SectionShell>
+          );
+        })}
       </div>
     </div>
-  )
+  );
 }
 
-function SectionTitle({ children, color }: { children: React.ReactNode; color: string }) {
+function SectionShell({
+  title,
+  accent,
+  border,
+  children,
+}: {
+  title: string;
+  accent: string;
+  border: string;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="flex items-center gap-3">
-      <h2 className="font-display text-sm font-bold uppercase tracking-widest" style={{ color }}>
-        {children}
-      </h2>
-      <div className="flex-1 h-px bg-neutral-200" />
-    </div>
-  )
+    <section>
+      <div className="flex items-center gap-3">
+        <h2
+          className="font-display text-xs font-semibold uppercase tracking-[0.26em]"
+          style={{ color: accent }}
+        >
+          {title}
+        </h2>
+        <div className="h-px flex-1" style={{ background: border }} />
+      </div>
+      <div className="mt-4">{children}</div>
+    </section>
+  );
 }

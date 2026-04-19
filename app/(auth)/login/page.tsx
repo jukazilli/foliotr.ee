@@ -1,18 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema, type LoginInput } from "@/lib/validations";
 
-export default function LoginPage() {
+function getSafeCallbackUrl(value: string | null): string {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/dashboard";
+  }
+
+  return value;
+}
+
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [authError, setAuthError] = useState<string | null>(null);
 
   const {
@@ -25,6 +35,7 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginInput) {
     setAuthError(null);
+
     const result = await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -32,66 +43,80 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setAuthError("Email ou senha incorretos.");
+      setAuthError("Não foi possível entrar. Confira os dados e tente novamente.");
       return;
     }
 
-    router.push("/dashboard");
+    router.push(getSafeCallbackUrl(searchParams.get("callbackUrl")));
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
-          Entrar na sua conta
+    <div className="space-y-7">
+      <div>
+        <p className="font-data text-xs font-semibold uppercase text-blue-700">
+          Entrar
+        </p>
+        <h1 className="mt-3 font-display text-4xl font-extrabold leading-tight text-neutral-950">
+          Bem-vindo de volta.
         </h1>
-        <p className="text-sm text-neutral-500">
-          Bem-vindo de volta. Informe seus dados abaixo.
+        <p className="mt-3 text-sm font-semibold leading-6 text-neutral-600">
+          Acesse sua base profissional para continuar organizando provas, versões e
+          páginas.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             type="email"
             placeholder="voce@exemplo.com"
             autoComplete="email"
             error={!!errors.email}
+            disabled={isSubmitting}
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs text-coral-600">{errors.email.message}</p>
+            <p className="text-xs font-semibold text-coral-700">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <Label htmlFor="password">Senha</Label>
             <Link
               href="/forgot-password"
-              className="text-xs text-blue-500 hover:text-blue-600 hover:underline"
+              className="text-xs font-bold text-blue-700 hover:text-blue-900 hover:underline"
             >
-              Esqueceu a senha?
+              Esqueci a senha
             </Link>
           </div>
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
+            placeholder="Sua senha"
             autoComplete="current-password"
             error={!!errors.password}
+            disabled={isSubmitting}
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-xs text-coral-600">{errors.password.message}</p>
+            <p className="text-xs font-semibold text-coral-700">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
         {authError && (
-          <div className="rounded-xl bg-coral-50 border border-coral-200 px-4 py-3">
-            <p className="text-sm text-coral-700">{authError}</p>
+          <div
+            className="rounded-2xl border border-coral-200 bg-coral-50 px-4 py-3"
+            role="alert"
+            aria-live="polite"
+          >
+            <p className="text-sm font-semibold text-coral-900">{authError}</p>
           </div>
         )}
 
@@ -100,21 +125,30 @@ export default function LoginPage() {
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          className="w-full"
+          className="w-full rounded-full"
         >
           Entrar
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </form>
 
-      <p className="text-center text-sm text-neutral-500">
-        Não tem uma conta?{" "}
+      <p className="text-center text-sm font-semibold text-neutral-600">
+        Ainda não tem conta?{" "}
         <Link
           href="/register"
-          className="font-medium text-blue-500 hover:text-blue-600 hover:underline"
+          className="font-bold text-blue-700 hover:text-blue-900 hover:underline"
         >
           Criar conta
         </Link>
       </p>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="h-96" aria-hidden="true" />}>
+      <LoginContent />
+    </Suspense>
   );
 }

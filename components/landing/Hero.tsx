@@ -1,129 +1,158 @@
-import Link from "next/link"
-import { ArrowRight, Sparkles } from "lucide-react"
+import Link from "next/link";
+import {
+  ArrowRight,
+  BadgeCheck,
+  BriefcaseBusiness,
+  FileText,
+  Globe2,
+  Layers3,
+  Link2,
+  Sparkles,
+} from "lucide-react";
+
+const proofBlocks = [
+  { label: "Case", value: "+18% ativação", tone: "bg-lime-500 text-lime-900" },
+  { label: "Projeto", value: "Checkout B2B", tone: "bg-cyan-100 text-cyan-900" },
+  { label: "Prova", value: "Métrica + link", tone: "bg-green-100 text-green-900" },
+];
+
+const linkBlocks = [
+  { icon: BriefcaseBusiness, label: "Experiência", value: "3 cargos selecionados" },
+  { icon: Layers3, label: "Versão", value: "Product Lead" },
+  { icon: Globe2, label: "Página", value: "publicada" },
+  { icon: FileText, label: "Currículo", value: "modo leitura" },
+];
 
 export default function Hero() {
   return (
-    <section className="relative min-h-[calc(100vh-4rem)] bg-blue-900 overflow-hidden">
-      {/* Subtle background texture */}
-      <div className="pointer-events-none absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-lime-500 via-transparent to-transparent" />
-      </div>
-
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col items-center justify-center gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:gap-16 lg:py-24">
-        {/* Left column — copy */}
-        <div className="flex flex-1 flex-col items-start gap-8">
-          {/* Eyebrow */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-lime-500/30 bg-lime-500/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-lime-500">
-            <Sparkles size={12} />
-            Presença profissional real
-          </span>
-
-          {/* Headline */}
-          <div className="font-display">
-            <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-lime-500 sm:text-6xl lg:text-7xl">
-              Mostre mais
-            </h1>
-            <h1 className="text-5xl font-extrabold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl">
-              do que um perfil.
-            </h1>
-          </div>
-
-          {/* Subheadline */}
-          <p className="max-w-md text-lg leading-relaxed text-white/75">
-            Organize sua trajetória profissional em um só lugar e mostre seu valor com muito mais presença.
+    <section className="soft-grid-bg px-3 pb-12 pt-9 sm:px-5 lg:pb-16">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.96fr_1.04fr] lg:items-center">
+        <div className="px-1 py-8 sm:py-12 lg:py-16">
+          <p className="font-data text-xs font-semibold uppercase text-blue-700">
+            Living professional evidence
+          </p>
+          <h1 className="mt-5 max-w-3xl font-display text-5xl font-extrabold leading-none text-neutral-950 sm:text-6xl lg:text-7xl">
+            Mostre mais que um perfil.
+          </h1>
+          <p className="mt-6 max-w-xl text-lg font-semibold leading-8 text-neutral-700">
+            Organize seu perfil, seus projetos e seus resultados em um so lugar.
           </p>
 
-          {/* CTAs */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
-              href="/cadastro"
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-lime-500 px-7 py-3.5 text-base font-bold text-lime-900 shadow-lg shadow-lime-500/20 hover:bg-lime-400 transition-colors"
+              href="/register"
+              className="liquid-button inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-base font-bold text-lime-900 transition-transform hover:-translate-y-0.5"
             >
-              Criar minha conta
-              <ArrowRight size={18} />
+              Criar meu FolioTree
+              <ArrowRight size={18} aria-hidden="true" />
             </Link>
-            <a
-              href="#exemplos"
-              className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 px-7 py-3.5 text-base font-medium text-white hover:bg-white/10 transition-colors"
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-full border border-white/80 bg-white/70 px-6 py-3 text-base font-bold text-neutral-900 shadow-sm backdrop-blur transition-colors hover:bg-white"
             >
-              Ver exemplo
-            </a>
+              Entrar
+            </Link>
           </div>
 
-          {/* Social proof */}
-          <div className="flex items-center gap-3">
-            <div className="flex -space-x-2">
-              {["MB", "LC", "RK", "AP"].map((initials) => (
-                <div
-                  key={initials}
-                  className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-blue-900 bg-blue-700 text-xs font-bold text-white"
-                >
-                  {initials}
-                </div>
-              ))}
+          <div className="mt-10 flex flex-wrap gap-2">
+            {["Perfil", "Versões", "Páginas", "Currículo"].map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-blue-100 bg-white/72 px-3 py-1.5 font-data text-xs font-semibold text-neutral-600"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <ProductPreview />
+      </div>
+    </section>
+  );
+}
+
+function ProductPreview() {
+  return (
+    <div className="relative min-h-[620px] overflow-hidden rounded-[2rem] bg-blue-500 p-4 text-white shadow-2xl shadow-blue-900/18 sm:p-6 lg:min-h-[650px]">
+      <div className="flex items-center justify-between gap-4">
+        <span className="font-data text-xs font-semibold uppercase text-white/76">
+          foliotree.com/@ana
+        </span>
+        <span className="rounded-full bg-lime-500 px-3 py-1 font-data text-xs font-bold uppercase text-lime-900">
+          ao vivo
+        </span>
+      </div>
+
+      <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_0.86fr]">
+        <div className="glass-panel rounded-[1.5rem] p-5 text-neutral-950">
+          <div className="flex items-start gap-4">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-lime-500 font-display text-2xl font-extrabold text-lime-900">
+              AC
             </div>
-            <p className="text-sm text-white/60">
-              <span className="font-semibold text-white">+2.400 pessoas</span> já criaram seu FolioTree
+            <div className="min-w-0">
+              <p className="font-display text-2xl font-extrabold">Ana Corrêa</p>
+              <p className="mt-1 text-sm font-semibold leading-6 text-neutral-600">
+                Designer de produto que transforma sistemas complexos em experiências
+                claras.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 space-y-2">
+            {linkBlocks.map(({ icon: Icon, label, value }) => (
+              <div
+                key={label}
+                className="flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3"
+              >
+                <Icon className="h-5 w-5 text-blue-600" aria-hidden="true" />
+                <div className="min-w-0">
+                  <p className="text-sm font-bold text-neutral-950">{label}</p>
+                  <p className="text-xs font-medium text-neutral-500">{value}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {proofBlocks.map((block) => (
+            <div
+              key={block.label}
+              className={`${block.tone} rounded-[1.25rem] p-4 shadow-lg shadow-blue-950/10`}
+            >
+              <p className="font-data text-xs font-bold uppercase">{block.label}</p>
+              <p className="mt-2 font-display text-2xl font-extrabold leading-tight">
+                {block.value}
+              </p>
+            </div>
+          ))}
+          <div className="rounded-[1.25rem] border border-white/24 bg-white/14 p-4 backdrop-blur">
+            <Sparkles className="h-5 w-5 text-lime-500" aria-hidden="true" />
+            <p className="mt-4 font-display text-3xl font-extrabold leading-tight text-lime-500">
+              Seu trabalho, com contexto.
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Right column — mockup visual */}
-        <div className="w-full max-w-sm flex-shrink-0 lg:max-w-md" id="exemplos">
-          <div className="relative rounded-2xl bg-white p-6 shadow-2xl shadow-black/40 ring-1 ring-white/10">
-            {/* Card header: avatar + name */}
-            <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-xl font-bold text-white shadow-md">
-                AM
-              </div>
-              <div>
-                <h3 className="font-display text-lg font-bold text-neutral-900">Ana Martins</h3>
-                <p className="text-sm text-neutral-500">Product Designer · São Paulo</p>
-                <div className="mt-1 flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-lime-500" />
-                  <span className="text-xs text-neutral-400">Disponível para projetos</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Skill chips */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              {["Figma", "Design System", "UX Research", "Prototyping", "Hotjar"].map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-md bg-neutral-100 px-2.5 py-1 text-xs font-medium text-neutral-700"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-
-            {/* Divider */}
-            <div className="my-4 h-px bg-neutral-100" />
-
-            {/* Mini project cards */}
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">Projetos em destaque</p>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50 p-3">
-                <div className="mb-2 h-16 rounded-lg bg-gradient-to-br from-blue-100 to-blue-200" />
-                <p className="text-xs font-semibold text-neutral-800">App de Onboarding</p>
-                <p className="mt-0.5 text-xs text-neutral-400">↑ 38% retenção</p>
-              </div>
-              <div className="rounded-xl border border-neutral-100 bg-neutral-50 p-3">
-                <div className="mb-2 h-16 rounded-lg bg-gradient-to-br from-lime-100 to-lime-200" />
-                <p className="text-xs font-semibold text-neutral-800">Design System</p>
-                <p className="mt-0.5 text-xs text-neutral-400">3 produtos, 1 base</p>
-              </div>
-            </div>
-
-            {/* Bottom link indicator */}
-            <div className="mt-4 flex items-center justify-between rounded-lg bg-blue-900/5 px-3 py-2">
-              <span className="text-xs text-neutral-500 font-mono">foliotr.ee/anamartins</span>
-              <span className="rounded-full bg-lime-500 px-2.5 py-0.5 text-xs font-bold text-lime-900">Publicado</span>
-            </div>
+      <div className="absolute bottom-5 left-5 right-5 rounded-[1.25rem] border border-white/24 bg-white/14 p-4 backdrop-blur">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <BadgeCheck className="h-5 w-5 text-lime-500" aria-hidden="true" />
+            <p className="text-sm font-semibold text-white/86">
+              Um link simples para compartilhar seu trabalho.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 font-data text-xs font-semibold uppercase text-white/70">
+            <Link2 className="h-4 w-4" aria-hidden="true" />
+            pronto para enviar
           </div>
         </div>
       </div>
-    </section>
-  )
+    </div>
+  );
 }
+
+
+

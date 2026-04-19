@@ -1,12 +1,12 @@
-import { ExternalLink, Github, Image } from "lucide-react"
-import { truncate } from "@/lib/utils"
-import type { BlockProps } from "./types"
+import { ExternalLink, Github, ImageIcon } from "lucide-react";
+import { truncate } from "@/lib/utils";
+import type { BlockProps } from "./types";
 
 interface ProjectsConfig {
-  title?: string
-  layout?: "grid" | "list"
-  maxItems?: number
-  showImages?: boolean
+  title?: string;
+  layout?: "grid" | "list";
+  maxItems?: number;
+  showImages?: boolean;
 }
 
 export default function ProjectsBlock({ profile, config, version }: BlockProps) {
@@ -15,23 +15,23 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
     layout = "grid",
     maxItems,
     showImages = true,
-  } = config as ProjectsConfig
+  } = config as ProjectsConfig;
 
-  let projects: any[] = profile?.projects ?? []
+  let projects = profile.projects;
 
   // Filter by version selectedProjectIds if present
   if (version?.selectedProjectIds?.length) {
-    projects = projects.filter((p: any) => version.selectedProjectIds.includes(p.id))
+    projects = projects.filter((p) => version.selectedProjectIds.includes(p.id));
   }
 
   projects = [...projects].sort((a, b) => {
-    if (a.featured !== b.featured) return b.featured ? 1 : -1
-    return a.order - b.order
-  })
+    if (a.featured !== b.featured) return b.featured ? 1 : -1;
+    return a.order - b.order;
+  });
 
-  if (maxItems) projects = projects.slice(0, maxItems)
+  if (maxItems) projects = projects.slice(0, maxItems);
 
-  if (projects.length === 0) return null
+  if (projects.length === 0) return null;
 
   return (
     <section className="bg-white py-12">
@@ -41,7 +41,7 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
 
         {layout === "grid" ? (
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {projects.map((project: any) => (
+            {projects.map((project) => (
               <div
                 key={project.id}
                 className="group rounded-2xl border border-neutral-100 bg-white overflow-hidden shadow-sm hover:shadow-md transition-shadow"
@@ -57,14 +57,16 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200">
-                        <Image size={32} className="text-neutral-300" />
+                        <ImageIcon size={32} className="text-neutral-300" />
                       </div>
                     )}
                   </div>
                 )}
 
                 <div className="p-5">
-                  <h3 className="font-display text-base font-bold text-neutral-900">{project.title}</h3>
+                  <h3 className="font-display text-base font-bold text-neutral-900">
+                    {project.title}
+                  </h3>
 
                   {project.description && (
                     <p className="mt-1.5 text-sm leading-6 text-neutral-500">
@@ -115,7 +117,7 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
           </div>
         ) : (
           <div className="mt-6 flex flex-col divide-y divide-neutral-100">
-            {projects.map((project: any) => (
+            {projects.map((project) => (
               <div key={project.id} className="flex gap-4 py-5">
                 {showImages && project.imageUrl && (
                   <img
@@ -126,7 +128,9 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display text-base font-semibold text-neutral-900">{project.title}</h3>
+                  <h3 className="font-display text-base font-semibold text-neutral-900">
+                    {project.title}
+                  </h3>
                   {project.description && (
                     <p className="mt-1 text-sm text-neutral-500 leading-6">
                       {truncate(project.description, 180)}
@@ -175,5 +179,5 @@ export default function ProjectsBlock({ profile, config, version }: BlockProps) 
         )}
       </div>
     </section>
-  )
+  );
 }

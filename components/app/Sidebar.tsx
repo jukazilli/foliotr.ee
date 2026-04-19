@@ -2,120 +2,100 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Settings, type LucideIcon } from "lucide-react";
+import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
 import {
-  LayoutDashboard,
-  User,
-  Layers,
-  Globe,
-  FileText,
-  Settings,
-  ExternalLink,
-} from "lucide-react";
+  getAppNavItem,
+  libraryAppNavigation,
+  primaryAppNavigation,
+} from "@/components/app/navigation";
 import { cn } from "@/lib/utils";
-import { AvatarRoot, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-interface NavItem {
-  label: string;
+function SidebarLink({
+  href,
+  label,
+  icon: Icon,
+  active,
+}: {
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-const mainNavItems: NavItem[] = [
-  { label: "Início", href: "/dashboard", icon: LayoutDashboard },
-  { label: "Meu Perfil", href: "/profile", icon: User },
-  { label: "Versões", href: "/versions", icon: Layers },
-  { label: "Páginas", href: "/pages", icon: Globe },
-  { label: "Currículos", href: "/resumes", icon: FileText },
-];
-
-const bottomNavItems: NavItem[] = [
-  { label: "Configurações", href: "/settings", icon: Settings },
-];
-
-interface SidebarProps {
-  userName?: string;
-  userImage?: string;
-  userUsername?: string;
-}
-
-function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
-  const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-  const Icon = item.icon;
-
+  label: string;
+  icon: LucideIcon;
+  active: boolean;
+}) {
   return (
     <Link
-      href={item.href}
+      href={href}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors relative",
-        isActive
-          ? "bg-neutral-100 text-neutral-900 font-semibold before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:h-5 before:w-0.5 before:rounded-r-full before:bg-lime-500"
-          : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
+        "group flex items-center gap-3 rounded-2xl px-3 py-3 transition-all",
+        active
+          ? "bg-green-100 text-green-900 shadow-sm shadow-green-900/10"
+          : "text-neutral-700 hover:bg-neutral-100/90 hover:text-neutral-950"
       )}
     >
-      <Icon className="h-4 w-4 shrink-0" />
-      {item.label}
+      <span
+        className={cn(
+          "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border",
+          active
+            ? "border-green-200 bg-green-500 text-green-900"
+            : "border-neutral-200 bg-white text-neutral-500"
+        )}
+      >
+        <Icon className="h-4 w-4" aria-hidden="true" />
+      </span>
+      <span className="min-w-0 flex-1 truncate text-sm font-semibold">{label}</span>
     </Link>
   );
 }
 
-export function Sidebar({ userName, userImage, userUsername }: SidebarProps) {
+export function Sidebar() {
   const pathname = usePathname();
-  const initials = userName
-    ? userName
-        .trim()
-        .split(/\s+/)
-        .map((n) => n[0])
-        .slice(0, 2)
-        .join("")
-        .toUpperCase()
-    : "FT";
+  const activeItem = getAppNavItem(pathname);
 
   return (
-    <aside className="hidden lg:flex w-60 shrink-0 flex-col border-r border-[rgba(15,17,21,0.08)] bg-white">
-      {/* Logo */}
-      <div className="flex h-14 items-center px-5 border-b border-[rgba(15,17,21,0.08)]">
-        <span className="font-display text-lg font-bold text-neutral-900">
-          FolioTree
-        </span>
-      </div>
+    <aside className="hidden w-72 shrink-0 lg:block xl:w-80">
+      <div className="sticky top-3 flex h-[calc(100vh-1.5rem)] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white/88 px-4 py-5 shadow-sm backdrop-blur">
+        <div className="px-2">
+          <FolioTreeLogo href="/" />
+        </div>
 
-      {/* Nav principal */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-        {mainNavItems.map((item) => (
-          <NavLink key={item.href} item={item} pathname={pathname} />
-        ))}
-      </nav>
-
-      {/* Nav inferior */}
-      <div className="px-3 pb-3 space-y-1">
-        {bottomNavItems.map((item) => (
-          <NavLink key={item.href} item={item} pathname={pathname} />
-        ))}
-      </div>
-
-      {/* Usuário no rodapé */}
-      <div className="border-t border-[rgba(15,17,21,0.08)] p-4">
-        <div className="flex items-center gap-3 min-w-0">
-          <AvatarRoot size="sm">
-            {userImage && <AvatarImage src={userImage} alt={userName ?? ""} />}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </AvatarRoot>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-neutral-900 truncate">
-              {userName ?? "Usuário"}
-            </p>
-            {userUsername && (
-              <Link
-                href={`https://foliotr.ee/${userUsername}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 text-xs text-neutral-400 hover:text-neutral-600 transition-colors truncate"
-              >
-                <span className="truncate">foliotr.ee/{userUsername}</span>
-                <ExternalLink className="h-3 w-3 shrink-0" />
-              </Link>
-            )}
+        <div className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1">
+          <div className="space-y-2">
+            {primaryAppNavigation.map((item) => (
+              <SidebarLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                icon={item.icon}
+                active={activeItem.href === item.href}
+              />
+            ))}
           </div>
+
+          <div className="mt-4 border-t border-neutral-200/80 pt-4">
+            <div className="space-y-2">
+              {libraryAppNavigation.map((item) => (
+                <SidebarLink
+                  key={item.href}
+                  href={item.href}
+                  label={item.label}
+                  icon={item.icon}
+                  active={activeItem.href === item.href}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 border-t border-neutral-200/80 pt-4">
+          <Link
+            href="/settings"
+            className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-neutral-700 transition-colors hover:bg-neutral-100/90 hover:text-neutral-950"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-neutral-200 bg-white text-neutral-500">
+              <Settings className="h-4 w-4" aria-hidden="true" />
+            </span>
+            Ajustes
+          </Link>
         </div>
       </div>
     </aside>

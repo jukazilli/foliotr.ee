@@ -1,20 +1,24 @@
-import { MapPin, Building2 } from "lucide-react"
-import { formatDate, getInitials } from "@/lib/utils"
-import type { BlockProps } from "./types"
+import { MapPin, Building2 } from "lucide-react";
+import { formatDate, getInitials } from "@/lib/utils";
+import type { BlockProps } from "./types";
 
 interface ExperienceConfig {
-  title?: string
-  maxItems?: number
-  showCompanyLogo?: boolean
-  showCurrentBadge?: boolean
+  title?: string;
+  maxItems?: number;
+  showCompanyLogo?: boolean;
+  showCurrentBadge?: boolean;
 }
 
-function formatPeriod(startDate: string | Date, endDate: string | Date | null, current: boolean): string {
-  const start = formatDate(startDate, "year-month")
-  if (current) return `${start} · Atual`
-  if (!endDate) return start
-  const end = formatDate(endDate, "year-month")
-  return `${start} — ${end}`
+function formatPeriod(
+  startDate: string | Date,
+  endDate: string | Date | null,
+  current: boolean
+): string {
+  const start = formatDate(startDate, "year-month");
+  if (current) return `${start} · Atual`;
+  if (!endDate) return start;
+  const end = formatDate(endDate, "year-month");
+  return `${start} — ${end}`;
 }
 
 export default function ExperienceBlock({ profile, config, version }: BlockProps) {
@@ -23,25 +27,25 @@ export default function ExperienceBlock({ profile, config, version }: BlockProps
     maxItems,
     showCompanyLogo = true,
     showCurrentBadge = true,
-  } = config as ExperienceConfig
+  } = config as ExperienceConfig;
 
   // Filter by version selectedExperienceIds if present
-  let experiences: any[] = profile?.experiences ?? []
+  let experiences = profile.experiences;
   if (version?.selectedExperienceIds?.length) {
-    experiences = experiences.filter((e: any) =>
+    experiences = experiences.filter((e) =>
       version.selectedExperienceIds.includes(e.id)
-    )
+    );
   }
 
   // Sort by order then by startDate desc
   experiences = [...experiences].sort((a, b) => {
-    if (a.order !== b.order) return a.order - b.order
-    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-  })
+    if (a.order !== b.order) return a.order - b.order;
+    return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
+  });
 
-  if (maxItems) experiences = experiences.slice(0, maxItems)
+  if (maxItems) experiences = experiences.slice(0, maxItems);
 
-  if (experiences.length === 0) return null
+  if (experiences.length === 0) return null;
 
   return (
     <section className="bg-white py-12">
@@ -50,7 +54,7 @@ export default function ExperienceBlock({ profile, config, version }: BlockProps
         <div className="mt-1 h-0.5 w-10 rounded-full bg-lime-500" />
 
         <div className="mt-6 flex flex-col gap-6">
-          {experiences.map((exp: any) => (
+          {experiences.map((exp) => (
             <div key={exp.id} className="flex gap-4">
               {/* Logo */}
               {showCompanyLogo && (
@@ -82,7 +86,9 @@ export default function ExperienceBlock({ profile, config, version }: BlockProps
                   )}
                 </div>
 
-                <p className="mt-0.5 text-sm font-medium text-neutral-600">{exp.company}</p>
+                <p className="mt-0.5 text-sm font-medium text-neutral-600">
+                  {exp.company}
+                </p>
 
                 <div className="mt-1 flex flex-wrap items-center gap-3 text-xs text-neutral-400">
                   <span>{formatPeriod(exp.startDate, exp.endDate, exp.current)}</span>
@@ -105,5 +111,5 @@ export default function ExperienceBlock({ profile, config, version }: BlockProps
         </div>
       </div>
     </section>
-  )
+  );
 }

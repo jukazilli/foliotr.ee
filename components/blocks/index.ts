@@ -1,12 +1,12 @@
-import { BlockType, BlockProps } from "./types"
-import type { ComponentType } from "react"
+import { BlockType, BlockProps } from "./types";
+import type { ComponentType } from "react";
 
-import HeroBlock from "./HeroBlock"
-import AboutBlock from "./AboutBlock"
-import ExperienceBlock from "./ExperienceBlock"
-import SkillsBlock from "./SkillsBlock"
-import ProjectsBlock from "./ProjectsBlock"
-import LinksBlock from "./LinksBlock"
+import HeroBlock from "./HeroBlock";
+import AboutBlock from "./AboutBlock";
+import ExperienceBlock from "./ExperienceBlock";
+import SkillsBlock from "./SkillsBlock";
+import ProjectsBlock from "./ProjectsBlock";
+import LinksBlock from "./LinksBlock";
 
 export const BLOCK_REGISTRY: Record<BlockType, ComponentType<BlockProps>> = {
   hero: HeroBlock,
@@ -19,7 +19,7 @@ export const BLOCK_REGISTRY: Record<BlockType, ComponentType<BlockProps>> = {
   proof: AboutBlock, // placeholder
   links: LinksBlock,
   contact: LinksBlock, // placeholder
-}
+};
 
 export const BLOCK_LABELS: Record<BlockType, string> = {
   hero: "Apresentação",
@@ -32,6 +32,6 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   proof: "Resultados",
   links: "Links",
   contact: "Contato",
-}
+};
 
-export type { BlockType, BlockProps } from "./types"
+export type { BlockType, BlockProps } from "./types";

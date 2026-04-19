@@ -1,11 +1,11 @@
-import { MapPin, ExternalLink } from "lucide-react"
-import { getPlatformLabel, getPlatformUrl } from "@/lib/utils"
-import type { BlockProps } from "./types"
+import { MapPin, ExternalLink } from "lucide-react";
+import { getPlatformLabel, getPlatformUrl } from "@/lib/utils";
+import type { BlockProps } from "./types";
 
 interface AboutConfig {
-  title?: string
-  showLocation?: boolean
-  showLinks?: boolean
+  title?: string;
+  showLocation?: boolean;
+  showLinks?: boolean;
 }
 
 export default function AboutBlock({ profile, config, version }: BlockProps) {
@@ -13,13 +13,13 @@ export default function AboutBlock({ profile, config, version }: BlockProps) {
     title = "Sobre mim",
     showLocation = true,
     showLinks = true,
-  } = config as AboutConfig
+  } = config as AboutConfig;
 
-  const bio = version?.customBio ?? profile?.bio
-  const location = profile?.location
-  const links: any[] = profile?.links ?? []
+  const bio = version?.customBio ?? profile?.bio;
+  const location = profile?.location;
+  const links = profile.links;
 
-  if (!bio && !location) return null
+  if (!bio && !location) return null;
 
   return (
     <section className="bg-white py-12">
@@ -42,9 +42,9 @@ export default function AboutBlock({ profile, config, version }: BlockProps) {
 
         {showLinks && links.length > 0 && (
           <div className="mt-5 flex flex-wrap gap-2">
-            {links.map((link: any) => {
-              const url = getPlatformUrl(link.platform, link.url)
-              const label = link.label ?? getPlatformLabel(link.platform)
+            {links.map((link) => {
+              const url = getPlatformUrl(link.platform, link.url);
+              const label = link.label ?? getPlatformLabel(link.platform);
               return (
                 <a
                   key={link.id}
@@ -56,11 +56,11 @@ export default function AboutBlock({ profile, config, version }: BlockProps) {
                   {label}
                   <ExternalLink size={12} />
                 </a>
-              )
+              );
             })}
           </div>
         )}
       </div>
     </section>
-  )
+  );
 }

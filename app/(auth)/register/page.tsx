@@ -6,10 +6,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { registerSchema, type RegisterInput } from "@/lib/validations";
+
+function getRegisterErrorMessage(status: number): string {
+  if (status === 429) {
+    return "Muitas tentativas. Aguarde alguns instantes e tente novamente.";
+  }
+
+  return "Não foi possível criar a conta. Verifique os dados e tente novamente.";
+}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -26,19 +35,18 @@ export default function RegisterPage() {
   async function onSubmit(data: RegisterInput) {
     setServerError(null);
 
-    const res = await fetch("/api/register", {
+    const response = await fetch("/api/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      }),
-    });
+      body: JSON.stringify(data),
+    }).catch(() => null);
 
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      setServerError(body.message ?? "Ocorreu um erro. Tente novamente.");
+    if (!response?.ok) {
+      setServerError(
+        response
+          ? getRegisterErrorMessage(response.status)
+          : "Não foi possível criar a conta. Tente novamente."
+      );
       return;
     }
 
@@ -49,7 +57,9 @@ export default function RegisterPage() {
     });
 
     if (signInResult?.error) {
-      setServerError("Conta criada, mas não foi possível fazer login automático. Tente entrar manualmente.");
+      setServerError(
+        "Conta criada, mas não foi possível entrar automaticamente. Tente fazer login."
+      );
       return;
     }
 
@@ -57,44 +67,54 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="font-display text-2xl font-bold text-neutral-900">
-          Criar sua conta
+    <div className="space-y-7">
+      <div>
+        <p className="font-data text-xs font-semibold uppercase text-blue-700">
+          Criar conta
+        </p>
+        <h1 className="mt-3 font-display text-4xl font-extrabold leading-tight text-neutral-950">
+          Comece pelo básico.
         </h1>
-        <p className="text-sm text-neutral-500">
-          Comece grátis. Sem cartão de crédito.
+        <p className="mt-3 text-sm font-semibold leading-6 text-neutral-600">
+          Crie sua base profissional inicial. Depois você ajusta página, currículo e
+          versões.
         </p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
         <div className="space-y-1.5">
-          <Label htmlFor="name">Nome completo</Label>
+          <Label htmlFor="name">Nome</Label>
           <Input
             id="name"
             type="text"
             placeholder="Ana Souza"
             autoComplete="name"
             error={!!errors.name}
+            disabled={isSubmitting}
             {...register("name")}
           />
           {errors.name && (
-            <p className="text-xs text-coral-600">{errors.name.message}</p>
+            <p className="text-xs font-semibold text-coral-700">
+              {errors.name.message}
+            </p>
           )}
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="email">E-mail</Label>
           <Input
             id="email"
             type="email"
             placeholder="voce@exemplo.com"
             autoComplete="email"
             error={!!errors.email}
+            disabled={isSubmitting}
             {...register("email")}
           />
           {errors.email && (
-            <p className="text-xs text-coral-600">{errors.email.message}</p>
+            <p className="text-xs font-semibold text-coral-700">
+              {errors.email.message}
+            </p>
           )}
         </div>
 
@@ -103,13 +123,16 @@ export default function RegisterPage() {
           <Input
             id="password"
             type="password"
-            placeholder="Mín. 8 caracteres, 1 maiúscula, 1 número"
+            placeholder="Mínimo de 8 caracteres"
             autoComplete="new-password"
             error={!!errors.password}
+            disabled={isSubmitting}
             {...register("password")}
           />
           {errors.password && (
-            <p className="text-xs text-coral-600">{errors.password.message}</p>
+            <p className="text-xs font-semibold text-coral-700">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -121,18 +144,23 @@ export default function RegisterPage() {
             placeholder="Repita a senha"
             autoComplete="new-password"
             error={!!errors.confirmPassword}
+            disabled={isSubmitting}
             {...register("confirmPassword")}
           />
           {errors.confirmPassword && (
-            <p className="text-xs text-coral-600">
+            <p className="text-xs font-semibold text-coral-700">
               {errors.confirmPassword.message}
             </p>
           )}
         </div>
 
         {serverError && (
-          <div className="rounded-xl bg-coral-50 border border-coral-200 px-4 py-3">
-            <p className="text-sm text-coral-700">{serverError}</p>
+          <div
+            className="rounded-2xl border border-coral-200 bg-coral-50 px-4 py-3"
+            role="alert"
+            aria-live="polite"
+          >
+            <p className="text-sm font-semibold text-coral-900">{serverError}</p>
           </div>
         )}
 
@@ -141,17 +169,18 @@ export default function RegisterPage() {
           variant="primary"
           size="lg"
           loading={isSubmitting}
-          className="w-full"
+          className="w-full rounded-full"
         >
           Criar conta
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </form>
 
-      <p className="text-center text-sm text-neutral-500">
-        Já tem uma conta?{" "}
+      <p className="text-center text-sm font-semibold text-neutral-600">
+        Já tem conta?{" "}
         <Link
           href="/login"
-          className="font-medium text-blue-500 hover:text-blue-600 hover:underline"
+          className="font-bold text-blue-700 hover:text-blue-900 hover:underline"
         >
           Entrar
         </Link>

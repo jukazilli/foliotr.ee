@@ -1,153 +1,164 @@
 import Link from "next/link";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import { Plus, Layers, MoreHorizontal, Star } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, FileText, Globe, Star } from "lucide-react";
+import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
-
-// Mock de versões — em produção, buscar do banco
-const mockVersions = [
-  {
-    id: "v1",
-    name: "Versão Principal",
-    description: "Apresentação geral, para a maioria das vagas",
-    context: "Geral",
-    emoji: "⭐",
-    isDefault: true,
-    createdAt: "2024-01-10",
-    experiencesCount: 0,
-  },
-];
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAppViewer, getOwnedVersions } from "@/lib/server/app-viewer";
+import { formatDate } from "@/lib/utils";
 
 export default async function VersionsPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
+  const { user } = await getAppViewer();
+  const versions = await getOwnedVersions(user.id);
 
-  const hasVersions = mockVersions.length > 0;
+  if (versions.length === 0) {
+    return (
+      <div className="space-y-8">
+        <PageIntro
+          eyebrow="Versoes"
+          title="Versoes"
+          description="Crie versoes para objetivos diferentes."
+        />
+        <EmptyWorkspaceState
+          accent="violet"
+          label="Sem versoes"
+          title="Voce ainda nao tem versoes"
+          description="Crie uma versao para comecar."
+          primaryAction={{ href: "/profile", label: "Completar perfil" }}
+          secondaryAction={{ href: "/dashboard", label: "Voltar" }}
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-3xl space-y-8">
-      {/* Cabeçalho */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-neutral-900">
-            Versões
-          </h1>
-          <p className="mt-2 text-neutral-500 max-w-md">
-            Adapte sua apresentação para cada contexto. Cada versão usa a mesma
-            base, mas conta histórias diferentes.
-          </p>
-        </div>
-        <Button variant="primary" asChild>
-          <Link href="/versions/new">
-            <Plus className="h-4 w-4" />
-            Nova versão
-          </Link>
-        </Button>
-      </div>
+    <div className="space-y-8">
+      <PageIntro
+        eyebrow="Versoes"
+        title="Versoes"
+        description="Crie versoes para diferentes objetivos."
+        meta={
+          <>
+            <Badge variant="version">{versions.length} versoes</Badge>
+            <Badge variant="info">
+              {versions.filter((version) => version.page).length} paginas
+            </Badge>
+            <Badge variant="success">
+              {versions.filter((version) => version.resumeConfig).length} curriculos
+            </Badge>
+          </>
+        }
+        actions={
+          <Button asChild variant="outline">
+            <Link href="/pages">
+              Ver paginas
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </Button>
+        }
+      />
 
-      {hasVersions ? (
-        <div className="space-y-4">
-          {mockVersions.map((version) => (
-            <Card
-              key={version.id}
-              className="hover:shadow-md transition-shadow"
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
+      <section className="grid gap-4 xl:grid-cols-2">
+        {versions.map((version) => {
+          const page = version.page;
+          const hasResume = Boolean(version.resumeConfig);
+          const selectedCount =
+            version.experiences.length +
+            version.projects.length +
+            version.achievements.length +
+            version.skills.length +
+            version.proofs.length +
+            version.highlights.length +
+            version.links.length;
+
+          return (
+            <Card key={version.id} className="rounded-[28px]">
+              <CardHeader className="space-y-5">
+                <div className="flex items-start justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-xl">
-                      {version.emoji}
-                    </div>
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-50 text-xl shadow-sm">
+                      {version.emoji ?? "V"}
+                    </span>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <CardTitle>{version.name}</CardTitle>
-                        {version.isDefault && (
+                      <div className="flex flex-wrap items-center gap-2">
+                        <CardTitle className="font-display text-2xl font-semibold tracking-tight">
+                          {version.name}
+                        </CardTitle>
+                        {version.isDefault ? (
                           <Badge variant="version">
-                            <Star className="mr-1 h-2.5 w-2.5" />
+                            <Star className="mr-1 h-3 w-3" aria-hidden="true" />
                             Principal
                           </Badge>
-                        )}
+                        ) : null}
                       </div>
-                      <CardDescription>{version.description}</CardDescription>
+                      <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
+                        {version.description || version.context || "Sem descricao"}
+                      </CardDescription>
                     </div>
                   </div>
-                  <button className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 transition-colors">
-                    <MoreHorizontal className="h-4 w-4" />
-                  </button>
+                  <Badge variant={page?.publishState === "PUBLISHED" ? "success" : "default"}>
+                    {page?.publishState === "PUBLISHED" ? "publicada" : "rascunho"}
+                  </Badge>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  {[
+                    { label: "Itens", value: selectedCount, hint: "selecionados" },
+                    { label: "Pagina", value: page ? 1 : 0, hint: page?.template?.name ?? "sem modelo" },
+                    { label: "Curriculo", value: hasResume ? "ok" : "pendente", hint: hasResume ? "criado" : "sem curriculo" },
+                  ].map((item) => (
+                    <div key={item.label} className="rounded-[22px] border border-neutral-200 bg-neutral-50 p-4">
+                      <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
+                        {item.label}
+                      </p>
+                      <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-neutral-950">
+                        {item.value}
+                      </p>
+                      <p className="mt-1 text-sm text-neutral-600">{item.hint}</p>
+                    </div>
+                  ))}
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  <span className="text-xs text-neutral-400">
-                    Contexto: <span className="text-neutral-600">{version.context}</span>
-                  </span>
-                  <span className="text-xs text-neutral-400">
-                    {version.experiencesCount} experiências selecionadas
-                  </span>
+
+              <CardContent className="space-y-4">
+                <div className="rounded-[22px] border border-neutral-200 bg-white p-4">
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <Badge variant={page ? "info" : "default"}>
+                      <Globe className="mr-1 h-3 w-3" aria-hidden="true" />
+                      {page ? "com pagina" : "sem pagina"}
+                    </Badge>
+                    <Badge variant={hasResume ? "success" : "default"}>
+                      <FileText className="mr-1 h-3 w-3" aria-hidden="true" />
+                      {hasResume ? "com curriculo" : "sem curriculo"}
+                    </Badge>
+                    <Badge variant="default">
+                      Atualizada em {formatDate(version.updatedAt, "short")}
+                    </Badge>
+                  </div>
                 </div>
-                <div className="mt-4 flex items-center gap-2">
-                  <Button variant="outline" size="sm">
-                    Editar versão
-                  </Button>
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href="/pages">Ver página</Link>
-                  </Button>
+
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap gap-2">
+                    <Button asChild variant="outline" size="sm">
+                      <Link href="/pages">Ver paginas</Link>
+                    </Button>
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href="/resumes">Ver curriculos</Link>
+                    </Button>
+                  </div>
+                  <Link
+                    href="/profile"
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-neutral-700 transition-colors hover:text-neutral-950"
+                  >
+                    Editar perfil
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
                 </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
-      ) : (
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center py-12 text-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-100 mb-4">
-                <Layers className="h-8 w-8 text-violet-500" />
-              </div>
-              <h3 className="font-semibold text-neutral-900">
-                Nenhuma versão ainda
-              </h3>
-              <p className="mt-2 text-sm text-neutral-500 max-w-xs">
-                Crie sua primeira versão e comece a adaptar sua apresentação
-                para diferentes contextos.
-              </p>
-              <Button variant="primary" className="mt-6" asChild>
-                <Link href="/versions/new">
-                  <Plus className="h-4 w-4" />
-                  Criar primeira versão
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Info card */}
-      <Card className="bg-neutral-50 border-neutral-200">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <Layers className="h-5 w-5 text-neutral-400 mt-0.5 shrink-0" />
-            <div>
-              <p className="text-sm font-medium text-neutral-700">
-                Como funcionam as versões?
-              </p>
-              <p className="mt-1 text-sm text-neutral-500">
-                Cada versão seleciona e reordena experiências do seu perfil base,
-                podendo ter um headline e bio personalizados. Uma versão pode
-                virar uma página pública ou um currículo PDF.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          );
+        })}
+      </section>
     </div>
   );
 }

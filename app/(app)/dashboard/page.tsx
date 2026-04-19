@@ -1,187 +1,237 @@
 import Link from "next/link";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
-import {
-  UserCircle,
-  Layers,
-  Globe,
-  CheckCircle2,
-  Circle,
-  ArrowRight,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-
-// Mock de progresso — em produção, buscar do banco
-const mockProgress = {
-  profileFilled: false,
-  versionCreated: false,
-  pagePublished: false,
-};
-
-const quickActions = [
-  {
-    title: "Complete seu perfil",
-    description: "Adicione experiências, habilidades e projetos.",
-    href: "/profile",
-    icon: UserCircle,
-    cta: "Ir para o perfil",
-    accent: "bg-blue-50 border-blue-100",
-    iconClass: "text-blue-500",
-  },
-  {
-    title: "Criar uma versão",
-    description: "Adapte sua apresentação para cada oportunidade.",
-    href: "/versions/new",
-    icon: Layers,
-    cta: "Nova versão",
-    accent: "bg-violet-50 border-violet-100",
-    iconClass: "text-violet-500",
-  },
-  {
-    title: "Publicar sua página",
-    description: "Coloque sua página pública no ar.",
-    href: "/pages",
-    icon: Globe,
-    cta: "Ver páginas",
-    accent: "bg-lime-50 border-lime-100",
-    iconClass: "text-lime-600",
-  },
-];
-
-const checklistItems = [
-  {
-    label: "Perfil preenchido",
-    description: "Nome, bio, experiências e habilidades",
-    done: mockProgress.profileFilled,
-    href: "/profile",
-  },
-  {
-    label: "Versão criada",
-    description: "Sua primeira versão de apresentação",
-    done: mockProgress.versionCreated,
-    href: "/versions",
-  },
-  {
-    label: "Página publicada",
-    description: "Sua presença pública no ar",
-    done: mockProgress.pagePublished,
-    href: "/pages",
-  },
-];
+import { ArrowRight, CheckCircle2, CircleDashed, Globe, Layers3, UserRound } from "lucide-react";
+import { FlowStepCard, PageIntro, StatCard } from "@/components/app/primitives";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getDashboardViewer } from "@/lib/server/app-viewer";
+import { formatDate } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/login");
-
-  const user = session.user as typeof session.user & { username?: string };
-  const firstName = user.name?.split(" ")[0] ?? "profissional";
-  const completedSteps = checklistItems.filter((i) => i.done).length;
-  const totalSteps = checklistItems.length;
+  const profile = await getDashboardViewer();
+  const firstName = (profile.displayName || profile.user.name || "voce").split(" ")[0];
+  const pages = profile.versions.flatMap((version) => (version.page ? [version.page] : []));
+  const resumeConfigs = profile.versions.flatMap((version) =>
+    version.resumeConfig ? [version.resumeConfig] : []
+  );
+  const counts = {
+    versions: profile.versions.length,
+    pages: pages.length,
+    publishedPages: pages.filter((page) => page.publishState === "PUBLISHED").length,
+    resumeConfigs: resumeConfigs.length,
+    publishedResumes: resumeConfigs.filter((config) => config.publishState === "PUBLISHED").length,
+    experiences: profile._count.experiences,
+    projects: profile._count.projects,
+    proofs: profile._count.proofs,
+    links: profile._count.links + (profile.websiteUrl ? 1 : 0),
+  };
+  const checks = [
+    Boolean(profile.displayName || profile.user.name),
+    Boolean(profile.headline),
+    Boolean(profile.bio),
+    counts.experiences > 0,
+    counts.projects > 0,
+    counts.links > 0,
+    profile._count.achievements > 0 || profile._count.proofs > 0,
+  ];
+  const strength = {
+    completed: checks.filter(Boolean).length,
+    total: checks.length,
+    percent: Math.round((checks.filter(Boolean).length / checks.length) * 100),
+  };
+  const defaultVersion = profile.versions.find((version) => version.isDefault) ?? profile.versions[0];
 
   return (
-    <div className="max-w-4xl space-y-10">
-      {/* Cabeçalho */}
-      <div>
-        <h1 className="font-display text-3xl font-bold text-neutral-900">
-          Olá, {firstName}!
-        </h1>
-        <p className="mt-1 text-neutral-500">
-          Vamos construir sua presença profissional.
-        </p>
-      </div>
-
-      {/* Ações rápidas */}
-      <section>
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400 mb-4">
-          Ações rápidas
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <Link key={action.href} href={action.href} className="group block">
-                <Card
-                  className={`h-full border transition-shadow hover:shadow-md ${action.accent}`}
-                >
-                  <CardContent className="pt-6 space-y-4">
-                    <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-sm ${action.iconClass}`}
-                    >
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-neutral-900">
-                        {action.title}
-                      </h3>
-                      <p className="mt-1 text-sm text-neutral-500">
-                        {action.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-1 text-sm font-medium text-neutral-700 group-hover:gap-2 transition-all">
-                      {action.cta}
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </div>
-                  </CardContent>
-                </Card>
+    <div className="space-y-8">
+      <PageIntro
+        eyebrow="Area inicial"
+        title={`Oi, ${firstName}.`}
+        description="Veja o que falta e siga para a proxima etapa."
+        meta={
+          <>
+            <Badge variant="warning">Perfil {strength.percent}%</Badge>
+            <Badge variant="version">{counts.versions} versoes</Badge>
+            <Badge variant="info">{counts.publishedPages} paginas</Badge>
+          </>
+        }
+        actions={
+          <>
+            <Button asChild variant="outline">
+              <Link href="/profile">Editar perfil</Link>
+            </Button>
+            <Button asChild variant="primary">
+              <Link href="/versions">
+                Ver versoes
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
-            );
-          })}
-        </div>
+            </Button>
+          </>
+        }
+      />
+
+      <section className="grid gap-4 xl:grid-cols-4">
+        <StatCard label="Perfil" value={`${strength.percent}%`} hint="Complete seu perfil." tone="blue" />
+        <StatCard label="Versoes" value={counts.versions} hint="Crie versoes diferentes." tone="violet" />
+        <StatCard label="Paginas" value={counts.publishedPages} hint="Paginas publicadas." tone="cyan" />
+        <StatCard label="Curriculos" value={counts.resumeConfigs} hint="Curriculos prontos." tone="lime" />
       </section>
 
-      {/* Checklist de onboarding */}
-      <section>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
-            Próximos passos
-          </h2>
-          <span className="text-sm text-neutral-500">
-            {completedSteps}/{totalSteps} concluídos
-          </span>
-        </div>
+      <section className="grid gap-4 xl:grid-cols-3">
+        <FlowStepCard
+          step="01"
+          title="Perfil"
+          description="Complete suas informacoes."
+          href="/profile"
+          status={strength.percent >= 70 ? "pronto" : "falta preencher"}
+          tone="blue"
+        />
+        <FlowStepCard
+          step="02"
+          title="Versoes"
+          description="Crie versoes para objetivos diferentes."
+          href="/versions"
+          status={counts.versions > 1 ? "mais de uma versao" : "primeira versao"}
+          tone="violet"
+        />
+        <FlowStepCard
+          step="03"
+          title="Paginas e curriculos"
+          description="Publique sua pagina ou veja o curriculo."
+          href={counts.publishedPages > 0 ? "/pages" : "/resumes"}
+          status={
+            counts.publishedPages > 0 || counts.resumeConfigs > 0 ? "pronto" : "sem publicar"
+          }
+          tone="cyan"
+        />
+      </section>
 
-        {/* Barra de progresso */}
-        <div className="mb-6 h-1.5 w-full rounded-full bg-neutral-200 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-lime-500 transition-all"
-            style={{ width: `${(completedSteps / totalSteps) * 100}%` }}
-          />
-        </div>
-
-        <Card>
-          <CardContent className="pt-6 divide-y divide-[rgba(15,17,21,0.06)]">
-            {checklistItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`flex items-center gap-4 py-4 first:pt-0 last:pb-0 group hover:opacity-80 transition-opacity ${
-                  item.done ? "opacity-60" : ""
-                }`}
-              >
-                {item.done ? (
-                  <CheckCircle2 className="h-5 w-5 text-lime-500 shrink-0" />
-                ) : (
-                  <Circle className="h-5 w-5 text-neutral-300 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <p
-                    className={`text-sm font-medium ${
-                      item.done
-                        ? "line-through text-neutral-400"
-                        : "text-neutral-900"
-                    }`}
-                  >
+      <section className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
+        <Card className="rounded-[28px]">
+          <CardHeader className="flex flex-row items-start justify-between gap-4">
+            <div>
+              <CardTitle className="font-display text-2xl font-semibold tracking-tight">
+                Resumo
+              </CardTitle>
+              <CardDescription className="mt-2 max-w-2xl text-sm leading-7 text-neutral-600">
+                Veja o que ja esta pronto.
+              </CardDescription>
+            </div>
+            {defaultVersion ? (
+              <Badge variant="version" className="shrink-0">
+                Versao principal
+              </Badge>
+            ) : null}
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-3">
+              {[
+                {
+                  icon: UserRound,
+                  label: "Perfil",
+                  value: `${counts.experiences} experiencias`,
+                  description: "Experiencias cadastradas.",
+                },
+                {
+                  icon: Layers3,
+                  label: "Versao",
+                  value: defaultVersion?.name ?? "Principal",
+                  description: "Versao em foco.",
+                },
+                {
+                  icon: Globe,
+                  label: "Pagina",
+                  value: counts.publishedPages > 0 ? `${counts.publishedPages} no ar` : "sem pagina",
+                  description: "Status atual.",
+                },
+              ].map((item) => (
+                <div key={item.label} className="rounded-[24px] border border-neutral-200 bg-neutral-50 p-5">
+                  <item.icon className="h-5 w-5 text-neutral-500" aria-hidden="true" />
+                  <p className="mt-4 font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
                     {item.label}
                   </p>
-                  <p className="text-xs text-neutral-500 mt-0.5">
-                    {item.description}
+                  <p className="mt-2 font-display text-2xl font-semibold tracking-tight text-neutral-950">
+                    {item.value}
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-neutral-600">{item.description}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-[24px] border border-neutral-200 bg-white p-5">
+              <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
+                Proximo passo
+              </p>
+              <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-base font-semibold text-neutral-900">
+                    {strength.percent < 70
+                      ? "Complete seu perfil."
+                      : counts.publishedPages === 0
+                        ? "Crie sua primeira pagina."
+                        : "Revise suas versoes."}
                   </p>
                 </div>
-                {!item.done && (
-                  <ArrowRight className="h-4 w-4 text-neutral-300 group-hover:text-neutral-500 transition-colors shrink-0" />
+                <Button asChild variant="outline">
+                  <Link href={strength.percent < 70 ? "/profile" : "/versions"}>
+                    {strength.percent < 70 ? "Completar perfil" : "Ver versoes"}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[28px]">
+          <CardHeader>
+            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
+              Checklist
+            </CardTitle>
+            <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
+              O que ja esta pronto.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {[
+              {
+                done: Boolean(profile.headline && profile.bio),
+                label: "Perfil preenchido",
+                description: "Nome, headline e bio.",
+              },
+              {
+                done: counts.versions > 0,
+                label: "Versao criada",
+                description: "Uma versao ja esta pronta.",
+              },
+              {
+                done: counts.publishedPages > 0 || counts.resumeConfigs > 0,
+                label: "Saida pronta",
+                description: "Pagina ou curriculo.",
+              },
+            ].map((item) => (
+              <div key={item.label} className="flex gap-3 rounded-[22px] border border-neutral-200 bg-neutral-50 p-4">
+                {item.done ? (
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-green-600" />
+                ) : (
+                  <CircleDashed className="mt-0.5 h-5 w-5 shrink-0 text-neutral-400" />
                 )}
-              </Link>
+                <div>
+                  <p className="text-sm font-semibold text-neutral-900">{item.label}</p>
+                  <p className="mt-1 text-sm leading-6 text-neutral-600">{item.description}</p>
+                </div>
+              </div>
             ))}
+
+            {defaultVersion ? (
+              <div className="rounded-[22px] border border-violet-100 bg-violet-50/70 p-4">
+                <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-violet-700">
+                  Versao
+                </p>
+                <p className="mt-2 font-semibold text-neutral-950">{defaultVersion.name}</p>
+                <p className="mt-1 text-sm leading-6 text-neutral-600">
+                  Atualizada em {formatDate(defaultVersion.updatedAt, "long")}.
+                </p>
+              </div>
+            ) : null}
           </CardContent>
         </Card>
       </section>

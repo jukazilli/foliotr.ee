@@ -8,6 +8,26 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum PublishState {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssetKind {
+  IMAGE
+  DOCUMENT
+  VIDEO
+  AUDIO
+  OTHER
+}
+
+enum AssetStatus {
+  PENDING
+  READY
+  FAILED
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
@@ -17,9 +37,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  profile  Profile?
-  accounts Account[]
-  sessions Session[]
+  profile             Profile?
+  accounts            Account[]
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
 }
 
 model Account {
@@ -56,6 +77,19 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
 model Profile {
   id     String @id @default(cuid())
   userId String @unique
@@ -63,7 +97,7 @@ model Profile {
 
   displayName    String?
   headline       String?
-  bio            String?  @db.Text
+  bio            String? @db.Text
   avatarUrl      String?
   bannerUrl      String?
   location       String?
@@ -71,13 +105,15 @@ model Profile {
   websiteUrl     String?
   publicEmail    String?
   phone          String?
-  onboardingDone Boolean  @default(false)
+  birthDate      DateTime?
+  onboardingDone Boolean @default(false)
 
   experiences  Experience[]
   educations   Education[]
   skills       Skill[]
   projects     Project[]
   achievements Achievement[]
+  highlights   Highlight[]
   links        ProfileLink[]
   proofs       Proof[]
   versions     Version[]
@@ -88,20 +124,23 @@ model Profile {
 }
 
 model Experience {
-  id          String    @id @default(cuid())
+  id          String              @id @default(cuid())
   profileId   String
-  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile     Profile             @relation(fields: [profileId], references: [id], onDelete: Cascade)
   company     String
   role        String
-  description String?   @db.Text
+  description String?             @db.Text
   startDate   DateTime
   endDate     DateTime?
-  current     Boolean   @default(false)
+  current     Boolean             @default(false)
   location    String?
   logoUrl     String?
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  logoAssetId String?
+  logoAsset   Asset?              @relation("ExperienceLogoAsset", fields: [logoAssetId], references: [id], onDelete: SetNull)
+  order       Int                 @default(0)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  versions    VersionExperience[]
 }
 
 model Education {
@@ -122,82 +161,120 @@ model Education {
 }
 
 model Skill {
-  id        String  @id @default(cuid())
+  id        String         @id @default(cuid())
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
   name      String
   category  String?
   level     String?
-  order     Int     @default(0)
+  order     Int            @default(0)
+  versions  VersionSkill[]
 }
 
 model Project {
-  id          String    @id @default(cuid())
-  profileId   String
-  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  title       String
-  description String?   @db.Text
-  imageUrl    String?
-  url         String?
-  repoUrl     String?
-  tags        String[]
-  featured    Boolean   @default(false)
-  order       Int       @default(0)
-  startDate   DateTime?
-  endDate     DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String           @id @default(cuid())
+  profileId    String
+  profile      Profile          @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?          @db.Text
+  imageUrl     String?
+  url          String?
+  repoUrl      String?
+  tags         String[]
+  featured     Boolean          @default(false)
+  coverAssetId String?
+  coverAsset   Asset?           @relation("ProjectCoverAsset", fields: [coverAssetId], references: [id], onDelete: SetNull)
+  order        Int              @default(0)
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  versions     VersionProject[]
 }
 
 model Achievement {
-  id          String    @id @default(cuid())
+  id          String               @id @default(cuid())
   profileId   String
-  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile     Profile              @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title       String
-  description String?   @db.Text
+  description String?              @db.Text
   date        DateTime?
   metric      String?
   imageUrl    String?
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  assetId     String?
+  asset       Asset?               @relation("AchievementAsset", fields: [assetId], references: [id], onDelete: SetNull)
+  order       Int                  @default(0)
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+  versions    VersionAchievement[]
 }
 
 model ProfileLink {
-  id        String  @id @default(cuid())
+  id        String        @id @default(cuid())
   profileId String
-  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile   Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
   platform  String
   url       String
   label     String?
-  order     Int     @default(0)
+  order     Int           @default(0)
+  versions  VersionLink[]
 }
 
 model Proof {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   profileId   String
-  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile     Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
   title       String
-  description String?  @db.Text
+  description String?        @db.Text
   metric      String?
   url         String?
   imageUrl    String?
+  assetId     String?
+  asset       Asset?         @relation("ProofAsset", fields: [assetId], references: [id], onDelete: SetNull)
   tags        String[]
-  order       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  order       Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  versions    VersionProof[]
+}
+
+model Highlight {
+  id          String             @id @default(cuid())
+  profileId   String
+  profile     Profile            @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  description String?            @db.Text
+  metric      String?
+  assetId     String?
+  asset       Asset?             @relation("HighlightAsset", fields: [assetId], references: [id], onDelete: SetNull)
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  versions    VersionHighlight[]
 }
 
 model Asset {
-  id         String   @id @default(cuid())
-  profileId  String
-  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  url        String
-  storageKey String
-  name       String?
-  mimeType   String?
-  size       Int?
-  createdAt  DateTime @default(now())
+  id                String        @id @default(cuid())
+  profileId         String
+  profile           Profile       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  kind              AssetKind     @default(IMAGE)
+  status            AssetStatus   @default(PENDING)
+  url               String
+  storageKey        String        @unique
+  name              String?
+  altText           String?
+  mimeType          String?
+  size              Int?
+  width             Int?
+  height            Int?
+  metadata          Json          @default("{}")
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  projectCovers     Project[]     @relation("ProjectCoverAsset")
+  proofAssets       Proof[]       @relation("ProofAsset")
+  highlightAssets   Highlight[]   @relation("HighlightAsset")
+  experienceLogos   Experience[]  @relation("ExperienceLogoAsset")
+  achievementAssets Achievement[] @relation("AchievementAsset")
 }
 
 model Version {
@@ -212,27 +289,33 @@ model Version {
   customHeadline String?
   customBio      String? @db.Text
 
-  selectedExperienceIds  String[]
-  selectedProjectIds     String[]
-  selectedSkillIds       String[]
-  selectedAchievementIds String[]
-
   isDefault Boolean @default(false)
 
-  pages        Page[]
+  page         Page?
   resumeConfig ResumeConfig?
+  experiences  VersionExperience[]
+  projects     VersionProject[]
+  skills       VersionSkill[]
+  achievements VersionAchievement[]
+  proofs       VersionProof[]
+  highlights   VersionHighlight[]
+  links        VersionLink[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Template {
-  id          String  @id @default(cuid())
-  name        String
-  slug        String  @unique
-  description String?
-  thumbnail   String?
-  isActive    Boolean @default(true)
+  id           String  @id @default(cuid())
+  name         String
+  slug         String  @unique
+  description  String?
+  thumbnail    String?
+  isActive     Boolean @default(true)
+  version      Int     @default(1)
+  source       String?
+  sourceNodeId String?
+  theme        Json    @default("{}")
 
   blockDefs TemplateBlockDef[]
   pages     Page[]
@@ -242,46 +325,66 @@ model Template {
 }
 
 model TemplateBlockDef {
-  id            String   @id @default(cuid())
-  templateId    String
-  template      Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
-  blockType     String
-  defaultOrder  Int
-  required      Boolean  @default(false)
-  defaultConfig Json     @default("{}")
+  id              String      @id @default(cuid())
+  templateId      String
+  template        Template    @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  key             String
+  blockType       String
+  label           String
+  category        String      @default("section")
+  version         Int         @default(1)
+  defaultOrder    Int
+  required        Boolean     @default(false)
+  defaultConfig   Json        @default("{}")
+  defaultProps    Json        @default("{}")
+  editableFields  Json        @default("[]")
+  assetFields     Json        @default("[]")
+  allowedChildren Json        @default("[]")
+  pageBlocks      PageBlock[]
 
-  @@unique([templateId, blockType])
+  @@unique([templateId, key])
+  @@index([templateId, blockType])
 }
 
 model Page {
-  id         String   @id @default(cuid())
-  versionId  String
-  version    Version  @relation(fields: [versionId], references: [id], onDelete: Cascade)
-  templateId String
-  template   Template @relation(fields: [templateId], references: [id])
-  slug       String   @unique
-  title      String?
+  id           String       @id @default(cuid())
+  versionId    String       @unique
+  version      Version      @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  templateId   String
+  template     Template     @relation(fields: [templateId], references: [id])
+  slug         String       @unique
+  title        String?
+  publishState PublishState @default(DRAFT)
+  publishedAt  DateTime?
 
   blocks PageBlock[]
-
-  published   Boolean   @default(false)
-  publishedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model PageBlock {
-  id        String  @id @default(cuid())
-  pageId    String
-  page      Page    @relation(fields: [pageId], references: [id], onDelete: Cascade)
-  blockType String
-  order     Int
-  visible   Boolean @default(true)
-  config    Json    @default("{}")
+  id                 String            @id @default(cuid())
+  pageId             String
+  page               Page              @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  templateBlockDefId String?
+  templateBlockDef   TemplateBlockDef? @relation(fields: [templateBlockDefId], references: [id], onDelete: SetNull)
+  parentId           String?
+  parent             PageBlock?        @relation("PageBlockTree", fields: [parentId], references: [id], onDelete: Cascade)
+  children           PageBlock[]       @relation("PageBlockTree")
+  key                String
+  blockType          String
+  order              Int
+  visible            Boolean           @default(true)
+  config             Json              @default("{}")
+  props              Json              @default("{}")
+  assets             Json              @default("{}")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([pageId, parentId, order])
+  @@index([templateBlockDefId])
 }
 
 model ResumeConfig {
@@ -289,15 +392,91 @@ model ResumeConfig {
   versionId String  @unique
   version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
 
-  sections    String[]
-  layout      String   @default("classic")
-  accentColor String?
-  showPhoto   Boolean  @default(true)
-  showLinks   Boolean  @default(true)
-
-  published   Boolean   @default(false)
-  publishedAt DateTime?
+  sections     String[]
+  layout       String       @default("classic")
+  accentColor  String?
+  showPhoto    Boolean      @default(true)
+  showLinks    Boolean      @default(true)
+  publishState PublishState @default(DRAFT)
+  publishedAt  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model VersionExperience {
+  versionId    String
+  experienceId String
+  order        Int        @default(0)
+  version      Version    @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, experienceId])
+  @@index([versionId, order])
+}
+
+model VersionProject {
+  versionId String
+  projectId String
+  order     Int     @default(0)
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, projectId])
+  @@index([versionId, order])
+}
+
+model VersionSkill {
+  versionId String
+  skillId   String
+  order     Int     @default(0)
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  skill     Skill   @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, skillId])
+  @@index([versionId, order])
+}
+
+model VersionAchievement {
+  versionId     String
+  achievementId String
+  order         Int         @default(0)
+  version       Version     @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  achievement   Achievement @relation(fields: [achievementId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, achievementId])
+  @@index([versionId, order])
+}
+
+model VersionProof {
+  versionId String
+  proofId   String
+  order     Int     @default(0)
+  version   Version @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  proof     Proof   @relation(fields: [proofId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, proofId])
+  @@index([versionId, order])
+}
+
+model VersionHighlight {
+  versionId   String
+  highlightId String
+  order       Int       @default(0)
+  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  highlight   Highlight @relation(fields: [highlightId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, highlightId])
+  @@index([versionId, order])
+}
+
+model VersionLink {
+  versionId String
+  linkId    String
+  order     Int         @default(0)
+  version   Version     @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  link      ProfileLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, linkId])
+  @@index([versionId, order])
 }

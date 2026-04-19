@@ -4,11 +4,15 @@ Status: approved working deck
 Version: v0.0.1  
 Last updated: 2026-04-17
 
+Implementation update: 2026-04-18  
+The public UI implementation must use `doc/Design System/Brand Core.html`, `doc/Design System/Tonal System.html`, and `doc/Design System/Typography System.html` as design references. For the current cut, the prompt-level typography rule is Sora for display, Inter for UI, and IBM Plex Mono for data/meta.
+
 ## Document Purpose
 
 This file expands the compact brand core into a broader strategic brand deck.
 
 Use this file when an AI or human needs:
+
 - a fuller explanation of the brand
 - messaging strategy
 - audience interpretation
@@ -40,6 +44,7 @@ The deeper problem is this:
 people constantly rewrite and reorganize their professional story across different channels, in inconsistent ways, with weak proof and poor speed of understanding.
 
 This creates friction for:
+
 - recruiters
 - clients
 - collaborators
@@ -48,11 +53,13 @@ This creates friction for:
 ## 6. Product Interpretation
 
 The current product interpretation should be:
+
 - one central professional identity base
 - structured professional data, proof, and narrative
 - multiple output formats from one source
 
 Possible outputs include:
+
 - public pages
 - resumes
 - portfolios
@@ -64,12 +71,15 @@ Do not flatten the product into only one of these outputs.
 ## 7. Strategic Position
 
 ### Positioning statement
+
 FolioTree is the platform that turns a scattered professional trajectory into a clear, lively, and convincing presence for recruiters, clients, and opportunities.
 
 ### Short strategic contrast
+
 LinkedIn shows. FolioTree proves.
 
 ### Strategic interpretation
+
 LinkedIn can support visibility and networking.
 FolioTree should support evidence, clarity, speed, and value perception.
 
@@ -87,7 +97,9 @@ FolioTree is where trajectory becomes perceived value.
 ## 10. Audience
 
 ### Primary audience
+
 Digital and knowledge workers who need to present themselves better, including:
+
 - developers
 - designers
 - product managers
@@ -98,7 +110,9 @@ Digital and knowledge workers who need to present themselves better, including:
 - professionals in career transition
 
 ### Audience needs
+
 This audience wants to:
+
 - look more professional
 - be understood faster
 - present proof, not only titles
@@ -108,6 +122,7 @@ This audience wants to:
 ## 11. What the Brand Must Feel Like
 
 FolioTree should feel:
+
 - vibrant
 - clear
 - lively
@@ -120,6 +135,7 @@ FolioTree should feel:
 ## 12. What the Brand Must Not Feel Like
 
 FolioTree must not feel:
+
 - bureaucratic
 - cold
 - generic
@@ -133,28 +149,34 @@ FolioTree must not feel:
 ## 13. Archetype
 
 ### Primary archetype
+
 **Friend**
 
 Why:
+
 - approachable
 - communicative
 - easy to understand
 - welcoming
 
 ### Secondary archetype
+
 **Creator**
 
 Why:
+
 - transforms information into presence
 - values presentation and identity
 - turns raw trajectory into vivid evidence
 
 ### Combined interpretation
+
 Friend + Creator = a brand that simplifies, energizes, and transforms.
 
 ## 14. Personality
 
 If FolioTree were a person, it would be:
+
 - cheerful
 - energetic
 - communicative
@@ -165,54 +187,67 @@ If FolioTree were a person, it would be:
 - able to speak to Gen Z, Gen Y, and Gen X without sounding forced
 
 ### Personality shorthand
+
 **vibrant, clear, bold, close, intelligent, current**
 
 ## 15. Values
 
 ### 1. Clarity over noise
+
 Professional value should be easy to understand.
 
 ### 2. Expression with structure
+
 More personality, but with order and legibility.
 
 ### 3. Continuous evolution
+
 A career changes, so the way it is presented should evolve too.
 
 ### 4. Fast value perception
+
 The brand should always favor fast understanding and immediate impact.
 
 ### 5. User control
+
 The user should control narrative, versions, and public presentation.
 
 ## 16. Messaging House
 
 ### Parent message
+
 **Show more than a profile.**
 
 ### Pillar 1: Instant clarity
+
 Your value should be understood quickly.
 
 Supporting idea:
 Recruiters and clients should not need to decode your trajectory.
 
 ### Pillar 2: Real evidence
+
 Projects, results, achievements, and context matter more than titles alone.
 
 ### Pillar 3: Living presence
+
 Update once and keep your trajectory ready for multiple opportunities.
 
 ### Pillar 4: Expression with structure
+
 More visual personality without losing order or legibility.
 
 ## 17. Tone of Voice
 
 ### Tone formula
+
 - 40% energy
 - 30% clarity
 - 20% intelligence
 - 10% community
 
 ### Tone characteristics
+
 - direct
 - rhythmic
 - optimistic
@@ -223,7 +258,9 @@ More visual personality without losing order or legibility.
 - structured
 
 ### Copy behavior
+
 Prefer:
+
 - short sentences
 - action verbs
 - early user value
@@ -231,6 +268,7 @@ Prefer:
 - energetic clarity
 
 Avoid:
+
 - bureaucratic language
 - startup filler language
 - abstract over-explaining
@@ -240,15 +278,19 @@ Avoid:
 ## 18. Approved Brand Lines
 
 ### Main brand line
+
 **Show more than a profile.**
 
 ### Product line
+
 **Your trajectory, clear in seconds.**
 
 ### Concept line
+
 **Living professional evidence.**
 
 ### Secondary lines
+
 - Your career has value. Make it visible.
 - Turn trajectory into visible value.
 - The link that proves your value.
@@ -278,26 +320,32 @@ FolioTree exists to make your value appear in a few seconds.
 ## 20. Homepage Messaging
 
 ### Hero option A
+
 **Show more than a profile.**
 Transform your trajectory, achievements, and projects into a clear, fast, and memorable professional presence.
 
 ### Hero option B
+
 **Your trajectory, clear in seconds.**
 Bring your professional story into one place and show your value with much more presence.
 
 ### Hero option C
+
 **LinkedIn shows. FolioTree proves.**
 Create a professional page that recruiters and clients understand quickly.
 
 ### Recommended supporting subheadline
+
 Everything that proves your professional value, organized in one place, ready to become a page, resume, portfolio, and versions for each opportunity.
 
 ## 21. CTA Language
 
 ### Primary CTA
+
 Create my FolioTree
 
 ### Secondary CTA options
+
 - Show my value
 - Build my showcase
 - Transform my trajectory
@@ -307,6 +355,7 @@ Create my FolioTree
 ## 22. Product Language Guidance
 
 Preferred user-facing nouns:
+
 - Profile = central source
 - Versions = context-specific adaptations
 - Page = public page output
@@ -316,6 +365,7 @@ Preferred user-facing nouns:
 - Snapshot = fixed version for a specific opportunity
 
 Avoid:
+
 - technical builder terms
 - overly abstract naming
 - internal architecture terminology in user-facing copy
@@ -323,12 +373,15 @@ Avoid:
 ## 23. Design Direction
 
 ### Core design formula
+
 **Linktree in energy. FolioTree in depth.**
 
 ### Visual mood
+
 **bold + clean + modular + vibrant**
 
 ### The interface should communicate
+
 - agility
 - evidence
 - updated identity
@@ -337,6 +390,7 @@ Avoid:
 - fast understanding
 
 ### Composition guidance
+
 - strong grid
 - large cards
 - clear sections
@@ -345,6 +399,7 @@ Avoid:
 - visible proof modules for projects, achievements, links, results, and metrics
 
 ### Typography guidance
+
 - sans serif with personality
 - large headlines
 - short subheads
@@ -352,23 +407,30 @@ Avoid:
 - high readability
 
 ### Color guidance
+
 Approved direction:
-- dark or neutral structural base
-- one strong signature color
-- two to four vibrant support colors
-- high contrast
+
+- tonal families from `doc/Design System/Tonal System.html`
+- light neutral product/public base with expressive landing sections
+- Blue 500 as cold structural landing color
+- Lime 500 as signature energetic CTA/headline accent
+- Green, Cyan, Violet, Coral, and Brown as semantic support colors
+- high contrast with same-family dark typography when used over expressive sections
 
 Not yet approved:
-- exact palette codes
-- final brand identity system
+
+- final brand identity system beyond the current public UI cut
+- final logo system beyond the current geometric mark/wordmark
 
 ### Motion guidance
+
 - quick
 - responsive
 - snappy
 - used to reinforce progress, flow, and clarity
 
 ### Graphic elements
+
 - badges
 - chips
 - highlight blocks
@@ -380,6 +442,7 @@ Not yet approved:
 ## 24. Creative Guardrails
 
 Always preserve:
+
 - clarity
 - speed of understanding
 - proof
@@ -387,6 +450,7 @@ Always preserve:
 - expressive professionalism
 
 Never drift into:
+
 - cold enterprise HR aesthetics
 - chaotic creator-platform aesthetics
 - vague copy
@@ -397,19 +461,24 @@ Never drift into:
 ## 25. Landing Page Direction
 
 ### Fold 1
+
 - strong headline
 - short subheadline
 - primary CTA
 - mockup centered on proof modules
 
 ### Fold 2
+
 Explain why the product exists:
+
 - stop rewriting your trajectory
 - show value in seconds
 - keep everything in one place
 
 ### Fold 3
+
 Show value modules:
+
 - experiences
 - projects
 - results
@@ -418,13 +487,16 @@ Show value modules:
 - versions
 
 ### Fold 4
+
 Show proof:
+
 - examples
 - before/after
 - sample profiles
 - testimonials when available
 
 ### Fold 5
+
 Close with a CTA focused on action and value visibility.
 
 ## 26. Strategic Differentiation
@@ -433,6 +505,7 @@ FolioTree should not be interpreted as a better-looking LinkedIn profile.
 It should not be interpreted as a generic page builder for careers.
 
 Its value comes from combining:
+
 - centralization
 - structure
 - versioning
@@ -443,6 +516,7 @@ Its value comes from combining:
 ## 27. Open Questions
 
 These topics are not yet final and should remain open until documented in a later version:
+
 - final category name in the market
 - final visual identity and logo system
 - final brand palette values
@@ -453,6 +527,7 @@ These topics are not yet final and should remain open until documented in a late
 ## 28. AI Notes
 
 When using this deck, an AI assistant should:
+
 - start from `brand-core.md` first
 - use this file to expand strategy, not to replace the core
 - avoid making roadmap claims not documented here

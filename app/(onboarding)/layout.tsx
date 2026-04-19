@@ -4,11 +4,7 @@ export const metadata: Metadata = {
   title: "FolioTree — Configuração inicial",
 };
 
-export default function OnboardingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-neutral-100">
       <header className="border-b border-[rgba(15,17,21,0.08)] bg-white">

@@ -1,145 +1,112 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { profileSchema } from "@/lib/validations";
-import { ZodError } from "zod";
+import { getOwnedProfileBase, updateOwnedProfileBase } from "@/lib/server/domain/profile-base";
+import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import { profileBaseSchema, profileSchema } from "@/lib/validations";
 
-/**
- * GET /api/profile
- * Returns the authenticated user's full profile with all relations.
- */
+const collectionPayloadKeys = [
+  "assets",
+  "highlights",
+  "experiences",
+  "skills",
+  "projects",
+  "achievements",
+  "proofs",
+  "links",
+] as const;
+
+function hasCollectionPayload(input: Record<string, unknown>) {
+  return collectionPayloadKeys.some((key) => Object.prototype.hasOwnProperty.call(input, key));
+}
+
+function sanitizeNullable(value: string | null | undefined) {
+  if (value === undefined) return undefined;
+  if (value === "") return null;
+  return value;
+}
+
 export async function GET() {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return Response.json(
-        { error: "Não autorizado." },
-        { status: 401 }
-      );
+      return jsonError("UNAUTHORIZED", 401);
     }
 
-    const profile = await prisma.profile.findUnique({
-      where: { userId: session.user.id },
-      include: {
-        user: {
-          select: {
-            id: true,
-            email: true,
-            username: true,
-            name: true,
-            createdAt: true,
-          },
-        },
-        experiences: {
-          orderBy: { order: "asc" },
-        },
-        educations: {
-          orderBy: { order: "asc" },
-        },
-        skills: {
-          orderBy: { order: "asc" },
-        },
-        projects: {
-          orderBy: { order: "asc" },
-        },
-        achievements: {
-          orderBy: { order: "asc" },
-        },
-        links: {
-          orderBy: { order: "asc" },
-        },
-        proofs: {
-          orderBy: { order: "asc" },
-        },
-        versions: {
-          orderBy: { createdAt: "asc" },
-          include: {
-            pages: {
-              include: {
-                template: true,
-                blocks: {
-                  orderBy: { order: "asc" },
-                },
-              },
-            },
-            resumeConfig: true,
-          },
-        },
-        assets: {
-          orderBy: { createdAt: "desc" },
-        },
-      },
-    });
-
-    if (!profile) {
-      return Response.json(
-        { error: "Perfil não encontrado." },
-        { status: 404 }
-      );
-    }
-
-    return Response.json({ profile }, { status: 200 });
+    const profile = await getOwnedProfileBase(prisma, session.user.id);
+    return jsonOk({ profile }, { status: 200 });
   } catch (error) {
-    console.error("[GET /api/profile]", error);
-    return Response.json(
-      { error: "Erro interno do servidor." },
-      { status: 500 }
-    );
+    return handleRouteError("GET /api/profile", error);
   }
 }
 
-/**
- * PATCH /api/profile
- * Updates the authenticated user's profile fields.
- */
 export async function PATCH(request: NextRequest) {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return Response.json(
-        { error: "Não autorizado." },
-        { status: 401 }
-      );
+      return jsonError("UNAUTHORIZED", 401);
     }
 
     const body = await request.json();
+    const input = profileSchema.parse(body);
+    const profile = await updateOwnedProfileBase(prisma, session.user.id, input);
 
-    // Validate with profileSchema
-    const data = profileSchema.parse(body);
-
-    // Filter out undefined values so we only update fields that were provided
-    const updateData = Object.fromEntries(
-      Object.entries(data).filter(([, v]) => v !== undefined)
-    );
-
-    // Convert empty strings to null for optional URL/email fields
-    const sanitized = Object.fromEntries(
-      Object.entries(updateData).map(([key, value]) => [
-        key,
-        value === "" ? null : value,
-      ])
-    );
-
-    const updated = await prisma.profile.update({
-      where: { userId: session.user.id },
-      data: sanitized,
-    });
-
-    return Response.json({ profile: updated }, { status: 200 });
+    return jsonOk({ profile }, { status: 200 });
   } catch (error) {
-    if (error instanceof ZodError) {
-      return Response.json(
-        { error: "Dados inválidos.", details: error.flatten().fieldErrors },
-        { status: 422 }
-      );
+    return handleRouteError("PATCH /api/profile", error);
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return jsonError("UNAUTHORIZED", 401);
     }
 
-    console.error("[PATCH /api/profile]", error);
-    return Response.json(
-      { error: "Erro interno do servidor." },
-      { status: 500 }
-    );
+    const body = await request.json();
+    const input = profileBaseSchema.parse(body);
+
+    if (!hasCollectionPayload(input)) {
+      const profile = await prisma.profile.update({
+        where: { userId: session.user.id },
+        data: {
+          displayName: sanitizeNullable(input.displayName),
+          avatarUrl: sanitizeNullable(input.avatarUrl),
+          headline: sanitizeNullable(input.headline),
+          bio: sanitizeNullable(input.bio),
+          location: sanitizeNullable(input.location),
+          pronouns: sanitizeNullable(input.pronouns),
+          websiteUrl: sanitizeNullable(input.websiteUrl),
+          publicEmail: sanitizeNullable(input.publicEmail),
+          phone: sanitizeNullable(input.phone),
+          birthDate: input.birthDate ?? null,
+        },
+        select: {
+          id: true,
+          displayName: true,
+          avatarUrl: true,
+          headline: true,
+          bio: true,
+          location: true,
+          pronouns: true,
+          websiteUrl: true,
+          publicEmail: true,
+          phone: true,
+          birthDate: true,
+        },
+      });
+
+      return jsonOk({ profile }, { status: 200 });
+    }
+
+    const profile = await updateOwnedProfileBase(prisma, session.user.id, input);
+
+    return jsonOk({ profile }, { status: 200 });
+  } catch (error) {
+    return handleRouteError("PUT /api/profile", error);
   }
 }
