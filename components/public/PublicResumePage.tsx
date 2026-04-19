@@ -25,21 +25,23 @@ export default function PublicResumePage({
   const resumeHref = getPublicResumeHref(username, pageSlug);
 
   return (
-    <div className="min-h-screen bg-neutral-100 print:bg-white">
+    <div className="min-h-screen overflow-x-hidden bg-neutral-100 print:overflow-visible print:bg-white">
       <PublicToolbar
         templateHref={templateHref}
         resumeHref={resumeHref}
         activeMode="resume"
       />
 
-      <main className="w-full px-4 pb-10 pt-24 print:max-w-none print:p-0 sm:px-6 lg:px-8 xl:px-10 2xl:px-12">
-        <ResumeView
-          templateSlug={page.template.slug}
-          blocks={snapshot.blocks}
-          profile={snapshot.profile}
-          version={snapshot.version}
-          config={snapshot.config as never}
-        />
+      <main className="w-full px-3 pb-10 pt-24 print:max-w-none print:p-0 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-4xl">
+          <ResumeView
+            templateSlug={page.template.slug}
+            blocks={snapshot.blocks}
+            profile={snapshot.profile}
+            version={snapshot.version}
+            config={snapshot.config as never}
+          />
+        </div>
       </main>
 
       <div className="border-t border-neutral-200 py-6 text-center print:hidden">

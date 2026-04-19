@@ -28,7 +28,7 @@ export default function ResumeView({
 
   return (
     <div
-      className="rounded-[28px] border px-6 py-6 print:rounded-none print:border-0 print:px-0 print:py-0 sm:px-8"
+      className="mx-auto w-full max-w-4xl overflow-hidden rounded-[24px] border px-4 py-5 print:max-w-none print:overflow-visible print:rounded-none print:border-0 print:px-0 print:py-0 sm:rounded-[28px] sm:px-6 sm:py-6 md:px-8"
       style={{
         background: projection.theme.background,
         borderColor: projection.theme.border,
@@ -36,20 +36,20 @@ export default function ResumeView({
         fontFamily: projection.theme.fontFamily,
       }}
     >
-      <header className="border-b pb-6 print:pb-4" style={{ borderColor: projection.theme.border }}>
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+      <header className="min-w-0 border-b pb-6 print:pb-4" style={{ borderColor: projection.theme.border }}>
+        <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
             <p
-              className="text-[11px] font-semibold uppercase tracking-[0.24em]"
+              className="text-[10px] font-semibold uppercase tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]"
               style={{ color: projection.theme.accent }}
             >
               Curriculo derivado do template
             </p>
-            <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
+            <h1 className="mt-3 overflow-wrap-anywhere font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
               {projection.header.displayName}
             </h1>
             {projection.header.headline ? (
-              <p className="mt-2 text-base font-medium sm:text-lg" style={{ color: projection.theme.muted }}>
+              <p className="mt-2 overflow-wrap-anywhere text-base font-medium leading-7 sm:text-lg" style={{ color: projection.theme.muted }}>
                 {projection.header.headline}
               </p>
             ) : null}
@@ -64,10 +64,10 @@ export default function ResumeView({
           ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm" style={{ color: projection.theme.muted }}>
-          {projection.header.location ? <span>{projection.header.location}</span> : null}
-          {projection.header.publicEmail ? <span>{projection.header.publicEmail}</span> : null}
-          {projection.header.phone ? <span>{projection.header.phone}</span> : null}
+        <div className="mt-4 flex min-w-0 flex-wrap gap-x-4 gap-y-2 text-sm" style={{ color: projection.theme.muted }}>
+          {projection.header.location ? <span className="overflow-wrap-anywhere">{projection.header.location}</span> : null}
+          {projection.header.publicEmail ? <span className="overflow-wrap-anywhere">{projection.header.publicEmail}</span> : null}
+          {projection.header.phone ? <span className="overflow-wrap-anywhere">{projection.header.phone}</span> : null}
           {projection.showLinks
             ? projection.header.links.slice(0, 4).map((link) => (
                 <a
@@ -75,7 +75,7 @@ export default function ResumeView({
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-opacity hover:opacity-80"
+                  className="max-w-full overflow-wrap-anywhere transition-opacity hover:opacity-80"
                   style={{ color: projection.theme.accent }}
                 >
                   {link.label}
@@ -85,12 +85,12 @@ export default function ResumeView({
         </div>
       </header>
 
-      <div className="mt-8 space-y-8 print:mt-6 print:space-y-6">
+      <div className="mt-8 min-w-0 space-y-8 print:mt-6 print:space-y-6">
         {projection.sections.map((section) => {
           if (section.key === "summary") {
             return (
               <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
-                <p className="whitespace-pre-line text-sm leading-7 sm:text-[15px]" style={{ color: projection.theme.ink }}>
+                <p className="overflow-wrap-anywhere whitespace-pre-line text-sm leading-7 sm:text-[15px]" style={{ color: projection.theme.ink }}>
                   {section.body}
                 </p>
               </SectionShell>
@@ -102,11 +102,11 @@ export default function ResumeView({
               <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
                 <div className="space-y-5">
                   {section.items.map((item) => (
-                    <article key={item.id} className="grid gap-2 sm:grid-cols-[1fr_auto] sm:gap-3">
-                      <div>
+                    <article key={item.id} className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-3">
+                      <div className="min-w-0">
                         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-                          <h3 className="text-base font-semibold">{item.role}</h3>
-                          <span className="text-sm" style={{ color: projection.theme.muted }}>
+                          <h3 className="overflow-wrap-anywhere text-base font-semibold">{item.role}</h3>
+                          <span className="overflow-wrap-anywhere text-sm" style={{ color: projection.theme.muted }}>
                             {item.company}
                           </span>
                           {item.current ? (
@@ -122,12 +122,12 @@ export default function ResumeView({
                           ) : null}
                         </div>
                         {item.description ? (
-                          <p className="mt-2 whitespace-pre-line text-sm leading-6" style={{ color: projection.theme.muted }}>
+                          <p className="mt-2 overflow-wrap-anywhere whitespace-pre-line text-sm leading-6" style={{ color: projection.theme.muted }}>
                             {item.description}
                           </p>
                         ) : null}
                       </div>
-                      <div className="text-sm sm:text-right" style={{ color: projection.theme.muted }}>
+                      <div className="overflow-wrap-anywhere text-sm sm:text-right" style={{ color: projection.theme.muted }}>
                         <p>{item.period}</p>
                         {item.location ? <p>{item.location}</p> : null}
                       </div>
@@ -143,15 +143,15 @@ export default function ResumeView({
               <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
                 <div className="space-y-4">
                   {section.items.map((item) => (
-                    <article key={item.id} className="space-y-1">
-                      <div className="flex flex-wrap items-baseline justify-between gap-2">
-                        <h3 className="text-base font-semibold">{item.title}</h3>
+                    <article key={item.id} className="min-w-0 space-y-1">
+                      <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-2">
+                        <h3 className="overflow-wrap-anywhere text-base font-semibold">{item.title}</h3>
                         {item.href ? (
                           <a
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm transition-opacity hover:opacity-80"
+                            className="max-w-full break-all text-sm transition-opacity hover:opacity-80 sm:max-w-[55%]"
                             style={{ color: projection.theme.accent }}
                           >
                             {item.href}
@@ -159,7 +159,7 @@ export default function ResumeView({
                         ) : null}
                       </div>
                       {item.description ? (
-                        <p className="text-sm leading-6" style={{ color: projection.theme.muted }}>
+                        <p className="overflow-wrap-anywhere text-sm leading-6" style={{ color: projection.theme.muted }}>
                           {item.description}
                         </p>
                       ) : null}
@@ -182,17 +182,17 @@ export default function ResumeView({
                   {section.items.map((item) => (
                     <article
                       key={item.id}
-                      className="rounded-[20px] border bg-white/72 px-4 py-4 print:bg-transparent"
+                      className="min-w-0 rounded-[20px] border bg-white/72 px-4 py-4 print:bg-transparent"
                       style={{ borderColor: projection.theme.border }}
                     >
-                      <h3 className="text-sm font-semibold">{item.title}</h3>
+                      <h3 className="overflow-wrap-anywhere text-sm font-semibold">{item.title}</h3>
                       {item.metric ? (
                         <p className="mt-2 text-sm font-semibold" style={{ color: projection.theme.accent }}>
                           {item.metric}
                         </p>
                       ) : null}
                       {item.description ? (
-                        <p className="mt-2 text-sm leading-6" style={{ color: projection.theme.muted }}>
+                        <p className="mt-2 overflow-wrap-anywhere text-sm leading-6" style={{ color: projection.theme.muted }}>
                           {item.description}
                         </p>
                       ) : null}
@@ -208,9 +208,9 @@ export default function ResumeView({
               <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
                 <div className="space-y-3">
                   {section.groups.map((group) => (
-                    <div key={group.category} className="grid gap-1 sm:grid-cols-[140px_1fr]">
-                      <p className="text-sm font-semibold">{group.category}</p>
-                      <p className="text-sm leading-6" style={{ color: projection.theme.muted }}>
+                    <div key={group.category} className="grid min-w-0 gap-1 sm:grid-cols-[minmax(110px,140px)_minmax(0,1fr)]">
+                      <p className="overflow-wrap-anywhere text-sm font-semibold">{group.category}</p>
+                      <p className="overflow-wrap-anywhere text-sm leading-6" style={{ color: projection.theme.muted }}>
                         {group.items.join(", ")}
                       </p>
                     </div>
@@ -229,10 +229,10 @@ export default function ResumeView({
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-[20px] border bg-white/72 px-4 py-3 text-sm transition hover:bg-white print:bg-transparent"
+                    className="min-w-0 rounded-[20px] border bg-white/72 px-4 py-3 text-sm transition hover:bg-white print:bg-transparent"
                     style={{ borderColor: projection.theme.border }}
                   >
-                    <p className="font-semibold">{item.label}</p>
+                    <p className="overflow-wrap-anywhere font-semibold">{item.label}</p>
                     <p className="mt-1 break-all text-xs uppercase tracking-[0.12em]" style={{ color: projection.theme.muted }}>
                       {item.kind}
                     </p>
@@ -259,10 +259,10 @@ function SectionShell({
   children: React.ReactNode;
 }) {
   return (
-    <section>
-      <div className="flex items-center gap-3">
+    <section className="min-w-0">
+      <div className="flex min-w-0 items-center gap-3">
         <h2
-          className="font-display text-xs font-semibold uppercase tracking-[0.26em]"
+          className="shrink-0 font-display text-[11px] font-semibold uppercase tracking-[0.18em] sm:text-xs sm:tracking-[0.26em]"
           style={{ color: accent }}
         >
           {title}

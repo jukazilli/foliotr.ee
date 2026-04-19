@@ -101,7 +101,7 @@ export default async function AuthenticatedResumePage({
           </CardContent>
         </Card>
 
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto w-full max-w-4xl overflow-x-hidden">
           <ResumeView
             templateSlug={page.template.slug}
             blocks={page.blocks}

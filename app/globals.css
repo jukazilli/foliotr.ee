@@ -137,6 +137,10 @@
 }
 
 @layer components {
+  .overflow-wrap-anywhere {
+    overflow-wrap: anywhere;
+  }
+
   .dense-surface {
     border: 1px solid var(--page-border);
     border-radius: 0.875rem;
