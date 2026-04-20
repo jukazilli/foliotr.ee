@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 3 completed  
+Status: slice 4 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -309,6 +309,21 @@ Acceptance:
 - Save, upload, visibility, reorder and remove still call existing handlers
 - Error/success messages remain visible but compact
 
+Slice 4 result:
+
+- `components/pages/CanonicalPageEditor.tsx` now lays out the main workspace as preview canvas plus a right-side block inspector on wide screens.
+- The selected-block form was moved out of the large top card and into the inspector beside the preview.
+- Existing save, visibility, reorder and remove handlers were preserved:
+  - `saveSelectedBlock`
+  - `toggleVisibility`
+  - `moveBlock`
+  - `removeSelectedBlock`
+- Existing editable field rendering and upload/list flows still go through `renderEditableField`, so field behavior was not rewritten.
+- Error and success messages remain visible inside the inspector in a more compact treatment.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- Browser validation was deferred because the local Next dev server repeatedly listened without returning HTTP responses during Slices 2 and 3.
+
 ### Slice 5 - Interaction Polish And Responsiveness
 
 Goal: refine density, keyboard/accessibility basics and smaller screens.
@@ -360,7 +375,7 @@ Checklist:
 - [x] Slice 1 completed
 - [x] Slice 2 completed
 - [x] Slice 3 completed
-- [ ] Slice 4 completed
+- [x] Slice 4 completed
 - [ ] Slice 5 completed
 - [ ] Slice 6 completed
 

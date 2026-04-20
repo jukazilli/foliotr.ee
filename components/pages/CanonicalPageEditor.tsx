@@ -17,7 +17,6 @@ import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
 type JsonRecord = Record<string, unknown>;
@@ -1022,113 +1021,7 @@ export default function CanonicalPageEditor({
         </div>
       </aside>
 
-      <div className="space-y-6">
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-                {selectedBlockDef?.label ?? "Escolha um bloco"}
-              </CardTitle>
-              <CardDescription>
-                {selectedBlock
-                  ? "Edite este bloco."
-                  : "Escolha um bloco para editar."}
-              </CardDescription>
-            </div>
-            {selectedBlock ? (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `reorder:${selectedBlock.id}`}
-                  onClick={() => void moveBlock(selectedBlock.id, -1)}
-                >
-                  <ArrowUp className="h-4 w-4" aria-hidden="true" />
-                  Subir
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `reorder:${selectedBlock.id}`}
-                  onClick={() => void moveBlock(selectedBlock.id, 1)}
-                >
-                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                  Descer
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `visibility:${selectedBlock.id}`}
-                  onClick={() => void toggleVisibility(selectedBlock)}
-                >
-                  {selectedBlock.visible ? (
-                    <>
-                      <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      Ocultar
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="h-4 w-4" aria-hidden="true" />
-                      Exibir
-                    </>
-                  )}
-                </Button>
-                {!selectedBlockDef?.required ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    loading={busyKey === `remove:${selectedBlock.id}`}
-                    onClick={() => void removeSelectedBlock()}
-                  >
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    Remover
-                  </Button>
-                ) : null}
-              </div>
-            ) : null}
-          </CardHeader>
-          <CardContent className="space-y-5">
-            {errorMessage ? (
-              <div className="rounded-[20px] border border-coral-200 bg-coral-50 px-4 py-3 text-sm font-medium text-coral-900">
-                {errorMessage}
-              </div>
-            ) : null}
-            {successMessage ? (
-              <div className="rounded-[20px] border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-900">
-                {successMessage}
-              </div>
-            ) : null}
-
-            {selectedBlock && selectedBlockDef ? (
-              <>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {getEditableFields(selectedBlockDef).map((field) => renderEditableField(field))}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
-                  <Button
-                    type="button"
-                    loading={busyKey === `save:${selectedBlock.id}`}
-                    onClick={() => void saveSelectedBlock()}
-                  >
-                    <Save className="h-4 w-4" aria-hidden="true" />
-                    Salvar
-                  </Button>
-                  
-                </div>
-              </>
-            ) : (
-              <div className="rounded-[22px] border border-dashed border-neutral-300 bg-neutral-50 px-4 py-8 text-sm leading-7 text-neutral-500">
-                Escolha um bloco para editar.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
+      <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
         <section className="overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
           <div className="flex items-center justify-between gap-3 border-b border-neutral-300/80 bg-white/90 px-4 py-3">
             <div className="min-w-0">
@@ -1153,6 +1046,110 @@ export default function CanonicalPageEditor({
             </div>
           </div>
         </section>
+
+        <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 2xl:sticky 2xl:top-20 2xl:self-start">
+          <div className="border-b border-neutral-200 px-4 py-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-sm font-semibold text-neutral-950">
+                  {selectedBlockDef?.label ?? "Escolha um bloco"}
+                </h2>
+                <p className="mt-0.5 truncate text-xs text-neutral-500">
+                  {selectedBlockDef?.blockType ?? "Painel do bloco"}
+                </p>
+              </div>
+              {selectedBlockDef?.required ? <Badge variant="warning">fixo</Badge> : null}
+            </div>
+          </div>
+
+          <div className="max-h-[780px] space-y-4 overflow-y-auto p-3">
+            {errorMessage ? (
+              <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
+                {errorMessage}
+              </div>
+            ) : null}
+            {successMessage ? (
+              <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-900">
+                {successMessage}
+              </div>
+            ) : null}
+
+            {selectedBlock && selectedBlockDef ? (
+              <>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `reorder:${selectedBlock.id}`}
+                    onClick={() => void moveBlock(selectedBlock.id, -1)}
+                  >
+                    <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                    Subir
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `reorder:${selectedBlock.id}`}
+                    onClick={() => void moveBlock(selectedBlock.id, 1)}
+                  >
+                    <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                    Descer
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `visibility:${selectedBlock.id}`}
+                    onClick={() => void toggleVisibility(selectedBlock)}
+                  >
+                    {selectedBlock.visible ? (
+                      <>
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
+                        Ocultar
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="h-4 w-4" aria-hidden="true" />
+                        Exibir
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    type="button"
+                    loading={busyKey === `save:${selectedBlock.id}`}
+                    onClick={() => void saveSelectedBlock()}
+                  >
+                    <Save className="h-4 w-4" aria-hidden="true" />
+                    Salvar
+                  </Button>
+                  {!selectedBlockDef.required ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      loading={busyKey === `remove:${selectedBlock.id}`}
+                      onClick={() => void removeSelectedBlock()}
+                      className="col-span-2"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      Remover
+                    </Button>
+                  ) : null}
+                </div>
+
+                <div className="space-y-4">
+                  {getEditableFields(selectedBlockDef).map((field) => renderEditableField(field))}
+                </div>
+              </>
+            ) : (
+              <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-8 text-sm leading-7 text-neutral-500">
+                Escolha um bloco para editar.
+              </div>
+            )}
+          </div>
+        </aside>
       </div>
     </section>
   );
