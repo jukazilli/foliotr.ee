@@ -176,13 +176,7 @@ function HeaderNav({
 }) {
   return (
     <header className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-      {semantics.hero.displayName ? (
-        <p className="max-w-full break-words text-2xl font-semibold leading-tight tracking-wide md:text-[1.7rem]">
-          {semantics.hero.displayName}
-        </p>
-      ) : (
-        <div aria-hidden="true" />
-      )}
+      <div aria-hidden="true" />
 
       <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-lg md:justify-end">
         <a href="#top" className="transition hover:opacity-70">

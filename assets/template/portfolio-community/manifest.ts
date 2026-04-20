@@ -32,8 +32,6 @@ export const portfolioCommunityManifest = {
   eligibility: {
     requiredProfileFields: ["displayName", "headline", "bio"],
     requiresAvatar: true,
-    minExperienceOrProjectItems: 1,
-    minLinkItems: 1,
   },
   resumeDefaults: {
     sections: ["summary", "education", "experience", "projects", "skills", "links"],

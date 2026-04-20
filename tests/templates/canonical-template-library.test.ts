@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { portfolioCommunityManifest } from "@/assets/template/portfolio-community/manifest";
 import {
   evaluateTemplateEligibility,
   listCanonicalTemplates,
@@ -76,6 +77,23 @@ describe("canonical template library", () => {
         proofs: [],
       }
     );
+
+    expect(eligibility.eligible).toBe(true);
+    expect(eligibility.issues).toEqual([]);
+  });
+
+  it("allows portfolio-community with only the completed base profile", () => {
+    const eligibility = evaluateTemplateEligibility(portfolioCommunityManifest.eligibility, {
+      displayName: "Juliano Zilli",
+      headline: "Template e curriculo",
+      bio: "Analista de sistemas com foco em portfolio e curriculo.",
+      avatarUrl: "/api/assets/proxy?key=uploads/avatar.png",
+      user: { name: "Juliano Zilli" },
+      experiences: [],
+      projects: [],
+      links: [],
+      proofs: [],
+    });
 
     expect(eligibility.eligible).toBe(true);
     expect(eligibility.issues).toEqual([]);
