@@ -148,7 +148,7 @@ function createDefaultListItem(fieldKey: string) {
 }
 
 function textareaClassName() {
-  return "min-h-[120px] w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500";
+  return "min-h-[7.5rem] w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500";
 }
 
 function getEditableFields(blockDef: TemplateBlockDefLike | null): EditableFieldLike[] {
@@ -624,7 +624,7 @@ export default function CanonicalPageEditor({
     const alt = typeof image.alt === "string" ? image.alt : "";
 
     return (
-      <div className="space-y-3 rounded-[20px] border border-neutral-200 bg-neutral-50/80 p-4">
+      <div className="space-y-3 rounded-[1.25rem] border border-neutral-200 bg-neutral-50/80 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
@@ -693,7 +693,7 @@ export default function CanonicalPageEditor({
     const items = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
 
     return (
-      <div className="space-y-3 rounded-[20px] border border-neutral-200 bg-neutral-50/80 p-4">
+      <div className="space-y-3 rounded-[1.25rem] border border-neutral-200 bg-neutral-50/80 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
@@ -910,7 +910,7 @@ export default function CanonicalPageEditor({
   }
 
   return (
-    <section className="grid min-h-[720px] min-w-0 gap-4 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[340px_minmax(0,1fr)]">
+    <section className="grid min-h-[45rem] min-w-0 gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[22rem_minmax(0,1fr)]">
       <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
         <div className="border-b border-neutral-200 px-3 py-3">
           <div className="flex items-center justify-between gap-3">
@@ -922,7 +922,7 @@ export default function CanonicalPageEditor({
           </div>
         </div>
 
-        <div className="max-h-[440px] space-y-1 overflow-y-auto p-2">
+        <div className="max-h-[27.5rem] space-y-1 overflow-y-auto p-2">
           {blocks.length === 0 ? (
             <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-4 text-sm text-neutral-500">
               Nenhum bloco criado.
@@ -946,7 +946,7 @@ export default function CanonicalPageEditor({
                   }`}
                 >
                   <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold ${
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[0.6875rem] font-semibold ${
                       isSelected
                         ? "border-lime-300 bg-white text-lime-700"
                         : "border-neutral-200 bg-neutral-50 text-neutral-500"
@@ -958,7 +958,7 @@ export default function CanonicalPageEditor({
                     <span className="block truncate text-sm font-semibold text-neutral-900">
                       {blockDef?.label ?? block.key}
                     </span>
-                    <span className="mt-0.5 block truncate text-[11px] text-neutral-500">
+                    <span className="mt-0.5 block truncate text-[0.6875rem] text-neutral-500">
                       {blockDef?.blockType ?? block.blockType}
                     </span>
                   </span>
@@ -971,7 +971,7 @@ export default function CanonicalPageEditor({
                       aria-label={block.visible ? "Visivel" : "Oculto"}
                     />
                     {blockDef?.required ? (
-                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-700">
+                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-amber-700">
                         fixo
                       </span>
                     ) : null}
@@ -1002,7 +1002,7 @@ export default function CanonicalPageEditor({
                 >
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-neutral-900">{blockDef.label}</p>
-                    <p className="truncate text-[11px] text-neutral-500">{blockDef.blockType}</p>
+                    <p className="truncate text-[0.6875rem] text-neutral-500">{blockDef.blockType}</p>
                   </div>
                   <Button
                     type="button"
@@ -1021,8 +1021,8 @@ export default function CanonicalPageEditor({
         </div>
       </aside>
 
-      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="order-2 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 2xl:order-1">
+      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_24rem]">
+        <section className="order-2 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 xl:order-1">
           <div className="flex items-center justify-between gap-3 border-b border-neutral-300/80 bg-white/90 px-4 py-3">
             <div className="min-w-0">
               <h2 className="text-sm font-semibold text-neutral-950">Preview</h2>
@@ -1030,12 +1030,12 @@ export default function CanonicalPageEditor({
                 {pageTitle} em {templateName}
               </p>
             </div>
-            <span className="hidden shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-semibold text-neutral-500 sm:inline-flex">
-              760px
+            <span className="hidden shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[0.6875rem] font-semibold text-neutral-500 sm:inline-flex">
+              Canvas
             </span>
           </div>
-          <div className="max-h-[70vh] overflow-y-auto bg-neutral-100 px-2 py-4 sm:px-6 sm:py-6 lg:max-h-[780px] lg:px-8">
-            <div className="mx-auto min-h-[420px] w-full max-w-[760px] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm sm:min-h-[640px]">
+          <div className="max-h-[70vh] overflow-x-hidden overflow-y-auto bg-neutral-100 px-2 py-4 sm:px-5 sm:py-5 lg:max-h-[48.75rem] lg:px-6">
+            <div className="mx-auto min-h-[26.25rem] w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm sm:min-h-[40rem]">
               <TemplateRenderer
                 templateSlug={templateSlug}
                 blocks={previewBlocks}
@@ -1047,7 +1047,7 @@ export default function CanonicalPageEditor({
           </div>
         </section>
 
-        <aside className="order-1 overflow-hidden rounded-lg border border-neutral-200 bg-white/95 2xl:sticky 2xl:top-20 2xl:order-2 2xl:self-start">
+        <aside className="order-1 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:order-2 xl:self-start">
           <div className="border-b border-neutral-200 px-4 py-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -1062,7 +1062,7 @@ export default function CanonicalPageEditor({
             </div>
           </div>
 
-          <div className="space-y-4 overflow-visible p-3 2xl:max-h-[780px] 2xl:overflow-y-auto">
+          <div className="space-y-3 overflow-visible p-3 xl:max-h-[48.75rem] xl:overflow-y-auto">
             {errorMessage ? (
               <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
                 {errorMessage}

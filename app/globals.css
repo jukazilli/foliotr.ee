@@ -118,7 +118,26 @@
 
 @layer base {
   html {
+    font-size: 100%;
     scroll-behavior: smooth;
+  }
+
+  @media (min-width: 48rem) {
+    html {
+      font-size: 93.75%;
+    }
+  }
+
+  @media (min-width: 80rem) {
+    html {
+      font-size: 87.5%;
+    }
+  }
+
+  @media (min-width: 96rem) {
+    html {
+      font-size: 80%;
+    }
   }
 
   body {
