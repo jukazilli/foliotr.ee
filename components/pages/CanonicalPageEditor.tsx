@@ -911,8 +911,8 @@ export default function CanonicalPageEditor({
   }
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <div className="space-y-4 xl:sticky xl:top-24 xl:self-start">
+    <section className="grid min-h-[720px] gap-4 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-3 shadow-sm xl:grid-cols-[340px_minmax(0,1fr)]">
+      <div className="space-y-3 xl:sticky xl:top-20 xl:self-start">
         <Card className="rounded-[28px] border-neutral-200 bg-white/90">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-semibold tracking-tight">

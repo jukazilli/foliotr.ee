@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 0 completed  
+Status: slice 1 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -206,6 +206,21 @@ Acceptance:
 - Publish/sync/open actions still work
 - No API contract changed
 
+Slice 1 result:
+
+- `app/(app)/pages/[pageId]/editor/page.tsx` no longer starts with the large `PageIntro`, style notice card and separate publish card.
+- Page identity, template state, page/resume publish states, sync, resume and public links were collapsed into a compact toolbar/workspace header.
+- Page and resume publish forms still call the existing server actions:
+  - `setPagePublishStateAction`
+  - `setResumePublishStateAction`
+  - `syncPageSnapshotAction`
+- `components/pages/CanonicalPageEditor.tsx` now sits inside a denser neutral workspace frame, preparing the next slices for block rail, preview canvas and inspector work.
+- No API route, Prisma model, block contract or renderer source changed.
+- Browser validation used a temporary local page for the authenticated `juliano` user, then removed it from the database after verification.
+- `/pages/{temporaryPageId}/editor` loaded with the compact toolbar, existing block list, selected block editor and real preview.
+- Browser console showed no errors; only the existing Next.js `scroll-behavior: smooth` warning.
+- Playwright MCP captured `slice1-workspace-shell.png` as the visual evidence for this slice.
+
 ### Slice 2 - Left Block Rail
 
 Goal: make the left column the dense block navigation and add-block surface.
@@ -321,7 +336,7 @@ Checklist:
 - [x] Preserve/transplant/defer map defined
   - Proof: map documented above.
 - [x] Slice 0 completed
-- [ ] Slice 1 completed
+- [x] Slice 1 completed
 - [ ] Slice 2 completed
 - [ ] Slice 3 completed
 - [ ] Slice 4 completed
