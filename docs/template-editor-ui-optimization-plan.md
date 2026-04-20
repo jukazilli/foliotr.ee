@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 1 completed  
+Status: slice 2 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -244,6 +244,17 @@ Acceptance:
 - Add block still creates a real `PageBlock`
 - Required and hidden states remain visible
 
+Slice 2 result:
+
+- `components/pages/CanonicalPageEditor.tsx` replaced the two large left-column cards with a single compact `aside` rail.
+- Existing block selection still uses `selectedBlockId` and the existing `setSelectedBlockId` flow.
+- Each block row now shows order, label, block type, selected state, visibility dot and required `fixo` state in a denser row.
+- Add-block still calls the existing `addBlock(blockDef.key)` handler and keeps the real `POST /api/pages/[pageId]/blocks` behavior.
+- Empty states were preserved for both no current blocks and no available blocks to add.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- Browser validation was attempted, but the local Next dev server listened on `127.0.0.1:3000` and then on `127.0.0.1:3001` without returning HTTP responses within the timeout. No browser screenshot was captured for this slice.
+
 ### Slice 3 - Center Preview Canvas
 
 Goal: make the preview smaller and canvas-like, matching the reference direction while keeping real rendering.
@@ -337,7 +348,7 @@ Checklist:
   - Proof: map documented above.
 - [x] Slice 0 completed
 - [x] Slice 1 completed
-- [ ] Slice 2 completed
+- [x] Slice 2 completed
 - [ ] Slice 3 completed
 - [ ] Slice 4 completed
 - [ ] Slice 5 completed

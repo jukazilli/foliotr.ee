@@ -912,18 +912,24 @@ export default function CanonicalPageEditor({
 
   return (
     <section className="grid min-h-[720px] gap-4 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-3 shadow-sm xl:grid-cols-[340px_minmax(0,1fr)]">
-      <div className="space-y-3 xl:sticky xl:top-20 xl:self-start">
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Blocos
-            </CardTitle>
-            <CardDescription>
-              Escolha um bloco para editar.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {blocks.map((block, index) => {
+      <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
+        <div className="border-b border-neutral-200 px-3 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h2 className="text-sm font-semibold text-neutral-950">Blocos</h2>
+              <p className="mt-0.5 text-xs text-neutral-500">{blocks.length} secoes no template</p>
+            </div>
+            <span className="text-xs font-medium text-neutral-500">Selecionar</span>
+          </div>
+        </div>
+
+        <div className="max-h-[440px] space-y-1 overflow-y-auto p-2">
+          {blocks.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-4 text-sm text-neutral-500">
+              Nenhum bloco criado.
+            </div>
+          ) : (
+            blocks.map((block, index) => {
               const blockDef =
                 templateBlockDefs.find((item) => item.id === block.templateBlockDefId) ?? null;
               const isSelected = block.id === selectedBlockId;
@@ -932,58 +938,72 @@ export default function CanonicalPageEditor({
                 <button
                   key={block.id}
                   type="button"
+                  aria-current={isSelected ? "true" : undefined}
                   onClick={() => setSelectedBlockId(block.id)}
-                  className={`w-full rounded-[22px] border px-4 py-4 text-left transition ${
+                  className={`group flex min-h-14 w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 ${
                     isSelected
-                      ? "border-lime-300 bg-lime-50"
-                      : "border-neutral-200 bg-neutral-50 hover:border-neutral-300 hover:bg-white"
+                      ? "border-lime-400 bg-lime-50 shadow-sm"
+                      : "border-transparent bg-white hover:border-neutral-200 hover:bg-neutral-50"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {blockDef?.label ?? block.key}
-                      </p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-neutral-500">
-                        bloco {index + 1}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Badge variant={block.visible ? "success" : "default"}>
-                        {block.visible ? "visivel" : "oculto"}
-                      </Badge>
-                      {blockDef?.required ? <Badge variant="warning">fixo</Badge> : null}
-                    </div>
-                  </div>
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold ${
+                      isSelected
+                        ? "border-lime-300 bg-white text-lime-700"
+                        : "border-neutral-200 bg-neutral-50 text-neutral-500"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-neutral-900">
+                      {blockDef?.label ?? block.key}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[11px] text-neutral-500">
+                      {blockDef?.blockType ?? block.blockType}
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1">
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        block.visible ? "bg-lime-500" : "bg-neutral-300"
+                      }`}
+                      title={block.visible ? "Visivel" : "Oculto"}
+                      aria-label={block.visible ? "Visivel" : "Oculto"}
+                    />
+                    {blockDef?.required ? (
+                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-700">
+                        fixo
+                      </span>
+                    ) : null}
+                  </span>
                 </button>
               );
-            })}
-          </CardContent>
-        </Card>
+            })
+          )}
+        </div>
 
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Adicionar bloco
-            </CardTitle>
-            <CardDescription>
-              Adicione secoes disponiveis.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <div className="border-t border-neutral-200 bg-neutral-50/80 p-2">
+          <div className="mb-2 flex items-center justify-between gap-2 px-1">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Adicionar
+            </h3>
+            <span className="text-xs text-neutral-500">{availableBlockDefs.length} disponiveis</span>
+          </div>
+          <div className="space-y-1">
             {availableBlockDefs.length === 0 ? (
-              <div className="rounded-[20px] border border-dashed border-neutral-300 bg-neutral-50 p-4 text-sm leading-7 text-neutral-500">
+              <div className="rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-3 text-sm text-neutral-500">
                 Nao ha mais blocos para adicionar.
               </div>
             ) : (
               availableBlockDefs.map((blockDef) => (
                 <div
                   key={blockDef.id}
-                  className="flex items-center justify-between gap-3 rounded-[20px] border border-neutral-200 bg-neutral-50 p-3"
+                  className="flex min-h-12 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2 py-2"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-900">{blockDef.label}</p>
-                    <p className="text-xs text-neutral-500">{blockDef.blockType}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-neutral-900">{blockDef.label}</p>
+                    <p className="truncate text-[11px] text-neutral-500">{blockDef.blockType}</p>
                   </div>
                   <Button
                     type="button"
@@ -991,16 +1011,16 @@ export default function CanonicalPageEditor({
                     size="sm"
                     loading={busyKey === `add:${blockDef.key}`}
                     onClick={() => void addBlock(blockDef.key)}
+                    aria-label={`Adicionar bloco ${blockDef.label}`}
                   >
                     <Plus className="h-4 w-4" aria-hidden="true" />
-                    Adicionar
                   </Button>
                 </div>
               ))
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </aside>
 
       <div className="space-y-6">
         <Card className="rounded-[28px] border-neutral-200 bg-white/90">
