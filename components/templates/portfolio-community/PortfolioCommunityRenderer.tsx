@@ -339,6 +339,42 @@ function ExperienceSection({ semantics }: { semantics: PortfolioCommunitySemanti
   );
 }
 
+function EducationSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+  if (!semantics.education.visible || semantics.education.items.length === 0) return null;
+
+  return (
+    <SectionShell id="education" className="py-16 lg:py-24">
+      <SectionTitle>{semantics.education.title}</SectionTitle>
+      <div className="mt-10 mx-auto max-w-[58rem] space-y-8">
+        {semantics.education.items.map((education) => (
+          <article
+            key={education.id}
+            className="grid gap-4 border-l border-[#03045E]/30 pl-6 md:grid-cols-[12rem_minmax(0,1fr)] md:border-l-0 md:pl-0"
+          >
+            <p className="break-words text-lg font-semibold leading-relaxed md:text-xl">
+              {education.period}
+            </p>
+            <div className="min-w-0">
+              <h3 className="break-words text-xl font-semibold leading-snug md:text-2xl">
+                {[education.degree, education.field].filter(Boolean).join(" | ") ||
+                  education.institution}
+              </h3>
+              <p className="mt-1 break-words text-lg leading-relaxed md:text-xl">
+                {education.institution}
+              </p>
+              {education.description ? (
+                <p className="mt-3 whitespace-pre-line break-words text-lg leading-[1.8] md:text-xl">
+                  {education.description}
+                </p>
+              ) : null}
+            </div>
+          </article>
+        ))}
+      </div>
+    </SectionShell>
+  );
+}
+
 function WorkSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
   if (!semantics.work.visible) return null;
 
@@ -445,6 +481,7 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
     >
       <HeroSection semantics={semantics} sourcePackage={sourcePackage} />
       <AboutSection semantics={semantics} />
+      <EducationSection semantics={semantics} />
       <ExperienceSection semantics={semantics} />
       <WorkSection semantics={semantics} />
       <ContactSection semantics={semantics} />

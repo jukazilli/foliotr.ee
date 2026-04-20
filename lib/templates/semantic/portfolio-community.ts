@@ -114,6 +114,36 @@ const portfolioCommunityBlockSeeders: Record<
       }
     );
   },
+  "portfolio.education": (blockDef, context) => {
+    const semantics = derivePortfolioCommunitySemantics({
+      profile: context.profile,
+      version: context.version,
+      blockConfigs: {
+        "portfolio.education": asRecord(blockDef.defaultConfig),
+      },
+    });
+
+    return withSourceMeta(
+      blockDef,
+      {
+        ...asRecord(blockDef.defaultConfig),
+        title: semantics.education.title,
+      },
+      {
+        visible: semantics.education.visible,
+        resolvedFrom: [
+          {
+            target: "items",
+            slot: "education.items",
+            source:
+              context.version.educations.length > 0
+                ? "version.educations"
+                : "profile.educations",
+          },
+        ],
+      }
+    );
+  },
   "portfolio.experience": (blockDef, context) => {
     const semantics = derivePortfolioCommunitySemantics({
       profile: context.profile,

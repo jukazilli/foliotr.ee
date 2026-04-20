@@ -36,7 +36,7 @@ export const portfolioCommunityManifest = {
     minLinkItems: 1,
   },
   resumeDefaults: {
-    sections: ["summary", "experience", "projects", "skills", "links"],
+    sections: ["summary", "education", "experience", "projects", "skills", "links"],
     layout: "classic",
     accentColor: "#474306",
     showPhoto: false,
@@ -136,12 +136,39 @@ export const portfolioCommunityManifest = {
       ],
     },
     {
+      key: "portfolio-education",
+      blockType: "portfolio.education",
+      label: "Formacao",
+      category: "section",
+      version: 1,
+      defaultOrder: 2,
+      required: false,
+      repeatable: false,
+      defaultConfig: {
+        title: "formacao",
+      },
+      editableFields: [
+        { key: "title", label: "Titulo", element: "h2", kind: "text" },
+      ],
+      assetFields: [],
+      allowedChildren: [],
+      semanticSlots: [
+        {
+          slot: "education.items",
+          target: "items",
+          source: "selection",
+          required: false,
+          description: "Secao que representa cursos, estudos e periodos de formacao.",
+        },
+      ],
+    },
+    {
       key: "portfolio-experience",
       blockType: "portfolio.experience",
       label: "Experience",
       category: "section",
       version: 1,
-      defaultOrder: 2,
+      defaultOrder: 3,
       required: false,
       repeatable: false,
       defaultConfig: {
@@ -170,7 +197,7 @@ export const portfolioCommunityManifest = {
       label: "Work",
       category: "section",
       version: 1,
-      defaultOrder: 3,
+      defaultOrder: 4,
       required: false,
       repeatable: true,
       defaultConfig: {
@@ -209,7 +236,7 @@ export const portfolioCommunityManifest = {
       label: "Contact",
       category: "section",
       version: 1,
-      defaultOrder: 4,
+      defaultOrder: 5,
       required: false,
       repeatable: false,
       defaultConfig: {

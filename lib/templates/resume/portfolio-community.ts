@@ -20,7 +20,7 @@ export function projectPortfolioCommunityResume(
   const accent = input.config?.accentColor || "#474306";
   const visibleSectionOrder = (input.config?.sections?.length
     ? input.config.sections
-    : ["summary", "experience", "projects", "highlights", "skills", "links"]) as string[];
+    : ["summary", "education", "experience", "projects", "highlights", "skills", "links"]) as string[];
 
   const sectionMap = new Map<string, ResumeProjectionSection>();
 
@@ -44,6 +44,22 @@ export function projectPortfolioCommunityResume(
         location: experience.location,
         description: experience.description,
         current: experience.current,
+      })),
+    });
+  }
+
+  if (semantics.education.visible && semantics.education.items.length > 0) {
+    sectionMap.set("education", {
+      key: "education",
+      title: semantics.education.title || "Formacao",
+      items: semantics.education.items.map((education) => ({
+        id: education.id,
+        institution: education.institution,
+        degree: education.degree,
+        field: education.field,
+        period: education.period,
+        description: education.description,
+        current: education.current,
       })),
     });
   }
@@ -165,6 +181,7 @@ export function projectPortfolioCommunityResume(
       enters: [
         "hero -> cabecalho recruiter-friendly",
         "about -> resumo textual",
+        "education -> formacao objetiva",
         "experience -> experiencia objetiva",
         "work -> projetos concisos",
         "contact -> links e provas",
@@ -182,6 +199,7 @@ export function projectPortfolioCommunityResume(
       textOnly: [
         "about",
         "experience descriptions",
+        "education descriptions",
         "project descriptions",
         "proof labels",
       ],

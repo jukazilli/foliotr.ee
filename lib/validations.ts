@@ -218,6 +218,7 @@ export const profileLinkSchema = z.object({
 
 export const versionSelectionSchema = z.object({
   experienceIds: z.array(cuidSchema).default([]),
+  educationIds: z.array(cuidSchema).default([]),
   projectIds: z.array(cuidSchema).default([]),
   skillIds: z.array(cuidSchema).default([]),
   achievementIds: z.array(cuidSchema).default([]),
@@ -241,6 +242,7 @@ export const profileBaseSchema = profileSchema.extend({
   assets: z.array(assetInputSchema).optional(),
   highlights: z.array(highlightSchema).optional(),
   experiences: z.array(experienceSchema).optional(),
+  educations: z.array(educationSchema).optional(),
   skills: z.array(skillSchema).optional(),
   projects: z.array(projectSchema).optional(),
   achievements: z.array(achievementSchema).optional(),

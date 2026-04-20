@@ -105,6 +105,7 @@ export const getDashboardViewer = cache(async () => {
       _count: {
         select: {
           experiences: true,
+          educations: true,
           projects: true,
           links: true,
           achievements: true,
@@ -200,6 +201,20 @@ export const getProfileEditorViewer = cache(async () => {
           location: true,
           logoUrl: true,
           logoAssetId: true,
+        },
+      },
+      educations: {
+        orderBy: [{ order: "asc" }, { startDate: "desc" }],
+        select: {
+          id: true,
+          institution: true,
+          degree: true,
+          field: true,
+          description: true,
+          startDate: true,
+          endDate: true,
+          current: true,
+          logoUrl: true,
         },
       },
       skills: {

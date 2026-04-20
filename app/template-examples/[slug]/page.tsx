@@ -92,6 +92,7 @@ export default async function TemplateExamplePage({ params }: TemplateExamplePag
           customHeadline: null,
           customBio: null,
           selectedExperienceIds: [],
+          selectedEducationIds: [],
           selectedProjectIds: [],
           selectedSkillIds: [],
           selectedAchievementIds: [],

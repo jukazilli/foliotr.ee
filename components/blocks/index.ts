@@ -4,6 +4,7 @@ import type { ComponentType } from "react";
 import HeroBlock from "./HeroBlock";
 import AboutBlock from "./AboutBlock";
 import ExperienceBlock from "./ExperienceBlock";
+import EducationBlock from "./EducationBlock";
 import SkillsBlock from "./SkillsBlock";
 import ProjectsBlock from "./ProjectsBlock";
 import LinksBlock from "./LinksBlock";
@@ -12,7 +13,7 @@ export const BLOCK_REGISTRY: Record<BlockType, ComponentType<BlockProps>> = {
   hero: HeroBlock,
   about: AboutBlock,
   experience: ExperienceBlock,
-  education: ExperienceBlock, // placeholder até criar EducationBlock
+  education: EducationBlock,
   skills: SkillsBlock,
   projects: ProjectsBlock,
   achievements: AboutBlock, // placeholder

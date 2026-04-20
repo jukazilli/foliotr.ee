@@ -144,7 +144,7 @@ First target: `portfolio-community`
 ## Memoria curta
 
 - Decisoes:
-  manifesto local + persistencia em banco; renderer interno controlado; visual canonico bloqueado; resume derivado da mesma `Version`.
+  manifesto local + persistencia em banco; renderer interno controlado; visual canonico bloqueado; resume derivado da mesma `Version`; `Education/Formacao` e dado canonico selecionavel por versao e projetado para template e curriculo.
 - Regras relevantes:
   nao usar runtime da SPA bruta; nao usar MCP do Figma; nao quebrar auth/Prisma/rotas atuais; evitar memoria paralela fora deste contrato e de `doc/templates-architecture.md`.
 - Pendencias:

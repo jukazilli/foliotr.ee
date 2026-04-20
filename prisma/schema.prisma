@@ -145,20 +145,21 @@ model Experience {
 }
 
 model Education {
-  id          String    @id @default(cuid())
+  id          String             @id @default(cuid())
   profileId   String
-  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  profile     Profile            @relation(fields: [profileId], references: [id], onDelete: Cascade)
   institution String
   degree      String?
   field       String?
   startDate   DateTime
   endDate     DateTime?
-  current     Boolean   @default(false)
-  description String?   @db.Text
+  current     Boolean            @default(false)
+  description String?            @db.Text
   logoUrl     String?
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  order       Int                @default(0)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  versions    VersionEducation[]
 }
 
 model Skill {
@@ -295,6 +296,7 @@ model Version {
   pages        Page[]
   resumeConfig ResumeConfig?
   experiences  VersionExperience[]
+  educations   VersionEducation[]
   projects     VersionProject[]
   skills       VersionSkill[]
   achievements VersionAchievement[]
@@ -436,6 +438,17 @@ model VersionExperience {
   experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
 
   @@id([versionId, experienceId])
+  @@index([versionId, order])
+}
+
+model VersionEducation {
+  versionId   String
+  educationId String
+  order       Int       @default(0)
+  version     Version   @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  education   Education @relation(fields: [educationId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, educationId])
   @@index([versionId, order])
 }
 

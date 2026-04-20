@@ -65,6 +65,7 @@ export default async function VersionsPage() {
           const hasResume = Boolean(version.resumeConfig);
           const selectedCount =
             version.experiences.length +
+            version.educations.length +
             version.projects.length +
             version.achievements.length +
             version.skills.length +

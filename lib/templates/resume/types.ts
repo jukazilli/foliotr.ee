@@ -49,6 +49,22 @@ export interface ResumeProjectionExperienceSection {
   items: ResumeProjectionExperienceItem[];
 }
 
+export interface ResumeProjectionEducationItem {
+  id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  period: string;
+  description: string;
+  current: boolean;
+}
+
+export interface ResumeProjectionEducationSection {
+  key: "education";
+  title: string;
+  items: ResumeProjectionEducationItem[];
+}
+
 export interface ResumeProjectionProjectItem {
   id: string;
   title: string;
@@ -91,6 +107,7 @@ export interface ResumeProjectionLinksSection {
 export type ResumeProjectionSection =
   | ResumeProjectionSummarySection
   | ResumeProjectionExperienceSection
+  | ResumeProjectionEducationSection
   | ResumeProjectionProjectSection
   | ResumeProjectionHighlightSection
   | ResumeProjectionSkillsSection

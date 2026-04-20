@@ -13,6 +13,7 @@ export const TEMPLATE_BLOCK_TYPES = [
   "contact",
   "portfolio.hero",
   "portfolio.about",
+  "portfolio.education",
   "portfolio.experience",
   "portfolio.work",
   "portfolio.contact",
@@ -170,6 +171,7 @@ const genericKnownConfigSchema = z
 const blockConfigSchemas = {
   "portfolio.hero": portfolioHeroConfigSchema,
   "portfolio.about": portfolioAboutConfigSchema,
+  "portfolio.education": genericKnownConfigSchema,
   "portfolio.experience": portfolioExperienceConfigSchema,
   "portfolio.work": portfolioWorkConfigSchema,
   "portfolio.contact": portfolioContactConfigSchema,

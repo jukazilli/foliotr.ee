@@ -9,6 +9,7 @@ import {
   Check,
   ExternalLink,
   FolderOpenDot,
+  GraduationCap,
   Link2,
   Medal,
   Plus,
@@ -39,6 +40,7 @@ type EditableProfile = {
     email: string | null;
   };
   experiences: EditableExperience[];
+  educations: EditableEducation[];
   projects: EditableProject[];
   achievements: EditableAchievement[];
   highlights: EditableHighlight[];
@@ -66,6 +68,19 @@ type EditableExperience = {
   location: string;
   logoUrl: string;
   logoAssetId?: string | null;
+};
+
+type EditableEducation = {
+  _key: string;
+  id?: string;
+  institution: string;
+  degree: string;
+  field: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  logoUrl: string;
 };
 
 type EditableProject = {
@@ -197,6 +212,7 @@ const ERROR_LABELS: Record<string, string> = {
   birthDate: "Data de nascimento",
   highlights: "Highlights",
   experiences: "Experiencias",
+  educations: "Formacao",
   skills: "Skills",
   projects: "Projetos",
   achievements: "Reconhecimentos",
@@ -204,6 +220,9 @@ const ERROR_LABELS: Record<string, string> = {
   links: "Links",
   company: "Empresa",
   role: "Cargo",
+  institution: "Instituicao",
+  degree: "Curso",
+  field: "Area de estudo",
   description: "Descricao",
   startDate: "Data de inicio",
   endDate: "Data final",
@@ -226,6 +245,7 @@ const ERROR_LABELS: Record<string, string> = {
 const SINGULAR_COLLECTION_LABELS: Record<string, string> = {
   highlights: "Highlight",
   experiences: "Experiencia",
+  educations: "Formacao",
   skills: "Skill",
   projects: "Projeto",
   achievements: "Reconhecimento",
@@ -237,6 +257,7 @@ function isCollectionField(field: keyof EditableProfile): field is CollectionFie
   return (
     field === "highlights" ||
     field === "experiences" ||
+    field === "educations" ||
     field === "skills" ||
     field === "projects" ||
     field === "achievements" ||
@@ -345,6 +366,18 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
       logoUrl: text(item.logoUrl),
       logoAssetId: item.logoAssetId ?? null,
     })),
+    educations: profile.educations.map((item) => ({
+      _key: item.id ?? key(),
+      id: item.id,
+      institution: text(item.institution),
+      degree: text(item.degree),
+      field: text(item.field),
+      description: text(item.description),
+      startDate: toDateInput(item.startDate),
+      endDate: toDateInput(item.endDate),
+      current: Boolean(item.current),
+      logoUrl: text(item.logoUrl),
+    })),
     projects: profile.projects.map((item) => ({
       _key: item.id ?? key(),
       id: item.id,
@@ -412,6 +445,7 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
 type CollectionField =
   | "highlights"
   | "experiences"
+  | "educations"
   | "skills"
   | "projects"
   | "achievements"
@@ -460,6 +494,22 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         location: item.location,
         logoUrl: cleanUrl(item.logoUrl),
         logoAssetId: item.logoAssetId ?? null,
+      }));
+  }
+
+  if (collection === "educations") {
+    return profile.educations
+      .filter((item) => item.institution.trim() && item.startDate)
+      .map((item) => ({
+        id: persistedId(item.id),
+        institution: item.institution,
+        degree: item.degree,
+        field: item.field,
+        description: item.description,
+        startDate: item.startDate,
+        endDate: item.current ? null : item.endDate || null,
+        current: item.current,
+        logoUrl: cleanUrl(item.logoUrl),
       }));
   }
 
@@ -847,6 +897,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
             {profile.displayName || profile.user.name || "Seu perfil"}
           </h1>
           <div className="mt-4 flex flex-wrap gap-2">
+            <Badge variant="default">{profile.educations.length} formacoes</Badge>
             <Badge variant="info">{profile.experiences.length} experiencias</Badge>
             <Badge variant="version">{profile.projects.length} projetos</Badge>
             <Badge variant="premium">
@@ -1047,6 +1098,59 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   </Card>
                 </aside>
               </div>
+            ),
+          },
+          {
+            value: "formacao",
+            label: "Formacao",
+            count: profile.educations.length,
+            children: (
+              <ListPanel
+                icon={<GraduationCap className="h-4 w-4" />}
+                count={profile.educations.length}
+                label="formacoes"
+                addLabel="Formacao"
+                onAdd={() =>
+                  addItem<EditableEducation>("educations", {
+                    _key: key(),
+                    institution: "",
+                    degree: "",
+                    field: "",
+                    description: "",
+                    startDate: new Date().toISOString().slice(0, 10),
+                    endDate: "",
+                    current: false,
+                    logoUrl: "",
+                  })
+                }
+              >
+                {profile.educations.map((item) => (
+                  <Card key={item._key} className="rounded-[20px]">
+                    <CardContent className="grid gap-4 p-4 md:grid-cols-[130px_1fr_auto]">
+                      <div className="space-y-3">
+                        <input type="date" className={inputClass()} value={item.startDate} onChange={(event) => updateList<EditableEducation>("educations", item._key, { startDate: event.target.value })} />
+                        <input type="date" className={inputClass()} value={item.endDate} disabled={item.current} onChange={(event) => updateList<EditableEducation>("educations", item._key, { endDate: event.target.value })} />
+                        <label className="flex items-center gap-2 text-xs font-medium text-neutral-600">
+                          <input type="checkbox" checked={item.current} onChange={(event) => updateList<EditableEducation>("educations", item._key, { current: event.target.checked })} />
+                          Atual
+                        </label>
+                      </div>
+                      <div className="grid gap-3">
+                        <div className="grid gap-3 sm:grid-cols-2">
+                          <input className={inputClass()} placeholder="Instituicao" value={item.institution} onChange={(event) => updateList<EditableEducation>("educations", item._key, { institution: event.target.value })} />
+                          <input className={inputClass()} placeholder="Curso ou grau" value={item.degree} onChange={(event) => updateList<EditableEducation>("educations", item._key, { degree: event.target.value })} />
+                        </div>
+                        <input className={inputClass()} placeholder="Area de estudo" value={item.field} onChange={(event) => updateList<EditableEducation>("educations", item._key, { field: event.target.value })} />
+                        <textarea className={textareaClass()} placeholder="Resumo da formacao, enfase, projetos ou conquistas" value={item.description} onChange={(event) => updateList<EditableEducation>("educations", item._key, { description: event.target.value })} />
+                        <input className={inputClass()} placeholder="Logo da instituicao" value={item.logoUrl} onChange={(event) => updateList<EditableEducation>("educations", item._key, { logoUrl: event.target.value })} />
+                      </div>
+                      <IconButton label="Remover formacao" onClick={() => removeItem<EditableEducation>("educations", item._key)}>
+                        <Trash2 className="h-4 w-4" />
+                      </IconButton>
+                    </CardContent>
+                  </Card>
+                ))}
+              </ListPanel>
             ),
           },
           {

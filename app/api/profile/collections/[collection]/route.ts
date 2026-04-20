@@ -9,6 +9,7 @@ import {
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import {
   achievementSchema,
+  educationSchema,
   experienceSchema,
   highlightSchema,
   profileLinkSchema,
@@ -20,6 +21,7 @@ import {
 const collectionSchemaMap = {
   highlights: z.object({ items: z.array(highlightSchema) }),
   experiences: z.object({ items: z.array(experienceSchema) }),
+  educations: z.object({ items: z.array(educationSchema) }),
   skills: z.object({ items: z.array(skillSchema) }),
   projects: z.object({ items: z.array(projectSchema) }),
   achievements: z.object({ items: z.array(achievementSchema) }),

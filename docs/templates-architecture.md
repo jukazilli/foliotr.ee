@@ -123,6 +123,7 @@ For `portfolio-community`, the first seed resolves:
 
 - hero -> display name, headline, avatar, resume CTA
 - about -> bio/about
+- education -> selected education and training items
 - trajectory -> selected experiences
 - work -> selected projects
 - contact -> public email, links and proofs

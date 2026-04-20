@@ -111,6 +111,7 @@ export async function getOwnedVersion(
 function resolveDefaultSelections(profile: ProfileAggregate): VersionSelectionInput {
   return {
     experienceIds: profile.experiences.map((item) => item.id),
+    educationIds: profile.educations.map((item) => item.id),
     projectIds: profile.projects.map((item) => item.id),
     skillIds: profile.skills.map((item) => item.id),
     achievementIds: profile.achievements.map((item) => item.id),
@@ -134,6 +135,15 @@ async function assertVersionSelectionsOwned(
           select: { id: true },
         }),
       label: "experiencias",
+    },
+    {
+      ids: selections.educationIds,
+      finder: (ids: string[]) =>
+        tx.education.findMany({
+          where: { profileId: profile.id, id: { in: ids } },
+          select: { id: true },
+        }),
+      label: "formacoes",
     },
     {
       ids: selections.projectIds,
@@ -212,6 +222,7 @@ async function syncVersionSelections(
   selections: VersionSelectionInput
 ) {
   await tx.versionExperience.deleteMany({ where: { versionId } });
+  await tx.versionEducation.deleteMany({ where: { versionId } });
   await tx.versionProject.deleteMany({ where: { versionId } });
   await tx.versionSkill.deleteMany({ where: { versionId } });
   await tx.versionAchievement.deleteMany({ where: { versionId } });
@@ -224,6 +235,16 @@ async function syncVersionSelections(
       data: dedupeIds(selections.experienceIds).map((experienceId, order) => ({
         versionId,
         experienceId,
+        order,
+      })),
+    });
+  }
+
+  if (selections.educationIds.length > 0) {
+    await tx.versionEducation.createMany({
+      data: dedupeIds(selections.educationIds).map((educationId, order) => ({
+        versionId,
+        educationId,
         order,
       })),
     });

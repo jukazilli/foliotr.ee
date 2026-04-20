@@ -9,6 +9,7 @@ const collectionPayloadKeys = [
   "assets",
   "highlights",
   "experiences",
+  "educations",
   "skills",
   "projects",
   "achievements",

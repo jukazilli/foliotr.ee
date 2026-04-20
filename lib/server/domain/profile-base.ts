@@ -12,6 +12,7 @@ type TxClient = Prisma.TransactionClient;
 export type ProfileCollectionKey =
   | "highlights"
   | "experiences"
+  | "educations"
   | "skills"
   | "projects"
   | "achievements"
@@ -379,6 +380,75 @@ export async function updateOwnedProfileCollection(
           location: true,
           logoUrl: true,
           logoAssetId: true,
+        },
+      });
+    }
+
+    if (collection === "educations") {
+      const typedItems = items as NonNullable<ProfileBaseInput["educations"]>;
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Formacoes",
+        findExistingIds: () =>
+          tx.education.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.education.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.education.update({
+            where: { id },
+            data: {
+              institution: item.institution,
+              degree: sanitizeNullable(item.degree),
+              field: sanitizeNullable(item.field),
+              description: sanitizeNullable(item.description),
+              startDate: item.startDate,
+              endDate: item.current ? null : item.endDate ?? null,
+              current: item.current,
+              logoUrl: sanitizeNullable(item.logoUrl),
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.education.create({
+            data: {
+              profileId: profile.id,
+              institution: item.institution,
+              degree: sanitizeNullable(item.degree),
+              field: sanitizeNullable(item.field),
+              description: sanitizeNullable(item.description),
+              startDate: item.startDate,
+              endDate: item.current ? null : item.endDate ?? null,
+              current: item.current,
+              logoUrl: sanitizeNullable(item.logoUrl),
+              order: index,
+            },
+          }),
+      });
+
+      return tx.education.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { startDate: "desc" }],
+        select: {
+          id: true,
+          institution: true,
+          degree: true,
+          field: true,
+          description: true,
+          startDate: true,
+          endDate: true,
+          current: true,
+          logoUrl: true,
         },
       });
     }
@@ -874,6 +944,57 @@ export async function updateOwnedProfileBase(
                 location: sanitizeNullable(item.location),
                 logoUrl: sanitizeNullable(item.logoUrl),
                 logoAssetId: item.logoAssetId ?? null,
+                order: index,
+              },
+            }),
+        });
+      }
+
+      if (input.educations) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.educations,
+          label: "Formacoes",
+          findExistingIds: () =>
+            tx.education.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.education.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.education.update({
+              where: { id },
+              data: {
+                institution: item.institution,
+                degree: sanitizeNullable(item.degree),
+                field: sanitizeNullable(item.field),
+                description: sanitizeNullable(item.description),
+                startDate: item.startDate,
+                endDate: item.current ? null : item.endDate ?? null,
+                current: item.current,
+                logoUrl: sanitizeNullable(item.logoUrl),
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.education.create({
+              data: {
+                profileId: profile.id,
+                institution: item.institution,
+                degree: sanitizeNullable(item.degree),
+                field: sanitizeNullable(item.field),
+                description: sanitizeNullable(item.description),
+                startDate: item.startDate,
+                endDate: item.current ? null : item.endDate ?? null,
+                current: item.current,
+                logoUrl: sanitizeNullable(item.logoUrl),
                 order: index,
               },
             }),

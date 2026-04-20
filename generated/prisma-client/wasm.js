@@ -430,6 +430,12 @@ exports.Prisma.VersionExperienceScalarFieldEnum = {
   order: 'order'
 };
 
+exports.Prisma.VersionEducationScalarFieldEnum = {
+  versionId: 'versionId',
+  educationId: 'educationId',
+  order: 'order'
+};
+
 exports.Prisma.VersionProjectScalarFieldEnum = {
   versionId: 'versionId',
   projectId: 'projectId',
@@ -533,6 +539,7 @@ exports.Prisma.ModelName = {
   PageBlock: 'PageBlock',
   ResumeConfig: 'ResumeConfig',
   VersionExperience: 'VersionExperience',
+  VersionEducation: 'VersionEducation',
   VersionProject: 'VersionProject',
   VersionSkill: 'VersionSkill',
   VersionAchievement: 'VersionAchievement',

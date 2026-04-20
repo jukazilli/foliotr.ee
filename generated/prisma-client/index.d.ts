@@ -124,6 +124,11 @@ export type ResumeConfig = $Result.DefaultSelection<Prisma.$ResumeConfigPayload>
  */
 export type VersionExperience = $Result.DefaultSelection<Prisma.$VersionExperiencePayload>
 /**
+ * Model VersionEducation
+ * 
+ */
+export type VersionEducation = $Result.DefaultSelection<Prisma.$VersionEducationPayload>
+/**
  * Model VersionProject
  * 
  */
@@ -542,6 +547,16 @@ export class PrismaClient<
     * ```
     */
   get versionExperience(): Prisma.VersionExperienceDelegate<ExtArgs>;
+
+  /**
+   * `prisma.versionEducation`: Exposes CRUD operations for the **VersionEducation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VersionEducations
+    * const versionEducations = await prisma.versionEducation.findMany()
+    * ```
+    */
+  get versionEducation(): Prisma.VersionEducationDelegate<ExtArgs>;
 
   /**
    * `prisma.versionProject`: Exposes CRUD operations for the **VersionProject** model.
@@ -1065,6 +1080,7 @@ export namespace Prisma {
     PageBlock: 'PageBlock',
     ResumeConfig: 'ResumeConfig',
     VersionExperience: 'VersionExperience',
+    VersionEducation: 'VersionEducation',
     VersionProject: 'VersionProject',
     VersionSkill: 'VersionSkill',
     VersionAchievement: 'VersionAchievement',
@@ -1086,7 +1102,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "profile" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "profile" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2630,6 +2646,76 @@ export namespace Prisma {
           }
         }
       }
+      VersionEducation: {
+        payload: Prisma.$VersionEducationPayload<ExtArgs>
+        fields: Prisma.VersionEducationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VersionEducationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VersionEducationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          findFirst: {
+            args: Prisma.VersionEducationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VersionEducationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          findMany: {
+            args: Prisma.VersionEducationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>[]
+          }
+          create: {
+            args: Prisma.VersionEducationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          createMany: {
+            args: Prisma.VersionEducationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VersionEducationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>[]
+          }
+          delete: {
+            args: Prisma.VersionEducationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          update: {
+            args: Prisma.VersionEducationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          deleteMany: {
+            args: Prisma.VersionEducationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VersionEducationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.VersionEducationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VersionEducationPayload>
+          }
+          aggregate: {
+            args: Prisma.VersionEducationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVersionEducation>
+          }
+          groupBy: {
+            args: Prisma.VersionEducationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VersionEducationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VersionEducationCountArgs<ExtArgs>
+            result: $Utils.Optional<VersionEducationCountAggregateOutputType> | number
+          }
+        }
+      }
       VersionProject: {
         payload: Prisma.$VersionProjectPayload<ExtArgs>
         fields: Prisma.VersionProjectFieldRefs
@@ -3399,6 +3485,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type EducationCountOutputType
+   */
+
+  export type EducationCountOutputType = {
+    versions: number
+  }
+
+  export type EducationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    versions?: boolean | EducationCountOutputTypeCountVersionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * EducationCountOutputType without action
+   */
+  export type EducationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the EducationCountOutputType
+     */
+    select?: EducationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * EducationCountOutputType without action
+   */
+  export type EducationCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VersionEducationWhereInput
+  }
+
+
+  /**
    * Count Type SkillCountOutputType
    */
 
@@ -3658,6 +3775,7 @@ export namespace Prisma {
   export type VersionCountOutputType = {
     pages: number
     experiences: number
+    educations: number
     projects: number
     skills: number
     achievements: number
@@ -3669,6 +3787,7 @@ export namespace Prisma {
   export type VersionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     pages?: boolean | VersionCountOutputTypeCountPagesArgs
     experiences?: boolean | VersionCountOutputTypeCountExperiencesArgs
+    educations?: boolean | VersionCountOutputTypeCountEducationsArgs
     projects?: boolean | VersionCountOutputTypeCountProjectsArgs
     skills?: boolean | VersionCountOutputTypeCountSkillsArgs
     achievements?: boolean | VersionCountOutputTypeCountAchievementsArgs
@@ -3700,6 +3819,13 @@ export namespace Prisma {
    */
   export type VersionCountOutputTypeCountExperiencesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VersionExperienceWhereInput
+  }
+
+  /**
+   * VersionCountOutputType without action
+   */
+  export type VersionCountOutputTypeCountEducationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VersionEducationWhereInput
   }
 
   /**
@@ -11384,6 +11510,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    versions?: boolean | Education$versionsArgs<ExtArgs>
+    _count?: boolean | EducationCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["education"]>
 
   export type EducationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -11421,6 +11549,8 @@ export namespace Prisma {
 
   export type EducationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    versions?: boolean | Education$versionsArgs<ExtArgs>
+    _count?: boolean | EducationCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type EducationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
@@ -11430,6 +11560,7 @@ export namespace Prisma {
     name: "Education"
     objects: {
       profile: Prisma.$ProfilePayload<ExtArgs>
+      versions: Prisma.$VersionEducationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -11810,6 +11941,7 @@ export namespace Prisma {
   export interface Prisma__EducationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    versions<T extends Education$versionsArgs<ExtArgs> = {}>(args?: Subset<T, Education$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -12167,6 +12299,26 @@ export namespace Prisma {
      * Filter which Educations to delete
      */
     where?: EducationWhereInput
+  }
+
+  /**
+   * Education.versions
+   */
+  export type Education$versionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    where?: VersionEducationWhereInput
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    cursor?: VersionEducationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VersionEducationScalarFieldEnum | VersionEducationScalarFieldEnum[]
   }
 
   /**
@@ -19995,6 +20147,7 @@ export namespace Prisma {
     pages?: boolean | Version$pagesArgs<ExtArgs>
     resumeConfig?: boolean | Version$resumeConfigArgs<ExtArgs>
     experiences?: boolean | Version$experiencesArgs<ExtArgs>
+    educations?: boolean | Version$educationsArgs<ExtArgs>
     projects?: boolean | Version$projectsArgs<ExtArgs>
     skills?: boolean | Version$skillsArgs<ExtArgs>
     achievements?: boolean | Version$achievementsArgs<ExtArgs>
@@ -20038,6 +20191,7 @@ export namespace Prisma {
     pages?: boolean | Version$pagesArgs<ExtArgs>
     resumeConfig?: boolean | Version$resumeConfigArgs<ExtArgs>
     experiences?: boolean | Version$experiencesArgs<ExtArgs>
+    educations?: boolean | Version$educationsArgs<ExtArgs>
     projects?: boolean | Version$projectsArgs<ExtArgs>
     skills?: boolean | Version$skillsArgs<ExtArgs>
     achievements?: boolean | Version$achievementsArgs<ExtArgs>
@@ -20057,6 +20211,7 @@ export namespace Prisma {
       pages: Prisma.$PagePayload<ExtArgs>[]
       resumeConfig: Prisma.$ResumeConfigPayload<ExtArgs> | null
       experiences: Prisma.$VersionExperiencePayload<ExtArgs>[]
+      educations: Prisma.$VersionEducationPayload<ExtArgs>[]
       projects: Prisma.$VersionProjectPayload<ExtArgs>[]
       skills: Prisma.$VersionSkillPayload<ExtArgs>[]
       achievements: Prisma.$VersionAchievementPayload<ExtArgs>[]
@@ -20444,6 +20599,7 @@ export namespace Prisma {
     pages<T extends Version$pagesArgs<ExtArgs> = {}>(args?: Subset<T, Version$pagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany"> | Null>
     resumeConfig<T extends Version$resumeConfigArgs<ExtArgs> = {}>(args?: Subset<T, Version$resumeConfigArgs<ExtArgs>>): Prisma__ResumeConfigClient<$Result.GetResult<Prisma.$ResumeConfigPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     experiences<T extends Version$experiencesArgs<ExtArgs> = {}>(args?: Subset<T, Version$experiencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionExperiencePayload<ExtArgs>, T, "findMany"> | Null>
+    educations<T extends Version$educationsArgs<ExtArgs> = {}>(args?: Subset<T, Version$educationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findMany"> | Null>
     projects<T extends Version$projectsArgs<ExtArgs> = {}>(args?: Subset<T, Version$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionProjectPayload<ExtArgs>, T, "findMany"> | Null>
     skills<T extends Version$skillsArgs<ExtArgs> = {}>(args?: Subset<T, Version$skillsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionSkillPayload<ExtArgs>, T, "findMany"> | Null>
     achievements<T extends Version$achievementsArgs<ExtArgs> = {}>(args?: Subset<T, Version$achievementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionAchievementPayload<ExtArgs>, T, "findMany"> | Null>
@@ -20860,6 +21016,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: VersionExperienceScalarFieldEnum | VersionExperienceScalarFieldEnum[]
+  }
+
+  /**
+   * Version.educations
+   */
+  export type Version$educationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    where?: VersionEducationWhereInput
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    cursor?: VersionEducationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VersionEducationScalarFieldEnum | VersionEducationScalarFieldEnum[]
   }
 
   /**
@@ -27463,6 +27639,955 @@ export namespace Prisma {
 
 
   /**
+   * Model VersionEducation
+   */
+
+  export type AggregateVersionEducation = {
+    _count: VersionEducationCountAggregateOutputType | null
+    _avg: VersionEducationAvgAggregateOutputType | null
+    _sum: VersionEducationSumAggregateOutputType | null
+    _min: VersionEducationMinAggregateOutputType | null
+    _max: VersionEducationMaxAggregateOutputType | null
+  }
+
+  export type VersionEducationAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type VersionEducationSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type VersionEducationMinAggregateOutputType = {
+    versionId: string | null
+    educationId: string | null
+    order: number | null
+  }
+
+  export type VersionEducationMaxAggregateOutputType = {
+    versionId: string | null
+    educationId: string | null
+    order: number | null
+  }
+
+  export type VersionEducationCountAggregateOutputType = {
+    versionId: number
+    educationId: number
+    order: number
+    _all: number
+  }
+
+
+  export type VersionEducationAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type VersionEducationSumAggregateInputType = {
+    order?: true
+  }
+
+  export type VersionEducationMinAggregateInputType = {
+    versionId?: true
+    educationId?: true
+    order?: true
+  }
+
+  export type VersionEducationMaxAggregateInputType = {
+    versionId?: true
+    educationId?: true
+    order?: true
+  }
+
+  export type VersionEducationCountAggregateInputType = {
+    versionId?: true
+    educationId?: true
+    order?: true
+    _all?: true
+  }
+
+  export type VersionEducationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VersionEducation to aggregate.
+     */
+    where?: VersionEducationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VersionEducations to fetch.
+     */
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VersionEducationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VersionEducations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VersionEducations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VersionEducations
+    **/
+    _count?: true | VersionEducationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VersionEducationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VersionEducationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VersionEducationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VersionEducationMaxAggregateInputType
+  }
+
+  export type GetVersionEducationAggregateType<T extends VersionEducationAggregateArgs> = {
+        [P in keyof T & keyof AggregateVersionEducation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVersionEducation[P]>
+      : GetScalarType<T[P], AggregateVersionEducation[P]>
+  }
+
+
+
+
+  export type VersionEducationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VersionEducationWhereInput
+    orderBy?: VersionEducationOrderByWithAggregationInput | VersionEducationOrderByWithAggregationInput[]
+    by: VersionEducationScalarFieldEnum[] | VersionEducationScalarFieldEnum
+    having?: VersionEducationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VersionEducationCountAggregateInputType | true
+    _avg?: VersionEducationAvgAggregateInputType
+    _sum?: VersionEducationSumAggregateInputType
+    _min?: VersionEducationMinAggregateInputType
+    _max?: VersionEducationMaxAggregateInputType
+  }
+
+  export type VersionEducationGroupByOutputType = {
+    versionId: string
+    educationId: string
+    order: number
+    _count: VersionEducationCountAggregateOutputType | null
+    _avg: VersionEducationAvgAggregateOutputType | null
+    _sum: VersionEducationSumAggregateOutputType | null
+    _min: VersionEducationMinAggregateOutputType | null
+    _max: VersionEducationMaxAggregateOutputType | null
+  }
+
+  type GetVersionEducationGroupByPayload<T extends VersionEducationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VersionEducationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VersionEducationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VersionEducationGroupByOutputType[P]>
+            : GetScalarType<T[P], VersionEducationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VersionEducationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    versionId?: boolean
+    educationId?: boolean
+    order?: boolean
+    version?: boolean | VersionDefaultArgs<ExtArgs>
+    education?: boolean | EducationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["versionEducation"]>
+
+  export type VersionEducationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    versionId?: boolean
+    educationId?: boolean
+    order?: boolean
+    version?: boolean | VersionDefaultArgs<ExtArgs>
+    education?: boolean | EducationDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["versionEducation"]>
+
+  export type VersionEducationSelectScalar = {
+    versionId?: boolean
+    educationId?: boolean
+    order?: boolean
+  }
+
+  export type VersionEducationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    version?: boolean | VersionDefaultArgs<ExtArgs>
+    education?: boolean | EducationDefaultArgs<ExtArgs>
+  }
+  export type VersionEducationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    version?: boolean | VersionDefaultArgs<ExtArgs>
+    education?: boolean | EducationDefaultArgs<ExtArgs>
+  }
+
+  export type $VersionEducationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VersionEducation"
+    objects: {
+      version: Prisma.$VersionPayload<ExtArgs>
+      education: Prisma.$EducationPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      versionId: string
+      educationId: string
+      order: number
+    }, ExtArgs["result"]["versionEducation"]>
+    composites: {}
+  }
+
+  type VersionEducationGetPayload<S extends boolean | null | undefined | VersionEducationDefaultArgs> = $Result.GetResult<Prisma.$VersionEducationPayload, S>
+
+  type VersionEducationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<VersionEducationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: VersionEducationCountAggregateInputType | true
+    }
+
+  export interface VersionEducationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VersionEducation'], meta: { name: 'VersionEducation' } }
+    /**
+     * Find zero or one VersionEducation that matches the filter.
+     * @param {VersionEducationFindUniqueArgs} args - Arguments to find a VersionEducation
+     * @example
+     * // Get one VersionEducation
+     * const versionEducation = await prisma.versionEducation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VersionEducationFindUniqueArgs>(args: SelectSubset<T, VersionEducationFindUniqueArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one VersionEducation that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {VersionEducationFindUniqueOrThrowArgs} args - Arguments to find a VersionEducation
+     * @example
+     * // Get one VersionEducation
+     * const versionEducation = await prisma.versionEducation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VersionEducationFindUniqueOrThrowArgs>(args: SelectSubset<T, VersionEducationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first VersionEducation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationFindFirstArgs} args - Arguments to find a VersionEducation
+     * @example
+     * // Get one VersionEducation
+     * const versionEducation = await prisma.versionEducation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VersionEducationFindFirstArgs>(args?: SelectSubset<T, VersionEducationFindFirstArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first VersionEducation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationFindFirstOrThrowArgs} args - Arguments to find a VersionEducation
+     * @example
+     * // Get one VersionEducation
+     * const versionEducation = await prisma.versionEducation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VersionEducationFindFirstOrThrowArgs>(args?: SelectSubset<T, VersionEducationFindFirstOrThrowArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more VersionEducations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VersionEducations
+     * const versionEducations = await prisma.versionEducation.findMany()
+     * 
+     * // Get first 10 VersionEducations
+     * const versionEducations = await prisma.versionEducation.findMany({ take: 10 })
+     * 
+     * // Only select the `versionId`
+     * const versionEducationWithVersionIdOnly = await prisma.versionEducation.findMany({ select: { versionId: true } })
+     * 
+     */
+    findMany<T extends VersionEducationFindManyArgs>(args?: SelectSubset<T, VersionEducationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a VersionEducation.
+     * @param {VersionEducationCreateArgs} args - Arguments to create a VersionEducation.
+     * @example
+     * // Create one VersionEducation
+     * const VersionEducation = await prisma.versionEducation.create({
+     *   data: {
+     *     // ... data to create a VersionEducation
+     *   }
+     * })
+     * 
+     */
+    create<T extends VersionEducationCreateArgs>(args: SelectSubset<T, VersionEducationCreateArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many VersionEducations.
+     * @param {VersionEducationCreateManyArgs} args - Arguments to create many VersionEducations.
+     * @example
+     * // Create many VersionEducations
+     * const versionEducation = await prisma.versionEducation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VersionEducationCreateManyArgs>(args?: SelectSubset<T, VersionEducationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VersionEducations and returns the data saved in the database.
+     * @param {VersionEducationCreateManyAndReturnArgs} args - Arguments to create many VersionEducations.
+     * @example
+     * // Create many VersionEducations
+     * const versionEducation = await prisma.versionEducation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VersionEducations and only return the `versionId`
+     * const versionEducationWithVersionIdOnly = await prisma.versionEducation.createManyAndReturn({ 
+     *   select: { versionId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VersionEducationCreateManyAndReturnArgs>(args?: SelectSubset<T, VersionEducationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a VersionEducation.
+     * @param {VersionEducationDeleteArgs} args - Arguments to delete one VersionEducation.
+     * @example
+     * // Delete one VersionEducation
+     * const VersionEducation = await prisma.versionEducation.delete({
+     *   where: {
+     *     // ... filter to delete one VersionEducation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VersionEducationDeleteArgs>(args: SelectSubset<T, VersionEducationDeleteArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one VersionEducation.
+     * @param {VersionEducationUpdateArgs} args - Arguments to update one VersionEducation.
+     * @example
+     * // Update one VersionEducation
+     * const versionEducation = await prisma.versionEducation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VersionEducationUpdateArgs>(args: SelectSubset<T, VersionEducationUpdateArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more VersionEducations.
+     * @param {VersionEducationDeleteManyArgs} args - Arguments to filter VersionEducations to delete.
+     * @example
+     * // Delete a few VersionEducations
+     * const { count } = await prisma.versionEducation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VersionEducationDeleteManyArgs>(args?: SelectSubset<T, VersionEducationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VersionEducations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VersionEducations
+     * const versionEducation = await prisma.versionEducation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VersionEducationUpdateManyArgs>(args: SelectSubset<T, VersionEducationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one VersionEducation.
+     * @param {VersionEducationUpsertArgs} args - Arguments to update or create a VersionEducation.
+     * @example
+     * // Update or create a VersionEducation
+     * const versionEducation = await prisma.versionEducation.upsert({
+     *   create: {
+     *     // ... data to create a VersionEducation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VersionEducation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VersionEducationUpsertArgs>(args: SelectSubset<T, VersionEducationUpsertArgs<ExtArgs>>): Prisma__VersionEducationClient<$Result.GetResult<Prisma.$VersionEducationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of VersionEducations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationCountArgs} args - Arguments to filter VersionEducations to count.
+     * @example
+     * // Count the number of VersionEducations
+     * const count = await prisma.versionEducation.count({
+     *   where: {
+     *     // ... the filter for the VersionEducations we want to count
+     *   }
+     * })
+    **/
+    count<T extends VersionEducationCountArgs>(
+      args?: Subset<T, VersionEducationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VersionEducationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VersionEducation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VersionEducationAggregateArgs>(args: Subset<T, VersionEducationAggregateArgs>): Prisma.PrismaPromise<GetVersionEducationAggregateType<T>>
+
+    /**
+     * Group by VersionEducation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VersionEducationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VersionEducationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VersionEducationGroupByArgs['orderBy'] }
+        : { orderBy?: VersionEducationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VersionEducationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVersionEducationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VersionEducation model
+   */
+  readonly fields: VersionEducationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VersionEducation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VersionEducationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    version<T extends VersionDefaultArgs<ExtArgs> = {}>(args?: Subset<T, VersionDefaultArgs<ExtArgs>>): Prisma__VersionClient<$Result.GetResult<Prisma.$VersionPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    education<T extends EducationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, EducationDefaultArgs<ExtArgs>>): Prisma__EducationClient<$Result.GetResult<Prisma.$EducationPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VersionEducation model
+   */ 
+  interface VersionEducationFieldRefs {
+    readonly versionId: FieldRef<"VersionEducation", 'String'>
+    readonly educationId: FieldRef<"VersionEducation", 'String'>
+    readonly order: FieldRef<"VersionEducation", 'Int'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VersionEducation findUnique
+   */
+  export type VersionEducationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter, which VersionEducation to fetch.
+     */
+    where: VersionEducationWhereUniqueInput
+  }
+
+  /**
+   * VersionEducation findUniqueOrThrow
+   */
+  export type VersionEducationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter, which VersionEducation to fetch.
+     */
+    where: VersionEducationWhereUniqueInput
+  }
+
+  /**
+   * VersionEducation findFirst
+   */
+  export type VersionEducationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter, which VersionEducation to fetch.
+     */
+    where?: VersionEducationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VersionEducations to fetch.
+     */
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VersionEducations.
+     */
+    cursor?: VersionEducationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VersionEducations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VersionEducations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VersionEducations.
+     */
+    distinct?: VersionEducationScalarFieldEnum | VersionEducationScalarFieldEnum[]
+  }
+
+  /**
+   * VersionEducation findFirstOrThrow
+   */
+  export type VersionEducationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter, which VersionEducation to fetch.
+     */
+    where?: VersionEducationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VersionEducations to fetch.
+     */
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VersionEducations.
+     */
+    cursor?: VersionEducationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VersionEducations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VersionEducations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VersionEducations.
+     */
+    distinct?: VersionEducationScalarFieldEnum | VersionEducationScalarFieldEnum[]
+  }
+
+  /**
+   * VersionEducation findMany
+   */
+  export type VersionEducationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter, which VersionEducations to fetch.
+     */
+    where?: VersionEducationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VersionEducations to fetch.
+     */
+    orderBy?: VersionEducationOrderByWithRelationInput | VersionEducationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VersionEducations.
+     */
+    cursor?: VersionEducationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VersionEducations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VersionEducations.
+     */
+    skip?: number
+    distinct?: VersionEducationScalarFieldEnum | VersionEducationScalarFieldEnum[]
+  }
+
+  /**
+   * VersionEducation create
+   */
+  export type VersionEducationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VersionEducation.
+     */
+    data: XOR<VersionEducationCreateInput, VersionEducationUncheckedCreateInput>
+  }
+
+  /**
+   * VersionEducation createMany
+   */
+  export type VersionEducationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VersionEducations.
+     */
+    data: VersionEducationCreateManyInput | VersionEducationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VersionEducation createManyAndReturn
+   */
+  export type VersionEducationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many VersionEducations.
+     */
+    data: VersionEducationCreateManyInput | VersionEducationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VersionEducation update
+   */
+  export type VersionEducationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VersionEducation.
+     */
+    data: XOR<VersionEducationUpdateInput, VersionEducationUncheckedUpdateInput>
+    /**
+     * Choose, which VersionEducation to update.
+     */
+    where: VersionEducationWhereUniqueInput
+  }
+
+  /**
+   * VersionEducation updateMany
+   */
+  export type VersionEducationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VersionEducations.
+     */
+    data: XOR<VersionEducationUpdateManyMutationInput, VersionEducationUncheckedUpdateManyInput>
+    /**
+     * Filter which VersionEducations to update
+     */
+    where?: VersionEducationWhereInput
+  }
+
+  /**
+   * VersionEducation upsert
+   */
+  export type VersionEducationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VersionEducation to update in case it exists.
+     */
+    where: VersionEducationWhereUniqueInput
+    /**
+     * In case the VersionEducation found by the `where` argument doesn't exist, create a new VersionEducation with this data.
+     */
+    create: XOR<VersionEducationCreateInput, VersionEducationUncheckedCreateInput>
+    /**
+     * In case the VersionEducation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VersionEducationUpdateInput, VersionEducationUncheckedUpdateInput>
+  }
+
+  /**
+   * VersionEducation delete
+   */
+  export type VersionEducationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+    /**
+     * Filter which VersionEducation to delete.
+     */
+    where: VersionEducationWhereUniqueInput
+  }
+
+  /**
+   * VersionEducation deleteMany
+   */
+  export type VersionEducationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VersionEducations to delete
+     */
+    where?: VersionEducationWhereInput
+  }
+
+  /**
+   * VersionEducation without action
+   */
+  export type VersionEducationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VersionEducation
+     */
+    select?: VersionEducationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionEducationInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model VersionProject
    */
 
@@ -33544,6 +34669,15 @@ export namespace Prisma {
   export type VersionExperienceScalarFieldEnum = (typeof VersionExperienceScalarFieldEnum)[keyof typeof VersionExperienceScalarFieldEnum]
 
 
+  export const VersionEducationScalarFieldEnum: {
+    versionId: 'versionId',
+    educationId: 'educationId',
+    order: 'order'
+  };
+
+  export type VersionEducationScalarFieldEnum = (typeof VersionEducationScalarFieldEnum)[keyof typeof VersionEducationScalarFieldEnum]
+
+
   export const VersionProjectScalarFieldEnum: {
     versionId: 'versionId',
     projectId: 'projectId',
@@ -34344,6 +35478,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Education"> | Date | string
     updatedAt?: DateTimeFilter<"Education"> | Date | string
     profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    versions?: VersionEducationListRelationFilter
   }
 
   export type EducationOrderByWithRelationInput = {
@@ -34361,6 +35496,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     profile?: ProfileOrderByWithRelationInput
+    versions?: VersionEducationOrderByRelationAggregateInput
   }
 
   export type EducationWhereUniqueInput = Prisma.AtLeast<{
@@ -34381,6 +35517,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"Education"> | Date | string
     updatedAt?: DateTimeFilter<"Education"> | Date | string
     profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    versions?: VersionEducationListRelationFilter
   }, "id">
 
   export type EducationOrderByWithAggregationInput = {
@@ -35081,6 +36218,7 @@ export namespace Prisma {
     pages?: PageListRelationFilter
     resumeConfig?: XOR<ResumeConfigNullableRelationFilter, ResumeConfigWhereInput> | null
     experiences?: VersionExperienceListRelationFilter
+    educations?: VersionEducationListRelationFilter
     projects?: VersionProjectListRelationFilter
     skills?: VersionSkillListRelationFilter
     achievements?: VersionAchievementListRelationFilter
@@ -35105,6 +36243,7 @@ export namespace Prisma {
     pages?: PageOrderByRelationAggregateInput
     resumeConfig?: ResumeConfigOrderByWithRelationInput
     experiences?: VersionExperienceOrderByRelationAggregateInput
+    educations?: VersionEducationOrderByRelationAggregateInput
     projects?: VersionProjectOrderByRelationAggregateInput
     skills?: VersionSkillOrderByRelationAggregateInput
     achievements?: VersionAchievementOrderByRelationAggregateInput
@@ -35132,6 +36271,7 @@ export namespace Prisma {
     pages?: PageListRelationFilter
     resumeConfig?: XOR<ResumeConfigNullableRelationFilter, ResumeConfigWhereInput> | null
     experiences?: VersionExperienceListRelationFilter
+    educations?: VersionEducationListRelationFilter
     projects?: VersionProjectListRelationFilter
     skills?: VersionSkillListRelationFilter
     achievements?: VersionAchievementListRelationFilter
@@ -35797,6 +36937,57 @@ export namespace Prisma {
     versionId?: StringWithAggregatesFilter<"VersionExperience"> | string
     experienceId?: StringWithAggregatesFilter<"VersionExperience"> | string
     order?: IntWithAggregatesFilter<"VersionExperience"> | number
+  }
+
+  export type VersionEducationWhereInput = {
+    AND?: VersionEducationWhereInput | VersionEducationWhereInput[]
+    OR?: VersionEducationWhereInput[]
+    NOT?: VersionEducationWhereInput | VersionEducationWhereInput[]
+    versionId?: StringFilter<"VersionEducation"> | string
+    educationId?: StringFilter<"VersionEducation"> | string
+    order?: IntFilter<"VersionEducation"> | number
+    version?: XOR<VersionRelationFilter, VersionWhereInput>
+    education?: XOR<EducationRelationFilter, EducationWhereInput>
+  }
+
+  export type VersionEducationOrderByWithRelationInput = {
+    versionId?: SortOrder
+    educationId?: SortOrder
+    order?: SortOrder
+    version?: VersionOrderByWithRelationInput
+    education?: EducationOrderByWithRelationInput
+  }
+
+  export type VersionEducationWhereUniqueInput = Prisma.AtLeast<{
+    versionId_educationId?: VersionEducationVersionIdEducationIdCompoundUniqueInput
+    AND?: VersionEducationWhereInput | VersionEducationWhereInput[]
+    OR?: VersionEducationWhereInput[]
+    NOT?: VersionEducationWhereInput | VersionEducationWhereInput[]
+    versionId?: StringFilter<"VersionEducation"> | string
+    educationId?: StringFilter<"VersionEducation"> | string
+    order?: IntFilter<"VersionEducation"> | number
+    version?: XOR<VersionRelationFilter, VersionWhereInput>
+    education?: XOR<EducationRelationFilter, EducationWhereInput>
+  }, "versionId_educationId">
+
+  export type VersionEducationOrderByWithAggregationInput = {
+    versionId?: SortOrder
+    educationId?: SortOrder
+    order?: SortOrder
+    _count?: VersionEducationCountOrderByAggregateInput
+    _avg?: VersionEducationAvgOrderByAggregateInput
+    _max?: VersionEducationMaxOrderByAggregateInput
+    _min?: VersionEducationMinOrderByAggregateInput
+    _sum?: VersionEducationSumOrderByAggregateInput
+  }
+
+  export type VersionEducationScalarWhereWithAggregatesInput = {
+    AND?: VersionEducationScalarWhereWithAggregatesInput | VersionEducationScalarWhereWithAggregatesInput[]
+    OR?: VersionEducationScalarWhereWithAggregatesInput[]
+    NOT?: VersionEducationScalarWhereWithAggregatesInput | VersionEducationScalarWhereWithAggregatesInput[]
+    versionId?: StringWithAggregatesFilter<"VersionEducation"> | string
+    educationId?: StringWithAggregatesFilter<"VersionEducation"> | string
+    order?: IntWithAggregatesFilter<"VersionEducation"> | number
   }
 
   export type VersionProjectWhereInput = {
@@ -36754,6 +37945,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutEducationsInput
+    versions?: VersionEducationCreateNestedManyWithoutEducationInput
   }
 
   export type EducationUncheckedCreateInput = {
@@ -36770,6 +37962,7 @@ export namespace Prisma {
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    versions?: VersionEducationUncheckedCreateNestedManyWithoutEducationInput
   }
 
   export type EducationUpdateInput = {
@@ -36786,6 +37979,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutEducationsNestedInput
+    versions?: VersionEducationUpdateManyWithoutEducationNestedInput
   }
 
   export type EducationUncheckedUpdateInput = {
@@ -36802,6 +37996,7 @@ export namespace Prisma {
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionEducationUncheckedUpdateManyWithoutEducationNestedInput
   }
 
   export type EducationCreateManyInput = {
@@ -37564,6 +38759,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -37587,6 +38783,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -37610,6 +38807,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -37633,6 +38831,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -38390,6 +39589,46 @@ export namespace Prisma {
   export type VersionExperienceUncheckedUpdateManyInput = {
     versionId?: StringFieldUpdateOperationsInput | string
     experienceId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationCreateInput = {
+    order?: number
+    version: VersionCreateNestedOneWithoutEducationsInput
+    education: EducationCreateNestedOneWithoutVersionsInput
+  }
+
+  export type VersionEducationUncheckedCreateInput = {
+    versionId: string
+    educationId: string
+    order?: number
+  }
+
+  export type VersionEducationUpdateInput = {
+    order?: IntFieldUpdateOperationsInput | number
+    version?: VersionUpdateOneRequiredWithoutEducationsNestedInput
+    education?: EducationUpdateOneRequiredWithoutVersionsNestedInput
+  }
+
+  export type VersionEducationUncheckedUpdateInput = {
+    versionId?: StringFieldUpdateOperationsInput | string
+    educationId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationCreateManyInput = {
+    versionId: string
+    educationId: string
+    order?: number
+  }
+
+  export type VersionEducationUpdateManyMutationInput = {
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationUncheckedUpdateManyInput = {
+    versionId?: StringFieldUpdateOperationsInput | string
+    educationId?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
 
@@ -39254,6 +40493,16 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type VersionEducationListRelationFilter = {
+    every?: VersionEducationWhereInput
+    some?: VersionEducationWhereInput
+    none?: VersionEducationWhereInput
+  }
+
+  export type VersionEducationOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type EducationCountOrderByAggregateInput = {
@@ -40239,6 +41488,42 @@ export namespace Prisma {
     order?: SortOrder
   }
 
+  export type EducationRelationFilter = {
+    is?: EducationWhereInput
+    isNot?: EducationWhereInput
+  }
+
+  export type VersionEducationVersionIdEducationIdCompoundUniqueInput = {
+    versionId: string
+    educationId: string
+  }
+
+  export type VersionEducationCountOrderByAggregateInput = {
+    versionId?: SortOrder
+    educationId?: SortOrder
+    order?: SortOrder
+  }
+
+  export type VersionEducationAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type VersionEducationMaxOrderByAggregateInput = {
+    versionId?: SortOrder
+    educationId?: SortOrder
+    order?: SortOrder
+  }
+
+  export type VersionEducationMinOrderByAggregateInput = {
+    versionId?: SortOrder
+    educationId?: SortOrder
+    order?: SortOrder
+  }
+
+  export type VersionEducationSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
   export type ProjectRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
@@ -41203,12 +42488,54 @@ export namespace Prisma {
     connect?: ProfileWhereUniqueInput
   }
 
+  export type VersionEducationCreateNestedManyWithoutEducationInput = {
+    create?: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput> | VersionEducationCreateWithoutEducationInput[] | VersionEducationUncheckedCreateWithoutEducationInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutEducationInput | VersionEducationCreateOrConnectWithoutEducationInput[]
+    createMany?: VersionEducationCreateManyEducationInputEnvelope
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+  }
+
+  export type VersionEducationUncheckedCreateNestedManyWithoutEducationInput = {
+    create?: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput> | VersionEducationCreateWithoutEducationInput[] | VersionEducationUncheckedCreateWithoutEducationInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutEducationInput | VersionEducationCreateOrConnectWithoutEducationInput[]
+    createMany?: VersionEducationCreateManyEducationInputEnvelope
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+  }
+
   export type ProfileUpdateOneRequiredWithoutEducationsNestedInput = {
     create?: XOR<ProfileCreateWithoutEducationsInput, ProfileUncheckedCreateWithoutEducationsInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutEducationsInput
     upsert?: ProfileUpsertWithoutEducationsInput
     connect?: ProfileWhereUniqueInput
     update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutEducationsInput, ProfileUpdateWithoutEducationsInput>, ProfileUncheckedUpdateWithoutEducationsInput>
+  }
+
+  export type VersionEducationUpdateManyWithoutEducationNestedInput = {
+    create?: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput> | VersionEducationCreateWithoutEducationInput[] | VersionEducationUncheckedCreateWithoutEducationInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutEducationInput | VersionEducationCreateOrConnectWithoutEducationInput[]
+    upsert?: VersionEducationUpsertWithWhereUniqueWithoutEducationInput | VersionEducationUpsertWithWhereUniqueWithoutEducationInput[]
+    createMany?: VersionEducationCreateManyEducationInputEnvelope
+    set?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    disconnect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    delete?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    update?: VersionEducationUpdateWithWhereUniqueWithoutEducationInput | VersionEducationUpdateWithWhereUniqueWithoutEducationInput[]
+    updateMany?: VersionEducationUpdateManyWithWhereWithoutEducationInput | VersionEducationUpdateManyWithWhereWithoutEducationInput[]
+    deleteMany?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
+  }
+
+  export type VersionEducationUncheckedUpdateManyWithoutEducationNestedInput = {
+    create?: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput> | VersionEducationCreateWithoutEducationInput[] | VersionEducationUncheckedCreateWithoutEducationInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutEducationInput | VersionEducationCreateOrConnectWithoutEducationInput[]
+    upsert?: VersionEducationUpsertWithWhereUniqueWithoutEducationInput | VersionEducationUpsertWithWhereUniqueWithoutEducationInput[]
+    createMany?: VersionEducationCreateManyEducationInputEnvelope
+    set?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    disconnect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    delete?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    update?: VersionEducationUpdateWithWhereUniqueWithoutEducationInput | VersionEducationUpdateWithWhereUniqueWithoutEducationInput[]
+    updateMany?: VersionEducationUpdateManyWithWhereWithoutEducationInput | VersionEducationUpdateManyWithWhereWithoutEducationInput[]
+    deleteMany?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
   }
 
   export type ProfileCreateNestedOneWithoutSkillsInput = {
@@ -41887,6 +43214,13 @@ export namespace Prisma {
     connect?: VersionExperienceWhereUniqueInput | VersionExperienceWhereUniqueInput[]
   }
 
+  export type VersionEducationCreateNestedManyWithoutVersionInput = {
+    create?: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput> | VersionEducationCreateWithoutVersionInput[] | VersionEducationUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutVersionInput | VersionEducationCreateOrConnectWithoutVersionInput[]
+    createMany?: VersionEducationCreateManyVersionInputEnvelope
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+  }
+
   export type VersionProjectCreateNestedManyWithoutVersionInput = {
     create?: XOR<VersionProjectCreateWithoutVersionInput, VersionProjectUncheckedCreateWithoutVersionInput> | VersionProjectCreateWithoutVersionInput[] | VersionProjectUncheckedCreateWithoutVersionInput[]
     connectOrCreate?: VersionProjectCreateOrConnectWithoutVersionInput | VersionProjectCreateOrConnectWithoutVersionInput[]
@@ -41947,6 +43281,13 @@ export namespace Prisma {
     connectOrCreate?: VersionExperienceCreateOrConnectWithoutVersionInput | VersionExperienceCreateOrConnectWithoutVersionInput[]
     createMany?: VersionExperienceCreateManyVersionInputEnvelope
     connect?: VersionExperienceWhereUniqueInput | VersionExperienceWhereUniqueInput[]
+  }
+
+  export type VersionEducationUncheckedCreateNestedManyWithoutVersionInput = {
+    create?: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput> | VersionEducationCreateWithoutVersionInput[] | VersionEducationUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutVersionInput | VersionEducationCreateOrConnectWithoutVersionInput[]
+    createMany?: VersionEducationCreateManyVersionInputEnvelope
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
   }
 
   export type VersionProjectUncheckedCreateNestedManyWithoutVersionInput = {
@@ -42035,6 +43376,20 @@ export namespace Prisma {
     update?: VersionExperienceUpdateWithWhereUniqueWithoutVersionInput | VersionExperienceUpdateWithWhereUniqueWithoutVersionInput[]
     updateMany?: VersionExperienceUpdateManyWithWhereWithoutVersionInput | VersionExperienceUpdateManyWithWhereWithoutVersionInput[]
     deleteMany?: VersionExperienceScalarWhereInput | VersionExperienceScalarWhereInput[]
+  }
+
+  export type VersionEducationUpdateManyWithoutVersionNestedInput = {
+    create?: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput> | VersionEducationCreateWithoutVersionInput[] | VersionEducationUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutVersionInput | VersionEducationCreateOrConnectWithoutVersionInput[]
+    upsert?: VersionEducationUpsertWithWhereUniqueWithoutVersionInput | VersionEducationUpsertWithWhereUniqueWithoutVersionInput[]
+    createMany?: VersionEducationCreateManyVersionInputEnvelope
+    set?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    disconnect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    delete?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    update?: VersionEducationUpdateWithWhereUniqueWithoutVersionInput | VersionEducationUpdateWithWhereUniqueWithoutVersionInput[]
+    updateMany?: VersionEducationUpdateManyWithWhereWithoutVersionInput | VersionEducationUpdateManyWithWhereWithoutVersionInput[]
+    deleteMany?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
   }
 
   export type VersionProjectUpdateManyWithoutVersionNestedInput = {
@@ -42157,6 +43512,20 @@ export namespace Prisma {
     update?: VersionExperienceUpdateWithWhereUniqueWithoutVersionInput | VersionExperienceUpdateWithWhereUniqueWithoutVersionInput[]
     updateMany?: VersionExperienceUpdateManyWithWhereWithoutVersionInput | VersionExperienceUpdateManyWithWhereWithoutVersionInput[]
     deleteMany?: VersionExperienceScalarWhereInput | VersionExperienceScalarWhereInput[]
+  }
+
+  export type VersionEducationUncheckedUpdateManyWithoutVersionNestedInput = {
+    create?: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput> | VersionEducationCreateWithoutVersionInput[] | VersionEducationUncheckedCreateWithoutVersionInput[]
+    connectOrCreate?: VersionEducationCreateOrConnectWithoutVersionInput | VersionEducationCreateOrConnectWithoutVersionInput[]
+    upsert?: VersionEducationUpsertWithWhereUniqueWithoutVersionInput | VersionEducationUpsertWithWhereUniqueWithoutVersionInput[]
+    createMany?: VersionEducationCreateManyVersionInputEnvelope
+    set?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    disconnect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    delete?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    connect?: VersionEducationWhereUniqueInput | VersionEducationWhereUniqueInput[]
+    update?: VersionEducationUpdateWithWhereUniqueWithoutVersionInput | VersionEducationUpdateWithWhereUniqueWithoutVersionInput[]
+    updateMany?: VersionEducationUpdateManyWithWhereWithoutVersionInput | VersionEducationUpdateManyWithWhereWithoutVersionInput[]
+    deleteMany?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
   }
 
   export type VersionProjectUncheckedUpdateManyWithoutVersionNestedInput = {
@@ -42603,6 +43972,34 @@ export namespace Prisma {
     upsert?: ExperienceUpsertWithoutVersionsInput
     connect?: ExperienceWhereUniqueInput
     update?: XOR<XOR<ExperienceUpdateToOneWithWhereWithoutVersionsInput, ExperienceUpdateWithoutVersionsInput>, ExperienceUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type VersionCreateNestedOneWithoutEducationsInput = {
+    create?: XOR<VersionCreateWithoutEducationsInput, VersionUncheckedCreateWithoutEducationsInput>
+    connectOrCreate?: VersionCreateOrConnectWithoutEducationsInput
+    connect?: VersionWhereUniqueInput
+  }
+
+  export type EducationCreateNestedOneWithoutVersionsInput = {
+    create?: XOR<EducationCreateWithoutVersionsInput, EducationUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: EducationCreateOrConnectWithoutVersionsInput
+    connect?: EducationWhereUniqueInput
+  }
+
+  export type VersionUpdateOneRequiredWithoutEducationsNestedInput = {
+    create?: XOR<VersionCreateWithoutEducationsInput, VersionUncheckedCreateWithoutEducationsInput>
+    connectOrCreate?: VersionCreateOrConnectWithoutEducationsInput
+    upsert?: VersionUpsertWithoutEducationsInput
+    connect?: VersionWhereUniqueInput
+    update?: XOR<XOR<VersionUpdateToOneWithWhereWithoutEducationsInput, VersionUpdateWithoutEducationsInput>, VersionUncheckedUpdateWithoutEducationsInput>
+  }
+
+  export type EducationUpdateOneRequiredWithoutVersionsNestedInput = {
+    create?: XOR<EducationCreateWithoutVersionsInput, EducationUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: EducationCreateOrConnectWithoutVersionsInput
+    upsert?: EducationUpsertWithoutVersionsInput
+    connect?: EducationWhereUniqueInput
+    update?: XOR<XOR<EducationUpdateToOneWithWhereWithoutVersionsInput, EducationUpdateWithoutVersionsInput>, EducationUncheckedUpdateWithoutVersionsInput>
   }
 
   export type VersionCreateNestedOneWithoutProjectsInput = {
@@ -43641,6 +45038,7 @@ export namespace Prisma {
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    versions?: VersionEducationCreateNestedManyWithoutEducationInput
   }
 
   export type EducationUncheckedCreateWithoutProfileInput = {
@@ -43656,6 +45054,7 @@ export namespace Prisma {
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
+    versions?: VersionEducationUncheckedCreateNestedManyWithoutEducationInput
   }
 
   export type EducationCreateOrConnectWithoutProfileInput = {
@@ -43896,6 +45295,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -43918,6 +45318,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -44697,6 +46098,26 @@ export namespace Prisma {
     create: XOR<ProfileCreateWithoutEducationsInput, ProfileUncheckedCreateWithoutEducationsInput>
   }
 
+  export type VersionEducationCreateWithoutEducationInput = {
+    order?: number
+    version: VersionCreateNestedOneWithoutEducationsInput
+  }
+
+  export type VersionEducationUncheckedCreateWithoutEducationInput = {
+    versionId: string
+    order?: number
+  }
+
+  export type VersionEducationCreateOrConnectWithoutEducationInput = {
+    where: VersionEducationWhereUniqueInput
+    create: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput>
+  }
+
+  export type VersionEducationCreateManyEducationInputEnvelope = {
+    data: VersionEducationCreateManyEducationInput | VersionEducationCreateManyEducationInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProfileUpsertWithoutEducationsInput = {
     update: XOR<ProfileUpdateWithoutEducationsInput, ProfileUncheckedUpdateWithoutEducationsInput>
     create: XOR<ProfileCreateWithoutEducationsInput, ProfileUncheckedCreateWithoutEducationsInput>
@@ -44762,6 +46183,31 @@ export namespace Prisma {
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type VersionEducationUpsertWithWhereUniqueWithoutEducationInput = {
+    where: VersionEducationWhereUniqueInput
+    update: XOR<VersionEducationUpdateWithoutEducationInput, VersionEducationUncheckedUpdateWithoutEducationInput>
+    create: XOR<VersionEducationCreateWithoutEducationInput, VersionEducationUncheckedCreateWithoutEducationInput>
+  }
+
+  export type VersionEducationUpdateWithWhereUniqueWithoutEducationInput = {
+    where: VersionEducationWhereUniqueInput
+    data: XOR<VersionEducationUpdateWithoutEducationInput, VersionEducationUncheckedUpdateWithoutEducationInput>
+  }
+
+  export type VersionEducationUpdateManyWithWhereWithoutEducationInput = {
+    where: VersionEducationScalarWhereInput
+    data: XOR<VersionEducationUpdateManyMutationInput, VersionEducationUncheckedUpdateManyWithoutEducationInput>
+  }
+
+  export type VersionEducationScalarWhereInput = {
+    AND?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
+    OR?: VersionEducationScalarWhereInput[]
+    NOT?: VersionEducationScalarWhereInput | VersionEducationScalarWhereInput[]
+    versionId?: StringFilter<"VersionEducation"> | string
+    educationId?: StringFilter<"VersionEducation"> | string
+    order?: IntFilter<"VersionEducation"> | number
   }
 
   export type ProfileCreateWithoutSkillsInput = {
@@ -46786,6 +48232,26 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type VersionEducationCreateWithoutVersionInput = {
+    order?: number
+    education: EducationCreateNestedOneWithoutVersionsInput
+  }
+
+  export type VersionEducationUncheckedCreateWithoutVersionInput = {
+    educationId: string
+    order?: number
+  }
+
+  export type VersionEducationCreateOrConnectWithoutVersionInput = {
+    where: VersionEducationWhereUniqueInput
+    create: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput>
+  }
+
+  export type VersionEducationCreateManyVersionInputEnvelope = {
+    data: VersionEducationCreateManyVersionInput | VersionEducationCreateManyVersionInput[]
+    skipDuplicates?: boolean
+  }
+
   export type VersionProjectCreateWithoutVersionInput = {
     order?: number
     project: ProjectCreateNestedOneWithoutVersionsInput
@@ -47063,6 +48529,22 @@ export namespace Prisma {
   export type VersionExperienceUpdateManyWithWhereWithoutVersionInput = {
     where: VersionExperienceScalarWhereInput
     data: XOR<VersionExperienceUpdateManyMutationInput, VersionExperienceUncheckedUpdateManyWithoutVersionInput>
+  }
+
+  export type VersionEducationUpsertWithWhereUniqueWithoutVersionInput = {
+    where: VersionEducationWhereUniqueInput
+    update: XOR<VersionEducationUpdateWithoutVersionInput, VersionEducationUncheckedUpdateWithoutVersionInput>
+    create: XOR<VersionEducationCreateWithoutVersionInput, VersionEducationUncheckedCreateWithoutVersionInput>
+  }
+
+  export type VersionEducationUpdateWithWhereUniqueWithoutVersionInput = {
+    where: VersionEducationWhereUniqueInput
+    data: XOR<VersionEducationUpdateWithoutVersionInput, VersionEducationUncheckedUpdateWithoutVersionInput>
+  }
+
+  export type VersionEducationUpdateManyWithWhereWithoutVersionInput = {
+    where: VersionEducationScalarWhereInput
+    data: XOR<VersionEducationUpdateManyMutationInput, VersionEducationUncheckedUpdateManyWithoutVersionInput>
   }
 
   export type VersionProjectUpsertWithWhereUniqueWithoutVersionInput = {
@@ -47525,6 +49007,7 @@ export namespace Prisma {
     profile: ProfileCreateNestedOneWithoutVersionsInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -47547,6 +49030,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -47690,6 +49174,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -47712,6 +49197,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -48125,6 +49611,7 @@ export namespace Prisma {
     profile: ProfileCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -48147,6 +49634,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -48185,6 +49673,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -48207,6 +49696,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -48229,6 +49719,7 @@ export namespace Prisma {
     profile: ProfileCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -48251,6 +49742,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -48328,6 +49820,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -48350,6 +49843,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -48403,6 +49897,194 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type VersionCreateWithoutEducationsInput = {
+    id?: string
+    name: string
+    description?: string | null
+    context?: string | null
+    emoji?: string | null
+    customHeadline?: string | null
+    customBio?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutVersionsInput
+    pages?: PageCreateNestedManyWithoutVersionInput
+    resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
+    experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    projects?: VersionProjectCreateNestedManyWithoutVersionInput
+    skills?: VersionSkillCreateNestedManyWithoutVersionInput
+    achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
+    proofs?: VersionProofCreateNestedManyWithoutVersionInput
+    highlights?: VersionHighlightCreateNestedManyWithoutVersionInput
+    links?: VersionLinkCreateNestedManyWithoutVersionInput
+  }
+
+  export type VersionUncheckedCreateWithoutEducationsInput = {
+    id?: string
+    profileId: string
+    name: string
+    description?: string | null
+    context?: string | null
+    emoji?: string | null
+    customHeadline?: string | null
+    customBio?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pages?: PageUncheckedCreateNestedManyWithoutVersionInput
+    resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
+    experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
+    skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
+    achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
+    proofs?: VersionProofUncheckedCreateNestedManyWithoutVersionInput
+    highlights?: VersionHighlightUncheckedCreateNestedManyWithoutVersionInput
+    links?: VersionLinkUncheckedCreateNestedManyWithoutVersionInput
+  }
+
+  export type VersionCreateOrConnectWithoutEducationsInput = {
+    where: VersionWhereUniqueInput
+    create: XOR<VersionCreateWithoutEducationsInput, VersionUncheckedCreateWithoutEducationsInput>
+  }
+
+  export type EducationCreateWithoutVersionsInput = {
+    id?: string
+    institution: string
+    degree?: string | null
+    field?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    current?: boolean
+    description?: string | null
+    logoUrl?: string | null
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutEducationsInput
+  }
+
+  export type EducationUncheckedCreateWithoutVersionsInput = {
+    id?: string
+    profileId: string
+    institution: string
+    degree?: string | null
+    field?: string | null
+    startDate: Date | string
+    endDate?: Date | string | null
+    current?: boolean
+    description?: string | null
+    logoUrl?: string | null
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type EducationCreateOrConnectWithoutVersionsInput = {
+    where: EducationWhereUniqueInput
+    create: XOR<EducationCreateWithoutVersionsInput, EducationUncheckedCreateWithoutVersionsInput>
+  }
+
+  export type VersionUpsertWithoutEducationsInput = {
+    update: XOR<VersionUpdateWithoutEducationsInput, VersionUncheckedUpdateWithoutEducationsInput>
+    create: XOR<VersionCreateWithoutEducationsInput, VersionUncheckedCreateWithoutEducationsInput>
+    where?: VersionWhereInput
+  }
+
+  export type VersionUpdateToOneWithWhereWithoutEducationsInput = {
+    where?: VersionWhereInput
+    data: XOR<VersionUpdateWithoutEducationsInput, VersionUncheckedUpdateWithoutEducationsInput>
+  }
+
+  export type VersionUpdateWithoutEducationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    emoji?: NullableStringFieldUpdateOperationsInput | string | null
+    customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    pages?: PageUpdateManyWithoutVersionNestedInput
+    resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
+    experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    projects?: VersionProjectUpdateManyWithoutVersionNestedInput
+    skills?: VersionSkillUpdateManyWithoutVersionNestedInput
+    achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
+    proofs?: VersionProofUpdateManyWithoutVersionNestedInput
+    highlights?: VersionHighlightUpdateManyWithoutVersionNestedInput
+    links?: VersionLinkUpdateManyWithoutVersionNestedInput
+  }
+
+  export type VersionUncheckedUpdateWithoutEducationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    emoji?: NullableStringFieldUpdateOperationsInput | string | null
+    customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
+    resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
+    experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
+    skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
+    achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
+    proofs?: VersionProofUncheckedUpdateManyWithoutVersionNestedInput
+    highlights?: VersionHighlightUncheckedUpdateManyWithoutVersionNestedInput
+    links?: VersionLinkUncheckedUpdateManyWithoutVersionNestedInput
+  }
+
+  export type EducationUpsertWithoutVersionsInput = {
+    update: XOR<EducationUpdateWithoutVersionsInput, EducationUncheckedUpdateWithoutVersionsInput>
+    create: XOR<EducationCreateWithoutVersionsInput, EducationUncheckedCreateWithoutVersionsInput>
+    where?: EducationWhereInput
+  }
+
+  export type EducationUpdateToOneWithWhereWithoutVersionsInput = {
+    where?: EducationWhereInput
+    data: XOR<EducationUpdateWithoutVersionsInput, EducationUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type EducationUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    institution?: StringFieldUpdateOperationsInput | string
+    degree?: NullableStringFieldUpdateOperationsInput | string | null
+    field?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    current?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutEducationsNestedInput
+  }
+
+  export type EducationUncheckedUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    institution?: StringFieldUpdateOperationsInput | string
+    degree?: NullableStringFieldUpdateOperationsInput | string | null
+    field?: NullableStringFieldUpdateOperationsInput | string | null
+    startDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    current?: BoolFieldUpdateOperationsInput | boolean
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type VersionCreateWithoutProjectsInput = {
     id?: string
     name: string
@@ -48418,6 +50100,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
     proofs?: VersionProofCreateNestedManyWithoutVersionInput
@@ -48440,6 +50123,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
     proofs?: VersionProofUncheckedCreateNestedManyWithoutVersionInput
@@ -48519,6 +50203,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUpdateManyWithoutVersionNestedInput
@@ -48541,6 +50226,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUncheckedUpdateManyWithoutVersionNestedInput
@@ -48610,6 +50296,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
     proofs?: VersionProofCreateNestedManyWithoutVersionInput
@@ -48632,6 +50319,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
     proofs?: VersionProofUncheckedCreateNestedManyWithoutVersionInput
@@ -48693,6 +50381,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUpdateManyWithoutVersionNestedInput
@@ -48715,6 +50404,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUncheckedUpdateManyWithoutVersionNestedInput
@@ -48766,6 +50456,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     proofs?: VersionProofCreateNestedManyWithoutVersionInput
@@ -48788,6 +50479,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     proofs?: VersionProofUncheckedCreateNestedManyWithoutVersionInput
@@ -48859,6 +50551,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUpdateManyWithoutVersionNestedInput
@@ -48881,6 +50574,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     proofs?: VersionProofUncheckedUpdateManyWithoutVersionNestedInput
@@ -48942,6 +50636,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -48964,6 +50659,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -49037,6 +50733,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -49059,6 +50756,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -49122,6 +50820,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -49144,6 +50843,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -49211,6 +50911,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -49233,6 +50934,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -49290,6 +50992,7 @@ export namespace Prisma {
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
     projects?: VersionProjectCreateNestedManyWithoutVersionInput
     skills?: VersionSkillCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
@@ -49312,6 +51015,7 @@ export namespace Prisma {
     pages?: PageUncheckedCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
     projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
     skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
     achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
@@ -49373,6 +51077,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -49395,6 +51100,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -49738,6 +51444,7 @@ export namespace Prisma {
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionEducationUpdateManyWithoutEducationNestedInput
   }
 
   export type EducationUncheckedUpdateWithoutProfileInput = {
@@ -49753,6 +51460,7 @@ export namespace Prisma {
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionEducationUncheckedUpdateManyWithoutEducationNestedInput
   }
 
   export type EducationUncheckedUpdateManyWithoutProfileInput = {
@@ -50009,6 +51717,7 @@ export namespace Prisma {
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
@@ -50031,6 +51740,7 @@ export namespace Prisma {
     pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
     projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
     skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
     achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
@@ -50129,6 +51839,26 @@ export namespace Prisma {
   }
 
   export type VersionExperienceUncheckedUpdateManyWithoutExperienceInput = {
+    versionId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationCreateManyEducationInput = {
+    versionId: string
+    order?: number
+  }
+
+  export type VersionEducationUpdateWithoutEducationInput = {
+    order?: IntFieldUpdateOperationsInput | number
+    version?: VersionUpdateOneRequiredWithoutEducationsNestedInput
+  }
+
+  export type VersionEducationUncheckedUpdateWithoutEducationInput = {
+    versionId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationUncheckedUpdateManyWithoutEducationInput = {
     versionId?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
@@ -50567,6 +52297,11 @@ export namespace Prisma {
     order?: number
   }
 
+  export type VersionEducationCreateManyVersionInput = {
+    educationId: string
+    order?: number
+  }
+
   export type VersionProjectCreateManyVersionInput = {
     projectId: string
     order?: number
@@ -50656,6 +52391,21 @@ export namespace Prisma {
 
   export type VersionExperienceUncheckedUpdateManyWithoutVersionInput = {
     experienceId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationUpdateWithoutVersionInput = {
+    order?: IntFieldUpdateOperationsInput | number
+    education?: EducationUpdateOneRequiredWithoutVersionsNestedInput
+  }
+
+  export type VersionEducationUncheckedUpdateWithoutVersionInput = {
+    educationId?: StringFieldUpdateOperationsInput | string
+    order?: IntFieldUpdateOperationsInput | number
+  }
+
+  export type VersionEducationUncheckedUpdateManyWithoutVersionInput = {
+    educationId?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
   }
 
@@ -51085,6 +52835,10 @@ export namespace Prisma {
      */
     export type ExperienceCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ExperienceCountOutputTypeDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use EducationCountOutputTypeDefaultArgs instead
+     */
+    export type EducationCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = EducationCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use SkillCountOutputTypeDefaultArgs instead
      */
     export type SkillCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = SkillCountOutputTypeDefaultArgs<ExtArgs>
@@ -51220,6 +52974,10 @@ export namespace Prisma {
      * @deprecated Use VersionExperienceDefaultArgs instead
      */
     export type VersionExperienceArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VersionExperienceDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use VersionEducationDefaultArgs instead
+     */
+    export type VersionEducationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VersionEducationDefaultArgs<ExtArgs>
     /**
      * @deprecated Use VersionProjectDefaultArgs instead
      */

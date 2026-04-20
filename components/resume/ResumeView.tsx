@@ -138,6 +138,49 @@ export default function ResumeView({
             );
           }
 
+          if (section.key === "education") {
+            return (
+              <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>
+                <div className="space-y-5">
+                  {section.items.map((item) => (
+                    <article key={item.id} className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-3">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                          <h3 className="overflow-wrap-anywhere text-base font-semibold">
+                            {[item.degree, item.field].filter(Boolean).join(" - ") ||
+                              item.institution}
+                          </h3>
+                          <span className="overflow-wrap-anywhere text-sm" style={{ color: projection.theme.muted }}>
+                            {item.institution}
+                          </span>
+                          {item.current ? (
+                            <span
+                              className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
+                              style={{
+                                background: `${projection.theme.accent}18`,
+                                color: projection.theme.accent,
+                              }}
+                            >
+                              Atual
+                            </span>
+                          ) : null}
+                        </div>
+                        {item.description ? (
+                          <p className="mt-2 overflow-wrap-anywhere whitespace-pre-line text-sm leading-6" style={{ color: projection.theme.muted }}>
+                            {item.description}
+                          </p>
+                        ) : null}
+                      </div>
+                      <div className="overflow-wrap-anywhere text-sm sm:text-right" style={{ color: projection.theme.muted }}>
+                        <p>{item.period}</p>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </SectionShell>
+            );
+          }
+
           if (section.key === "projects") {
             return (
               <SectionShell key={section.key} title={section.title} accent={projection.theme.accent} border={projection.theme.border}>

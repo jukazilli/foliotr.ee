@@ -18,6 +18,7 @@ import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 type PortfolioCommunityBlockType =
   | "portfolio.hero"
   | "portfolio.about"
+  | "portfolio.education"
   | "portfolio.experience"
   | "portfolio.work"
   | "portfolio.contact";
@@ -41,6 +42,18 @@ export interface PortfolioCommunityExperienceItem {
   role: string;
   description: string;
   location: string;
+  current: boolean;
+  period: string;
+  startDate: Date | string | null;
+  endDate: Date | string | null;
+}
+
+export interface PortfolioCommunityEducationItem {
+  id: string;
+  institution: string;
+  degree: string;
+  field: string;
+  description: string;
   current: boolean;
   period: string;
   startDate: Date | string | null;
@@ -78,6 +91,11 @@ export interface PortfolioCommunitySemantics {
     title: string;
     maxItems: number;
     items: PortfolioCommunityExperienceItem[];
+  };
+  education: {
+    visible: boolean;
+    title: string;
+    items: PortfolioCommunityEducationItem[];
   };
   work: {
     visible: boolean;
@@ -250,6 +268,7 @@ export function buildPortfolioCommunityBlockStateFromDefs(
     if (
       blockDef.blockType === "portfolio.hero" ||
       blockDef.blockType === "portfolio.about" ||
+      blockDef.blockType === "portfolio.education" ||
       blockDef.blockType === "portfolio.experience" ||
       blockDef.blockType === "portfolio.work" ||
       blockDef.blockType === "portfolio.contact"
@@ -274,6 +293,7 @@ export function buildPortfolioCommunityBlockStateFromBlocks(
     if (
       block.blockType === "portfolio.hero" ||
       block.blockType === "portfolio.about" ||
+      block.blockType === "portfolio.education" ||
       block.blockType === "portfolio.experience" ||
       block.blockType === "portfolio.work" ||
       block.blockType === "portfolio.contact"
@@ -300,6 +320,7 @@ export function derivePortfolioCommunitySemantics(args: {
   const version = args.version;
   const heroConfig = args.blockConfigs?.["portfolio.hero"] ?? {};
   const aboutConfig = args.blockConfigs?.["portfolio.about"] ?? {};
+  const educationConfig = args.blockConfigs?.["portfolio.education"] ?? {};
   const experienceConfig = args.blockConfigs?.["portfolio.experience"] ?? {};
   const workConfig = args.blockConfigs?.["portfolio.work"] ?? {};
   const contactConfig = args.blockConfigs?.["portfolio.contact"] ?? {};
@@ -307,6 +328,10 @@ export function derivePortfolioCommunitySemantics(args: {
   const selectedExperiences = getSelectedByIds(
     profile.experiences,
     getSelectedIds(version, "selectedExperienceIds", "experiences", "experienceId")
+  );
+  const selectedEducations = getSelectedByIds(
+    profile.educations,
+    getSelectedIds(version, "selectedEducationIds", "educations", "educationId")
   );
   const selectedProjects = getSelectedByIds(
     profile.projects,
@@ -389,6 +414,19 @@ export function derivePortfolioCommunitySemantics(args: {
     startDate: experience.startDate,
     endDate: experience.endDate,
   }));
+  const educationItems = selectedEducations.map((education) => ({
+    id: education.id,
+    institution: education.institution,
+    degree: education.degree ?? "",
+    field: education.field ?? "",
+    description:
+      education.description?.trim() ||
+      [education.degree, education.field, education.institution].filter(Boolean).join(" - "),
+    current: education.current,
+    period: formatPeriod(education.startDate, education.endDate, education.current),
+    startDate: education.startDate,
+    endDate: education.endDate,
+  }));
 
   const fallbackWorkItems = Array.isArray(workConfig.fallbackProjects)
     ? workConfig.fallbackProjects.map(asRecord)
@@ -470,6 +508,13 @@ export function derivePortfolioCommunitySemantics(args: {
         )
       ),
       items: experienceItems.slice(0, readNumber(experienceConfig.maxItems, 3)),
+    },
+    education: {
+      visible:
+        readBoolean(args.visibility?.["portfolio.education"]) ??
+        selectedEducations.length > 0,
+      title: readString(educationConfig.title, "Formacao"),
+      items: educationItems,
     },
     work: {
       visible:

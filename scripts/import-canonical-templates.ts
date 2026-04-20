@@ -199,7 +199,7 @@ async function buildPortfolioCommunitySourcePackage(
       background: manifest.theme.background,
       fontFamily: manifest.theme.fontFamily,
     },
-    sectionOrder: ["hero", "about", "experience", "work", "contact"],
+    sectionOrder: ["hero", "about", "education", "experience", "work", "contact"],
     imports: {
       default: defaultImports,
       named: namedImports,

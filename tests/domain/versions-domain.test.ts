@@ -15,6 +15,9 @@ function createTx() {
     experience: {
       findMany: vi.fn(),
     },
+    education: {
+      findMany: vi.fn(),
+    },
     project: {
       findMany: vi.fn(),
     },
@@ -46,17 +49,24 @@ function createTx() {
     page: {
       findFirst: vi.fn(),
       findUnique: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
       upsert: vi.fn(),
     },
     pageBlock: {
       count: vi.fn(),
       create: vi.fn(),
+      findMany: vi.fn(),
     },
     resumeConfig: {
       findUnique: vi.fn(),
       upsert: vi.fn(),
     },
     versionExperience: {
+      deleteMany: vi.fn(),
+      createMany: vi.fn(),
+    },
+    versionEducation: {
       deleteMany: vi.fn(),
       createMany: vi.fn(),
     },
@@ -103,6 +113,7 @@ describe("versions domain", () => {
     id: "profile_1",
     versions: [],
     experiences: [{ id: "exp_1" }],
+    educations: [{ id: "education_1" }],
     projects: [{ id: "project_1" }],
     skills: [{ id: "skill_1" }],
     achievements: [{ id: "achievement_1" }],
@@ -121,6 +132,7 @@ describe("versions domain", () => {
 
     tx.profile.findUnique.mockResolvedValue(profileAggregate);
     tx.experience.findMany.mockResolvedValue([{ id: "exp_1" }]);
+    tx.education.findMany.mockResolvedValue([{ id: "education_1" }]);
     tx.project.findMany.mockResolvedValue([{ id: "project_1" }]);
     tx.skill.findMany.mockResolvedValue([{ id: "skill_1" }]);
     tx.achievement.findMany.mockResolvedValue([{ id: "achievement_1" }]);
@@ -155,6 +167,9 @@ describe("versions domain", () => {
     expect(tx.versionExperience.createMany).toHaveBeenCalledWith({
       data: [{ versionId: "version_1", experienceId: "exp_1", order: 0 }],
     });
+    expect(tx.versionEducation.createMany).toHaveBeenCalledWith({
+      data: [{ versionId: "version_1", educationId: "education_1", order: 0 }],
+    });
     expect(tx.versionProject.createMany).toHaveBeenCalledWith({
       data: [{ versionId: "version_1", projectId: "project_1", order: 0 }],
     });
@@ -183,13 +198,15 @@ describe("versions domain", () => {
     tx.version.findFirst.mockResolvedValue({ id: "version_1", profileId: "profile_1" });
     tx.template.findUnique.mockResolvedValue({ id: "template_1", isActive: true });
     tx.page.findFirst.mockResolvedValue(null);
-    tx.page.findUnique.mockResolvedValue({ publishedAt: null, templateId: "template_1" });
-    tx.page.upsert.mockResolvedValue({ id: "page_1" });
+    tx.page.create.mockResolvedValue({ id: "page_1" });
+    tx.page.update.mockResolvedValue({ id: "page_1" });
     tx.pageBlock.count.mockResolvedValue(1);
+    tx.pageBlock.findMany.mockResolvedValue([]);
     tx.version.findUniqueOrThrow
       .mockResolvedValueOnce({
         id: "version_1",
         experiences: [],
+        educations: [],
         projects: [],
         skills: [],
         achievements: [],
@@ -206,22 +223,23 @@ describe("versions domain", () => {
       publishState: "PUBLISHED",
     });
 
-    expect(tx.page.upsert).toHaveBeenCalledWith({
-      where: { versionId: "version_1" },
-      update: {
-        title: "Design Lead",
-        slug: "design-lead",
-        templateId: "template_1",
-        publishState: "PUBLISHED",
-        publishedAt: expect.any(Date),
-      },
-      create: {
+    expect(tx.page.create).toHaveBeenCalledWith({
+      data: {
         versionId: "version_1",
         title: "Design Lead",
         slug: "design-lead",
         templateId: "template_1",
         publishState: "PUBLISHED",
         publishedAt: expect.any(Date),
+        editorSnapshot: expect.any(Object),
+        snapshotUpdatedAt: expect.any(Date),
+      },
+    });
+    expect(tx.page.update).toHaveBeenCalledWith({
+      where: { id: "page_1" },
+      data: {
+        publishedSnapshot: expect.any(Object),
+        publishedSnapshotAt: expect.any(Date),
       },
     });
   });
@@ -230,11 +248,24 @@ describe("versions domain", () => {
     const tx = createTx();
     const db = createDb(tx);
 
+    tx.profile.findUnique.mockResolvedValue(profileAggregate);
     tx.version.findFirst.mockResolvedValue({ id: "version_1", profileId: "profile_1" });
+    tx.version.findUniqueOrThrow
+      .mockResolvedValueOnce({
+        id: "version_1",
+        experiences: [],
+        educations: [],
+        projects: [],
+        skills: [],
+        achievements: [],
+        proofs: [],
+        highlights: [],
+        links: [],
+      })
+      .mockResolvedValueOnce({ id: "version_1" });
     tx.resumeConfig.findUnique.mockResolvedValue({
       publishedAt: new Date("2026-04-18T10:00:00.000Z"),
     });
-    tx.version.findUniqueOrThrow.mockResolvedValue({ id: "version_1" });
 
     await upsertOwnedResumeOutput(db as never, "user_1", "version_1", {
       sections: ["hero", "experience"],

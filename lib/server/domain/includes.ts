@@ -24,6 +24,12 @@ export const versionAggregateInclude = Prisma.validator<Prisma.VersionInclude>()
       experience: true,
     },
   },
+  educations: {
+    orderBy: { order: "asc" },
+    include: {
+      education: true,
+    },
+  },
   projects: {
     orderBy: { order: "asc" },
     include: {
@@ -138,6 +144,7 @@ export type ProfileAggregateWithBirthDate = ProfileAggregate & {
 export function getVersionSelectionIds(version: VersionAggregate) {
   return {
     selectedExperienceIds: version.experiences.map((item) => item.experienceId),
+    selectedEducationIds: version.educations.map((item) => item.educationId),
     selectedProjectIds: version.projects.map((item) => item.projectId),
     selectedSkillIds: version.skills.map((item) => item.skillId),
     selectedAchievementIds: version.achievements.map((item) => item.achievementId),

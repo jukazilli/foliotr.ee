@@ -51,6 +51,7 @@ interface VersionSelectionLike {
   customHeadline?: string | null;
   customBio?: string | null;
   selectedExperienceIds: string[];
+  selectedEducationIds?: string[];
   selectedProjectIds: string[];
   selectedSkillIds: string[];
   selectedAchievementIds: string[];
