@@ -44,6 +44,7 @@ const inkColor = "#03045E";
 const accentInkColor = "#474306";
 const accentSurfaceColor = "#F5EE84";
 const ghostTitleColor = "#F7F197";
+const iceBackgroundColor = "#F7F7F2";
 
 function readSourcePackage(value: unknown): PortfolioCommunitySourcePackage {
   try {
@@ -215,6 +216,26 @@ function HeaderNav({
   );
 }
 
+function HeroCta({ href, label }: { href: string; label: string }) {
+  return (
+    <a
+      href={href}
+      className="group relative inline-flex min-h-[3.8rem] items-center justify-center px-10 text-xl text-[#474306]"
+    >
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-1 bottom-0 top-1 rounded-md transition-transform group-hover:translate-x-1 group-hover:translate-y-1"
+        style={{ backgroundColor: accentSurfaceColor }}
+      />
+      <span
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-1 top-0 rounded-md border border-[#474306]"
+      />
+      <span className="relative">{label}</span>
+    </a>
+  );
+}
+
 function HeroSection({
   semantics,
   sourcePackage,
@@ -225,51 +246,50 @@ function HeroSection({
   if (!semantics.hero.visible) return null;
 
   return (
-    <SectionShell id="top" className="pb-20 pt-28 sm:pt-32 lg:pb-32">
-      <HeaderNav semantics={semantics} sourcePackage={sourcePackage} />
+    <>
+      <div style={{ background: sourcePackage.canvas.background }}>
+        <SectionShell id="top" className="pb-0 pt-28 sm:pt-32">
+          <HeaderNav semantics={semantics} sourcePackage={sourcePackage} />
 
-      <div className="grid items-end gap-12 pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,32rem)] lg:gap-16 lg:pt-24">
-        <div className="min-w-0">
-          <p
-            className="mb-5 break-words font-medium leading-tight"
-            style={{ fontSize: "clamp(1.35rem, 3.2vw, 2rem)" }}
-          >
-            {semantics.hero.eyebrow} {semantics.hero.firstName},
-          </p>
-          <h1
-            className="max-w-[13ch] break-words font-extrabold leading-[0.98] tracking-[-0.08em]"
-            style={{ fontSize: "clamp(3.6rem, 8vw, 6.75rem)" }}
-          >
-            {semantics.hero.headline}
-          </h1>
-          {semantics.hero.locationLine ? (
-            <p
-              className="mt-6 break-words font-medium leading-tight"
-              style={{ fontSize: "clamp(1.25rem, 3vw, 2rem)" }}
-            >
-              {semantics.hero.locationLine}
-            </p>
-          ) : null}
-          <a
-            href={semantics.hero.ctaHref}
-            className="group relative mt-10 inline-flex min-h-[3.8rem] items-center justify-center px-10 text-xl text-[#474306]"
-          >
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-1 bottom-0 top-1 rounded-md transition-transform group-hover:translate-x-1 group-hover:translate-y-1"
-              style={{ backgroundColor: accentSurfaceColor }}
-            />
-            <span
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-1 top-0 rounded-md border border-[#474306]"
-            />
-            <span className="relative">{semantics.hero.ctaLabel}</span>
-          </a>
-        </div>
+          <div className="grid items-end gap-12 pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,32rem)] lg:gap-16 lg:pt-24">
+            <div className="min-w-0 pb-14 lg:pb-20">
+              <p
+                className="mb-5 break-words font-medium leading-tight"
+                style={{ fontSize: "clamp(1.35rem, 3.2vw, 2rem)" }}
+              >
+                {semantics.hero.eyebrow} {semantics.hero.firstName},
+              </p>
+              <h1
+                className="max-w-[13ch] break-words font-extrabold leading-[0.98] tracking-[-0.08em]"
+                style={{ fontSize: "clamp(3.6rem, 8vw, 6.75rem)" }}
+              >
+                {semantics.hero.headline}
+              </h1>
+              {semantics.hero.locationLine ? (
+                <p
+                  className="mt-6 break-words font-medium leading-tight"
+                  style={{ fontSize: "clamp(1.25rem, 3vw, 2rem)" }}
+                >
+                  {semantics.hero.locationLine}
+                </p>
+              ) : null}
+            </div>
 
-        <HeroPortrait semantics={semantics} sourcePackage={sourcePackage} />
+            <div className="relative z-10 -mb-16 sm:-mb-20 lg:-mb-24">
+              <HeroPortrait semantics={semantics} sourcePackage={sourcePackage} />
+            </div>
+          </div>
+        </SectionShell>
       </div>
-    </SectionShell>
+
+      <div style={{ background: iceBackgroundColor }}>
+        <SectionShell id="hero-action" className="pb-16 pt-24 sm:pt-28 lg:pb-24 lg:pt-32">
+          <div className="min-w-0">
+            <HeroCta href={semantics.hero.ctaHref} label={semantics.hero.ctaLabel} />
+          </div>
+        </SectionShell>
+      </div>
+    </>
   );
 }
 
@@ -418,7 +438,7 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
     <main
       className="w-full overflow-x-hidden"
       style={{
-        background: sourcePackage.canvas.background,
+        background: iceBackgroundColor,
         color: inkColor,
         fontFamily: `var(--font-template-portfolio), ${sourcePackage.canvas.fontFamily}, ui-sans-serif, system-ui, sans-serif`,
       }}
