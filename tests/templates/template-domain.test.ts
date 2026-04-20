@@ -62,10 +62,10 @@ describe("template domain", () => {
         blockType: "portfolio.hero",
         defaultOrder: 0,
         defaultConfig: {
-          headline: "Product Designer",
+          headline: "Designer de Produto",
           portrait: {
             src: "/templates/portfolio-community/profile-photo.png",
-            alt: "Portrait",
+            alt: "Retrato",
           },
         },
         defaultProps: {},
@@ -76,8 +76,8 @@ describe("template domain", () => {
         blockType: "portfolio.about",
         defaultOrder: 1,
         defaultConfig: {
-          title: "about.",
-          body: "Short bio",
+          title: "sobre.",
+          body: "Resumo curto",
         },
         defaultProps: {},
       },
@@ -94,7 +94,7 @@ describe("template domain", () => {
         blockType: "portfolio.hero",
         order: 0,
         visible: true,
-        config: expect.objectContaining({ headline: "Product Designer" }),
+        config: expect.objectContaining({ headline: "Designer de Produto" }),
         props: {},
         assets: {},
       },
@@ -115,7 +115,7 @@ describe("template domain", () => {
       key: "portfolio-work",
       blockType: "portfolio.work",
       defaultConfig: {
-        title: "work.",
+        title: "projetos.",
         maxItems: 2,
         fallbackProjects: [],
       },
@@ -126,7 +126,7 @@ describe("template domain", () => {
     const block = await addOwnedPageBlock(db as never, "user_1", "page_1", {
       templateBlockKey: "portfolio-work",
       config: {
-        title: "work.",
+        title: "projetos.",
         maxItems: 2,
         fallbackProjects: [],
       },

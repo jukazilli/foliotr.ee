@@ -35,7 +35,7 @@ export function projectPortfolioCommunityResume(
   if (semantics.experience.visible && semantics.experience.items.length > 0) {
     sectionMap.set("experience", {
       key: "experience",
-      title: semantics.experience.title || "Experience",
+      title: semantics.experience.title || "Experiencia",
       items: semantics.experience.items.map((experience) => ({
         id: experience.id,
         company: experience.company,
@@ -87,7 +87,7 @@ export function projectPortfolioCommunityResume(
 
     sectionMap.set("projects", {
       key: "projects",
-      title: semantics.work.title || "Work",
+      title: semantics.work.title || "Projetos",
       items: resumeProjects,
     });
   }
@@ -107,7 +107,7 @@ export function projectPortfolioCommunityResume(
 
   if (semantics.selections.skills.length > 0) {
     const groups = semantics.selections.skills.reduce<Record<string, string[]>>((acc, skill) => {
-      const category = skill.category || "Core";
+      const category = skill.category || "Principal";
       if (!acc[category]) acc[category] = [];
       acc[category].push(skill.name);
       return acc;
@@ -123,7 +123,7 @@ export function projectPortfolioCommunityResume(
   if (semantics.contact.visible && semantics.contact.links.length > 0) {
     sectionMap.set("links", {
       key: "links",
-      title: semantics.contact.title || "Contact",
+      title: semantics.contact.title || "Contato",
       items: semantics.contact.links.map((item) => ({
         label: item.label,
         href: item.href,
@@ -179,7 +179,7 @@ export function projectPortfolioCommunityResume(
     showLinks,
     rules: {
       enters: [
-        "hero -> cabecalho recruiter-friendly",
+        "hero -> cabecalho objetivo",
         "about -> resumo textual",
         "education -> formacao objetiva",
         "experience -> experiencia objetiva",
@@ -198,10 +198,10 @@ export function projectPortfolioCommunityResume(
       ],
       textOnly: [
         "about",
-        "experience descriptions",
-        "education descriptions",
-        "project descriptions",
-        "proof labels",
+        "descricoes de experiencia",
+        "descricoes de formacao",
+        "descricoes de projetos",
+        "rotulos de provas",
       ],
     },
   };

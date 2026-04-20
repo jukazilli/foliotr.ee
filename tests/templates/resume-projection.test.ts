@@ -3,7 +3,7 @@ import { resolveTemplateResumeProjection } from "@/lib/templates/resume/resolver
 
 const profile = {
   displayName: "Juliano Pedroso",
-  headline: "Product Designer",
+  headline: "Designer de Produto",
   bio: "Designer focado em produto e narrativa visual.",
   avatarUrl: "/uploads/user/avatar.png",
   location: "Sao Paulo, BR",
@@ -18,19 +18,19 @@ const profile = {
     {
       id: "exp_1",
       company: "FolioTree",
-      role: "Lead Designer",
+      role: "Designer Lider",
       description: "Liderou produto, design system e narrativa do template.",
       startDate: new Date("2023-01-01"),
       endDate: null,
       current: true,
-      location: "Remote",
+      location: "Remoto",
       order: 0,
     },
   ],
   educations: [],
   skills: [
-    { id: "skill_1", name: "Design Systems", category: "Core", order: 0 },
-    { id: "skill_2", name: "UX Writing", category: "Core", order: 1 },
+    { id: "skill_1", name: "Design Systems", category: "Principal", order: 0 },
+    { id: "skill_2", name: "UX Writing", category: "Principal", order: 1 },
   ],
   projects: [
     {
@@ -75,10 +75,10 @@ const profile = {
 
 const blocks = [
   { id: "hero", blockType: "portfolio.hero", visible: true, order: 0, config: {}, parentId: null },
-  { id: "about", blockType: "portfolio.about", visible: true, order: 1, config: { title: "about." }, parentId: null },
-  { id: "experience", blockType: "portfolio.experience", visible: true, order: 2, config: { title: "experience" }, parentId: null },
-  { id: "work", blockType: "portfolio.work", visible: true, order: 3, config: { title: "work." }, parentId: null },
-  { id: "contact", blockType: "portfolio.contact", visible: true, order: 4, config: { title: "contact." }, parentId: null },
+  { id: "about", blockType: "portfolio.about", visible: true, order: 1, config: { title: "sobre." }, parentId: null },
+  { id: "experience", blockType: "portfolio.experience", visible: true, order: 2, config: { title: "experiencia" }, parentId: null },
+  { id: "work", blockType: "portfolio.work", visible: true, order: 3, config: { title: "projetos." }, parentId: null },
+  { id: "contact", blockType: "portfolio.contact", visible: true, order: 4, config: { title: "contato." }, parentId: null },
 ] as never;
 
 describe("resume projection", () => {
@@ -88,7 +88,7 @@ describe("resume projection", () => {
       blocks,
       profile,
       version: {
-        customHeadline: "Senior Product Designer",
+        customHeadline: "Designer de Produto Senior",
         customBio: "Resumo adaptado para leitura rapida.",
         selectedExperienceIds: ["exp_1"],
         selectedProjectIds: ["project_1"],
@@ -108,7 +108,7 @@ describe("resume projection", () => {
     });
 
     expect(projection.header.displayName).toBe("Juliano Pedroso");
-    expect(projection.header.headline).toBe("Senior Product Designer");
+    expect(projection.header.headline).toBe("Designer de Produto Senior");
     expect(projection.sections.map((section) => section.key)).toEqual([
       "summary",
       "experience",

@@ -3,6 +3,20 @@ import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/typ
 import type { RenderablePageBlock } from "@/components/templates/types";
 import { resolveTemplateResumeProjection } from "@/lib/templates/resume/resolver";
 
+function getLinkKindLabel(kind: string) {
+  switch (kind) {
+    case "contact":
+      return "Contato";
+    case "proof":
+      return "Prova";
+    case "link":
+      return "Link";
+    default:
+      return kind;
+  }
+}
+
+
 interface ResumeViewProps {
   templateSlug: string;
   blocks: RenderablePageBlock[];
@@ -273,7 +287,7 @@ export default function ResumeView({
                   >
                     <p className="overflow-wrap-anywhere font-semibold">{item.label}</p>
                     <p className="mt-1 break-all text-xs uppercase tracking-[0.12em]" style={{ color: projection.theme.muted }}>
-                      {item.kind}
+                      {getLinkKindLabel(item.kind)}
                     </p>
                   </a>
                 ))}

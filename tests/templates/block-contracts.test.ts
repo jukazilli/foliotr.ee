@@ -7,27 +7,27 @@ import {
 describe("template block contracts", () => {
   it("accepts canonical Portfolio Community block content", () => {
     const config = validateBlockConfig("portfolio.hero", {
-      eyebrow: "Hello, I'm",
-      headline: "Product Designer",
-      locationLine: "based in Netherland.",
-      ctaLabel: "Resume",
+      eyebrow: "Ola, eu sou",
+      headline: "Designer de Produto",
+      locationLine: "com base em Joinville.",
+      ctaLabel: "Curriculo",
       ctaHref: "/resume",
       portrait: {
         src: "/templates/portfolio-community/profile-photo.png",
-        alt: "Portrait",
+        alt: "Retrato",
       },
     });
 
     expect(config).toMatchObject({
-      eyebrow: "Hello, I'm",
-      headline: "Product Designer",
-      ctaLabel: "Resume",
+      eyebrow: "Ola, eu sou",
+      headline: "Designer de Produto",
+      ctaLabel: "Curriculo",
     });
   });
 
   it("rejects arbitrary HTML in editable text fields", () => {
     const result = safeParseBlockConfig("portfolio.about", {
-      title: "about.",
+      title: "sobre.",
       body: "<script>alert('xss')</script>",
     });
 
@@ -43,7 +43,7 @@ describe("template block contracts", () => {
 
   it("rejects unsafe image references", () => {
     const result = safeParseBlockConfig("portfolio.contact", {
-      title: "contact.",
+      title: "contato.",
       image: {
         src: "javascript:alert(1)",
         alt: "Bad image",
@@ -55,7 +55,7 @@ describe("template block contracts", () => {
 
   it("rejects unsafe links in canonical hero actions", () => {
     const result = safeParseBlockConfig("portfolio.hero", {
-      headline: "Product Designer",
+      headline: "Designer de Produto",
       ctaHref: "javascript:alert(1)",
     });
 
@@ -64,7 +64,7 @@ describe("template block contracts", () => {
 
   it("accepts mailto links in canonical contact blocks", () => {
     const config = validateBlockConfig("portfolio.contact", {
-      title: "contact.",
+      title: "contato.",
       links: [
         {
           label: "juliano@example.com",
@@ -85,7 +85,7 @@ describe("template block contracts", () => {
 
   it("rejects unsafe links in canonical contact blocks", () => {
     const result = safeParseBlockConfig("portfolio.contact", {
-      title: "contact.",
+      title: "contato.",
       links: [
         {
           label: "Bad",

@@ -180,16 +180,21 @@ function HeaderNav({
 
       <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-lg md:justify-end">
         <a href="#top" className="transition hover:opacity-70">
-          Home
+          Inicio
         </a>
         {semantics.about.visible ? (
           <a href="#about" className="transition hover:opacity-70">
-            About
+            Sobre
           </a>
         ) : null}
         {semantics.work.visible ? (
           <a href="#work" className="transition hover:opacity-70">
-            Work
+            Projetos
+          </a>
+        ) : null}
+        {semantics.contact.visible ? (
+          <a href="#contact" className="transition hover:opacity-70">
+            Contato
           </a>
         ) : null}
         <div className="flex items-center gap-6 text-[#03045E]">
@@ -310,8 +315,8 @@ function ExperienceSection({ semantics }: { semantics: PortfolioCommunitySemanti
 
   return (
     <SectionShell id="experience" className="py-16 lg:py-24">
-      <h2 className="sr-only">{semantics.experience.title}</h2>
-      <div className="mx-auto max-w-[58rem] space-y-12">
+      <SectionTitle>{semantics.experience.title}</SectionTitle>
+      <div className="mt-10 mx-auto max-w-[58rem] space-y-12">
         {semantics.experience.items.map((experience) => (
           <article
             key={experience.id}

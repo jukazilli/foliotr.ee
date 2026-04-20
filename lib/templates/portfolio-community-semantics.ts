@@ -174,7 +174,7 @@ function hasText(value: string | null | undefined) {
 }
 
 function formatLocationLine(location: string | null | undefined) {
-  return location ? `based in ${location}.` : "";
+  return location ? `com base em ${location}.` : "";
 }
 
 function formatYear(value: Date | string | null | undefined) {
@@ -190,7 +190,7 @@ function formatPeriod(
   current: boolean
 ) {
   const start = formatYear(startDate);
-  const end = current ? "Present" : formatYear(endDate);
+  const end = current ? "Atual" : formatYear(endDate);
   return [start, end].filter(Boolean).join(" - ");
 }
 
@@ -198,7 +198,7 @@ function formatProjectDate(value: Date | string | null | undefined, fallback: st
   if (!value) return fallback;
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return fallback;
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString("pt-BR", {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -358,7 +358,7 @@ export function derivePortfolioCommunitySemantics(args: {
     readString(version && "customHeadline" in version ? version.customHeadline : undefined) ||
     profile.headline ||
     readString(heroConfig.headline) ||
-    "Product Designer";
+    "Designer de Produto";
   const body =
     readString(version && "customBio" in version ? version.customBio : undefined) ||
     profile.bio ||
@@ -366,11 +366,11 @@ export function derivePortfolioCommunitySemantics(args: {
   const portrait =
     readImage(heroConfig.portrait) ??
     (profile.avatarUrl
-      ? { src: normalizeStoragePublicUrl(profile.avatarUrl), alt: displayName || "Profile portrait" }
+      ? { src: normalizeStoragePublicUrl(profile.avatarUrl), alt: displayName || "Foto de perfil" }
       : args.sourcePackage?.imports.default.imgUnsplashD1UPkiFd04A1
         ? {
             src: args.sourcePackage.imports.default.imgUnsplashD1UPkiFd04A1,
-            alt: displayName || "Profile portrait",
+            alt: displayName || "Foto de perfil",
           }
         : null);
   const contactLinks = dedupeLinks([
@@ -402,7 +402,7 @@ export function derivePortfolioCommunitySemantics(args: {
     company: experience.company,
     role: experience.role,
     description:
-      experience.description?.trim() || `${experience.role} at ${experience.company}.`,
+      experience.description?.trim() || `${experience.role} na ${experience.company}.`,
     location: experience.location ?? "",
     current: experience.current,
     period: formatPeriod(experience.startDate, experience.endDate, experience.current),
@@ -439,7 +439,7 @@ export function derivePortfolioCommunitySemantics(args: {
         key: project.id,
         title: project.title,
         description: project.description ?? "",
-        date: formatProjectDate(project.startDate, "November 24, 2019"),
+        date: formatProjectDate(project.startDate, "24 de novembro de 2019"),
         image: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : workFallbackImages[index] ?? "",
         href: project.url ?? project.repoUrl ?? "",
       };
@@ -447,12 +447,12 @@ export function derivePortfolioCommunitySemantics(args: {
 
     return {
       key: `fallback-${index}`,
-      title: readString(fallback.title, "Some Case Study"),
+      title: readString(fallback.title, "Projeto em destaque"),
       description: readString(
         fallback.description,
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut sed aliquam sollicitudin rhoncus morbi."
+        "Resumo do projeto com contexto, abordagem e impacto gerado."
       ),
-      date: readString(fallback.date, "November 24, 2019"),
+      date: readString(fallback.date, "24 de novembro de 2019"),
       image: readImage(fallback.image)?.src ?? workFallbackImages[index] ?? "",
       href: readString(fallback.href),
     };
@@ -472,29 +472,29 @@ export function derivePortfolioCommunitySemantics(args: {
         hasText(headline),
       displayName,
       firstName: displayName.split(" ")[0] ?? "",
-      eyebrow: readString(heroConfig.eyebrow, "Hello, I'm"),
+      eyebrow: readString(heroConfig.eyebrow, "Ola, eu sou"),
       headline,
       locationLine:
         readString(heroConfig.locationLine) ||
         formatLocationLine(profile.location) ||
-        "based in Netherland.",
+        "com base na sua cidade.",
       ctaHref: resolveResumeHref(
         readString(heroConfig.ctaHref, "/resume"),
         profile.user?.username
       ),
-      ctaLabel: readString(heroConfig.ctaLabel, "Resume"),
+      ctaLabel: readString(heroConfig.ctaLabel, "Curriculo"),
       portrait,
     },
     about: {
       visible: readBoolean(args.visibility?.["portfolio.about"]) ?? hasText(body),
-      title: readString(aboutConfig.title, "about."),
+      title: readString(aboutConfig.title, "sobre."),
       body,
     },
     experience: {
       visible:
         readBoolean(args.visibility?.["portfolio.experience"]) ??
         selectedExperiences.length > 0,
-      title: readString(experienceConfig.title, "Experience"),
+      title: readString(experienceConfig.title, "experiencia"),
       maxItems: Math.max(
         1,
         Math.min(
@@ -508,14 +508,14 @@ export function derivePortfolioCommunitySemantics(args: {
       visible:
         readBoolean(args.visibility?.["portfolio.education"]) ??
         selectedEducations.length > 0,
-      title: readString(educationConfig.title, "Formacao"),
+      title: readString(educationConfig.title, "formacao"),
       items: educationItems,
     },
     work: {
       visible:
         readBoolean(args.visibility?.["portfolio.work"]) ??
         selectedProjects.length > 0,
-      title: readString(workConfig.title, "work."),
+      title: readString(workConfig.title, "projetos."),
       intro: readString(workConfig.intro),
       maxItems:
         selectedProjects.length > 0
@@ -525,7 +525,7 @@ export function derivePortfolioCommunitySemantics(args: {
       fallbackProjects: selectedProjects.slice(0, 2).map((project) => ({
         title: project.title,
         description: project.description ?? "",
-        date: formatProjectDate(project.startDate, "Featured work"),
+        date: formatProjectDate(project.startDate, "Projeto em destaque"),
         href: project.url ?? project.repoUrl ?? undefined,
         image: project.imageUrl
           ? {
@@ -539,7 +539,7 @@ export function derivePortfolioCommunitySemantics(args: {
       visible:
         readBoolean(args.visibility?.["portfolio.contact"]) ??
         Boolean(profile.publicEmail || contactLinks.length > 0),
-      title: readString(contactConfig.title, "contact."),
+      title: readString(contactConfig.title, "contato."),
       body:
         readString(contactConfig.body) ||
         body,

@@ -103,28 +103,28 @@ const linkSchema = z.object({
 });
 
 const portfolioHeroConfigSchema = z.object({
-  eyebrow: safeShortTextSchema.default("Hello, I'm"),
+  eyebrow: safeShortTextSchema.default("Ola, eu sou"),
   name: safeShortTextSchema.optional(),
   headline: safeShortTextSchema.optional(),
   locationLine: safeShortTextSchema.optional(),
-  ctaLabel: safeShortTextSchema.default("Resume"),
+  ctaLabel: safeShortTextSchema.default("Curriculo"),
   ctaHref: safeHrefSchema.default("/resume"),
   portrait: imageSchema.optional(),
   navLinks: z.array(linkSchema).max(4).default([]),
 });
 
 const portfolioAboutConfigSchema = z.object({
-  title: safeShortTextSchema.default("about."),
+  title: safeShortTextSchema.default("sobre."),
   body: safeTextSchema.optional(),
 });
 
 const portfolioExperienceConfigSchema = z.object({
-  title: safeShortTextSchema.default("experience"),
+  title: safeShortTextSchema.default("experiencia"),
   maxItems: z.number().int().min(1).max(8).default(3),
 });
 
 const portfolioWorkConfigSchema = z.object({
-  title: safeShortTextSchema.default("work."),
+  title: safeShortTextSchema.default("projetos."),
   intro: safeTextSchema.optional(),
   maxItems: z.number().int().min(1).max(6).default(2),
   fallbackProjects: z
@@ -132,7 +132,7 @@ const portfolioWorkConfigSchema = z.object({
       z.object({
         title: safeShortTextSchema,
         description: safeTextSchema,
-        date: safeShortTextSchema.default("November 24, 2019"),
+        date: safeShortTextSchema.default("24 de novembro de 2019"),
         image: imageSchema.optional(),
         href: safeUrlSchema.optional(),
       })
@@ -142,7 +142,7 @@ const portfolioWorkConfigSchema = z.object({
 });
 
 const portfolioContactConfigSchema = z.object({
-  title: safeShortTextSchema.default("contact."),
+  title: safeShortTextSchema.default("contato."),
   body: safeTextSchema.optional(),
   image: imageSchema.optional(),
   links: z.array(
