@@ -18,6 +18,7 @@ import type { RenderablePageBlock, TemplateProfile } from "@/components/template
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -620,7 +621,7 @@ export default function CanonicalPageEditor({
 
   function renderImageField(fieldKey: string, label: string) {
     const image = asRecord(draftConfig[fieldKey]);
-    const src = typeof image.src === "string" ? image.src : "";
+    const src = typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
     const alt = typeof image.alt === "string" ? image.alt : "";
 
     return (
@@ -729,7 +730,8 @@ export default function CanonicalPageEditor({
             {Object.entries(item).map(([propKey, propValue]) => {
               if (propKey === "image") {
                 const image = asRecord(propValue);
-                const imageSrc = typeof image.src === "string" ? image.src : "";
+                const imageSrc =
+                  typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
                 const imageAlt = typeof image.alt === "string" ? image.alt : "";
 
                 return (
