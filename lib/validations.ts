@@ -15,7 +15,7 @@ const emailSchema = z
   .email("E-mail invalido")
   .transform((email) => email.toLowerCase());
 
-const passwordSchema = z
+export const passwordSchema = z
   .string()
   .min(8, "Senha deve ter pelo menos 8 caracteres")
   .max(128, "Senha deve ter no maximo 128 caracteres");
