@@ -39,14 +39,8 @@ export default function ResumeView({
       <header className="min-w-0 border-b pb-6 print:pb-4" style={{ borderColor: projection.theme.border }}>
         <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p
-              className="text-[10px] font-semibold uppercase tracking-[0.18em] sm:text-[11px] sm:tracking-[0.24em]"
-              style={{ color: projection.theme.accent }}
-            >
-              Curriculo derivado do template
-            </p>
             {projection.header.displayName ? (
-              <h1 className="mt-3 overflow-wrap-anywhere font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
+              <h1 className="overflow-wrap-anywhere font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
                 {projection.header.displayName}
               </h1>
             ) : null}

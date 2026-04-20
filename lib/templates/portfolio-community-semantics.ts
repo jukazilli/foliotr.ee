@@ -350,7 +350,10 @@ export function derivePortfolioCommunitySemantics(args: {
     getSelectedIds(version, "selectedLinkIds", "links", "linkId")
   );
 
-  const displayName = "";
+  const displayName =
+    readString(profile.displayName) ||
+    readString(profile.user?.name) ||
+    readString(profile.user?.username);
   const headline =
     readString(version && "customHeadline" in version ? version.customHeadline : undefined) ||
     profile.headline ||
@@ -468,7 +471,7 @@ export function derivePortfolioCommunitySemantics(args: {
         readBoolean(args.visibility?.["portfolio.hero"]) ??
         hasText(headline),
       displayName,
-      firstName: "",
+      firstName: displayName.split(" ")[0] ?? "",
       eyebrow: readString(heroConfig.eyebrow, "Hello, I'm"),
       headline,
       locationLine:

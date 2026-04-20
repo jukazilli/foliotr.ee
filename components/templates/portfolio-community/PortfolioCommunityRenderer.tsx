@@ -262,7 +262,7 @@ function HeroSection({
                 style={{ fontSize: "clamp(1.35rem, 3.2vw, 2rem)" }}
               >
                 {semantics.hero.eyebrow}
-                {semantics.hero.firstName ? ` ${semantics.hero.firstName},` : ""}
+                {semantics.hero.displayName ? ` ${semantics.hero.displayName},` : ""}
               </p>
               <h1
                 className="max-w-[13ch] break-words font-extrabold leading-[0.98] tracking-[-0.08em]"
