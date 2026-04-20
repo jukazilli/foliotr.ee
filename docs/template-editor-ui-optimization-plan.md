@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 5 completed  
+Status: slice 6 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -366,13 +366,33 @@ Goal: prove that the refactor preserved behavior and update memory.
 
 Checklist:
 
-- [ ] `npm run typecheck`
-- [ ] `npm run lint`
-- [ ] `npm run test` if touched behavior risks warrant it
+- [x] `npm run typecheck`
+- [x] `npm run lint`
+- [x] `npm run test` if touched behavior risks warrant it
 - [ ] Browser verification of editor load
 - [ ] Browser verification of select block, edit draft, save, visibility, reorder, add and remove
 - [ ] Browser verification of preview scale at desktop and mobile widths
-- [ ] Update this plan with final status and known residual risks
+- [x] Update this plan with final status and known residual risks
+
+Slice 6 result:
+
+- Final static validation:
+  - `npm run typecheck` passed.
+  - `npm run lint` passed.
+- Full test validation was executed with `npm run test`.
+  - Result: 15 test files passed and 1 test file failed.
+  - Passing count: 53 tests passed.
+  - Failing count: 2 tests failed in `tests/domain/versions-domain.test.ts`.
+  - Failures observed:
+    - `binds a page output to the version and stamps publication safely`: `TypeError: tx.page.create is not a function` at `lib/server/domain/versions.ts:495`.
+    - `clears resume publication timestamp when output returns to draft`: `ApiRouteError: NOT_FOUND` from `getOwnedProfileAggregateOrThrow` at `lib/server/domain/versions.ts:75`.
+  - These failures are outside the editor UI files changed in this optimization slice and appear related to version-domain test mocks/domain setup, not to `components/pages/CanonicalPageEditor.tsx`.
+- Browser validation was attempted again through the local dev server.
+  - Command path: `npm run dev`, which calls `scripts/serve-port-3000.mjs dev`.
+  - Observed behavior: Next.js 15.5.15 logs `Starting...`, opens a listener on `127.0.0.1:3000`, but does not return HTTP responses before timeout.
+  - The process was stopped after collecting logs and confirming the listener PID.
+  - Because of this dev-server blocker, editor load and interaction checks could not be completed in browser during Slice 6.
+- No runtime/editor contract changes were made during Slice 6.
 
 ## Strategic Checklist
 
@@ -390,7 +410,7 @@ Checklist:
 - [x] Slice 3 completed
 - [x] Slice 4 completed
 - [x] Slice 5 completed
-- [ ] Slice 6 completed
+- [x] Slice 6 completed
 
 ## Risks
 
@@ -398,6 +418,8 @@ Checklist:
 - The preview renderer may have natural full-page assumptions. The canvas frame must constrain it visually without changing public rendering.
 - The reference uses absolute positioning and fixed 1440px assumptions. Implementation must translate the idea into responsive Tailwind layout, not copy the generated structure.
 - High density can reduce clarity if labels and action states are compressed too aggressively. Keep status and destructive actions explicit.
+- Final browser validation remains blocked until the local Next dev server returns HTTP responses after startup.
+- Full `npm run test` currently has 2 failures in `tests/domain/versions-domain.test.ts`, outside the editor UI surface changed here.
 
 ## Definition Of Done
 
