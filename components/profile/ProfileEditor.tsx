@@ -667,12 +667,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const [photoError, setPhotoError] = useState("");
   const [dirtyCollections, setDirtyCollections] = useState<Set<CollectionField>>(() => new Set());
 
-  const defaultVersion = useMemo(
-    () => profile.versions.find((version) => version.isDefault) ?? profile.versions[0],
-    [profile.versions]
-  );
-  const pagesCount = profile.versions.filter((version) => version.pages.length > 0).length;
-  const resumesCount = profile.versions.filter((version) => version.resumeConfig).length;
   const username = profile.user.username;
   const age = useMemo(() => {
     if (!profile.birthDate) return null;
@@ -951,7 +945,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
             label: "Dados basicos",
             count: 1,
             children: (
-              <div className="grid gap-8 lg:grid-cols-[minmax(0,620px)_minmax(280px,1fr)]">
+              <div className="mx-auto max-w-3xl">
                 <Card className="rounded-[24px]">
                   <CardContent className="space-y-5 p-5">
                     <div className="grid gap-4 rounded-[20px] border border-neutral-200 bg-neutral-50 p-4 sm:grid-cols-[120px_1fr] sm:items-center">
@@ -1055,55 +1049,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     </Field>
                   </CardContent>
                 </Card>
-
-                <aside className="lg:sticky lg:top-24 lg:self-start">
-                  <Card className="rounded-[24px]">
-                    <CardHeader className="pb-3">
-                      <CardTitle className="font-display text-xl">Preview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-5">
-                      <div>
-                        <div className="mb-4 flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border border-neutral-200 bg-neutral-50">
-                          {photoPreview ? (
-                            <img src={photoPreview} alt="" className="h-full w-full object-cover" />
-                          ) : (
-                            <UserRound className="h-8 w-8 text-neutral-400" aria-hidden />
-                          )}
-                        </div>
-                        <p className="font-display text-2xl font-semibold leading-tight text-neutral-950">
-                          {profile.headline || profile.displayName || "Headline"}
-                        </p>
-                        {profile.bio ? (
-                          <p className="mt-3 text-sm leading-6 text-neutral-600">{profile.bio}</p>
-                        ) : null}
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 border-t border-neutral-100 pt-4 text-center">
-                        <div>
-                          <p className="text-lg font-semibold text-neutral-950">{profile.versions.length}</p>
-                          <p className="text-[11px] text-neutral-500">versoes</p>
-                        </div>
-                        <div>
-                          <p className="text-lg font-semibold text-neutral-950">{pagesCount}</p>
-                          <p className="text-[11px] text-neutral-500">paginas</p>
-                        </div>
-                        <div>
-                          <p className="text-lg font-semibold text-neutral-950">{resumesCount}</p>
-                          <p className="text-[11px] text-neutral-500">CVs</p>
-                        </div>
-                      </div>
-                      {defaultVersion ? (
-                        <div className="rounded-2xl border border-violet-100 bg-violet-50 p-4">
-                          <p className="font-data text-[10px] font-semibold uppercase tracking-[0.18em] text-violet-900">
-                            Versao padrao
-                          </p>
-                          <p className="mt-2 text-sm font-semibold text-violet-900">
-                            {defaultVersion.name}
-                          </p>
-                        </div>
-                      ) : null}
-                    </CardContent>
-                  </Card>
-                </aside>
               </div>
             ),
           },
