@@ -20,7 +20,19 @@ export const passwordSchema = z
   .min(8, "Senha deve ter pelo menos 8 caracteres")
   .max(128, "Senha deve ter no maximo 128 caracteres");
 
+function isInternalAssetProxyUrl(value: string) {
+  return value.startsWith("/api/assets/proxy?key=");
+}
+
 const nullableUrlSchema = z.string().url("URL invalida").optional().or(z.literal(""));
+const nullableAssetUrlSchema = z
+  .string()
+  .trim()
+  .refine((value) => value.length === 0 || isInternalAssetProxyUrl(value) || z.string().url().safeParse(value).success, {
+    message: "URL invalida",
+  })
+  .optional()
+  .or(z.literal(""));
 const nullableStringSchema = z.string().optional().or(z.literal(""));
 
 export const publishStateSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"], {
@@ -100,7 +112,7 @@ export const onboardingSchema = z.object({
 
 export const profileSchema = z.object({
   displayName: z.string().max(120, "Nome muito longo").optional(),
-  avatarUrl: nullableUrlSchema,
+  avatarUrl: nullableAssetUrlSchema,
   headline: z.string().max(120, "Titulo deve ter no maximo 120 caracteres").optional(),
   bio: z.string().max(500, "Bio deve ter no maximo 500 caracteres").optional(),
   location: z.string().max(120, "Localizacao muito longa").optional(),
@@ -115,7 +127,12 @@ export const assetInputSchema = z.object({
   id: cuidSchema.optional(),
   kind: assetKindSchema.default("IMAGE"),
   status: assetStatusSchema.default("READY"),
-  url: z.string().url("URL do asset invalida"),
+  url: z
+    .string()
+    .trim()
+    .refine((value) => isInternalAssetProxyUrl(value) || z.string().url().safeParse(value).success, {
+      message: "URL do asset invalida",
+    }),
   storageKey: z.string().trim().min(1, "Storage key obrigatoria").max(255),
   name: nullableStringSchema,
   altText: nullableStringSchema,
@@ -137,7 +154,7 @@ export const experienceSchema = z.object({
   endDate: z.coerce.date().optional().nullable(),
   current: z.boolean().default(false),
   location: z.string().max(120, "Localizacao muito longa").optional(),
-  logoUrl: nullableUrlSchema,
+  logoUrl: nullableAssetUrlSchema,
   logoAssetId: cuidSchema.optional().nullable(),
 });
 
@@ -152,7 +169,7 @@ export const educationSchema = z.object({
   endDate: z.coerce.date().optional().nullable(),
   current: z.boolean().default(false),
   description: z.string().optional(),
-  logoUrl: nullableUrlSchema,
+  logoUrl: nullableAssetUrlSchema,
 });
 
 export const skillSchema = z.object({
@@ -170,7 +187,7 @@ export const projectSchema = z.object({
   id: cuidSchema.optional(),
   title: z.string().min(1, "Titulo do projeto e obrigatorio"),
   description: z.string().max(2000, "Descricao muito longa").optional(),
-  imageUrl: nullableUrlSchema,
+  imageUrl: nullableAssetUrlSchema,
   url: nullableUrlSchema,
   repoUrl: nullableUrlSchema,
   tags: z.array(z.string().trim().min(1)).default([]),
@@ -186,7 +203,7 @@ export const achievementSchema = z.object({
   description: z.string().max(500, "Descricao muito longa").optional(),
   date: z.coerce.date().optional().nullable(),
   metric: z.string().max(140, "Metrica muito longa").optional(),
-  imageUrl: nullableUrlSchema,
+  imageUrl: nullableAssetUrlSchema,
   assetId: cuidSchema.optional().nullable(),
 });
 
@@ -204,7 +221,7 @@ export const proofSchema = z.object({
   description: z.string().max(500, "Descricao muito longa").optional(),
   metric: z.string().max(140, "Metrica muito longa").optional(),
   url: nullableUrlSchema,
-  imageUrl: nullableUrlSchema,
+  imageUrl: nullableAssetUrlSchema,
   assetId: cuidSchema.optional().nullable(),
   tags: z.array(z.string().trim().min(1)).default([]),
 });
