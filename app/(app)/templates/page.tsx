@@ -1,11 +1,16 @@
 import Link from "next/link";
-import { ArrowRight, SlidersHorizontal } from "lucide-react";
-import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
+import { ExternalLink, SlidersHorizontal } from "lucide-react";
+import { EmptyWorkspaceState } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { listCanonicalTemplates } from "@/lib/server/domain/canonical-templates";
+import { getAppViewer, getOwnedVersions } from "@/lib/server/app-viewer";
+import {
+  evaluateTemplateEligibility,
+  listCanonicalTemplates,
+} from "@/lib/server/domain/canonical-templates";
+import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
+import { useCanonicalTemplateAction } from "./actions";
 
 type TemplatesSearchParams = {
   category?: string;
@@ -33,7 +38,12 @@ export default async function TemplatesPage({
   searchParams: Promise<TemplatesSearchParams>;
 }) {
   const params = await searchParams;
-  const templates = await listCanonicalTemplates(prisma);
+  const [{ profile, user }, templates] = await Promise.all([
+    getAppViewer(),
+    listCanonicalTemplates(prisma),
+  ]);
+  const versions = await getOwnedVersions(user.id);
+  const targetVersion = versions.find((version) => version.isDefault) ?? versions[0] ?? null;
 
   const categoryOptions = [
     "all",
@@ -53,124 +63,143 @@ export default async function TemplatesPage({
         return left.name.localeCompare(right.name);
       }
 
-      return left.libraryStatus.localeCompare(right.libraryStatus);
+      return left.sortOrder - right.sortOrder || left.name.localeCompare(right.name);
     });
 
   return (
-    <div className="space-y-8">
-      <PageIntro
-        eyebrow="Modelos"
-        title="Biblioteca de modelos"
-        description="Escolha um modelo para usar."
-        meta={
-          <>
-            <Badge variant="success">{templates.length} modelos</Badge>
-            <Badge variant="default">Disponiveis</Badge>
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            <Button asChild variant="outline">
-              <Link href="/versions">Ver versoes</Link>
-            </Button>
-            <Button asChild variant="ghost">
-              <Link href="/profile">Completar perfil</Link>
-            </Button>
-          </div>
-        }
-      />
+    <div className="space-y-5">
+      <section className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white/95 px-4 py-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <h1 className="font-display text-xl font-semibold tracking-tight text-neutral-950">
+            Escolha seu modelo e edite
+          </h1>
+        </div>
 
-      <section className="rounded-[30px] border border-lime-100 bg-white/85 p-4 sm:p-6">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div>
-            <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
-              Filtros
-            </p>
-            <p className="mt-2 max-w-2xl text-sm leading-7 text-neutral-600">
-              Filtre e ordene os modelos.
-            </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap rounded-lg border border-neutral-200 bg-neutral-100 p-1">
+            {categoryOptions.map((category) => {
+              const isActive = category === selectedCategory;
+              return (
+                <Link
+                  key={category}
+                  href={buildTemplatesHref({ category, sort: selectedSort })}
+                  className={`rounded-md px-3 py-1.5 text-sm font-semibold transition ${
+                    isActive
+                      ? "bg-white text-neutral-950 shadow-sm"
+                      : "text-neutral-600 hover:bg-white hover:text-neutral-950"
+                  }`}
+                >
+                  {category === "all" ? "Todos" : category}
+                </Link>
+              );
+            })}
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex flex-wrap rounded-full border border-neutral-200 bg-neutral-100 p-1">
-              {categoryOptions.map((category) => {
-                const isActive = category === selectedCategory;
-                return (
-                  <Link
-                    key={category}
-                    href={buildTemplatesHref({ category, sort: selectedSort })}
-                    className={`rounded-full px-3 py-1.5 text-sm font-semibold transition ${
-                      isActive
-                        ? "bg-green-500 text-green-900"
-                        : "text-neutral-600 hover:bg-white hover:text-neutral-900"
-                    }`}
-                  >
-                    {category === "all" ? "Todos" : category}
-                  </Link>
-                );
-              })}
-            </div>
-
-            <div className="flex items-center rounded-full border border-neutral-200 bg-neutral-100 p-1 text-sm font-semibold">
-              <SlidersHorizontal className="ml-2 mr-1 h-4 w-4 text-neutral-500" aria-hidden="true" />
-              {[
-                { key: "curated", label: "Destaque" },
-                { key: "name", label: "Nome" },
-              ].map((option) => {
-                const isActive = option.key === selectedSort;
-                return (
-                  <Link
-                    key={option.key}
-                    href={buildTemplatesHref({
-                      category: selectedCategory,
-                      sort: option.key,
-                    })}
-                    className={`rounded-full px-3 py-1.5 transition ${
-                      isActive
-                        ? "bg-white text-neutral-900 shadow-sm"
-                        : "text-neutral-600 hover:text-neutral-900"
-                    }`}
-                  >
-                    {option.label}
-                  </Link>
-                );
-              })}
-            </div>
+          <div className="flex items-center rounded-lg border border-neutral-200 bg-neutral-100 p-1 text-sm font-semibold">
+            <SlidersHorizontal className="ml-2 mr-1 h-4 w-4 text-neutral-500" aria-hidden="true" />
+            {[
+              { key: "curated", label: "Destaque" },
+              { key: "name", label: "Nome" },
+            ].map((option) => {
+              const isActive = option.key === selectedSort;
+              return (
+                <Link
+                  key={option.key}
+                  href={buildTemplatesHref({
+                    category: selectedCategory,
+                    sort: option.key,
+                  })}
+                  className={`rounded-md px-3 py-1.5 transition ${
+                    isActive
+                      ? "bg-white text-neutral-950 shadow-sm"
+                      : "text-neutral-600 hover:text-neutral-950"
+                  }`}
+                >
+                  {option.label}
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {filteredTemplates.length === 0 ? (
         <EmptyWorkspaceState
-          title="Nenhum modelo encontrado"
+          title="Nenhum modelo"
           description="Tente outro filtro."
           primaryAction={{ href: "/templates", label: "Ver todos" }}
-          secondaryAction={{ href: "/profile", label: "Voltar ao perfil" }}
+          secondaryAction={{ href: "/profile", label: "Perfil" }}
           accent="lime"
-          label="Sem resultados"
+          label="Biblioteca"
         />
       ) : (
-        <section className="grid gap-6 xl:grid-cols-2">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,22rem),24rem))] justify-start gap-4">
           {filteredTemplates.map((template) => {
+            const eligibility = evaluateTemplateEligibility(template, profile, targetVersion);
+            const page = targetVersion ? getPrimaryVersionPage(targetVersion) : null;
+            const appliedPage = page?.template?.slug === template.slug ? page : null;
+            const useAction = useCanonicalTemplateAction.bind(null, template.slug);
+            const editDisabled = !targetVersion || !eligibility.eligible;
+
             return (
-              <Link key={template.slug} href={template.detailHref} className="group block">
-                <Card className="overflow-hidden rounded-[32px] border border-neutral-200 bg-white transition-all hover:-translate-y-0.5 hover:shadow-xl">
-                  <div className="relative aspect-[16/10] overflow-hidden bg-[#FBF8CC]">
+              <article
+                key={template.slug}
+                className="group overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+              >
+                <div className="relative aspect-[16/10] overflow-hidden bg-neutral-100">
+                  {template.coverUrl ? (
                     <img
                       src={template.coverUrl}
                       alt={template.name}
-                      className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+                      className="h-full w-full object-contain object-center transition duration-500 group-hover:scale-[1.02]"
                     />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-[#FBF8CC]">
+                      <span className="text-sm font-semibold text-neutral-500">{template.name}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <h2 className="truncate text-base font-semibold text-neutral-950">
+                        {template.name}
+                      </h2>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        <Badge variant="default">{template.category}</Badge>
+                        {appliedPage ? <Badge variant="success">aplicado</Badge> : null}
+                      </div>
+                    </div>
                   </div>
 
-                  <CardContent className="flex justify-end p-5">
-                    <span className="inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition group-hover:bg-lime-500 group-hover:text-neutral-950">
-                      Ver detalhes
-                      <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
-                    </span>
-                  </CardContent>
-                </Card>
-              </Link>
+                  <div className="grid grid-cols-2 gap-2">
+                    {appliedPage ? (
+                      <Button asChild>
+                        <Link href={`/pages/${appliedPage.id}/editor`}>Editar</Link>
+                      </Button>
+                    ) : (
+                      <form action={useAction}>
+                        <input type="hidden" name="versionId" value={targetVersion?.id ?? ""} />
+                        <Button type="submit" disabled={editDisabled} className="w-full">
+                          Editar
+                        </Button>
+                      </form>
+                    )}
+
+                    <Button asChild variant="outline">
+                      <Link
+                        href={`/template-examples/${template.slug}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                        Abrir exemplo
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </article>
             );
           })}
         </section>
