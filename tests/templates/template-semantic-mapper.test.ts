@@ -196,7 +196,6 @@ describe("template semantic mapper", () => {
     expect(blocks[0]).toMatchObject({
       blockType: "portfolio.hero",
       config: expect.objectContaining({
-        name: "Juliano Pedroso",
         headline: "Designing digital products",
         ctaHref: "/juliano-zilli/resume",
       }),
@@ -212,6 +211,7 @@ describe("template semantic mapper", () => {
         },
       },
     });
+    expect(blocks[0].config).not.toHaveProperty("name");
     expect(blocks[1]).toMatchObject({
       blockType: "portfolio.about",
       visible: true,

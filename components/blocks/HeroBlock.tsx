@@ -1,5 +1,5 @@
 import { MapPin, ExternalLink, ArrowRight } from "lucide-react";
-import { getPlatformLabel, getPlatformUrl, getInitials } from "@/lib/utils";
+import { getPlatformLabel, getPlatformUrl } from "@/lib/utils";
 import type { BlockProps } from "./types";
 
 interface HeroConfig {
@@ -18,7 +18,6 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
     layout = "centered",
   } = config as HeroConfig;
 
-  const displayName = profile?.displayName ?? profile?.user?.name ?? "Sem nome";
   const headline = version?.customHeadline ?? profile?.headline;
   const location = profile?.location;
   const avatarUrl = profile?.avatarUrl;
@@ -41,27 +40,20 @@ export default function HeroBlock({ profile, config, version }: BlockProps) {
             {avatarUrl ? (
               <img
                 src={avatarUrl}
-                alt={displayName}
+                alt=""
                 className="h-24 w-24 rounded-full object-cover ring-4 ring-neutral-100 shadow-md"
               />
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-3xl font-bold text-white ring-4 ring-neutral-100 shadow-md">
-                {getInitials(displayName)}
-              </div>
+              <div className="h-24 w-24 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 ring-4 ring-neutral-100 shadow-md" />
             )}
           </div>
         )}
 
-        {/* Name */}
-        <h1 className="font-display text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
-          {displayName}
-        </h1>
-
         {/* Headline */}
         {headline && (
-          <p className="mt-3 text-xl font-medium text-neutral-500 sm:text-2xl">
+          <h1 className="font-display text-4xl font-extrabold tracking-tight text-neutral-900 sm:text-5xl">
             {headline}
-          </p>
+          </h1>
         )}
 
         {/* Location */}

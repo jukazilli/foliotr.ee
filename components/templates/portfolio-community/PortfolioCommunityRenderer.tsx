@@ -176,9 +176,13 @@ function HeaderNav({
 }) {
   return (
     <header className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-      <p className="max-w-full break-words text-2xl font-semibold leading-tight tracking-wide md:text-[1.7rem]">
-        {semantics.hero.displayName}
-      </p>
+      {semantics.hero.displayName ? (
+        <p className="max-w-full break-words text-2xl font-semibold leading-tight tracking-wide md:text-[1.7rem]">
+          {semantics.hero.displayName}
+        </p>
+      ) : (
+        <div aria-hidden="true" />
+      )}
 
       <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-lg md:justify-end">
         <a href="#top" className="transition hover:opacity-70">
@@ -257,7 +261,8 @@ function HeroSection({
                 className="mb-5 break-words font-medium leading-tight"
                 style={{ fontSize: "clamp(1.35rem, 3.2vw, 2rem)" }}
               >
-                {semantics.hero.eyebrow} {semantics.hero.firstName},
+                {semantics.hero.eyebrow}
+                {semantics.hero.firstName ? ` ${semantics.hero.firstName},` : ""}
               </p>
               <h1
                 className="max-w-[13ch] break-words font-extrabold leading-[0.98] tracking-[-0.08em]"

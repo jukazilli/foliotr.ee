@@ -57,7 +57,6 @@ const portfolioCommunityBlockSeeders: Record<
       blockDef,
       {
         ...asRecord(blockDef.defaultConfig),
-        name: semantics.hero.displayName,
         headline: semantics.hero.headline,
         locationLine: semantics.hero.locationLine,
         ctaHref: semantics.hero.ctaHref,
@@ -67,7 +66,6 @@ const portfolioCommunityBlockSeeders: Record<
       {
         visible: semantics.hero.visible,
         resolvedFrom: [
-          { target: "name", slot: "profile.displayName", source: "profile.displayName" },
           {
             target: "headline",
             slot: "version.headline",

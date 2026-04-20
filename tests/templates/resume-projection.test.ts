@@ -107,6 +107,7 @@ describe("resume projection", () => {
       } as never,
     });
 
+    expect(projection.header.displayName).toBe("");
     expect(projection.header.headline).toBe("Senior Product Designer");
     expect(projection.sections.map((section) => section.key)).toEqual([
       "summary",

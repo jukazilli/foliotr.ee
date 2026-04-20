@@ -173,10 +173,6 @@ function hasText(value: string | null | undefined) {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function getFirstName(value: string) {
-  return value.trim().split(/\s+/)[0] || value;
-}
-
 function formatLocationLine(location: string | null | undefined) {
   return location ? `based in ${location}.` : "";
 }
@@ -354,11 +350,7 @@ export function derivePortfolioCommunitySemantics(args: {
     getSelectedIds(version, "selectedLinkIds", "links", "linkId")
   );
 
-  const displayName =
-    profile.displayName ??
-    profile.user?.name ??
-    readString(heroConfig.name) ??
-    "";
+  const displayName = "";
   const headline =
     readString(version && "customHeadline" in version ? version.customHeadline : undefined) ||
     profile.headline ||
@@ -474,9 +466,9 @@ export function derivePortfolioCommunitySemantics(args: {
     hero: {
       visible:
         readBoolean(args.visibility?.["portfolio.hero"]) ??
-        (hasText(displayName) || hasText(headline)),
+        hasText(headline),
       displayName,
-      firstName: getFirstName(displayName || "John Doe"),
+      firstName: "",
       eyebrow: readString(heroConfig.eyebrow, "Hello, I'm"),
       headline,
       locationLine:

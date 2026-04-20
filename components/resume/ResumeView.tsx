@@ -45,9 +45,11 @@ export default function ResumeView({
             >
               Curriculo derivado do template
             </p>
-            <h1 className="mt-3 overflow-wrap-anywhere font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
-              {projection.header.displayName}
-            </h1>
+            {projection.header.displayName ? (
+              <h1 className="mt-3 overflow-wrap-anywhere font-display text-3xl font-semibold tracking-tight sm:text-[2.55rem]">
+                {projection.header.displayName}
+              </h1>
+            ) : null}
             {projection.header.headline ? (
               <p className="mt-2 overflow-wrap-anywhere text-base font-medium leading-7 sm:text-lg" style={{ color: projection.theme.muted }}>
                 {projection.header.headline}
@@ -58,7 +60,7 @@ export default function ResumeView({
           {projection.showPhoto && projection.header.avatarUrl ? (
             <img
               src={projection.header.avatarUrl}
-              alt={projection.header.displayName}
+              alt=""
               className="h-20 w-20 rounded-[28px] object-cover print:hidden"
             />
           ) : null}

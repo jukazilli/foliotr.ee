@@ -78,13 +78,6 @@ export const portfolioCommunityManifest = {
       allowedChildren: [],
       semanticSlots: [
         {
-          slot: "profile.displayName",
-          target: "name",
-          source: "profile",
-          required: true,
-          description: "Nome principal exibido no hero.",
-        },
-        {
           slot: "version.headline",
           target: "headline",
           source: "version",
