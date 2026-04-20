@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 2 completed  
+Status: slice 3 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -277,6 +277,16 @@ Acceptance:
 - Draft edits still reflect in preview before save
 - Template renderer remains the only rendering source
 
+Slice 3 result:
+
+- `components/pages/CanonicalPageEditor.tsx` replaced the large preview card with a neutral canvas section.
+- The preview now renders inside a centered artifact frame with `max-w-[760px]`, stable minimum height and a bounded scroll viewport.
+- `TemplateRenderer` remains the only preview renderer and still receives `previewBlocks`, `initialProfile`, `initialVersion` and `initialTemplateSourcePackage`.
+- The canvas wrapper uses FolioTree neutral colors and does not introduce any new editing behavior or template contract.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- Browser validation was attempted again on `127.0.0.1:3002`, but the Next dev server did not produce a usable HTTP response before timeout. The process was stopped and no screenshot was captured.
+
 ### Slice 4 - Right Inspector
 
 Goal: move selected block editing into a compact inspector beside the preview.
@@ -349,7 +359,7 @@ Checklist:
 - [x] Slice 0 completed
 - [x] Slice 1 completed
 - [x] Slice 2 completed
-- [ ] Slice 3 completed
+- [x] Slice 3 completed
 - [ ] Slice 4 completed
 - [ ] Slice 5 completed
 - [ ] Slice 6 completed

@@ -1129,17 +1129,20 @@ export default function CanonicalPageEditor({
           </CardContent>
         </Card>
 
-        <Card className="overflow-hidden rounded-[32px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Preview
-            </CardTitle>
-            <CardDescription>
-              {pageTitle} em {templateName}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <div className="border-t border-neutral-200">
+        <section className="overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
+          <div className="flex items-center justify-between gap-3 border-b border-neutral-300/80 bg-white/90 px-4 py-3">
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-neutral-950">Preview</h2>
+              <p className="mt-0.5 truncate text-xs text-neutral-500">
+                {pageTitle} em {templateName}
+              </p>
+            </div>
+            <span className="shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-semibold text-neutral-500">
+              760px
+            </span>
+          </div>
+          <div className="max-h-[780px] overflow-y-auto bg-neutral-100 px-3 py-6 sm:px-6 lg:px-8">
+            <div className="mx-auto min-h-[640px] w-full max-w-[760px] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm">
               <TemplateRenderer
                 templateSlug={templateSlug}
                 blocks={previewBlocks}
@@ -1148,8 +1151,8 @@ export default function CanonicalPageEditor({
                 templateSourcePackage={initialTemplateSourcePackage}
               />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </section>
       </div>
     </section>
   );
