@@ -200,6 +200,13 @@ function cleanUrl(value: string | null | undefined) {
   }
 }
 
+function cleanAssetUrl(value: string | null | undefined) {
+  const raw = value?.trim() ?? "";
+  if (!raw) return "";
+  if (raw.startsWith("/api/assets/proxy?key=")) return raw;
+  return cleanUrl(raw);
+}
+
 const ERROR_LABELS: Record<string, string> = {
   displayName: "Nome de exibicao",
   headline: "Headline",
@@ -455,7 +462,7 @@ type CollectionField =
 function buildBasePayload(profile: EditableProfile) {
   return {
     displayName: profile.displayName ?? "",
-    avatarUrl: cleanUrl(profile.avatarUrl),
+    avatarUrl: cleanAssetUrl(profile.avatarUrl),
     headline: profile.headline ?? "",
     bio: profile.bio ?? "",
     location: profile.location ?? "",
@@ -492,7 +499,7 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         endDate: item.current ? null : item.endDate || null,
         current: item.current,
         location: item.location,
-        logoUrl: cleanUrl(item.logoUrl),
+        logoUrl: cleanAssetUrl(item.logoUrl),
         logoAssetId: item.logoAssetId ?? null,
       }));
   }
@@ -509,7 +516,7 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         startDate: item.startDate,
         endDate: item.current ? null : item.endDate || null,
         current: item.current,
-        logoUrl: cleanUrl(item.logoUrl),
+        logoUrl: cleanAssetUrl(item.logoUrl),
       }));
   }
 
@@ -531,7 +538,7 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         id: persistedId(item.id),
         title: item.title,
         description: item.description,
-        imageUrl: cleanUrl(item.imageUrl),
+        imageUrl: cleanAssetUrl(item.imageUrl),
         url: cleanUrl(item.url),
         repoUrl: cleanUrl(item.repoUrl),
         tags: compactTags(item.tagsText),
@@ -551,7 +558,7 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         description: item.description,
         date: item.date || null,
         metric: item.metric,
-        imageUrl: cleanUrl(item.imageUrl),
+        imageUrl: cleanAssetUrl(item.imageUrl),
         assetId: item.assetId ?? null,
       }));
   }
@@ -565,7 +572,7 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         description: item.description,
         metric: item.metric,
         url: cleanUrl(item.url),
-        imageUrl: cleanUrl(item.imageUrl),
+        imageUrl: cleanAssetUrl(item.imageUrl),
         tags: compactTags(item.tagsText),
         assetId: item.assetId ?? null,
       }));

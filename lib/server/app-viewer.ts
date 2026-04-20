@@ -3,6 +3,7 @@ import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 import {
   versionAggregateInclude,
   type ProfileAggregateWithBirthDate,
@@ -85,7 +86,7 @@ export const getAppShellViewer = cache(async (): Promise<AppShellViewer> => {
   return {
     profile: {
       displayName: profile.displayName,
-      avatarUrl: profile.avatarUrl,
+      avatarUrl: profile.avatarUrl ? normalizeStoragePublicUrl(profile.avatarUrl) : null,
       onboardingDone: profile.onboardingDone,
     },
     user: profile.user,

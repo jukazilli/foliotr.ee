@@ -3,9 +3,18 @@ export function normalizeStoragePublicUrl(url: string) {
 
   try {
     const parsed = new URL(url);
+    const key = parsed.searchParams.get("key");
 
-    if (parsed.pathname === "/api/assets/proxy" && parsed.searchParams.get("key")) {
-      return url;
+    if (parsed.pathname === "/api/assets/proxy" && key) {
+      return `/api/assets/proxy?key=${encodeURIComponent(decodeURIComponent(key))}`;
+    }
+
+    if (parsed.hostname === "api" && parsed.pathname === "/assets/proxy" && key) {
+      return `/api/assets/proxy?key=${encodeURIComponent(decodeURIComponent(key))}`;
+    }
+
+    if (parsed.hostname === "proxy" && parsed.pathname === "/" && key) {
+      return `/api/assets/proxy?key=${encodeURIComponent(decodeURIComponent(key))}`;
     }
 
     if (parsed.pathname.startsWith("/storage/v1/object/public/")) {
