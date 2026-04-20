@@ -6,6 +6,7 @@ import { getAppViewer } from "@/lib/server/app-viewer";
 import { readPageEditorSnapshot } from "@/lib/server/domain/page-snapshots";
 import { getOwnedPageEditorData } from "@/lib/server/domain/templates";
 import { toLegacyVersionSelection } from "@/lib/server/domain/versions";
+import { setPagePublishStateAction } from "./actions";
 
 interface PageEditorRouteProps {
   params: Promise<{ pageId: string }>;
@@ -20,6 +21,7 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
+    const publishPageAction = setPagePublishStateAction.bind(null, page.id, "PUBLISHED");
     const editorSnapshot =
       readPageEditorSnapshot(page.editorSnapshot) ??
       {
@@ -60,6 +62,7 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
           initialVersion={toSerializable(editorSnapshot.version)}
           initialResumeConfig={toSerializable(page.version.resumeConfig)}
           initialTemplateSourcePackage={toSerializable(page.template.sourcePackage)}
+          publishPageAction={publishPageAction}
         />
       </div>
     );

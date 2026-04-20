@@ -201,12 +201,6 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
           </Link>
         ) : null}
 
-        <Link
-          href="/pages"
-          className="inline-flex h-[32px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-blue-500 px-3 text-[13px] font-medium text-white transition-colors hover:bg-blue-600"
-        >
-          Publicar
-        </Link>
       </div>
 
       <div className="flex items-center gap-1.5 overflow-x-auto border-t border-neutral-200/70 bg-neutral-50/80 px-3 py-1.5 text-xs font-normal tracking-[0.005em] text-neutral-500">

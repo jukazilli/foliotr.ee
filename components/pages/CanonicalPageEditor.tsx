@@ -13,6 +13,7 @@ import {
   Save,
   Trash2,
   Upload,
+  UploadCloud,
 } from "lucide-react";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
@@ -70,6 +71,7 @@ interface CanonicalPageEditorProps {
   initialVersion: VersionSelectionLike;
   initialResumeConfig?: ResumeConfig | null;
   initialTemplateSourcePackage?: unknown;
+  publishPageAction: () => Promise<void>;
 }
 
 interface UploadedAsset {
@@ -212,6 +214,7 @@ export default function CanonicalPageEditor({
   initialVersion,
   initialResumeConfig,
   initialTemplateSourcePackage,
+  publishPageAction,
 }: CanonicalPageEditorProps) {
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
@@ -347,7 +350,7 @@ export default function CanonicalPageEditor({
   }
 
   async function saveSelectedBlock(nextConfig = draftConfig, nextAssets = draftAssets) {
-    if (!selectedBlock) return;
+    if (!selectedBlock) return true;
 
     setBusyKey(`save:${selectedBlock.id}`);
     setErrorMessage("");
@@ -368,7 +371,7 @@ export default function CanonicalPageEditor({
       setErrorMessage(
         formatApiError(payload, response.status, "Nao foi possivel salvar este bloco")
       );
-      return;
+      return false;
     }
 
     const nextBlock = asRecord(payload).block as RenderablePageBlock;
@@ -377,6 +380,26 @@ export default function CanonicalPageEditor({
     setDraftAssets(asRecord(nextBlock.assets));
     setBusyKey(null);
     setSuccessMessage("Bloco salvo.");
+    return true;
+  }
+
+  async function publishPage() {
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const saved = await saveSelectedBlock();
+    if (!saved) return;
+
+    setBusyKey("publish");
+
+    try {
+      await publishPageAction();
+      setSuccessMessage("Pagina publicada.");
+    } catch {
+      setErrorMessage("Nao foi possivel publicar a pagina.");
+    } finally {
+      setBusyKey(null);
+    }
   }
 
   async function toggleVisibility(block: RenderablePageBlock) {
@@ -1261,6 +1284,16 @@ export default function CanonicalPageEditor({
                   >
                     <Save className="h-4 w-4" aria-hidden="true" />
                     Salvar
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="primary"
+                    loading={busyKey === "publish" || busyKey === `save:${selectedBlock.id}`}
+                    onClick={() => void publishPage()}
+                    className="2xl:col-span-2"
+                  >
+                    <UploadCloud className="h-4 w-4" aria-hidden="true" />
+                    Publicar
                   </Button>
                   {!selectedBlockDef.required ? (
                     <Button
