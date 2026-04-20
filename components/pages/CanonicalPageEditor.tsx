@@ -1034,15 +1034,19 @@ export default function CanonicalPageEditor({
               Canvas
             </span>
           </div>
-          <div className="max-h-[70vh] overflow-x-hidden overflow-y-auto bg-neutral-100 px-2 py-4 sm:px-5 sm:py-5 lg:max-h-[48.75rem] lg:px-6">
-            <div className="mx-auto min-h-[26.25rem] w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm sm:min-h-[40rem]">
-              <TemplateRenderer
-                templateSlug={templateSlug}
-                blocks={previewBlocks}
-                profile={initialProfile}
-                version={initialVersion}
-                templateSourcePackage={initialTemplateSourcePackage}
-              />
+          <div className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-5 sm:py-5 lg:max-h-[48.75rem] lg:px-6">
+            <div className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm">
+              <div className="relative h-[84rem] sm:h-[106rem] md:h-[126rem] lg:h-[133rem]">
+                <div className="absolute left-1/2 top-0 w-[90rem] max-w-none origin-top -translate-x-1/2 scale-[0.333] sm:scale-[0.42] md:scale-50 lg:scale-[0.528]">
+                  <TemplateRenderer
+                    templateSlug={templateSlug}
+                    blocks={previewBlocks}
+                    profile={initialProfile}
+                    version={initialVersion}
+                    templateSourcePackage={initialTemplateSourcePackage}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>
