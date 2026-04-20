@@ -2,6 +2,20 @@ import { z } from "zod";
 
 const storageProviderSchema = z.enum(["disabled", "vercel-blob", "s3"]);
 const optionalUrlSchema = z.string().url().optional().or(z.literal(""));
+const booleanStringSchema = z.preprocess(
+  (value) => {
+    if (typeof value === "boolean") return value;
+    if (typeof value !== "string") return value;
+
+    const normalized = value.trim().toLowerCase();
+
+    if (["true", "1", "yes", "on"].includes(normalized)) return true;
+    if (["false", "0", "no", "off"].includes(normalized)) return false;
+
+    return value;
+  },
+  z.boolean()
+);
 const postgresUrlSchema = z
   .string()
   .url()
@@ -32,7 +46,7 @@ export const serverEnvSchema = z
     STORAGE_S3_BUCKET: z.string().trim().optional(),
     STORAGE_S3_ACCESS_KEY_ID: z.string().trim().optional(),
     STORAGE_S3_SECRET_ACCESS_KEY: z.string().trim().optional(),
-    STORAGE_S3_TLS_REJECT_UNAUTHORIZED: z.coerce.boolean().default(true),
+    STORAGE_S3_TLS_REJECT_UNAUTHORIZED: booleanStringSchema.default(true),
     STORAGE_PUBLIC_BASE_URL: optionalUrlSchema,
     NEXT_PUBLIC_SUPABASE_URL: optionalUrlSchema,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().trim().optional(),

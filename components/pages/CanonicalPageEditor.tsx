@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { JsonValue } from "@prisma/client/runtime/library";
+import type { ResumeConfig } from "@/generated/prisma-client";
 import {
   ArrowDown,
   ArrowUp,
@@ -15,12 +16,20 @@ import {
 } from "lucide-react";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
+import ResumeView from "@/components/resume/ResumeView";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type JsonRecord = Record<string, unknown>;
+type CanvasDimensionKey = "width" | "height";
+type PreviewMode = "portfolio" | "resume";
+
+const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
+const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
+const MIN_PREVIEW_SCALE = 0.24;
+const MAX_PREVIEW_SCALE = 1;
 
 interface TemplateBlockDefLike {
   id: string;
@@ -59,6 +68,7 @@ interface CanonicalPageEditorProps {
   manifestBlocks: ManifestBlockLike[];
   initialProfile: TemplateProfile;
   initialVersion: VersionSelectionLike;
+  initialResumeConfig?: ResumeConfig | null;
   initialTemplateSourcePackage?: unknown;
 }
 
@@ -89,6 +99,18 @@ function asJsonValue(value: unknown): JsonValue {
 
 function asArray(value: unknown) {
   return Array.isArray(value) ? value : [];
+}
+
+function readPreviewCanvasDimension(
+  sourcePackage: unknown,
+  key: CanvasDimensionKey,
+  fallback: number
+) {
+  const packageRecord = asRecord(sourcePackage);
+  const canvas = asRecord(packageRecord.canvas);
+  const value = canvas[key];
+
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
 function sortBlocks(blocks: RenderablePageBlock[]) {
@@ -149,7 +171,7 @@ function createDefaultListItem(fieldKey: string) {
 }
 
 function textareaClassName() {
-  return "min-h-[120px] w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500";
+  return "min-h-[7.5rem] w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500";
 }
 
 function getEditableFields(blockDef: TemplateBlockDefLike | null): EditableFieldLike[] {
@@ -188,6 +210,7 @@ export default function CanonicalPageEditor({
   manifestBlocks,
   initialProfile,
   initialVersion,
+  initialResumeConfig,
   initialTemplateSourcePackage,
 }: CanonicalPageEditorProps) {
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
@@ -199,6 +222,59 @@ export default function CanonicalPageEditor({
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("portfolio");
+  const previewFrameRef = useRef<HTMLDivElement | null>(null);
+  const [previewScale, setPreviewScale] = useState(0.5);
+
+  const previewCanvasWidth = useMemo(
+    () =>
+      readPreviewCanvasDimension(
+        initialTemplateSourcePackage,
+        "width",
+        FALLBACK_PREVIEW_CANVAS_WIDTH
+      ),
+    [initialTemplateSourcePackage]
+  );
+  const previewCanvasHeight = useMemo(
+    () =>
+      readPreviewCanvasDimension(
+        initialTemplateSourcePackage,
+        "height",
+        FALLBACK_PREVIEW_CANVAS_HEIGHT
+      ),
+    [initialTemplateSourcePackage]
+  );
+
+  useEffect(() => {
+    const frame = previewFrameRef.current;
+    if (!frame) return;
+
+    function updateScale(width: number) {
+      const nextScale = Math.min(
+        MAX_PREVIEW_SCALE,
+        Math.max(MIN_PREVIEW_SCALE, width / previewCanvasWidth)
+      );
+
+      setPreviewScale((current) =>
+        Math.abs(current - nextScale) > 0.005 ? nextScale : current
+      );
+    }
+
+    updateScale(frame.clientWidth);
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) updateScale(width);
+    });
+
+    observer.observe(frame);
+
+    return () => observer.disconnect();
+  }, [previewCanvasWidth]);
 
   const manifestByKey = useMemo(
     () => new Map(manifestBlocks.map((block) => [block.key, block])),
@@ -621,11 +697,11 @@ export default function CanonicalPageEditor({
 
   function renderImageField(fieldKey: string, label: string) {
     const image = asRecord(draftConfig[fieldKey]);
-    const src = typeof image.src === "string" ? image.src : "";
+    const src = typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
     const alt = typeof image.alt === "string" ? image.alt : "";
 
     return (
-      <div className="space-y-3 rounded-[20px] border border-neutral-200 bg-neutral-50/80 p-4">
+      <div className="space-y-3 rounded-[1.25rem] border border-neutral-200 bg-neutral-50/80 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
@@ -694,7 +770,7 @@ export default function CanonicalPageEditor({
     const items = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
 
     return (
-      <div className="space-y-3 rounded-[20px] border border-neutral-200 bg-neutral-50/80 p-4">
+      <div className="space-y-3 rounded-[1.25rem] border border-neutral-200 bg-neutral-50/80 p-4">
         <div className="flex items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
@@ -730,7 +806,8 @@ export default function CanonicalPageEditor({
             {Object.entries(item).map(([propKey, propValue]) => {
               if (propKey === "image") {
                 const image = asRecord(propValue);
-                const imageSrc = typeof image.src === "string" ? image.src : "";
+                const imageSrc =
+                  typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
                 const imageAlt = typeof image.alt === "string" ? image.alt : "";
 
                 return (
@@ -911,19 +988,52 @@ export default function CanonicalPageEditor({
   }
 
   return (
-    <section className="grid gap-6 xl:grid-cols-[360px_minmax(0,1fr)]">
-      <div className="space-y-4 xl:sticky xl:top-24 xl:self-start">
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Blocos
-            </CardTitle>
-            <CardDescription>
-              Escolha um bloco para editar.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {blocks.map((block, index) => {
+    <section className="grid min-h-[45rem] min-w-0 gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:grid-cols-[20rem_minmax(0,1fr)]">
+      <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
+        <div className="border-b border-neutral-200 bg-neutral-50/80 p-2">
+          <div className="grid grid-cols-2 rounded-lg border border-neutral-200 bg-neutral-100 p-1">
+            {[
+              { key: "portfolio", label: "Portfolio" },
+              { key: "resume", label: "Curriculo" },
+            ].map((item) => {
+              const isActive = previewMode === item.key;
+
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => setPreviewMode(item.key as PreviewMode)}
+                  className={`h-9 rounded-md px-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 ${
+                    isActive
+                      ? "bg-white text-neutral-950 shadow-sm"
+                      : "text-neutral-600 hover:bg-white/70 hover:text-neutral-950"
+                  }`}
+                  aria-pressed={isActive}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="border-b border-neutral-200 px-3 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-neutral-950">Blocos</h2>
+              <p className="mt-0.5 text-xs text-neutral-500">{blocks.length} secoes no template</p>
+            </div>
+            <span className="hidden shrink-0 text-xs font-medium text-neutral-500 sm:inline">Selecionar</span>
+          </div>
+        </div>
+
+        <div className="max-h-[27.5rem] space-y-1 overflow-y-auto p-2">
+          {blocks.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-4 text-sm text-neutral-500">
+              Nenhum bloco criado.
+            </div>
+          ) : (
+            blocks.map((block, index) => {
               const blockDef =
                 templateBlockDefs.find((item) => item.id === block.templateBlockDefId) ?? null;
               const isSelected = block.id === selectedBlockId;
@@ -932,58 +1042,72 @@ export default function CanonicalPageEditor({
                 <button
                   key={block.id}
                   type="button"
+                  aria-current={isSelected ? "true" : undefined}
                   onClick={() => setSelectedBlockId(block.id)}
-                  className={`w-full rounded-[22px] border px-4 py-4 text-left transition ${
+                  className={`group flex min-h-14 w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 ${
                     isSelected
-                      ? "border-lime-300 bg-lime-50"
-                      : "border-neutral-200 bg-neutral-50 hover:border-neutral-300 hover:bg-white"
+                      ? "border-lime-400 bg-lime-50 shadow-sm"
+                      : "border-transparent bg-white hover:border-neutral-200 hover:bg-neutral-50"
                   }`}
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-900">
-                        {blockDef?.label ?? block.key}
-                      </p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-neutral-500">
-                        bloco {index + 1}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-1">
-                      <Badge variant={block.visible ? "success" : "default"}>
-                        {block.visible ? "visivel" : "oculto"}
-                      </Badge>
-                      {blockDef?.required ? <Badge variant="warning">fixo</Badge> : null}
-                    </div>
-                  </div>
+                  <span
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[0.6875rem] font-semibold ${
+                      isSelected
+                        ? "border-lime-300 bg-white text-lime-700"
+                        : "border-neutral-200 bg-neutral-50 text-neutral-500"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-semibold text-neutral-900">
+                      {blockDef?.label ?? block.key}
+                    </span>
+                    <span className="mt-0.5 block truncate text-[0.6875rem] text-neutral-500">
+                      {blockDef?.blockType ?? block.blockType}
+                    </span>
+                  </span>
+                  <span className="flex shrink-0 items-center gap-1">
+                    <span
+                      className={`h-2 w-2 rounded-full ${
+                        block.visible ? "bg-lime-500" : "bg-neutral-300"
+                      }`}
+                      title={block.visible ? "Visivel" : "Oculto"}
+                      aria-label={block.visible ? "Visivel" : "Oculto"}
+                    />
+                    {blockDef?.required ? (
+                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-amber-700">
+                        fixo
+                      </span>
+                    ) : null}
+                  </span>
                 </button>
               );
-            })}
-          </CardContent>
-        </Card>
+            })
+          )}
+        </div>
 
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Adicionar bloco
-            </CardTitle>
-            <CardDescription>
-              Adicione secoes disponiveis.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
+        <div className="border-t border-neutral-200 bg-neutral-50/80 p-2">
+          <div className="mb-2 flex items-center justify-between gap-2 px-1">
+            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
+              Adicionar
+            </h3>
+            <span className="shrink-0 text-xs text-neutral-500">{availableBlockDefs.length} disponiveis</span>
+          </div>
+          <div className="space-y-1">
             {availableBlockDefs.length === 0 ? (
-              <div className="rounded-[20px] border border-dashed border-neutral-300 bg-neutral-50 p-4 text-sm leading-7 text-neutral-500">
+              <div className="rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-3 text-sm text-neutral-500">
                 Nao ha mais blocos para adicionar.
               </div>
             ) : (
               availableBlockDefs.map((blockDef) => (
                 <div
                   key={blockDef.id}
-                  className="flex items-center justify-between gap-3 rounded-[20px] border border-neutral-200 bg-neutral-50 p-3"
+                  className="flex min-h-12 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2 py-2"
                 >
-                  <div>
-                    <p className="text-sm font-semibold text-neutral-900">{blockDef.label}</p>
-                    <p className="text-xs text-neutral-500">{blockDef.blockType}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-neutral-900">{blockDef.label}</p>
+                    <p className="truncate text-[0.6875rem] text-neutral-500">{blockDef.blockType}</p>
                   </div>
                   <Button
                     type="button"
@@ -991,105 +1115,145 @@ export default function CanonicalPageEditor({
                     size="sm"
                     loading={busyKey === `add:${blockDef.key}`}
                     onClick={() => void addBlock(blockDef.key)}
+                    aria-label={`Adicionar bloco ${blockDef.label}`}
                   >
                     <Plus className="h-4 w-4" aria-hidden="true" />
-                    Adicionar
                   </Button>
                 </div>
               ))
             )}
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+        </div>
+      </aside>
 
-      <div className="space-y-6">
-        <Card className="rounded-[28px] border-neutral-200 bg-white/90">
-          <CardHeader className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-              <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-                {selectedBlockDef?.label ?? "Escolha um bloco"}
-              </CardTitle>
-              <CardDescription>
-                {selectedBlock
-                  ? "Edite este bloco."
-                  : "Escolha um bloco para editar."}
-              </CardDescription>
+      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <section className="order-2 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 xl:order-1">
+          <div className="flex items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
+            <div className="min-w-0">
+              <h2 className="text-sm font-semibold text-neutral-950">
+                {previewMode === "portfolio" ? "Portfolio" : "Curriculo"}
+              </h2>
+              <p className="mt-0.5 truncate text-xs text-neutral-500">
+                {pageTitle} em {templateName}
+              </p>
             </div>
-            {selectedBlock ? (
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `reorder:${selectedBlock.id}`}
-                  onClick={() => void moveBlock(selectedBlock.id, -1)}
+            <span className="hidden shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[0.6875rem] font-semibold text-neutral-500 sm:inline-flex">
+              Canvas
+            </span>
+          </div>
+          <div className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-4 sm:py-4 lg:max-h-[48.75rem] xl:px-3 2xl:px-5">
+            <div
+              ref={previewFrameRef}
+              className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm"
+            >
+              {previewMode === "portfolio" ? (
+                <div
+                  className="relative mx-auto"
+                  style={{
+                    width: `${previewCanvasWidth * previewScale}px`,
+                    height: `${previewCanvasHeight * previewScale}px`,
+                  }}
                 >
-                  <ArrowUp className="h-4 w-4" aria-hidden="true" />
-                  Subir
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `reorder:${selectedBlock.id}`}
-                  onClick={() => void moveBlock(selectedBlock.id, 1)}
-                >
-                  <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                  Descer
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  loading={busyKey === `visibility:${selectedBlock.id}`}
-                  onClick={() => void toggleVisibility(selectedBlock)}
-                >
-                  {selectedBlock.visible ? (
-                    <>
-                      <EyeOff className="h-4 w-4" aria-hidden="true" />
-                      Ocultar
-                    </>
-                  ) : (
-                    <>
-                      <Eye className="h-4 w-4" aria-hidden="true" />
-                      Exibir
-                    </>
-                  )}
-                </Button>
-                {!selectedBlockDef?.required ? (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    loading={busyKey === `remove:${selectedBlock.id}`}
-                    onClick={() => void removeSelectedBlock()}
+                  <div
+                    className="absolute left-0 top-0 max-w-none origin-top-left"
+                    style={{
+                      width: `${previewCanvasWidth}px`,
+                      transform: `scale(${previewScale})`,
+                    }}
                   >
-                    <Trash2 className="h-4 w-4" aria-hidden="true" />
-                    Remover
-                  </Button>
-                ) : null}
+                    <TemplateRenderer
+                      templateSlug={templateSlug}
+                      blocks={previewBlocks}
+                      profile={initialProfile}
+                      version={initialVersion}
+                      templateSourcePackage={initialTemplateSourcePackage}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="px-3 py-4 sm:px-5">
+                  <ResumeView
+                    templateSlug={templateSlug}
+                    blocks={previewBlocks}
+                    profile={initialProfile}
+                    version={initialVersion}
+                    config={initialResumeConfig}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <aside className="order-1 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:order-2 xl:self-start">
+          <div className="border-b border-neutral-200 px-3 py-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="truncate text-sm font-semibold text-neutral-950">
+                  {selectedBlockDef?.label ?? "Escolha um bloco"}
+                </h2>
+                <p className="mt-0.5 truncate text-xs text-neutral-500">
+                  {selectedBlockDef?.blockType ?? "Painel do bloco"}
+                </p>
               </div>
-            ) : null}
-          </CardHeader>
-          <CardContent className="space-y-5">
+              {selectedBlockDef?.required ? <Badge variant="warning">fixo</Badge> : null}
+            </div>
+          </div>
+
+          <div className="space-y-3 overflow-visible p-3 xl:max-h-[48.75rem] xl:overflow-y-auto">
             {errorMessage ? (
-              <div className="rounded-[20px] border border-coral-200 bg-coral-50 px-4 py-3 text-sm font-medium text-coral-900">
+              <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
                 {errorMessage}
               </div>
             ) : null}
             {successMessage ? (
-              <div className="rounded-[20px] border border-green-200 bg-green-50 px-4 py-3 text-sm font-medium text-green-900">
+              <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-900">
                 {successMessage}
               </div>
             ) : null}
 
             {selectedBlock && selectedBlockDef ? (
               <>
-                <div className="grid gap-4 md:grid-cols-2">
-                  {getEditableFields(selectedBlockDef).map((field) => renderEditableField(field))}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="grid grid-cols-1 gap-2 2xl:grid-cols-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `reorder:${selectedBlock.id}`}
+                    onClick={() => void moveBlock(selectedBlock.id, -1)}
+                  >
+                    <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                    Subir
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `reorder:${selectedBlock.id}`}
+                    onClick={() => void moveBlock(selectedBlock.id, 1)}
+                  >
+                    <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                    Descer
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    loading={busyKey === `visibility:${selectedBlock.id}`}
+                    onClick={() => void toggleVisibility(selectedBlock)}
+                  >
+                    {selectedBlock.visible ? (
+                      <>
+                        <EyeOff className="h-4 w-4" aria-hidden="true" />
+                        Ocultar
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="h-4 w-4" aria-hidden="true" />
+                        Exibir
+                      </>
+                    )}
+                  </Button>
                   <Button
                     type="button"
                     loading={busyKey === `save:${selectedBlock.id}`}
@@ -1098,38 +1262,32 @@ export default function CanonicalPageEditor({
                     <Save className="h-4 w-4" aria-hidden="true" />
                     Salvar
                   </Button>
-                  
+                  {!selectedBlockDef.required ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      loading={busyKey === `remove:${selectedBlock.id}`}
+                      onClick={() => void removeSelectedBlock()}
+                    className="2xl:col-span-2"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      Remover
+                    </Button>
+                  ) : null}
+                </div>
+
+                <div className="space-y-4">
+                  {getEditableFields(selectedBlockDef).map((field) => renderEditableField(field))}
                 </div>
               </>
             ) : (
-              <div className="rounded-[22px] border border-dashed border-neutral-300 bg-neutral-50 px-4 py-8 text-sm leading-7 text-neutral-500">
+              <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-8 text-sm leading-7 text-neutral-500">
                 Escolha um bloco para editar.
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card className="overflow-hidden rounded-[32px] border-neutral-200 bg-white/90">
-          <CardHeader>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-              Preview
-            </CardTitle>
-            <CardDescription>
-              {pageTitle} em {templateName}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="px-0 pb-0">
-            <div className="border-t border-neutral-200">
-              <TemplateRenderer
-                templateSlug={templateSlug}
-                blocks={previewBlocks}
-                profile={initialProfile}
-                version={initialVersion}
-                templateSourcePackage={initialTemplateSourcePackage}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </aside>
       </div>
     </section>
   );

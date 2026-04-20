@@ -1,7 +1,8 @@
 import { Agent } from "node:https";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { getEnv } from "@/lib/env";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 export interface UploadImageToS3Input {
   key: string;
@@ -74,13 +75,14 @@ function getS3Client() {
 
 function toPublicBaseUrl(endpoint: string, bucket: string) {
   const url = new URL(endpoint);
+  url.hostname = url.hostname.replace(".storage.supabase.co", ".supabase.co");
   url.pathname = url.pathname.replace(/\/storage\/v1\/s3\/?$/, "/storage/v1/object/public");
   return `${url.toString().replace(/\/$/, "")}/${bucket}`;
 }
 
 function buildPublicUrl(config: ReturnType<typeof requireS3Config>, key: string) {
   const baseUrl = config.publicBaseUrl?.replace(/\/$/, "") ?? toPublicBaseUrl(config.endpoint, config.bucket);
-  return `${baseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`;
+  return normalizeStoragePublicUrl(`${baseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`);
 }
 
 export async function uploadImageToS3(input: UploadImageToS3Input): Promise<UploadedS3Object> {
@@ -103,4 +105,16 @@ export async function uploadImageToS3(input: UploadImageToS3Input): Promise<Uplo
     key: input.key,
     url: buildPublicUrl(config, input.key),
   };
+}
+
+export async function getImageFromS3(key: string) {
+  const config = requireS3Config();
+  const client = getS3Client();
+
+  return client.send(
+    new GetObjectCommand({
+      Bucket: config.bucket,
+      Key: key,
+    })
+  );
 }

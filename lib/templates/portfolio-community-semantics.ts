@@ -13,6 +13,7 @@ import {
   getPlatformUrl,
 } from "@/lib/utils";
 import type { PortfolioCommunitySourcePackage } from "@/lib/templates/source-package";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type PortfolioCommunityBlockType =
   | "portfolio.hero"
@@ -145,7 +146,7 @@ function readImage(value: unknown) {
   if (!src) return null;
 
   return {
-    src,
+    src: normalizeStoragePublicUrl(src),
     alt: readString(image.alt),
   };
 }
@@ -345,7 +346,7 @@ export function derivePortfolioCommunitySemantics(args: {
   const portrait =
     readImage(heroConfig.portrait) ??
     (profile.avatarUrl
-      ? { src: profile.avatarUrl, alt: displayName || "Profile portrait" }
+      ? { src: normalizeStoragePublicUrl(profile.avatarUrl), alt: displayName || "Profile portrait" }
       : args.sourcePackage?.imports.default.imgUnsplashD1UPkiFd04A1
         ? {
             src: args.sourcePackage.imports.default.imgUnsplashD1UPkiFd04A1,
@@ -406,7 +407,7 @@ export function derivePortfolioCommunitySemantics(args: {
         title: project.title,
         description: project.description ?? "",
         date: formatProjectDate(project.startDate, "November 24, 2019"),
-        image: project.imageUrl ?? workFallbackImages[index] ?? "",
+        image: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : workFallbackImages[index] ?? "",
         href: project.url ?? project.repoUrl ?? "",
       };
     }
@@ -424,9 +425,10 @@ export function derivePortfolioCommunitySemantics(args: {
     };
   });
 
+  const selectedProofImageUrl = selectedProofs.find((proof) => proof.imageUrl)?.imageUrl;
   const supportImage =
     readImage(contactConfig.image)?.src ??
-    selectedProofs.find((proof) => proof.imageUrl)?.imageUrl ??
+    (selectedProofImageUrl ? normalizeStoragePublicUrl(selectedProofImageUrl) : undefined) ??
     args.sourcePackage?.imports.default.imgUnsplash2Xht5D22Y0I ??
     "";
 

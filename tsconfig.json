@@ -25,6 +25,7 @@
     "out",
     "build",
     "coverage",
+    "editor-otimizacao",
     "assets/template/**/template-code/**",
     "apps/**/dist",
     "packages/**/dist"
