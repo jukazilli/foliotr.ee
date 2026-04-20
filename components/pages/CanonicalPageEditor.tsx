@@ -910,15 +910,15 @@ export default function CanonicalPageEditor({
   }
 
   return (
-    <section className="grid min-h-[720px] gap-4 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-3 shadow-sm xl:grid-cols-[340px_minmax(0,1fr)]">
+    <section className="grid min-h-[720px] min-w-0 gap-4 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[340px_minmax(0,1fr)]">
       <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
         <div className="border-b border-neutral-200 px-3 py-3">
           <div className="flex items-center justify-between gap-3">
-            <div>
+            <div className="min-w-0">
               <h2 className="text-sm font-semibold text-neutral-950">Blocos</h2>
               <p className="mt-0.5 text-xs text-neutral-500">{blocks.length} secoes no template</p>
             </div>
-            <span className="text-xs font-medium text-neutral-500">Selecionar</span>
+            <span className="hidden shrink-0 text-xs font-medium text-neutral-500 sm:inline">Selecionar</span>
           </div>
         </div>
 
@@ -987,7 +987,7 @@ export default function CanonicalPageEditor({
             <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
               Adicionar
             </h3>
-            <span className="text-xs text-neutral-500">{availableBlockDefs.length} disponiveis</span>
+            <span className="shrink-0 text-xs text-neutral-500">{availableBlockDefs.length} disponiveis</span>
           </div>
           <div className="space-y-1">
             {availableBlockDefs.length === 0 ? (
@@ -1021,8 +1021,8 @@ export default function CanonicalPageEditor({
         </div>
       </aside>
 
-      <div className="grid gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
-        <section className="overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
+      <div className="grid min-w-0 gap-4 2xl:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="order-2 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 2xl:order-1">
           <div className="flex items-center justify-between gap-3 border-b border-neutral-300/80 bg-white/90 px-4 py-3">
             <div className="min-w-0">
               <h2 className="text-sm font-semibold text-neutral-950">Preview</h2>
@@ -1030,12 +1030,12 @@ export default function CanonicalPageEditor({
                 {pageTitle} em {templateName}
               </p>
             </div>
-            <span className="shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-semibold text-neutral-500">
+            <span className="hidden shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[11px] font-semibold text-neutral-500 sm:inline-flex">
               760px
             </span>
           </div>
-          <div className="max-h-[780px] overflow-y-auto bg-neutral-100 px-3 py-6 sm:px-6 lg:px-8">
-            <div className="mx-auto min-h-[640px] w-full max-w-[760px] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm">
+          <div className="max-h-[70vh] overflow-y-auto bg-neutral-100 px-2 py-4 sm:px-6 sm:py-6 lg:max-h-[780px] lg:px-8">
+            <div className="mx-auto min-h-[420px] w-full max-w-[760px] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm sm:min-h-[640px]">
               <TemplateRenderer
                 templateSlug={templateSlug}
                 blocks={previewBlocks}
@@ -1047,7 +1047,7 @@ export default function CanonicalPageEditor({
           </div>
         </section>
 
-        <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 2xl:sticky 2xl:top-20 2xl:self-start">
+        <aside className="order-1 overflow-hidden rounded-lg border border-neutral-200 bg-white/95 2xl:sticky 2xl:top-20 2xl:order-2 2xl:self-start">
           <div className="border-b border-neutral-200 px-4 py-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
@@ -1062,7 +1062,7 @@ export default function CanonicalPageEditor({
             </div>
           </div>
 
-          <div className="max-h-[780px] space-y-4 overflow-y-auto p-3">
+          <div className="space-y-4 overflow-visible p-3 2xl:max-h-[780px] 2xl:overflow-y-auto">
             {errorMessage ? (
               <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
                 {errorMessage}
@@ -1076,7 +1076,7 @@ export default function CanonicalPageEditor({
 
             {selectedBlock && selectedBlockDef ? (
               <>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   <Button
                     type="button"
                     variant="outline"
@@ -1131,7 +1131,7 @@ export default function CanonicalPageEditor({
                       size="sm"
                       loading={busyKey === `remove:${selectedBlock.id}`}
                       onClick={() => void removeSelectedBlock()}
-                      className="col-span-2"
+                      className="sm:col-span-2"
                     >
                       <Trash2 className="h-4 w-4" aria-hidden="true" />
                       Remover

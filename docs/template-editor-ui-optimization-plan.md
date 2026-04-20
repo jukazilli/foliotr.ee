@@ -1,6 +1,6 @@
 # Template Editor UI Optimization Plan
 
-Status: slice 4 completed  
+Status: slice 5 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
 Reference material: `editor-otimizacao/editor`  
@@ -347,6 +347,19 @@ Acceptance:
 - Sidebar rows and action buttons remain readable
 - UI feels dense but not cramped
 
+Slice 5 result:
+
+- `components/pages/CanonicalPageEditor.tsx` refined the responsive workspace layout without changing editor behavior.
+- The mobile/tablet fallback now stacks as blocks, inspector and then preview; wide screens keep preview plus right inspector.
+- Rail/header labels and preview width marker now avoid squeezing narrow screens.
+- The inspector action cluster uses one column on narrow screens and two columns from `sm`, preventing button text overflow.
+- The preview canvas uses smaller mobile padding and `min-h-[420px]`, then returns to the larger desktop frame from `sm`.
+- The inspector only gets an internal scroll container on wide screens, avoiding nested scroll traps in stacked mobile layout.
+- Existing focus-visible styling on block rows was preserved and no new business action was introduced.
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- Browser validation remains deferred to Slice 6 because the local Next dev server issue is already documented.
+
 ### Slice 6 - Validation And Documentation Closure
 
 Goal: prove that the refactor preserved behavior and update memory.
@@ -376,7 +389,7 @@ Checklist:
 - [x] Slice 2 completed
 - [x] Slice 3 completed
 - [x] Slice 4 completed
-- [ ] Slice 5 completed
+- [x] Slice 5 completed
 - [ ] Slice 6 completed
 
 ## Risks
