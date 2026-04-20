@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { JsonValue } from "@prisma/client/runtime/library";
 import {
   ArrowDown,
@@ -21,6 +21,12 @@ import { Input } from "@/components/ui/input";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type JsonRecord = Record<string, unknown>;
+type CanvasDimensionKey = "width" | "height";
+
+const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
+const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
+const MIN_PREVIEW_SCALE = 0.24;
+const MAX_PREVIEW_SCALE = 1;
 
 interface TemplateBlockDefLike {
   id: string;
@@ -89,6 +95,18 @@ function asJsonValue(value: unknown): JsonValue {
 
 function asArray(value: unknown) {
   return Array.isArray(value) ? value : [];
+}
+
+function readPreviewCanvasDimension(
+  sourcePackage: unknown,
+  key: CanvasDimensionKey,
+  fallback: number
+) {
+  const packageRecord = asRecord(sourcePackage);
+  const canvas = asRecord(packageRecord.canvas);
+  const value = canvas[key];
+
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
 function sortBlocks(blocks: RenderablePageBlock[]) {
@@ -199,6 +217,58 @@ export default function CanonicalPageEditor({
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const previewFrameRef = useRef<HTMLDivElement | null>(null);
+  const [previewScale, setPreviewScale] = useState(0.5);
+
+  const previewCanvasWidth = useMemo(
+    () =>
+      readPreviewCanvasDimension(
+        initialTemplateSourcePackage,
+        "width",
+        FALLBACK_PREVIEW_CANVAS_WIDTH
+      ),
+    [initialTemplateSourcePackage]
+  );
+  const previewCanvasHeight = useMemo(
+    () =>
+      readPreviewCanvasDimension(
+        initialTemplateSourcePackage,
+        "height",
+        FALLBACK_PREVIEW_CANVAS_HEIGHT
+      ),
+    [initialTemplateSourcePackage]
+  );
+
+  useEffect(() => {
+    const frame = previewFrameRef.current;
+    if (!frame) return;
+
+    function updateScale(width: number) {
+      const nextScale = Math.min(
+        MAX_PREVIEW_SCALE,
+        Math.max(MIN_PREVIEW_SCALE, width / previewCanvasWidth)
+      );
+
+      setPreviewScale((current) =>
+        Math.abs(current - nextScale) > 0.005 ? nextScale : current
+      );
+    }
+
+    updateScale(frame.clientWidth);
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) updateScale(width);
+    });
+
+    observer.observe(frame);
+
+    return () => observer.disconnect();
+  }, [previewCanvasWidth]);
 
   const manifestByKey = useMemo(
     () => new Map(manifestBlocks.map((block) => [block.key, block])),
@@ -1037,9 +1107,24 @@ export default function CanonicalPageEditor({
             </span>
           </div>
           <div className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-5 sm:py-5 lg:max-h-[48.75rem] lg:px-6">
-            <div className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm">
-              <div className="relative h-[84rem] sm:h-[106rem] md:h-[126rem] lg:h-[133rem]">
-                <div className="absolute left-1/2 top-0 w-[90rem] max-w-none origin-top -translate-x-1/2 scale-[0.333] sm:scale-[0.42] md:scale-50 lg:scale-[0.528]">
+            <div
+              ref={previewFrameRef}
+              className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm"
+            >
+              <div
+                className="relative mx-auto"
+                style={{
+                  width: `${previewCanvasWidth * previewScale}px`,
+                  height: `${previewCanvasHeight * previewScale}px`,
+                }}
+              >
+                <div
+                  className="absolute left-0 top-0 max-w-none origin-top-left"
+                  style={{
+                    width: `${previewCanvasWidth}px`,
+                    transform: `scale(${previewScale})`,
+                  }}
+                >
                   <TemplateRenderer
                     templateSlug={templateSlug}
                     blocks={previewBlocks}
