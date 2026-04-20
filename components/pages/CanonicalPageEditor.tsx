@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { JsonValue } from "@prisma/client/runtime/library";
+import type { ResumeConfig } from "@/generated/prisma-client";
 import {
   ArrowDown,
   ArrowUp,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
+import ResumeView from "@/components/resume/ResumeView";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +24,7 @@ import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type JsonRecord = Record<string, unknown>;
 type CanvasDimensionKey = "width" | "height";
+type PreviewMode = "portfolio" | "resume";
 
 const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
 const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
@@ -65,6 +68,7 @@ interface CanonicalPageEditorProps {
   manifestBlocks: ManifestBlockLike[];
   initialProfile: TemplateProfile;
   initialVersion: VersionSelectionLike;
+  initialResumeConfig?: ResumeConfig | null;
   initialTemplateSourcePackage?: unknown;
 }
 
@@ -206,6 +210,7 @@ export default function CanonicalPageEditor({
   manifestBlocks,
   initialProfile,
   initialVersion,
+  initialResumeConfig,
   initialTemplateSourcePackage,
 }: CanonicalPageEditorProps) {
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
@@ -217,6 +222,7 @@ export default function CanonicalPageEditor({
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("portfolio");
   const previewFrameRef = useRef<HTMLDivElement | null>(null);
   const [previewScale, setPreviewScale] = useState(0.5);
 
@@ -984,6 +990,33 @@ export default function CanonicalPageEditor({
   return (
     <section className="grid min-h-[45rem] min-w-0 gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:grid-cols-[20rem_minmax(0,1fr)]">
       <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
+        <div className="border-b border-neutral-200 bg-neutral-50/80 p-2">
+          <div className="grid grid-cols-2 rounded-lg border border-neutral-200 bg-neutral-100 p-1">
+            {[
+              { key: "portfolio", label: "Portfolio" },
+              { key: "resume", label: "Curriculo" },
+            ].map((item) => {
+              const isActive = previewMode === item.key;
+
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => setPreviewMode(item.key as PreviewMode)}
+                  className={`h-9 rounded-md px-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 ${
+                    isActive
+                      ? "bg-white text-neutral-950 shadow-sm"
+                      : "text-neutral-600 hover:bg-white/70 hover:text-neutral-950"
+                  }`}
+                  aria-pressed={isActive}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="border-b border-neutral-200 px-3 py-3">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
@@ -1097,7 +1130,9 @@ export default function CanonicalPageEditor({
         <section className="order-2 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 xl:order-1">
           <div className="flex items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
             <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-neutral-950">Preview</h2>
+              <h2 className="text-sm font-semibold text-neutral-950">
+                {previewMode === "portfolio" ? "Portfolio" : "Curriculo"}
+              </h2>
               <p className="mt-0.5 truncate text-xs text-neutral-500">
                 {pageTitle} em {templateName}
               </p>
@@ -1111,29 +1146,41 @@ export default function CanonicalPageEditor({
               ref={previewFrameRef}
               className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm"
             >
-              <div
-                className="relative mx-auto"
-                style={{
-                  width: `${previewCanvasWidth * previewScale}px`,
-                  height: `${previewCanvasHeight * previewScale}px`,
-                }}
-              >
+              {previewMode === "portfolio" ? (
                 <div
-                  className="absolute left-0 top-0 max-w-none origin-top-left"
+                  className="relative mx-auto"
                   style={{
-                    width: `${previewCanvasWidth}px`,
-                    transform: `scale(${previewScale})`,
+                    width: `${previewCanvasWidth * previewScale}px`,
+                    height: `${previewCanvasHeight * previewScale}px`,
                   }}
                 >
-                  <TemplateRenderer
+                  <div
+                    className="absolute left-0 top-0 max-w-none origin-top-left"
+                    style={{
+                      width: `${previewCanvasWidth}px`,
+                      transform: `scale(${previewScale})`,
+                    }}
+                  >
+                    <TemplateRenderer
+                      templateSlug={templateSlug}
+                      blocks={previewBlocks}
+                      profile={initialProfile}
+                      version={initialVersion}
+                      templateSourcePackage={initialTemplateSourcePackage}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="px-3 py-4 sm:px-5">
+                  <ResumeView
                     templateSlug={templateSlug}
                     blocks={previewBlocks}
                     profile={initialProfile}
                     version={initialVersion}
-                    templateSourcePackage={initialTemplateSourcePackage}
+                    config={initialResumeConfig}
                   />
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </section>
