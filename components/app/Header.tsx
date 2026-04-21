@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { ChevronDown, ExternalLink, Home, LogOut, Search, Settings, UserRound } from "lucide-react";
+import {
+  ChevronDown,
+  ExternalLink,
+  Home,
+  LogOut,
+  Search,
+  Settings,
+  UserRound,
+} from "lucide-react";
 import { signOutAction } from "@/components/app/actions";
 import { appNavigation, type AppNavItem } from "@/components/app/navigation";
 import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
@@ -23,7 +31,9 @@ const menuGroups: MenuGroup[] = [
   },
   {
     label: "Conteudo",
-    items: appNavigation.filter((item) => ["/profile", "/versions"].includes(item.href)),
+    items: appNavigation.filter((item) =>
+      ["/profile", "/versions"].includes(item.href)
+    ),
   },
   {
     label: "Publicacao",
@@ -52,9 +62,15 @@ function AccountAvatar({
     <span className="relative flex h-7 w-7 shrink-0 overflow-hidden rounded-full bg-red-500 text-[11px] font-medium text-white">
       {userImage ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={userImage} alt={userName ?? ""} className="h-full w-full object-cover" />
+        <img
+          src={userImage}
+          alt={userName ?? ""}
+          className="h-full w-full object-cover"
+        />
       ) : (
-        <span className="flex h-full w-full items-center justify-center">{initials}</span>
+        <span className="flex h-full w-full items-center justify-center">
+          {initials}
+        </span>
       )}
     </span>
   );
@@ -88,7 +104,9 @@ function TopMenuGroup({ group }: { group: MenuGroup }) {
               <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <span className="min-w-0">
-              <span className="block text-[13px] font-normal tracking-[0.005em]">{item.label}</span>
+              <span className="block text-[13px] font-normal tracking-[0.005em]">
+                {item.label}
+              </span>
               <span className="mt-0.5 block text-xs font-normal leading-4 text-neutral-500">
                 {item.description}
               </span>
@@ -112,7 +130,9 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
             )}
           >
             <AccountAvatar userName={userName} userImage={userImage} />
-            <span className="hidden max-w-36 truncate sm:block">{userName ?? "Sua conta"}</span>
+            <span className="hidden max-w-36 truncate sm:block">
+              {userName ?? "Sua conta"}
+            </span>
             <ChevronDown
               className="hidden h-3 w-3 text-neutral-600 transition-transform group-open:rotate-180 sm:block"
               strokeWidth={1.8}
@@ -157,7 +177,10 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
           markClassName="h-4 w-4 text-neutral-950"
         />
 
-        <nav aria-label="Navegacao principal" className="hidden min-w-0 flex-1 items-center gap-3 lg:flex">
+        <nav
+          aria-label="Navegacao principal"
+          className="hidden min-w-0 flex-1 items-center gap-3 lg:flex"
+        >
           {menuGroups.map((group) => (
             <TopMenuGroup key={group.label} group={group} />
           ))}
@@ -173,7 +196,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
               href={item.href}
               className="inline-flex h-[32px] shrink-0 items-center gap-1.5 rounded-full bg-neutral-100 px-2.5 text-[13px] font-normal tracking-[0.005em] text-neutral-700 transition-colors hover:bg-neutral-200 hover:text-neutral-950"
             >
-                <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
+              <item.icon className="h-3.5 w-3.5" aria-hidden="true" />
               {item.shortLabel}
             </Link>
           ))}
@@ -182,6 +205,8 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
         <div className="hidden h-[32px] w-[230px] shrink-0 items-center gap-2 rounded-full bg-neutral-100 px-3 xl:flex">
           <Search className="h-3.5 w-3.5 text-neutral-500" aria-hidden="true" />
           <input
+            id="app-header-search"
+            name="appHeaderSearch"
             type="search"
             placeholder="Buscar"
             className="min-w-0 flex-1 bg-transparent text-[13px] font-normal text-neutral-900 outline-none placeholder:text-neutral-500"
@@ -200,7 +225,6 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
             Abrir pagina
           </Link>
         ) : null}
-
       </div>
 
       <div className="flex items-center gap-1.5 overflow-x-auto border-t border-neutral-200/70 bg-neutral-50/80 px-3 py-1.5 text-xs font-normal tracking-[0.005em] text-neutral-500">

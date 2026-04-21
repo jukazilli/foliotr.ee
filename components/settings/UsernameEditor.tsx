@@ -17,7 +17,9 @@ type SaveStatus = "idle" | "checking" | "saving" | "saved" | "error";
 
 function readApiMessage(body: unknown) {
   if (!body || typeof body !== "object") return null;
-  const error = (body as { error?: { message?: string; details?: { message?: string } } }).error;
+  const error = (
+    body as { error?: { message?: string; details?: { message?: string } } }
+  ).error;
   return error?.details?.message ?? error?.message ?? null;
 }
 
@@ -68,7 +70,9 @@ export function UsernameEditor({
             | unknown;
 
           if (!response.ok) {
-            throw new Error(readApiMessage(body) ?? "Nao foi possivel validar o username.");
+            throw new Error(
+              readApiMessage(body) ?? "Nao foi possivel validar o username."
+            );
           }
 
           const availability = body as UsernameAvailability;
@@ -86,7 +90,9 @@ export function UsernameEditor({
         .catch((error: unknown) => {
           if (controller.signal.aborted) return;
           setStatus("error");
-          setMessage(error instanceof Error ? error.message : "Nao foi possivel validar.");
+          setMessage(
+            error instanceof Error ? error.message : "Nao foi possivel validar."
+          );
         });
     }, 450);
 
@@ -117,7 +123,9 @@ export function UsernameEditor({
     if (!response.ok) {
       const details = body?.error?.details;
       setStatus("error");
-      setMessage(details?.message ?? readApiMessage(body) ?? "Nao foi possivel salvar.");
+      setMessage(
+        details?.message ?? readApiMessage(body) ?? "Nao foi possivel salvar."
+      );
       setSuggestions(Array.isArray(details?.suggestions) ? details.suggestions : []);
       return;
     }
@@ -138,6 +146,8 @@ export function UsernameEditor({
           <Globe className="h-4 w-4 shrink-0 text-neutral-400" aria-hidden />
           <span className="font-mono text-xs text-neutral-400">foliotr.ee/</span>
           <input
+            id="profile-username"
+            name="username"
             value={value}
             onChange={(event) => {
               setValue(event.target.value);

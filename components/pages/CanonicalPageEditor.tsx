@@ -2974,14 +2974,20 @@ export default function CanonicalPageEditor({
                 (typeof propValue === "string" && propValue.length > 120) ||
                 propKey === "description";
               const inputType = propKey.includes("href") ? "url" : "text";
+              const propFieldId = `page-editor-${fieldKey}-${index}-${propKey}`;
 
               return (
                 <div key={`${fieldKey}-${index}-${propKey}`} className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+                  <label
+                    htmlFor={propFieldId}
+                    className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500"
+                  >
                     {propKey}
                   </label>
                   {isLongText ? (
                     <textarea
+                      id={propFieldId}
+                      name={propFieldId}
                       className={textareaClassName()}
                       value={typeof propValue === "string" ? propValue : ""}
                       onChange={(event) =>
@@ -2990,6 +2996,8 @@ export default function CanonicalPageEditor({
                     />
                   ) : (
                     <Input
+                      id={propFieldId}
+                      name={propFieldId}
                       type={inputType}
                       value={typeof propValue === "string" ? propValue : ""}
                       onChange={(event) =>
@@ -3039,9 +3047,9 @@ export default function CanonicalPageEditor({
 
       return (
         <div key={field.key} className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
             {field.label}
-          </label>
+          </p>
           <div className="grid grid-cols-3 gap-2">
             {(["left", "center", "right"] as const).map((align) => (
               <Button
@@ -3064,12 +3072,18 @@ export default function CanonicalPageEditor({
     }
 
     if (typeof value === "number") {
+      const inputId = `page-editor-field-${field.key}`;
       return (
         <div key={field.key} className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          <label
+            htmlFor={inputId}
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500"
+          >
             {field.label}
           </label>
           <Input
+            id={inputId}
+            name={inputId}
             type="number"
             min={1}
             max={12}
@@ -3114,12 +3128,18 @@ export default function CanonicalPageEditor({
     }
 
     if (field.kind === "longText") {
+      const textareaId = `page-editor-field-${field.key}`;
       return (
         <div key={field.key} className="space-y-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+          <label
+            htmlFor={textareaId}
+            className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500"
+          >
             {field.label}
           </label>
           <textarea
+            id={textareaId}
+            name={textareaId}
             className={textareaClassName()}
             value={typeof value === "string" ? value : ""}
             onChange={(event) => updateDraftField(field.key, event.target.value)}
@@ -3129,12 +3149,18 @@ export default function CanonicalPageEditor({
       );
     }
 
+    const inputId = `page-editor-field-${field.key}`;
     return (
       <div key={field.key} className="space-y-2">
-        <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+        <label
+          htmlFor={inputId}
+          className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500"
+        >
           {field.label}
         </label>
         <Input
+          id={inputId}
+          name={inputId}
           type={field.kind === "url" ? "url" : "text"}
           value={typeof value === "string" ? value : ""}
           onChange={(event) => updateDraftField(field.key, event.target.value)}
@@ -3155,6 +3181,8 @@ export default function CanonicalPageEditor({
       </div>
       <input
         ref={imageFileInputRef}
+        id="page-editor-image-file-input"
+        name="pageEditorImageFile"
         type="file"
         accept={IMAGE_FILE_ACCEPT}
         tabIndex={-1}

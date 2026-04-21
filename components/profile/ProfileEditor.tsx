@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type ReactNode,
+} from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -165,8 +172,13 @@ type StoredProfilePhoto = {
   size: number;
 };
 
+type ProfileImageFileTarget =
+  | { kind: "avatar" }
+  | { kind: "projectCover"; projectKey: string };
+
 const PROFILE_PHOTO_MAX_SIZE = 5 * 1024 * 1024;
 const PROFILE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const PROFILE_IMAGE_FILE_ACCEPT = "image/png,image/jpeg,image/webp";
 const PROJECT_COVER_MAX_SIZE = PROFILE_PHOTO_MAX_SIZE;
 const PROJECT_COVER_TYPES = PROFILE_PHOTO_TYPES;
 
@@ -712,6 +724,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     () => new Set()
   );
   const [today, setToday] = useState<Date | null>(null);
+  const [profileImagePickerOpen, setProfileImagePickerOpen] = useState(false);
+  const profileImageFileInputRef = useRef<HTMLInputElement | null>(null);
+  const profileImageFileTargetRef = useRef<ProfileImageFileTarget | null>(null);
+  const profileImagePickerOpenRef = useRef(false);
 
   const username = profile.user.username;
   const age = useMemo(() => {
@@ -731,6 +747,30 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
   useEffect(() => {
     setToday(new Date());
+  }, []);
+
+  useEffect(() => {
+    const input = profileImageFileInputRef.current;
+
+    function releaseProfileImagePicker() {
+      window.setTimeout(() => {
+        profileImagePickerOpenRef.current = false;
+        setProfileImagePickerOpen(false);
+      }, 150);
+    }
+
+    function cancelProfileImagePicker() {
+      profileImageFileTargetRef.current = null;
+      releaseProfileImagePicker();
+    }
+
+    input?.addEventListener("cancel", cancelProfileImagePicker);
+    window.addEventListener("focus", releaseProfileImagePicker);
+
+    return () => {
+      input?.removeEventListener("cancel", cancelProfileImagePicker);
+      window.removeEventListener("focus", releaseProfileImagePicker);
+    };
   }, []);
 
   function setBase<K extends keyof EditableProfile>(
@@ -915,10 +955,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     router.refresh();
   }
 
-  function handleProfilePhotoChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-
+  function processProfilePhotoFile(file: File | null) {
     if (!file || uploadStatus === "uploading") return;
 
     if (!PROFILE_PHOTO_TYPES.includes(file.type)) {
@@ -1002,13 +1039,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     clearProjectImageError(projectKey);
   }
 
-  function handleProjectCoverChange(
-    projectKey: string,
-    event: ChangeEvent<HTMLInputElement>
-  ) {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-
+  function processProjectCoverFile(projectKey: string, file: File | null) {
     if (!file) return;
 
     if (!PROJECT_COVER_TYPES.includes(file.type)) {
@@ -1033,6 +1064,50 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       });
   }
 
+  function requestProfileImageFile(target: ProfileImageFileTarget) {
+    const input = profileImageFileInputRef.current;
+    if (
+      !input ||
+      profileImagePickerOpenRef.current ||
+      profileImagePickerOpen ||
+      uploadStatus === "uploading" ||
+      Boolean(projectUploadKey)
+    ) {
+      return;
+    }
+
+    profileImagePickerOpenRef.current = true;
+    profileImageFileTargetRef.current = target;
+    setProfileImagePickerOpen(true);
+
+    try {
+      input.value = "";
+      input.click();
+    } catch {
+      profileImagePickerOpenRef.current = false;
+      profileImageFileTargetRef.current = null;
+      setProfileImagePickerOpen(false);
+    }
+  }
+
+  function handleSharedProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0] ?? null;
+    const target = profileImageFileTargetRef.current;
+    event.currentTarget.value = "";
+    profileImageFileTargetRef.current = null;
+    profileImagePickerOpenRef.current = false;
+    setProfileImagePickerOpen(false);
+
+    if (!file || !target) return;
+
+    if (target.kind === "avatar") {
+      processProfilePhotoFile(file);
+      return;
+    }
+
+    processProjectCoverFile(target.projectKey, file);
+  }
+
   function removeProjectCover(projectKey: string) {
     updateList<EditableProject>("projects", projectKey, {
       imageUrl: "",
@@ -1046,6 +1121,17 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
   return (
     <div className="space-y-8">
+      <input
+        ref={profileImageFileInputRef}
+        id="profile-image-file-input"
+        name="profileImageFile"
+        type="file"
+        accept={PROFILE_IMAGE_FILE_ACCEPT}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
+        onChange={handleSharedProfileImageChange}
+      />
       <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
@@ -1139,20 +1225,20 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                         </div>
 
                         <div className="flex flex-wrap gap-2">
-                          <label className="inline-flex cursor-pointer items-center rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50">
+                          <button
+                            type="button"
+                            disabled={
+                              uploadStatus === "uploading" || profileImagePickerOpen
+                            }
+                            onClick={() => requestProfileImageFile({ kind: "avatar" })}
+                            className="inline-flex cursor-pointer items-center rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 disabled:pointer-events-none disabled:opacity-55"
+                          >
                             {uploadStatus === "uploading"
                               ? "Enviando..."
                               : photoPreview
                                 ? "Trocar foto"
                                 : "Adicionar foto"}
-                            <input
-                              type="file"
-                              accept="image/png,image/jpeg,image/webp"
-                              className="hidden"
-                              disabled={uploadStatus === "uploading"}
-                              onChange={handleProfilePhotoChange}
-                            />
-                          </label>
+                          </button>
 
                           {photoPreview ? (
                             <button
@@ -1175,6 +1261,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
                     <Field label="Nome de exibicao">
                       <input
+                        id="profile-display-name"
+                        name="displayName"
                         className={inputClass()}
                         value={profile.displayName ?? ""}
                         onChange={onInput("displayName")}
@@ -1188,6 +1276,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     </Field>
                     <Field label="Headline" meta="template e curriculo">
                       <input
+                        id="profile-headline"
+                        name="headline"
                         className={inputClass()}
                         value={profile.headline ?? ""}
                         onChange={onInput("headline")}
@@ -1195,6 +1285,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     </Field>
                     <Field label="Bio curta">
                       <textarea
+                        id="profile-bio"
+                        name="bio"
                         className={textareaClass()}
                         value={profile.bio ?? ""}
                         onChange={onInput("bio")}
@@ -1203,6 +1295,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Localizacao">
                         <input
+                          id="profile-location"
+                          name="location"
                           className={inputClass()}
                           value={profile.location ?? ""}
                           onChange={onInput("location")}
@@ -1210,6 +1304,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                       </Field>
                       <Field label="Pronomes">
                         <input
+                          id="profile-pronouns"
+                          name="pronouns"
                           className={inputClass()}
                           value={profile.pronouns ?? ""}
                           onChange={onInput("pronouns")}
@@ -1219,6 +1315,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Email publico">
                         <input
+                          id="profile-public-email"
+                          name="publicEmail"
                           className={inputClass()}
                           value={profile.publicEmail ?? ""}
                           onChange={onInput("publicEmail")}
@@ -1226,6 +1324,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                       </Field>
                       <Field label="Telefone">
                         <input
+                          id="profile-phone"
+                          name="phone"
                           className={inputClass()}
                           value={profile.phone ?? ""}
                           onChange={onInput("phone")}
@@ -1235,6 +1335,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Data de nascimento">
                         <input
+                          id="profile-birth-date"
+                          name="birthDate"
                           type="date"
                           className={inputClass()}
                           value={profile.birthDate ?? ""}
@@ -1249,6 +1351,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     </div>
                     <Field label="Site">
                       <input
+                        id="profile-website-url"
+                        name="websiteUrl"
                         className={inputClass()}
                         value={profile.websiteUrl ?? ""}
                         onChange={onInput("websiteUrl")}
@@ -1565,10 +1669,18 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                           ) : null}
                         </div>
                         <div className="flex items-center gap-1">
-                          <label
-                            className={`inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:bg-lime-50 hover:text-lime-800 ${
-                              projectUploadKey ? "pointer-events-none opacity-55" : ""
-                            }`}
+                          <button
+                            type="button"
+                            disabled={
+                              profileImagePickerOpen || Boolean(projectUploadKey)
+                            }
+                            onClick={() =>
+                              requestProfileImageFile({
+                                kind: "projectCover",
+                                projectKey: item._key,
+                              })
+                            }
+                            className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:bg-lime-50 hover:text-lime-800 disabled:pointer-events-none disabled:opacity-55"
                             title={item.imageUrl ? "Trocar capa" : "Adicionar capa"}
                             aria-label={
                               item.imageUrl
@@ -1577,15 +1689,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                             }
                           >
                             <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              className="hidden"
-                              onChange={(event) =>
-                                handleProjectCoverChange(item._key, event)
-                              }
-                            />
-                          </label>
+                          </button>
                           {item.imageUrl ? (
                             <IconButton
                               label="Remover capa do projeto"
