@@ -61,6 +61,7 @@ function createTx() {
     resumeConfig: {
       findUnique: vi.fn(),
       upsert: vi.fn(),
+      update: vi.fn(),
     },
     versionExperience: {
       deleteMany: vi.fn(),
@@ -239,6 +240,135 @@ describe("versions domain", () => {
       where: { id: "page_1" },
       data: {
         publishedSnapshot: expect.any(Object),
+        publishedSnapshotAt: expect.any(Date),
+      },
+    });
+  });
+
+  it("publishes page snapshots with the current profile instead of stale editor snapshots", async () => {
+    const tx = createTx();
+    const db = createDb(tx);
+    const freshProfile = {
+      ...profileAggregate,
+      userId: "user_1",
+      avatarUrl: "/uploads/current-avatar.jpg",
+    };
+    const staleEditorSnapshot = {
+      profile: {
+        avatarUrl: "/uploads/old-avatar.png",
+      },
+      version: {},
+    };
+
+    tx.profile.findUnique.mockResolvedValue(freshProfile);
+    tx.version.findFirst.mockResolvedValue({ id: "version_1", profileId: "profile_1" });
+    tx.template.findUnique.mockResolvedValue({ id: "template_1", isActive: true });
+    tx.page.findFirst
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: "page_1",
+        publishedAt: new Date("2026-04-18T10:00:00.000Z"),
+        templateId: "template_1",
+        editorSnapshot: staleEditorSnapshot,
+        publishedSnapshotAt: new Date("2026-04-18T10:00:00.000Z"),
+      });
+    tx.page.update.mockResolvedValue({ id: "page_1" });
+    tx.pageBlock.count.mockResolvedValue(1);
+    tx.pageBlock.findMany.mockResolvedValue([]);
+    tx.version.findUniqueOrThrow
+      .mockResolvedValueOnce({
+        id: "version_1",
+        experiences: [],
+        educations: [],
+        projects: [],
+        skills: [],
+        achievements: [],
+        proofs: [],
+        highlights: [],
+        links: [],
+      })
+      .mockResolvedValueOnce({ id: "version_1" });
+
+    await upsertOwnedPageOutput(db as never, "user_1", "version_1", {
+      title: "Design Lead",
+      slug: "design-lead",
+      templateId: "template_1",
+      publishState: "PUBLISHED",
+    });
+
+    const metadataUpdate = tx.page.update.mock.calls[0]?.[0];
+    const publicationUpdate = tx.page.update.mock.calls[1]?.[0];
+
+    expect(metadataUpdate.data.editorSnapshot.profile.avatarUrl).toBe(
+      "/uploads/current-avatar.jpg"
+    );
+    expect(publicationUpdate.data.publishedSnapshot.profile.avatarUrl).toBe(
+      "/uploads/current-avatar.jpg"
+    );
+  });
+
+  it("publishes resume snapshots with the current profile instead of stale page snapshots", async () => {
+    const tx = createTx();
+    const db = createDb(tx);
+    const freshProfile = {
+      ...profileAggregate,
+      userId: "user_1",
+      avatarUrl: "/uploads/current-avatar.jpg",
+    };
+
+    tx.profile.findUnique.mockResolvedValue(freshProfile);
+    tx.version.findFirst.mockResolvedValue({ id: "version_1", profileId: "profile_1" });
+    tx.version.findUniqueOrThrow
+      .mockResolvedValueOnce({
+        id: "version_1",
+        experiences: [],
+        educations: [],
+        projects: [],
+        skills: [],
+        achievements: [],
+        proofs: [],
+        highlights: [],
+        links: [],
+      })
+      .mockResolvedValueOnce({ id: "version_1" });
+    tx.resumeConfig.findUnique.mockResolvedValue({
+      publishedAt: new Date("2026-04-18T10:00:00.000Z"),
+      publishedSnapshotAt: new Date("2026-04-18T10:00:00.000Z"),
+    });
+    tx.resumeConfig.upsert.mockResolvedValue({
+      sections: ["hero", "experience"],
+      layout: "classic",
+      accentColor: null,
+      showPhoto: true,
+      showLinks: true,
+    });
+    tx.page.findFirst.mockResolvedValue({
+      id: "page_1",
+      editorSnapshot: {
+        profile: { avatarUrl: "/uploads/old-avatar.png" },
+        version: {},
+      },
+    });
+    tx.pageBlock.findMany.mockResolvedValue([]);
+    tx.resumeConfig.update.mockResolvedValue({ id: "resume_1" });
+
+    await upsertOwnedResumeOutput(db as never, "user_1", "version_1", {
+      sections: ["hero", "experience"],
+      layout: "classic",
+      accentColor: "",
+      showPhoto: true,
+      showLinks: true,
+      publishState: "PUBLISHED",
+    });
+
+    expect(tx.resumeConfig.update).toHaveBeenCalledWith({
+      where: { versionId: "version_1" },
+      data: {
+        publishedSnapshot: expect.objectContaining({
+          profile: expect.objectContaining({
+            avatarUrl: "/uploads/current-avatar.jpg",
+          }),
+        }),
         publishedSnapshotAt: expect.any(Date),
       },
     });

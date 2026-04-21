@@ -12,7 +12,6 @@ import {
   buildEditorSnapshot,
   buildPublishedPageSnapshot,
   buildPublishedResumeSnapshot,
-  readPageEditorSnapshot,
 } from "@/lib/server/domain/page-snapshots";
 import { seedPageBlocksFromTemplate } from "@/lib/server/domain/templates";
 import type {
@@ -494,11 +493,7 @@ export async function upsertOwnedPageOutput(
           publishedSnapshotAt: true,
         },
       });
-      const nextEditorSnapshot =
-        current?.templateId === input.templateId
-          ? readPageEditorSnapshot(current?.editorSnapshot) ??
-            buildEditorSnapshot(profile, versionAggregate)
-          : buildEditorSnapshot(profile, versionAggregate);
+      const nextEditorSnapshot = buildEditorSnapshot(profile, versionAggregate);
 
       const page = current
         ? await tx.page.update({
@@ -634,9 +629,7 @@ export async function upsertOwnedResumeOutput(
           });
         }
 
-        const editorSnapshot =
-          readPageEditorSnapshot(page.editorSnapshot) ??
-          buildEditorSnapshot(profile, versionAggregate);
+        const editorSnapshot = buildEditorSnapshot(profile, versionAggregate);
         const blocks = await tx.pageBlock.findMany({
           where: {
             pageId: page.id,
