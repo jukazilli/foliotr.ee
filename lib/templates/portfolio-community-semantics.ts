@@ -67,6 +67,16 @@ export interface PortfolioCommunityWorkItem {
   date: string;
   image: string;
   href: string;
+  imageValue?: PortfolioCommunityImageValue | null;
+  imageConfigPath?: string;
+}
+
+export interface PortfolioCommunityImageValue {
+  src: string;
+  alt: string;
+  fitMode: "fit" | "fill" | "crop";
+  positionX: number;
+  positionY: number;
 }
 
 export interface PortfolioCommunitySemantics {
@@ -79,7 +89,10 @@ export interface PortfolioCommunitySemantics {
     locationLine: string;
     ctaHref: string;
     ctaLabel: string;
-    portrait: { src: string; alt: string } | null;
+    portrait: PortfolioCommunityImageValue | null;
+    showSocialIcons: boolean;
+    showPlusCluster: boolean;
+    showSlashMarks: boolean;
   };
   about: {
     visible: boolean;
@@ -116,7 +129,7 @@ export interface PortfolioCommunitySemantics {
     title: string;
     body: string;
     publicEmail: string;
-    supportImage: string;
+    supportImage: PortfolioCommunityImageValue | null;
     links: PortfolioCommunityLink[];
     displayLinks: string[];
   };
@@ -153,19 +166,42 @@ function readNumber(value: unknown, fallback: number) {
   return typeof value === "number" && Number.isFinite(value) ? value : fallback;
 }
 
+function clampPercentage(value: unknown, fallback: number) {
+  const resolved = typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  return Math.min(100, Math.max(0, resolved));
+}
+
 function readBoolean(value: unknown) {
   return typeof value === "boolean" ? value : undefined;
 }
 
-function readImage(value: unknown) {
+function readImage(value: unknown): PortfolioCommunityImageValue | null {
   const image = asRecord(value);
   const src = readString(image.src);
 
   if (!src) return null;
 
+  const fitMode =
+    image.fitMode === "fit" || image.fitMode === "fill" || image.fitMode === "crop"
+      ? image.fitMode
+      : "fill";
+
   return {
     src: normalizeStoragePublicUrl(src),
     alt: readString(image.alt),
+    fitMode,
+    positionX: clampPercentage(image.positionX, 50),
+    positionY: clampPercentage(image.positionY, 50),
+  };
+}
+
+function createDefaultImageValue(src: string, alt: string): PortfolioCommunityImageValue {
+  return {
+    src,
+    alt,
+    fitMode: "fill",
+    positionX: 50,
+    positionY: 50,
   };
 }
 
@@ -366,12 +402,15 @@ export function derivePortfolioCommunitySemantics(args: {
   const portrait =
     readImage(heroConfig.portrait) ??
     (profile.avatarUrl
-      ? { src: normalizeStoragePublicUrl(profile.avatarUrl), alt: displayName || "Foto de perfil" }
+      ? createDefaultImageValue(
+          normalizeStoragePublicUrl(profile.avatarUrl),
+          displayName || "Foto de perfil"
+        )
       : args.sourcePackage?.imports.default.imgUnsplashD1UPkiFd04A1
-        ? {
-            src: args.sourcePackage.imports.default.imgUnsplashD1UPkiFd04A1,
-            alt: displayName || "Foto de perfil",
-          }
+        ? createDefaultImageValue(
+            args.sourcePackage.imports.default.imgUnsplashD1UPkiFd04A1,
+            displayName || "Foto de perfil"
+          )
         : null);
   const contactLinks = dedupeLinks([
     ...(profile.publicEmail
@@ -442,8 +481,13 @@ export function derivePortfolioCommunitySemantics(args: {
         date: formatProjectDate(project.startDate, "24 de novembro de 2019"),
         image: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : workFallbackImages[index] ?? "",
         href: project.url ?? project.repoUrl ?? "",
+        imageValue: project.imageUrl
+          ? createDefaultImageValue(normalizeStoragePublicUrl(project.imageUrl), project.title)
+          : null,
       };
     }
+
+    const fallbackImage = readImage(fallback.image);
 
     return {
       key: `fallback-${index}`,
@@ -453,17 +497,25 @@ export function derivePortfolioCommunitySemantics(args: {
         "Resumo do projeto com contexto, abordagem e impacto gerado."
       ),
       date: readString(fallback.date, "24 de novembro de 2019"),
-      image: readImage(fallback.image)?.src ?? workFallbackImages[index] ?? "",
+      image: fallbackImage?.src ?? workFallbackImages[index] ?? "",
       href: readString(fallback.href),
+      imageValue: fallbackImage,
+      imageConfigPath: `fallbackProjects.${index}.image`,
     };
   });
 
   const selectedProofImageUrl = selectedProofs.find((proof) => proof.imageUrl)?.imageUrl;
   const supportImage =
-    readImage(contactConfig.image)?.src ??
-    (selectedProofImageUrl ? normalizeStoragePublicUrl(selectedProofImageUrl) : undefined) ??
-    args.sourcePackage?.imports.default.imgUnsplash2Xht5D22Y0I ??
-    "";
+    readImage(contactConfig.image) ??
+    (selectedProofImageUrl
+      ? createDefaultImageValue(normalizeStoragePublicUrl(selectedProofImageUrl), "Imagem de apoio")
+      : undefined) ??
+    (args.sourcePackage?.imports.default.imgUnsplash2Xht5D22Y0I
+      ? createDefaultImageValue(
+          args.sourcePackage.imports.default.imgUnsplash2Xht5D22Y0I,
+          "Imagem de apoio"
+        )
+      : null);
 
   return {
     hero: {
@@ -484,6 +536,9 @@ export function derivePortfolioCommunitySemantics(args: {
       ),
       ctaLabel: readString(heroConfig.ctaLabel, "Curriculo"),
       portrait,
+      showSocialIcons: readBoolean(heroConfig.showSocialIcons) ?? true,
+      showPlusCluster: readBoolean(heroConfig.showPlusCluster) ?? true,
+      showSlashMarks: readBoolean(heroConfig.showSlashMarks) ?? true,
     },
     about: {
       visible: readBoolean(args.visibility?.["portfolio.about"]) ?? hasText(body),

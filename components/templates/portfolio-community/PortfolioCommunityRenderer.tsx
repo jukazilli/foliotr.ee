@@ -8,6 +8,7 @@ import {
   type PortfolioCommunitySourcePackage,
 } from "@/lib/templates/source-package";
 import type { TemplateRendererProps } from "@/components/templates/types";
+import type { RenderablePageBlock } from "@/components/templates/types";
 
 const FALLBACK_SOURCE_PACKAGE: PortfolioCommunitySourcePackage = {
   variant: "template1",
@@ -121,27 +122,65 @@ function SectionShell({
   id,
   children,
   className = "",
+  editorBlockId,
+  editorSlot,
 }: {
   id: string;
   children: React.ReactNode;
   className?: string;
+  editorBlockId?: string;
+  editorSlot?: string;
 }) {
   return (
-    <section id={id} className={`mx-auto w-full max-w-[1180px] px-5 sm:px-8 lg:px-10 ${className}`}>
+    <section
+      id={id}
+      className={`mx-auto w-full max-w-[1180px] px-5 sm:px-8 lg:px-10 ${className}`}
+      data-ft-block-id={editorBlockId}
+      data-ft-slot={editorSlot}
+      data-ft-kind={editorBlockId ? "block" : undefined}
+      data-ft-editable={editorBlockId ? "true" : undefined}
+    >
       {children}
     </section>
   );
 }
 
+function getRenderableBlockByType(
+  blocks: RenderablePageBlock[],
+  blockType: RenderablePageBlock["blockType"]
+) {
+  return blocks.find((block) => block.blockType === blockType) ?? null;
+}
+
 function HeroPortrait({
   semantics,
   sourcePackage,
+  block,
 }: {
   semantics: PortfolioCommunitySemantics;
   sourcePackage: PortfolioCommunitySourcePackage;
+  block: RenderablePageBlock | null;
 }) {
+  const portraitStyle =
+    semantics.hero.portrait?.fitMode === "fit"
+      ? {
+          objectFit: "contain" as const,
+          objectPosition: `${semantics.hero.portrait.positionX}% ${semantics.hero.portrait.positionY}%`,
+        }
+      : {
+          objectFit: "cover" as const,
+          objectPosition: `${semantics.hero.portrait?.positionX ?? 50}% ${semantics.hero.portrait?.positionY ?? 50}%`,
+        };
+
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-[34rem] lg:mx-0">
+    <div
+      className="relative mx-auto aspect-square w-full max-w-[34rem] lg:mx-0"
+      data-ft-block-id={block?.id}
+      data-ft-slot="hero.portrait"
+      data-ft-config-path="portrait"
+      data-ft-kind="image"
+      data-ft-editable="true"
+    >
       <div className="absolute inset-[5%] rounded-[48%] border border-[#474306]/80" />
       <div className="absolute inset-[1%] translate-x-[2%] overflow-hidden rounded-[48%] bg-[#F5EE84]">
         {semantics.hero.portrait ? (
@@ -152,17 +191,56 @@ function HeroPortrait({
             style={
               sourcePackage.imports.named.imgUnsplashD1UPkiFd04A
                 ? {
+                    ...portraitStyle,
                     maskImage: `url('${sourcePackage.imports.named.imgUnsplashD1UPkiFd04A}')`,
                     maskSize: "cover",
                     maskRepeat: "no-repeat",
                   }
-                : undefined
+                : portraitStyle
             }
           />
         ) : null}
       </div>
-      <PlusCluster className="absolute -right-4 top-8 hidden sm:block" />
-      <SlashMarks className="absolute -bottom-5 left-8" />
+      {semantics.hero.showPlusCluster ? (
+        <div
+          data-ft-block-id={block?.id}
+          data-ft-slot="hero.showPlusCluster"
+          data-ft-config-path="showPlusCluster"
+          data-ft-kind="icon"
+          data-ft-editable="true"
+        >
+          <PlusCluster className="absolute -right-4 top-8 hidden sm:block" />
+        </div>
+      ) : (
+        <div
+          className="absolute -right-4 top-8 hidden h-16 w-16 rounded-2xl border border-dashed border-[#474306]/35 bg-[#F5EE84]/30 sm:block"
+          data-ft-block-id={block?.id}
+          data-ft-slot="hero.showPlusCluster"
+          data-ft-config-path="showPlusCluster"
+          data-ft-kind="icon"
+          data-ft-editable="true"
+        />
+      )}
+      {semantics.hero.showSlashMarks ? (
+        <div
+          data-ft-block-id={block?.id}
+          data-ft-slot="hero.showSlashMarks"
+          data-ft-config-path="showSlashMarks"
+          data-ft-kind="icon"
+          data-ft-editable="true"
+        >
+          <SlashMarks className="absolute -bottom-5 left-8" />
+        </div>
+      ) : (
+        <div
+          className="absolute -bottom-3 left-8 h-5 w-24 rounded-full border border-dashed border-[#474306]/35 bg-[#F5EE84]/30"
+          data-ft-block-id={block?.id}
+          data-ft-slot="hero.showSlashMarks"
+          data-ft-config-path="showSlashMarks"
+          data-ft-kind="icon"
+          data-ft-editable="true"
+        />
+      )}
     </div>
   );
 }
@@ -197,23 +275,41 @@ function HeaderNav({
             Contato
           </a>
         ) : null}
-        <div className="flex items-center gap-6 text-[#03045E]">
-          <SourceIcon
-            pathValue={sourcePackage.svg.paths.p3ec48180}
-            viewBox="0 0 26 15"
-            className="h-[15px] w-[26px]"
-          />
-          <SourceIcon
-            pathValue={sourcePackage.svg.paths.p338fd700}
-            viewBox="0 0 26 17"
-            className="h-[16px] w-[26px]"
-          />
-          <SourceIcon
-            pathValue={sourcePackage.svg.paths.p2b5eac80}
-            viewBox="0 0 20 16"
-            className="h-[18px] w-[20px]"
-          />
-        </div>
+        {semantics.hero.showSocialIcons ? (
+          <div
+            className="flex items-center gap-6 text-[#03045E]"
+            data-ft-slot="hero.showSocialIcons"
+            data-ft-config-path="showSocialIcons"
+            data-ft-kind="icon"
+            data-ft-editable="true"
+          >
+            <SourceIcon
+              pathValue={sourcePackage.svg.paths.p3ec48180}
+              viewBox="0 0 26 15"
+              className="h-[15px] w-[26px]"
+            />
+            <SourceIcon
+              pathValue={sourcePackage.svg.paths.p338fd700}
+              viewBox="0 0 26 17"
+              className="h-[16px] w-[26px]"
+            />
+            <SourceIcon
+              pathValue={sourcePackage.svg.paths.p2b5eac80}
+              viewBox="0 0 20 16"
+              className="h-[18px] w-[20px]"
+            />
+          </div>
+        ) : (
+          <div
+            className="flex h-10 items-center rounded-full border border-dashed border-[#03045E]/30 px-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#03045E]/45"
+            data-ft-slot="hero.showSocialIcons"
+            data-ft-config-path="showSocialIcons"
+            data-ft-kind="icon"
+            data-ft-editable="true"
+          >
+            icones
+          </div>
+        )}
       </div>
     </header>
   );
@@ -242,14 +338,21 @@ function HeroCta({ href, label }: { href: string; label: string }) {
 function HeroSection({
   semantics,
   sourcePackage,
+  block,
 }: {
   semantics: PortfolioCommunitySemantics;
   sourcePackage: PortfolioCommunitySourcePackage;
+  block: RenderablePageBlock | null;
 }) {
   if (!semantics.hero.visible) return null;
 
   return (
-    <>
+    <div
+      data-ft-block-id={block?.id}
+      data-ft-block-type={block?.blockType}
+      data-ft-kind={block ? "block" : undefined}
+      data-ft-editable={block ? "true" : undefined}
+    >
       <div style={{ background: sourcePackage.canvas.background }}>
         <SectionShell id="top" className="pb-0 pt-28 sm:pt-32">
           <HeaderNav semantics={semantics} sourcePackage={sourcePackage} />
@@ -259,6 +362,10 @@ function HeroSection({
               <p
                 className="mb-5 break-words font-medium leading-tight"
                 style={{ fontSize: "clamp(1.35rem, 3.2vw, 2rem)" }}
+                data-ft-slot="hero.eyebrow"
+                data-ft-config-path="eyebrow"
+                data-ft-kind="text"
+                data-ft-editable="true"
               >
                 {semantics.hero.eyebrow}
                 {semantics.hero.displayName ? ` ${semantics.hero.displayName},` : ""}
@@ -266,6 +373,10 @@ function HeroSection({
               <h1
                 className="max-w-[13ch] break-words font-extrabold leading-[0.98] tracking-[-0.08em]"
                 style={{ fontSize: "clamp(3.6rem, 8vw, 6.75rem)" }}
+                data-ft-slot="hero.headline"
+                data-ft-config-path="headline"
+                data-ft-kind="text"
+                data-ft-editable="true"
               >
                 {semantics.hero.headline}
               </h1>
@@ -273,14 +384,18 @@ function HeroSection({
                 <p
                   className="mt-6 break-words font-medium leading-tight"
                   style={{ fontSize: "clamp(1.25rem, 3vw, 2rem)" }}
+                  data-ft-slot="hero.locationLine"
+                  data-ft-config-path="locationLine"
+                  data-ft-kind="text"
+                  data-ft-editable="true"
                 >
                   {semantics.hero.locationLine}
                 </p>
               ) : null}
             </div>
 
-            <div className="relative z-10 -mb-16 sm:-mb-20 lg:-mb-24">
-              <HeroPortrait semantics={semantics} sourcePackage={sourcePackage} />
+          <div className="relative z-10 -mb-16 sm:-mb-20 lg:-mb-24">
+              <HeroPortrait semantics={semantics} sourcePackage={sourcePackage} block={block} />
             </div>
           </div>
         </SectionShell>
@@ -293,29 +408,61 @@ function HeroSection({
           </div>
         </SectionShell>
       </div>
-    </>
+    </div>
   );
 }
 
-function AboutSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+function AboutSection({
+  semantics,
+  block,
+}: {
+  semantics: PortfolioCommunitySemantics;
+  block: RenderablePageBlock | null;
+}) {
   if (!semantics.about.visible) return null;
 
   return (
-    <SectionShell id="about" className="py-16 lg:py-24">
-      <SectionTitle>{semantics.about.title}</SectionTitle>
-      <p className="mt-8 max-w-[58rem] whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl">
+    <SectionShell id="about" className="py-16 lg:py-24" editorBlockId={block?.id}>
+      <div
+        data-ft-slot="about.title"
+        data-ft-config-path="title"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
+        <SectionTitle>{semantics.about.title}</SectionTitle>
+      </div>
+      <p
+        className="mt-8 max-w-[58rem] whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl"
+        data-ft-slot="about.body"
+        data-ft-config-path="body"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
         {semantics.about.body}
       </p>
     </SectionShell>
   );
 }
 
-function ExperienceSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+function ExperienceSection({
+  semantics,
+  block,
+}: {
+  semantics: PortfolioCommunitySemantics;
+  block: RenderablePageBlock | null;
+}) {
   if (!semantics.experience.visible || semantics.experience.items.length === 0) return null;
 
   return (
-    <SectionShell id="experience" className="py-16 lg:py-24">
-      <SectionTitle>{semantics.experience.title}</SectionTitle>
+    <SectionShell id="experience" className="py-16 lg:py-24" editorBlockId={block?.id}>
+      <div
+        data-ft-slot="experience.title"
+        data-ft-config-path="title"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
+        <SectionTitle>{semantics.experience.title}</SectionTitle>
+      </div>
       <div className="mt-10 mx-auto max-w-[58rem] space-y-12">
         {semantics.experience.items.map((experience) => (
           <article
@@ -343,12 +490,25 @@ function ExperienceSection({ semantics }: { semantics: PortfolioCommunitySemanti
   );
 }
 
-function EducationSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+function EducationSection({
+  semantics,
+  block,
+}: {
+  semantics: PortfolioCommunitySemantics;
+  block: RenderablePageBlock | null;
+}) {
   if (!semantics.education.visible || semantics.education.items.length === 0) return null;
 
   return (
-    <SectionShell id="education" className="py-16 lg:py-24">
-      <SectionTitle>{semantics.education.title}</SectionTitle>
+    <SectionShell id="education" className="py-16 lg:py-24" editorBlockId={block?.id}>
+      <div
+        data-ft-slot="education.title"
+        data-ft-config-path="title"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
+        <SectionTitle>{semantics.education.title}</SectionTitle>
+      </div>
       <div className="mt-10 mx-auto max-w-[58rem] space-y-8">
         {semantics.education.items.map((education) => (
           <article
@@ -379,14 +539,33 @@ function EducationSection({ semantics }: { semantics: PortfolioCommunitySemantic
   );
 }
 
-function WorkSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+function WorkSection({
+  semantics,
+  block,
+}: {
+  semantics: PortfolioCommunitySemantics;
+  block: RenderablePageBlock | null;
+}) {
   if (!semantics.work.visible) return null;
 
   return (
-    <SectionShell id="work" className="py-16 lg:py-24">
-      <SectionTitle>{semantics.work.title}</SectionTitle>
+    <SectionShell id="work" className="py-16 lg:py-24" editorBlockId={block?.id}>
+      <div
+        data-ft-slot="work.title"
+        data-ft-config-path="title"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
+        <SectionTitle>{semantics.work.title}</SectionTitle>
+      </div>
       {semantics.work.intro ? (
-        <p className="mt-8 max-w-[58rem] whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl">
+        <p
+          className="mt-8 max-w-[58rem] whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl"
+          data-ft-slot="work.intro"
+          data-ft-config-path="intro"
+          data-ft-kind="text"
+          data-ft-editable="true"
+        >
           {semantics.work.intro}
         </p>
       ) : null}
@@ -395,9 +574,27 @@ function WorkSection({ semantics }: { semantics: PortfolioCommunitySemantics }) 
         {semantics.work.items.slice(0, semantics.work.maxItems).map((item) => {
           const content = (
             <>
-              <div className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]">
+              <div
+                className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]"
+                data-ft-slot={item.imageConfigPath ? `work.${item.imageConfigPath}` : undefined}
+                data-ft-config-path={item.imageConfigPath}
+                data-ft-kind={item.imageConfigPath ? "image" : undefined}
+                data-ft-editable={item.imageConfigPath ? "true" : undefined}
+              >
                 {item.image ? (
-                  <img alt={item.title} className="h-full w-full object-cover" src={item.image} />
+                  <img
+                    alt={item.title}
+                    className="h-full w-full"
+                    src={item.image}
+                    style={
+                      item.imageValue
+                        ? {
+                            objectFit: item.imageValue.fitMode === "fit" ? "contain" : "cover",
+                            objectPosition: `${item.imageValue.positionX}% ${item.imageValue.positionY}%`,
+                          }
+                        : { objectFit: "cover" }
+                    }
+                  />
                 ) : null}
               </div>
               <p className="mt-5 break-words text-sm italic leading-relaxed">{item.date}</p>
@@ -427,20 +624,54 @@ function WorkSection({ semantics }: { semantics: PortfolioCommunitySemantics }) 
   );
 }
 
-function ContactSection({ semantics }: { semantics: PortfolioCommunitySemantics }) {
+function ContactSection({
+  semantics,
+  block,
+}: {
+  semantics: PortfolioCommunitySemantics;
+  block: RenderablePageBlock | null;
+}) {
   if (!semantics.contact.visible) return null;
 
   return (
-    <SectionShell id="contact" className="py-16 lg:py-28">
-      <SectionTitle>{semantics.contact.title}</SectionTitle>
+    <SectionShell id="contact" className="py-16 lg:py-28" editorBlockId={block?.id}>
+      <div
+        data-ft-slot="contact.title"
+        data-ft-config-path="title"
+        data-ft-kind="text"
+        data-ft-editable="true"
+      >
+        <SectionTitle>{semantics.contact.title}</SectionTitle>
+      </div>
       <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(18rem,27rem)_minmax(0,1fr)] lg:gap-16">
-        <div className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]">
+        <div
+          className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]"
+          data-ft-slot="contact.image"
+          data-ft-config-path="image"
+          data-ft-kind="image"
+          data-ft-editable="true"
+        >
           {semantics.contact.supportImage ? (
-            <img alt="" className="h-full w-full object-cover" src={semantics.contact.supportImage} />
+            <img
+              alt=""
+              className="h-full w-full"
+              src={semantics.contact.supportImage.src}
+              style={{
+                objectFit:
+                  semantics.contact.supportImage.fitMode === "fit" ? "contain" : "cover",
+                objectPosition: `${semantics.contact.supportImage.positionX}% ${semantics.contact.supportImage.positionY}%`,
+              }}
+            />
           ) : null}
         </div>
         <div className="min-w-0">
-          <p className="whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl">
+          <p
+            className="whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl"
+            data-ft-slot="contact.body"
+            data-ft-config-path="body"
+            data-ft-kind="text"
+            data-ft-editable="true"
+          >
             {semantics.contact.body}
           </p>
           <div className="mt-8 flex flex-col items-start gap-2 text-xl leading-relaxed md:text-2xl">
@@ -466,6 +697,12 @@ function ContactSection({ semantics }: { semantics: PortfolioCommunitySemantics 
 export default function PortfolioCommunityRenderer(props: TemplateRendererProps) {
   const sourcePackage = readSourcePackage(props.templateSourcePackage);
   const blockState = buildPortfolioCommunityBlockStateFromBlocks(props.blocks);
+  const heroBlock = getRenderableBlockByType(props.blocks, "portfolio.hero");
+  const aboutBlock = getRenderableBlockByType(props.blocks, "portfolio.about");
+  const educationBlock = getRenderableBlockByType(props.blocks, "portfolio.education");
+  const experienceBlock = getRenderableBlockByType(props.blocks, "portfolio.experience");
+  const workBlock = getRenderableBlockByType(props.blocks, "portfolio.work");
+  const contactBlock = getRenderableBlockByType(props.blocks, "portfolio.contact");
   const semantics = derivePortfolioCommunitySemantics({
     profile: props.profile,
     version: props.version,
@@ -483,12 +720,12 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
         fontFamily: `var(--font-template-portfolio), ${sourcePackage.canvas.fontFamily}, ui-sans-serif, system-ui, sans-serif`,
       }}
     >
-      <HeroSection semantics={semantics} sourcePackage={sourcePackage} />
-      <AboutSection semantics={semantics} />
-      <EducationSection semantics={semantics} />
-      <ExperienceSection semantics={semantics} />
-      <WorkSection semantics={semantics} />
-      <ContactSection semantics={semantics} />
+      <HeroSection semantics={semantics} sourcePackage={sourcePackage} block={heroBlock} />
+      <AboutSection semantics={semantics} block={aboutBlock} />
+      <EducationSection semantics={semantics} block={educationBlock} />
+      <ExperienceSection semantics={semantics} block={experienceBlock} />
+      <WorkSection semantics={semantics} block={workBlock} />
+      <ContactSection semantics={semantics} block={contactBlock} />
     </main>
   );
 }

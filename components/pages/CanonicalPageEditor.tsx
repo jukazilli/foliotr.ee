@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
 import type { JsonValue } from "@prisma/client/runtime/library";
 import type { ResumeConfig } from "@/generated/prisma-client";
 import {
@@ -90,6 +91,44 @@ interface EditableFieldLike {
   element: string;
 }
 
+interface CanvasSelectionFrame {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+interface InlineFieldFrame extends CanvasSelectionFrame {
+  key: string;
+  label: string;
+  kind: "text" | "longText";
+}
+
+interface EditableSlotFrame extends CanvasSelectionFrame {
+  key: string;
+  kind: EditableFieldLike["kind"] | "unknown";
+}
+
+interface InlineImageFrame extends CanvasSelectionFrame {
+  key: string;
+  label: string;
+}
+
+interface InlineListImageTarget {
+  fieldKey: string;
+  index: number;
+  label: string;
+  path: string;
+}
+
+interface EditableImageValue {
+  src: string;
+  alt: string;
+  fitMode: "fit" | "fill" | "crop";
+  positionX: number;
+  positionY: number;
+}
+
 function asRecord(value: unknown): JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as JsonRecord)
@@ -118,6 +157,34 @@ function readPreviewCanvasDimension(
 
 function sortBlocks(blocks: RenderablePageBlock[]) {
   return [...blocks].sort((left, right) => left.order - right.order);
+}
+
+function escapeCssAttribute(value: string) {
+  if (typeof CSS !== "undefined" && typeof CSS.escape === "function") {
+    return CSS.escape(value);
+  }
+
+  return value.replace(/["\\]/g, "\\$&");
+}
+
+function inferFieldKindFromCanvas(value: string | undefined): EditableFieldLike["kind"] | "unknown" {
+  if (value === "image") return "image";
+  if (value === "icon") return "boolean";
+  if (value === "text") return "text";
+  return "unknown";
+}
+
+function parseRepeaterImagePath(path: string | undefined) {
+  if (!path) return null;
+
+  const match = /^([a-zA-Z0-9_]+)\.(\d+)\.image$/.exec(path);
+  if (!match) return null;
+
+  return {
+    fieldKey: match[1],
+    index: Number(match[2]),
+    path,
+  };
 }
 
 function formatApiError(payload: unknown, status: number, fallback: string) {
@@ -171,6 +238,27 @@ function createDefaultListItem(fieldKey: string) {
   }
 
   return {};
+}
+
+function clampPercentage(value: number) {
+  if (!Number.isFinite(value)) return 50;
+  return Math.max(0, Math.min(100, value));
+}
+
+function readEditableImageValue(value: unknown): EditableImageValue {
+  const image = asRecord(value);
+  const fitMode =
+    image.fitMode === "fit" || image.fitMode === "fill" || image.fitMode === "crop"
+      ? image.fitMode
+      : "fill";
+
+  return {
+    src: typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "",
+    alt: typeof image.alt === "string" ? image.alt : "",
+    fitMode,
+    positionX: clampPercentage(typeof image.positionX === "number" ? image.positionX : 50),
+    positionY: clampPercentage(typeof image.positionY === "number" ? image.positionY : 50),
+  };
 }
 
 function textareaClassName() {
@@ -228,7 +316,22 @@ export default function CanonicalPageEditor({
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("portfolio");
   const previewFrameRef = useRef<HTMLDivElement | null>(null);
+  const previewViewportRef = useRef<HTMLDivElement | null>(null);
   const [previewScale, setPreviewScale] = useState(0.5);
+  const [canvasSelectionFrame, setCanvasSelectionFrame] = useState<CanvasSelectionFrame | null>(
+    null
+  );
+  const [editableSlotFrames, setEditableSlotFrames] = useState<EditableSlotFrame[]>([]);
+  const [activeInlineFieldKey, setActiveInlineFieldKey] = useState<string | null>(null);
+  const [activeInlineFieldValue, setActiveInlineFieldValue] = useState("");
+  const [inlineFieldFrame, setInlineFieldFrame] = useState<InlineFieldFrame | null>(null);
+  const [activeInlineImageFieldKey, setActiveInlineImageFieldKey] = useState<string | null>(null);
+  const [inlineImageFrame, setInlineImageFrame] = useState<InlineImageFrame | null>(null);
+  const [activeInlineListImage, setActiveInlineListImage] = useState<InlineListImageTarget | null>(null);
+  const [inlineListImageFrame, setInlineListImageFrame] = useState<InlineImageFrame | null>(null);
+  const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
+  const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
+  const [imageDragActive, setImageDragActive] = useState(false);
 
   const previewCanvasWidth = useMemo(
     () =>
@@ -280,6 +383,70 @@ export default function CanonicalPageEditor({
     return () => observer.disconnect();
   }, [previewCanvasWidth]);
 
+  useEffect(() => {
+    if (previewMode !== "portfolio" || !selectedBlockId) {
+      setCanvasSelectionFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setCanvasSelectionFrame(null);
+      return;
+    }
+
+    function updateSelectionFrame() {
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setCanvasSelectionFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${selectedBlockId}"]`
+      );
+
+      if (!selectedElement) {
+        setCanvasSelectionFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      setCanvasSelectionFrame({
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      });
+    }
+
+    updateSelectionFrame();
+    viewport.addEventListener("scroll", updateSelectionFrame, { passive: true });
+    window.addEventListener("resize", updateSelectionFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateSelectionFrame());
+      observer.observe(frame);
+      const selectedElement = frame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${selectedBlockId}"]`
+      );
+      if (selectedElement) {
+        observer.observe(selectedElement);
+      }
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateSelectionFrame);
+      window.removeEventListener("resize", updateSelectionFrame);
+      observer?.disconnect();
+    };
+  }, [blocks, previewMode, previewScale, selectedBlockId]);
+
   const manifestByKey = useMemo(
     () => new Map(manifestBlocks.map((block) => [block.key, block])),
     [manifestBlocks]
@@ -293,6 +460,62 @@ export default function CanonicalPageEditor({
   const selectedBlockDef = selectedBlock?.templateBlockDefId
     ? templateBlockDefs.find((blockDef) => blockDef.id === selectedBlock.templateBlockDefId) ?? null
     : null;
+  const selectedEditableFields = useMemo(
+    () => getEditableFields(selectedBlockDef),
+    [selectedBlockDef]
+  );
+  const selectedInlineEditableFields = useMemo(
+    () =>
+      selectedEditableFields.filter(
+        (field) => field.kind === "text" || field.kind === "longText"
+      ) as Array<EditableFieldLike & { kind: "text" | "longText" }>,
+    [selectedEditableFields]
+  );
+  const activeInlineField = useMemo(
+    () =>
+      activeInlineFieldKey
+        ? selectedInlineEditableFields.find((field) => field.key === activeInlineFieldKey) ?? null
+        : null,
+    [activeInlineFieldKey, selectedInlineEditableFields]
+  );
+  const selectedImageFields = useMemo(
+    () =>
+      selectedEditableFields.filter((field) => field.kind === "image") as Array<
+        EditableFieldLike & { kind: "image" }
+      >,
+    [selectedEditableFields]
+  );
+  const activeInlineImageField = useMemo(
+    () =>
+      activeInlineImageFieldKey
+        ? selectedImageFields.find((field) => field.key === activeInlineImageFieldKey) ?? null
+        : null,
+    [activeInlineImageFieldKey, selectedImageFields]
+  );
+  const activeInlineImageValue = useMemo(
+    () =>
+      activeInlineImageField ? readEditableImageValue(draftConfig[activeInlineImageField.key]) : null,
+    [activeInlineImageField, draftConfig]
+  );
+  const activeInlineListImageValue = useMemo(() => {
+    if (!activeInlineListImage) return null;
+    const list = asArray(draftConfig[activeInlineListImage.fieldKey]).map((item) => asRecord(item));
+    return readEditableImageValue(list[activeInlineListImage.index]?.image);
+  }, [activeInlineListImage, draftConfig]);
+  const selectedBooleanFields = useMemo(
+    () =>
+      selectedEditableFields.filter((field) => field.kind === "boolean") as Array<
+        EditableFieldLike & { kind: "boolean" }
+      >,
+    [selectedEditableFields]
+  );
+  const activeInlineBooleanField = useMemo(
+    () =>
+      activeInlineBooleanFieldKey
+        ? selectedBooleanFields.find((field) => field.key === activeInlineBooleanFieldKey) ?? null
+        : null,
+    [activeInlineBooleanFieldKey, selectedBooleanFields]
+  );
 
   useEffect(() => {
     if (!blocks.some((block) => block.id === selectedBlockId)) {
@@ -310,6 +533,416 @@ export default function CanonicalPageEditor({
     setDraftConfig(asRecord(selectedBlock.config));
     setDraftAssets(asRecord(selectedBlock.assets));
   }, [selectedBlock]);
+
+  useEffect(() => {
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+    setEditableSlotFrames([]);
+  }, [previewMode, selectedBlockId]);
+
+  useEffect(() => {
+    if (previewMode !== "portfolio" || !selectedBlockId) {
+      setEditableSlotFrames([]);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setEditableSlotFrames([]);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const editableFieldMap = new Map(
+      selectedEditableFields.map((field) => [field.key, field.kind] as const)
+    );
+
+    function updateEditableSlotFrames() {
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setEditableSlotFrames([]);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const nodes = Array.from(
+        currentFrame.querySelectorAll<HTMLElement>(
+          `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path]`
+        )
+      );
+
+      setEditableSlotFrames(
+        nodes
+          .map((node) => {
+            const key = node.dataset.ftConfigPath;
+            if (!key) return null;
+
+            const rect = node.getBoundingClientRect();
+            return {
+              key,
+              kind: editableFieldMap.get(key) ?? inferFieldKindFromCanvas(node.dataset.ftKind),
+              left: rect.left - frameRect.left,
+              top: rect.top - frameRect.top,
+              width: rect.width,
+              height: rect.height,
+            } satisfies EditableSlotFrame;
+          })
+          .filter((item): item is EditableSlotFrame => Boolean(item))
+      );
+    }
+
+    updateEditableSlotFrames();
+    viewport.addEventListener("scroll", updateEditableSlotFrames, { passive: true });
+    window.addEventListener("resize", updateEditableSlotFrames);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateEditableSlotFrames());
+      observer.observe(frame);
+      const nodes = frame.querySelectorAll<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path]`
+      );
+      nodes.forEach((node) => observer?.observe(node));
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateEditableSlotFrames);
+      window.removeEventListener("resize", updateEditableSlotFrames);
+      observer?.disconnect();
+    };
+  }, [previewMode, previewScale, selectedBlockId, selectedEditableFields]);
+
+  useEffect(() => {
+    if (!activeInlineFieldKey || previewMode !== "portfolio") {
+      setInlineFieldFrame(null);
+      return;
+    }
+
+    const currentInlineField = activeInlineField;
+
+    if (!selectedBlockId || !currentInlineField) {
+      setInlineFieldFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setInlineFieldFrame(null);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const escapedFieldKey = escapeCssAttribute(activeInlineFieldKey);
+
+    function updateInlineFieldFrame() {
+      if (!currentInlineField) {
+        setInlineFieldFrame(null);
+        return;
+      }
+
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setInlineFieldFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+
+      if (!selectedElement) {
+        setInlineFieldFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      setInlineFieldFrame({
+        key: currentInlineField.key,
+        label: currentInlineField.label,
+        kind: currentInlineField.kind,
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      });
+    }
+
+    updateInlineFieldFrame();
+    viewport.addEventListener("scroll", updateInlineFieldFrame, { passive: true });
+    window.addEventListener("resize", updateInlineFieldFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateInlineFieldFrame());
+      observer.observe(frame);
+      const selectedElement = frame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+      if (selectedElement) {
+        observer.observe(selectedElement);
+      }
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateInlineFieldFrame);
+      window.removeEventListener("resize", updateInlineFieldFrame);
+      observer?.disconnect();
+    };
+  }, [activeInlineField, activeInlineFieldKey, blocks, previewMode, previewScale, selectedBlockId]);
+
+  useEffect(() => {
+    if (!activeInlineImageFieldKey || previewMode !== "portfolio") {
+      setInlineImageFrame(null);
+      return;
+    }
+
+    const currentImageField = activeInlineImageField;
+
+    if (!selectedBlockId || !currentImageField) {
+      setInlineImageFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setInlineImageFrame(null);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const escapedFieldKey = escapeCssAttribute(activeInlineImageFieldKey);
+
+    function updateInlineImageFrame() {
+      if (!currentImageField) {
+        setInlineImageFrame(null);
+        return;
+      }
+
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setInlineImageFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+
+      if (!selectedElement) {
+        setInlineImageFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      setInlineImageFrame({
+        key: currentImageField.key,
+        label: currentImageField.label,
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      });
+    }
+
+    updateInlineImageFrame();
+    viewport.addEventListener("scroll", updateInlineImageFrame, { passive: true });
+    window.addEventListener("resize", updateInlineImageFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateInlineImageFrame());
+      observer.observe(frame);
+      const selectedElement = frame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+      if (selectedElement) {
+        observer.observe(selectedElement);
+      }
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateInlineImageFrame);
+      window.removeEventListener("resize", updateInlineImageFrame);
+      observer?.disconnect();
+    };
+  }, [
+    activeInlineImageField,
+    activeInlineImageFieldKey,
+    previewMode,
+    previewScale,
+    selectedBlockId,
+  ]);
+
+  useEffect(() => {
+    if (!activeInlineListImage || previewMode !== "portfolio") {
+      setInlineListImageFrame(null);
+      return;
+    }
+
+    const currentListImage = activeInlineListImage;
+
+    if (!selectedBlockId) {
+      setInlineListImageFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setInlineListImageFrame(null);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const escapedFieldKey = escapeCssAttribute(currentListImage.path);
+
+    function updateInlineListImageFrame() {
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setInlineListImageFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+
+      if (!selectedElement) {
+        setInlineListImageFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      setInlineListImageFrame({
+        key: currentListImage.path,
+        label: currentListImage.label,
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      });
+    }
+
+    updateInlineListImageFrame();
+    viewport.addEventListener("scroll", updateInlineListImageFrame, { passive: true });
+    window.addEventListener("resize", updateInlineListImageFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateInlineListImageFrame());
+      observer.observe(frame);
+      const selectedElement = frame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+      if (selectedElement) {
+        observer.observe(selectedElement);
+      }
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateInlineListImageFrame);
+      window.removeEventListener("resize", updateInlineListImageFrame);
+      observer?.disconnect();
+    };
+  }, [activeInlineListImage, previewMode, previewScale, selectedBlockId]);
+
+  useEffect(() => {
+    if (!activeInlineBooleanFieldKey || previewMode !== "portfolio") {
+      setInlineBooleanFrame(null);
+      return;
+    }
+
+    if (!selectedBlockId || !activeInlineBooleanField) {
+      setInlineBooleanFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setInlineBooleanFrame(null);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const escapedFieldKey = escapeCssAttribute(activeInlineBooleanFieldKey);
+
+    function updateInlineBooleanFrame() {
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setInlineBooleanFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+
+      if (!selectedElement) {
+        setInlineBooleanFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      setInlineBooleanFrame({
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      });
+    }
+
+    updateInlineBooleanFrame();
+    viewport.addEventListener("scroll", updateInlineBooleanFrame, { passive: true });
+    window.addEventListener("resize", updateInlineBooleanFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateInlineBooleanFrame());
+      observer.observe(frame);
+      const selectedElement = frame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+      if (selectedElement) {
+        observer.observe(selectedElement);
+      }
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateInlineBooleanFrame);
+      window.removeEventListener("resize", updateInlineBooleanFrame);
+      observer?.disconnect();
+    };
+  }, [
+    activeInlineBooleanField,
+    activeInlineBooleanFieldKey,
+    previewMode,
+    previewScale,
+    selectedBlockId,
+  ]);
 
   const previewBlocks = useMemo(() => {
     if (!selectedBlock) return blocks;
@@ -382,6 +1015,282 @@ export default function CanonicalPageEditor({
     setBusyKey(null);
     setSuccessMessage("Bloco salvo.");
     return true;
+  }
+
+  function openInlineImageEditor(
+    block: RenderablePageBlock,
+    blockDef: TemplateBlockDefLike | null,
+    fieldKey: string
+  ) {
+    if (!blockDef) {
+      setActiveInlineImageFieldKey(null);
+      setInlineImageFrame(null);
+      return;
+    }
+
+    const field = getEditableFields(blockDef).find(
+      (item) => item.key === fieldKey && item.kind === "image"
+    );
+
+    if (!field) {
+      setActiveInlineImageFieldKey(null);
+      setInlineImageFrame(null);
+      return;
+    }
+
+    if (block.id !== selectedBlock?.id) {
+      setDraftConfig(asRecord(block.config));
+      setDraftAssets(asRecord(block.assets));
+    }
+
+    setActiveInlineImageFieldKey(field.key);
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+  }
+
+  function openInlineListImageEditor(
+    block: RenderablePageBlock,
+    fieldKey: string,
+    index: number,
+    path: string
+  ) {
+    if (block.id !== selectedBlock?.id) {
+      setDraftConfig(asRecord(block.config));
+      setDraftAssets(asRecord(block.assets));
+    }
+
+    setActiveInlineListImage({
+      fieldKey,
+      index,
+      label: `Imagem ${index + 1}`,
+      path,
+    });
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+  }
+
+  function updateTopLevelImageField(fieldKey: string, updater: (image: EditableImageValue) => EditableImageValue) {
+    const currentImage = readEditableImageValue(draftConfig[fieldKey]);
+    const nextImage = updater(currentImage);
+
+    setDraftConfig((current) => ({
+      ...current,
+      [fieldKey]: {
+        ...asRecord(current[fieldKey]),
+        src: nextImage.src,
+        alt: nextImage.alt,
+        fitMode: nextImage.fitMode,
+        positionX: nextImage.positionX,
+        positionY: nextImage.positionY,
+      },
+    }));
+
+    return nextImage;
+  }
+
+  function updateListImageField(
+    fieldKey: string,
+    index: number,
+    updater: (image: EditableImageValue) => EditableImageValue
+  ) {
+    const list = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
+    const nextList = list.map((item, itemIndex) => {
+      if (itemIndex !== index) return item;
+
+      const currentImage = readEditableImageValue(item.image);
+      const nextImage = updater(currentImage);
+
+      return {
+        ...item,
+        image: {
+          ...asRecord(item.image),
+          src: nextImage.src,
+          alt: nextImage.alt,
+          fitMode: nextImage.fitMode,
+          positionX: nextImage.positionX,
+          positionY: nextImage.positionY,
+        },
+      };
+    });
+
+    setDraftConfig((current) => ({
+      ...current,
+      [fieldKey]: nextList,
+    }));
+  }
+
+  async function commitTopLevelImageField(fieldKey: string, updater: (image: EditableImageValue) => EditableImageValue) {
+    if (!selectedBlock) return;
+
+    const currentImage = readEditableImageValue(draftConfig[fieldKey]);
+    const nextImage = updater(currentImage);
+    const nextConfig = {
+      ...draftConfig,
+      [fieldKey]: {
+        ...asRecord(draftConfig[fieldKey]),
+        src: nextImage.src,
+        alt: nextImage.alt,
+        fitMode: nextImage.fitMode,
+        positionX: nextImage.positionX,
+        positionY: nextImage.positionY,
+      },
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
+  }
+
+  async function commitListImageField(
+    fieldKey: string,
+    index: number,
+    updater: (image: EditableImageValue) => EditableImageValue
+  ) {
+    if (!selectedBlock) return;
+
+    const list = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
+    const nextList = list.map((item, itemIndex) => {
+      if (itemIndex !== index) return item;
+
+      const currentImage = readEditableImageValue(item.image);
+      const nextImage = updater(currentImage);
+
+      return {
+        ...item,
+        image: {
+          ...asRecord(item.image),
+          src: nextImage.src,
+          alt: nextImage.alt,
+          fitMode: nextImage.fitMode,
+          positionX: nextImage.positionX,
+          positionY: nextImage.positionY,
+        },
+      };
+    });
+
+    const nextConfig = {
+      ...draftConfig,
+      [fieldKey]: nextList,
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
+  }
+
+  function openInlineFieldEditor(
+    block: RenderablePageBlock,
+    blockDef: TemplateBlockDefLike | null,
+    fieldKey: string
+  ) {
+    if (!blockDef) {
+      setActiveInlineFieldKey(null);
+      setActiveInlineFieldValue("");
+      return;
+    }
+
+    const field = getEditableFields(blockDef).find(
+      (item) => item.key === fieldKey && (item.kind === "text" || item.kind === "longText")
+    );
+
+    if (!field) {
+      setActiveInlineFieldKey(null);
+      setActiveInlineFieldValue("");
+      return;
+    }
+
+    const sourceConfig = block.id === selectedBlock?.id ? draftConfig : asRecord(block.config);
+    const nextValue = sourceConfig[field.key];
+
+    setActiveInlineFieldKey(field.key);
+    setActiveInlineFieldValue(typeof nextValue === "string" ? nextValue : "");
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+  }
+
+  async function commitInlineFieldChange(nextValue: string) {
+    if (!selectedBlock || !activeInlineField) return;
+
+    const nextConfig = {
+      ...draftConfig,
+      [activeInlineField.key]: nextValue,
+    };
+
+    setDraftConfig(nextConfig);
+    setActiveInlineFieldValue(nextValue);
+
+    const didSave = await saveSelectedBlock(nextConfig, draftAssets);
+    if (didSave) {
+      setActiveInlineFieldKey(null);
+      setInlineFieldFrame(null);
+    }
+  }
+
+  function cancelInlineFieldChange() {
+    const fallbackValue =
+      activeInlineField && typeof draftConfig[activeInlineField.key] === "string"
+        ? String(draftConfig[activeInlineField.key])
+        : "";
+
+    setActiveInlineFieldValue(fallbackValue);
+    setActiveInlineFieldKey(null);
+    setInlineFieldFrame(null);
+  }
+
+  function openInlineBooleanEditor(
+    block: RenderablePageBlock,
+    blockDef: TemplateBlockDefLike | null,
+    fieldKey: string
+  ) {
+    const field = getEditableFields(blockDef).find(
+      (item) => item.key === fieldKey && item.kind === "boolean"
+    );
+
+    if (!field && blockDef) {
+      setActiveInlineBooleanFieldKey(null);
+      setInlineBooleanFrame(null);
+      return;
+    }
+
+    if (block.id !== selectedBlock?.id) {
+      setDraftConfig(asRecord(block.config));
+      setDraftAssets(asRecord(block.assets));
+    }
+
+    setActiveInlineBooleanFieldKey(field?.key ?? fieldKey);
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+  }
+
+  async function commitBooleanFieldChange(fieldKey: string, nextValue: boolean) {
+    if (!selectedBlock) return;
+
+    const nextConfig = {
+      ...draftConfig,
+      [fieldKey]: nextValue,
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
   }
 
   async function publishPage() {
@@ -493,6 +1402,70 @@ export default function CanonicalPageEditor({
     setSelectedBlockId(nextBlock.id);
     setBusyKey(null);
     setSuccessMessage("Bloco adicionado.");
+  }
+
+  function handleCanvasBlockSelection(event: ReactMouseEvent<HTMLDivElement>) {
+    if (previewMode !== "portfolio") return;
+
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+
+    const blockElement = target.closest<HTMLElement>("[data-ft-block-id]");
+    const nextBlockId = blockElement?.dataset.ftBlockId;
+
+    if (!nextBlockId) return;
+
+    const nextBlock = blocks.find((block) => block.id === nextBlockId) ?? null;
+    const nextBlockDef = nextBlock?.templateBlockDefId
+      ? templateBlockDefs.find((blockDef) => blockDef.id === nextBlock.templateBlockDefId) ?? null
+      : null;
+    const fieldElement = target.closest<HTMLElement>("[data-ft-config-path]");
+    const nextFieldKey = fieldElement?.dataset.ftConfigPath;
+    const nextFieldKind =
+      fieldElement && nextFieldKey
+        ? getEditableFields(nextBlockDef).find((field) => field.key === nextFieldKey)?.kind ??
+          inferFieldKindFromCanvas(fieldElement.dataset.ftKind)
+        : "unknown";
+
+    setSelectedBlockId(nextBlockId);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const repeaterImagePath =
+      nextFieldKind === "image" ? parseRepeaterImagePath(nextFieldKey) : null;
+
+    if (nextBlock && repeaterImagePath) {
+      openInlineListImageEditor(
+        nextBlock,
+        repeaterImagePath.fieldKey,
+        repeaterImagePath.index,
+        repeaterImagePath.path
+      );
+      return;
+    }
+
+    if (nextBlock && nextFieldKey && nextFieldKind === "image") {
+      openInlineImageEditor(nextBlock, nextBlockDef, nextFieldKey);
+      return;
+    }
+
+    if (nextBlock && nextFieldKey && nextFieldKind === "boolean") {
+      openInlineBooleanEditor(nextBlock, nextBlockDef, nextFieldKey);
+      return;
+    }
+
+    if (nextBlock && nextFieldKey) {
+      openInlineFieldEditor(nextBlock, nextBlockDef, nextFieldKey);
+      return;
+    }
+
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
   }
 
   async function removeSelectedBlock() {
@@ -633,12 +1606,15 @@ export default function CanonicalPageEditor({
 
     try {
       const uploadedAsset = await uploadImage(file);
-      const currentImage = asRecord(draftConfig[fieldKey]);
+      const currentImage = readEditableImageValue(draftConfig[fieldKey]);
       const nextConfig = {
         ...draftConfig,
         [fieldKey]: {
           src: uploadedAsset.url,
-          alt: typeof currentImage.alt === "string" ? currentImage.alt : selectedBlockDef?.label ?? "",
+          alt: currentImage.alt || selectedBlockDef?.label || "",
+          fitMode: currentImage.fitMode,
+          positionX: currentImage.positionX,
+          positionY: currentImage.positionY,
         },
       };
       const nextAssets = {
@@ -647,8 +1623,7 @@ export default function CanonicalPageEditor({
           assetId: uploadedAsset.id,
           url: uploadedAsset.url,
           src: uploadedAsset.url,
-          alt:
-            typeof currentImage.alt === "string" ? currentImage.alt : selectedBlockDef?.label ?? "",
+          alt: currentImage.alt || selectedBlockDef?.label || "",
         },
       };
 
@@ -682,6 +1657,20 @@ export default function CanonicalPageEditor({
                     : typeof item.title === "string"
                       ? item.title
                       : "",
+                fitMode:
+                  asRecord(item.image).fitMode === "fit" ||
+                  asRecord(item.image).fitMode === "fill" ||
+                  asRecord(item.image).fitMode === "crop"
+                    ? asRecord(item.image).fitMode
+                    : "fill",
+                positionX:
+                  typeof asRecord(item.image).positionX === "number"
+                    ? asRecord(item.image).positionX
+                    : 50,
+                positionY:
+                  typeof asRecord(item.image).positionY === "number"
+                    ? asRecord(item.image).positionY
+                    : 50,
               },
             }
           : item
@@ -717,6 +1706,222 @@ export default function CanonicalPageEditor({
       setBusyKey(null);
       setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
     }
+  }
+
+  async function removeTopLevelImage(fieldKey: string) {
+    if (!selectedBlock) return;
+
+    const nextConfig = { ...draftConfig };
+    delete nextConfig[fieldKey];
+
+    const nextAssets = { ...draftAssets };
+    delete nextAssets[fieldKey];
+
+    setDraftConfig(nextConfig);
+    setDraftAssets(nextAssets);
+    await saveSelectedBlock(nextConfig, nextAssets);
+  }
+
+  async function removeListImage(fieldKey: string, index: number) {
+    if (!selectedBlock) return;
+
+    const list = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
+    const nextList = list.map((item, itemIndex) =>
+      itemIndex === index
+        ? (() => {
+            const nextItem = { ...item };
+            delete nextItem.image;
+            return nextItem;
+          })()
+        : item
+    );
+    const nextAssets = {
+      ...draftAssets,
+      [fieldKey]: [
+        ...asArray(draftAssets[fieldKey]).slice(0, index),
+        null,
+        ...asArray(draftAssets[fieldKey]).slice(index + 1),
+      ],
+    };
+    const nextConfig = {
+      ...draftConfig,
+      [fieldKey]: nextList,
+    };
+
+    setDraftConfig(nextConfig);
+    setDraftAssets(nextAssets);
+    await saveSelectedBlock(nextConfig, nextAssets);
+  }
+
+  function handleInlineImagePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!activeInlineImageField || !inlineImageFrame || !activeInlineImageValue?.src) return;
+    if (activeInlineImageValue.fitMode === "fit") return;
+
+    const currentImageField = activeInlineImageField;
+
+    const previewFrame = previewFrameRef.current;
+    if (!previewFrame) return;
+
+    const escapedBlockId = selectedBlockId ? escapeCssAttribute(selectedBlockId) : "";
+    const escapedFieldKey = escapeCssAttribute(currentImageField.key);
+    const targetImage = previewFrame.querySelector<HTMLImageElement>(
+      `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"] img`
+    );
+
+    if (!targetImage) return;
+
+    const naturalWidth = targetImage.naturalWidth || targetImage.width;
+    const naturalHeight = targetImage.naturalHeight || targetImage.height;
+    const containerWidth = inlineImageFrame.width;
+    const containerHeight = inlineImageFrame.height;
+
+    if (!naturalWidth || !naturalHeight || !containerWidth || !containerHeight) return;
+
+    const fitMode = activeInlineImageValue.fitMode === "crop" ? "cover" : "cover";
+    const scale =
+      fitMode === "cover"
+        ? Math.max(containerWidth / naturalWidth, containerHeight / naturalHeight)
+        : Math.min(containerWidth / naturalWidth, containerHeight / naturalHeight);
+    const renderWidth = naturalWidth * scale;
+    const renderHeight = naturalHeight * scale;
+    const overflowX = Math.max(0, renderWidth - containerWidth);
+    const overflowY = Math.max(0, renderHeight - containerHeight);
+
+    if (overflowX <= 1 && overflowY <= 1) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startPositionX = activeInlineImageValue.positionX;
+    const startPositionY = activeInlineImageValue.positionY;
+
+    setImageDragActive(true);
+
+    function handlePointerMove(moveEvent: PointerEvent) {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaY = moveEvent.clientY - startY;
+
+      updateTopLevelImageField(currentImageField.key, (image) => ({
+        ...image,
+        positionX:
+          overflowX > 0
+            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+            : startPositionX,
+        positionY:
+          overflowY > 0
+            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+            : startPositionY,
+      }));
+    }
+
+    function handlePointerUp(upEvent: PointerEvent) {
+      const deltaX = upEvent.clientX - startX;
+      const deltaY = upEvent.clientY - startY;
+
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      setImageDragActive(false);
+
+      void commitTopLevelImageField(currentImageField.key, (image) => ({
+        ...image,
+        positionX:
+          overflowX > 0
+            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+            : startPositionX,
+        positionY:
+          overflowY > 0
+            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+            : startPositionY,
+      }));
+    }
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp, { once: true });
+  }
+
+  function handleInlineListImagePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
+    if (!activeInlineListImage || !inlineListImageFrame || !activeInlineListImageValue?.src) return;
+    if (activeInlineListImageValue.fitMode === "fit") return;
+
+    const currentListImage = activeInlineListImage;
+    const previewFrame = previewFrameRef.current;
+    if (!previewFrame) return;
+
+    const escapedBlockId = selectedBlockId ? escapeCssAttribute(selectedBlockId) : "";
+    const escapedFieldKey = escapeCssAttribute(currentListImage.path);
+    const targetImage = previewFrame.querySelector<HTMLImageElement>(
+      `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"] img`
+    );
+
+    if (!targetImage) return;
+
+    const naturalWidth = targetImage.naturalWidth || targetImage.width;
+    const naturalHeight = targetImage.naturalHeight || targetImage.height;
+    const containerWidth = inlineListImageFrame.width;
+    const containerHeight = inlineListImageFrame.height;
+
+    if (!naturalWidth || !naturalHeight || !containerWidth || !containerHeight) return;
+
+    const scale = Math.max(containerWidth / naturalWidth, containerHeight / naturalHeight);
+    const renderWidth = naturalWidth * scale;
+    const renderHeight = naturalHeight * scale;
+    const overflowX = Math.max(0, renderWidth - containerWidth);
+    const overflowY = Math.max(0, renderHeight - containerHeight);
+
+    if (overflowX <= 1 && overflowY <= 1) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    const startX = event.clientX;
+    const startY = event.clientY;
+    const startPositionX = activeInlineListImageValue.positionX;
+    const startPositionY = activeInlineListImageValue.positionY;
+
+    setImageDragActive(true);
+
+    function handlePointerMove(moveEvent: PointerEvent) {
+      const deltaX = moveEvent.clientX - startX;
+      const deltaY = moveEvent.clientY - startY;
+
+      updateListImageField(currentListImage.fieldKey, currentListImage.index, (image) => ({
+        ...image,
+        positionX:
+          overflowX > 0
+            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+            : startPositionX,
+        positionY:
+          overflowY > 0
+            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+            : startPositionY,
+      }));
+    }
+
+    function handlePointerUp(upEvent: PointerEvent) {
+      const deltaX = upEvent.clientX - startX;
+      const deltaY = upEvent.clientY - startY;
+
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+      setImageDragActive(false);
+
+      void commitListImageField(currentListImage.fieldKey, currentListImage.index, (image) => ({
+        ...image,
+        positionX:
+          overflowX > 0
+            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+            : startPositionX,
+        positionY:
+          overflowY > 0
+            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+            : startPositionY,
+      }));
+    }
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp, { once: true });
   }
 
   function renderImageField(fieldKey: string, label: string) {
@@ -980,6 +2185,35 @@ export default function CanonicalPageEditor({
       );
     }
 
+    if (field.kind === "boolean") {
+      const checked = typeof value === "boolean" ? value : false;
+
+      return (
+        <div
+          key={field.key}
+          className="flex items-center justify-between gap-3 rounded-[1.1rem] border border-neutral-200 bg-neutral-50/80 px-4 py-3"
+        >
+          <div>
+            <p className="text-sm font-semibold text-neutral-900">{field.label}</p>
+            <p className="text-xs text-neutral-500">Mostra ou oculta este elemento no template.</p>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={checked}
+            onClick={() => updateDraftField(field.key, !checked)}
+            className={`inline-flex h-7 w-12 items-center rounded-full border transition ${
+              checked
+                ? "border-lime-500 bg-lime-400/90 justify-end"
+                : "border-neutral-300 bg-white justify-start"
+            }`}
+          >
+            <span className="mx-1 block h-5 w-5 rounded-full bg-white shadow-sm" />
+          </button>
+        </div>
+      );
+    }
+
     if (field.kind === "longText") {
       return (
         <div key={field.key} className="space-y-2">
@@ -1165,35 +2399,383 @@ export default function CanonicalPageEditor({
               Canvas
             </span>
           </div>
-          <div className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-4 sm:py-4 lg:max-h-[48.75rem] xl:px-3 2xl:px-5">
+          <div
+            ref={previewViewportRef}
+            className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-4 sm:py-4 lg:max-h-[48.75rem] xl:px-3 2xl:px-5"
+          >
             <div
               ref={previewFrameRef}
-              className="mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm"
+              className="relative mx-auto w-full max-w-[47.5rem] overflow-hidden rounded-lg border border-neutral-300 bg-white shadow-sm"
             >
               {previewMode === "portfolio" ? (
-                <div
-                  className="relative mx-auto"
-                  style={{
-                    width: `${previewCanvasWidth * previewScale}px`,
-                    height: `${previewCanvasHeight * previewScale}px`,
-                  }}
-                >
+                <>
                   <div
-                    className="absolute left-0 top-0 max-w-none origin-top-left"
+                    className="relative mx-auto"
                     style={{
-                      width: `${previewCanvasWidth}px`,
-                      transform: `scale(${previewScale})`,
+                      width: `${previewCanvasWidth * previewScale}px`,
+                      height: `${previewCanvasHeight * previewScale}px`,
                     }}
                   >
-                    <TemplateRenderer
-                      templateSlug={templateSlug}
-                      blocks={previewBlocks}
-                      profile={initialProfile}
-                      version={initialVersion}
-                      templateSourcePackage={initialTemplateSourcePackage}
-                    />
+                    <div
+                      className="absolute left-0 top-0 max-w-none origin-top-left"
+                      style={{
+                        width: `${previewCanvasWidth}px`,
+                        transform: `scale(${previewScale})`,
+                      }}
+                      onClickCapture={handleCanvasBlockSelection}
+                    >
+                      <TemplateRenderer
+                        templateSlug={templateSlug}
+                        blocks={previewBlocks}
+                        profile={initialProfile}
+                        version={initialVersion}
+                        templateSourcePackage={initialTemplateSourcePackage}
+                      />
+                    </div>
                   </div>
-                </div>
+                  {selectedBlock && canvasSelectionFrame ? (
+                    <>
+                      {editableSlotFrames.map((slotFrame) => {
+                        const isActiveText = slotFrame.key === activeInlineFieldKey;
+                        const isActiveImage = slotFrame.key === activeInlineImageFieldKey;
+                        const isActiveBoolean = slotFrame.key === activeInlineBooleanFieldKey;
+                        const isImage = slotFrame.kind === "image";
+                        const isBoolean = slotFrame.kind === "boolean";
+
+                        return (
+                          <div
+                            key={`${selectedBlock.id}:${slotFrame.key}:${slotFrame.left}:${slotFrame.top}`}
+                            className={`pointer-events-none absolute rounded-xl transition ${
+                              isActiveText || isActiveImage || isActiveBoolean
+                                ? "border-2 shadow-[0_0_0_1px_rgba(255,255,255,0.82)]"
+                                : "border border-dashed"
+                            } ${
+                              isImage
+                                ? "border-sky-400/90 bg-sky-400/10"
+                                : isBoolean
+                                  ? "border-amber-400/95 bg-amber-300/10"
+                                : "border-lime-400/90 bg-lime-300/10"
+                            }`}
+                            style={{
+                              left: `${slotFrame.left}px`,
+                              top: `${slotFrame.top}px`,
+                              width: `${slotFrame.width}px`,
+                              height: `${slotFrame.height}px`,
+                            }}
+                          />
+                        );
+                      })}
+                      <div
+                        className="pointer-events-none absolute rounded-[1.25rem] border-2 border-lime-500/95 shadow-[0_0_0_1px_rgba(255,255,255,0.82)]"
+                        style={{
+                          left: `${canvasSelectionFrame.left}px`,
+                          top: `${canvasSelectionFrame.top}px`,
+                          width: `${canvasSelectionFrame.width}px`,
+                          height: `${canvasSelectionFrame.height}px`,
+                        }}
+                      />
+                      <div
+                        className="absolute z-20 flex items-center gap-1 rounded-full border border-neutral-200 bg-white/96 p-1 shadow-lg backdrop-blur"
+                        style={{
+                          left: `${Math.max(canvasSelectionFrame.left + 10, 10)}px`,
+                          top: `${Math.max(canvasSelectionFrame.top - 18, 10)}px`,
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          loading={busyKey === `reorder:${selectedBlock.id}`}
+                          onClick={() => void moveBlock(selectedBlock.id, -1)}
+                          aria-label="Mover bloco para cima"
+                          className="h-8 w-8 rounded-full px-0"
+                        >
+                          <ArrowUp className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          loading={busyKey === `reorder:${selectedBlock.id}`}
+                          onClick={() => void moveBlock(selectedBlock.id, 1)}
+                          aria-label="Mover bloco para baixo"
+                          className="h-8 w-8 rounded-full px-0"
+                        >
+                          <ArrowDown className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          loading={busyKey === `visibility:${selectedBlock.id}`}
+                          onClick={() => void toggleVisibility(selectedBlock)}
+                          aria-label={selectedBlock.visible ? "Ocultar bloco" : "Exibir bloco"}
+                          className="h-8 w-8 rounded-full px-0"
+                        >
+                          {selectedBlock.visible ? (
+                            <EyeOff className="h-4 w-4" aria-hidden="true" />
+                          ) : (
+                            <Eye className="h-4 w-4" aria-hidden="true" />
+                          )}
+                        </Button>
+                      </div>
+                    </>
+                  ) : null}
+                  {selectedBlock && activeInlineField && inlineFieldFrame ? (
+                    <div
+                      className="absolute z-30"
+                      style={{
+                        left: `${inlineFieldFrame.left}px`,
+                        top: `${inlineFieldFrame.top}px`,
+                        width: `${Math.max(inlineFieldFrame.width, 120)}px`,
+                        minHeight: `${Math.max(inlineFieldFrame.height, inlineFieldFrame.kind === "longText" ? 120 : 44)}px`,
+                      }}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      {inlineFieldFrame.kind === "longText" ? (
+                        <textarea
+                          autoFocus
+                          value={activeInlineFieldValue}
+                          data-ft-inline-editor="true"
+                          className="min-h-[7.5rem] w-full rounded-2xl border border-lime-300 bg-white/96 px-4 py-3 text-sm font-medium text-neutral-950 shadow-xl outline-none ring-2 ring-lime-400/70 backdrop-blur"
+                          placeholder={inlineFieldFrame.label}
+                          onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                          onBlur={(event) => void commitInlineFieldChange(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                              event.preventDefault();
+                              cancelInlineFieldChange();
+                              return;
+                            }
+
+                            if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                              event.preventDefault();
+                              void commitInlineFieldChange(activeInlineFieldValue);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <input
+                          autoFocus
+                          type="text"
+                          value={activeInlineFieldValue}
+                          data-ft-inline-editor="true"
+                          className="h-11 w-full rounded-2xl border border-lime-300 bg-white/96 px-4 text-sm font-medium text-neutral-950 shadow-xl outline-none ring-2 ring-lime-400/70 backdrop-blur"
+                          placeholder={inlineFieldFrame.label}
+                          onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                          onBlur={(event) => void commitInlineFieldChange(event.target.value)}
+                          onKeyDown={(event) => {
+                            if (event.key === "Escape") {
+                              event.preventDefault();
+                              cancelInlineFieldChange();
+                              return;
+                            }
+
+                            if (event.key === "Enter") {
+                              event.preventDefault();
+                              void commitInlineFieldChange(activeInlineFieldValue);
+                            }
+                          }}
+                        />
+                      )}
+                    </div>
+                  ) : null}
+                  {selectedBlock && activeInlineImageField && inlineImageFrame ? (
+                    <>
+                      <div
+                        className={`absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8 ${
+                          imageDragActive ? "cursor-grabbing" : activeInlineImageValue?.fitMode === "fit" ? "cursor-default" : "cursor-grab"
+                        }`}
+                        style={{
+                          left: `${inlineImageFrame.left}px`,
+                          top: `${inlineImageFrame.top}px`,
+                          width: `${inlineImageFrame.width}px`,
+                          height: `${inlineImageFrame.height}px`,
+                        }}
+                        onPointerDown={handleInlineImagePointerDown}
+                      />
+                      <div
+                        className="absolute z-30 flex max-w-[min(28rem,calc(100%-1rem))] flex-wrap items-center gap-1 rounded-2xl border border-neutral-200 bg-white/96 p-2 shadow-xl backdrop-blur"
+                        style={{
+                          left: `${Math.max(inlineImageFrame.left + 8, 8)}px`,
+                          top: `${Math.max(inlineImageFrame.top + 8, 8)}px`,
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <span className="mr-2 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                          {inlineImageFrame.label}
+                        </span>
+                        {(["fit", "fill", "crop"] as const).map((mode) => {
+                          const isActive = activeInlineImageValue?.fitMode === mode;
+                          const labels = {
+                            fit: "Fit",
+                            fill: "Fill",
+                            crop: "Crop",
+                          } as const;
+
+                          return (
+                            <Button
+                              key={mode}
+                              type="button"
+                              variant={isActive ? "primary" : "ghost"}
+                              size="sm"
+                              className="h-8 rounded-full px-3"
+                              onClick={() =>
+                                void commitTopLevelImageField(activeInlineImageField.key, (image) => ({
+                                  ...image,
+                                  fitMode: mode,
+                                }))
+                              }
+                            >
+                              {labels[mode]}
+                            </Button>
+                          );
+                        })}
+                        <label className="inline-flex h-8 cursor-pointer items-center rounded-full border border-neutral-200 px-3 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
+                          Trocar
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp,image/gif"
+                            className="hidden"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (file) {
+                                void uploadTopLevelImage(activeInlineImageField.key, file);
+                              }
+                              event.currentTarget.value = "";
+                            }}
+                          />
+                        </label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-full px-3 text-coral-700"
+                          onClick={() => void removeTopLevelImage(activeInlineImageField.key)}
+                        >
+                          Remover
+                        </Button>
+                        {activeInlineImageValue?.fitMode !== "fit" ? (
+                          <span className="ml-1 text-[0.72rem] text-neutral-500">
+                            Arraste para reposicionar
+                          </span>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : null}
+                  {selectedBlock && activeInlineListImage && inlineListImageFrame ? (
+                    <>
+                      <div
+                        className={`absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8 ${
+                          imageDragActive ? "cursor-grabbing" : activeInlineListImageValue?.fitMode === "fit" ? "cursor-default" : "cursor-grab"
+                        }`}
+                        style={{
+                          left: `${inlineListImageFrame.left}px`,
+                          top: `${inlineListImageFrame.top}px`,
+                          width: `${inlineListImageFrame.width}px`,
+                          height: `${inlineListImageFrame.height}px`,
+                        }}
+                        onPointerDown={handleInlineListImagePointerDown}
+                      />
+                      <div
+                        className="absolute z-30 flex max-w-[min(28rem,calc(100%-1rem))] flex-wrap items-center gap-1 rounded-2xl border border-neutral-200 bg-white/96 p-2 shadow-xl backdrop-blur"
+                        style={{
+                          left: `${Math.max(inlineListImageFrame.left + 8, 8)}px`,
+                          top: `${Math.max(inlineListImageFrame.top + 8, 8)}px`,
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <span className="mr-2 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                          {inlineListImageFrame.label}
+                        </span>
+                        {(["fit", "fill", "crop"] as const).map((mode) => {
+                          const isActive = activeInlineListImageValue?.fitMode === mode;
+                          return (
+                            <Button
+                              key={mode}
+                              type="button"
+                              variant={isActive ? "primary" : "ghost"}
+                              size="sm"
+                              className="h-8 rounded-full px-3"
+                              onClick={() =>
+                                void commitListImageField(activeInlineListImage.fieldKey, activeInlineListImage.index, (image) => ({
+                                  ...image,
+                                  fitMode: mode,
+                                }))
+                              }
+                            >
+                              {mode === "fit" ? "Fit" : mode === "fill" ? "Fill" : "Crop"}
+                            </Button>
+                          );
+                        })}
+                        <label className="inline-flex h-8 cursor-pointer items-center rounded-full border border-neutral-200 px-3 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
+                          Trocar
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp,image/gif"
+                            className="hidden"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (file) {
+                                void uploadListImage(activeInlineListImage.fieldKey, activeInlineListImage.index, file);
+                              }
+                              event.currentTarget.value = "";
+                            }}
+                          />
+                        </label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-full px-3 text-coral-700"
+                          onClick={() => void removeListImage(activeInlineListImage.fieldKey, activeInlineListImage.index)}
+                        >
+                          Remover
+                        </Button>
+                        {activeInlineListImageValue?.fitMode !== "fit" ? (
+                          <span className="ml-1 text-[0.72rem] text-neutral-500">
+                            Arraste para reposicionar
+                          </span>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : null}
+                  {selectedBlock && activeInlineBooleanFieldKey && inlineBooleanFrame ? (
+                    <div
+                      className="absolute z-30"
+                      style={{
+                        left: `${Math.max(inlineBooleanFrame.left + inlineBooleanFrame.width - 18, 8)}px`,
+                        top: `${Math.max(inlineBooleanFrame.top - 10, 8)}px`,
+                      }}
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <button
+                        type="button"
+                        className={`inline-flex h-9 min-w-9 items-center justify-center rounded-full border px-2 text-xs font-semibold shadow-lg backdrop-blur ${
+                          draftConfig[activeInlineBooleanFieldKey] === false
+                            ? "border-amber-300 bg-white/96 text-amber-700"
+                            : "border-coral-200 bg-white/96 text-coral-700"
+                        }`}
+                        onClick={() =>
+                          void commitBooleanFieldChange(
+                            activeInlineBooleanFieldKey,
+                            !(typeof draftConfig[activeInlineBooleanFieldKey] === "boolean"
+                              ? Boolean(draftConfig[activeInlineBooleanFieldKey])
+                              : false)
+                          )
+                        }
+                        aria-label={
+                          draftConfig[activeInlineBooleanFieldKey] === false
+                            ? `Restaurar ${activeInlineBooleanField?.label ?? activeInlineBooleanFieldKey}`
+                            : `Ocultar ${activeInlineBooleanField?.label ?? activeInlineBooleanFieldKey}`
+                        }
+                      >
+                        {draftConfig[activeInlineBooleanFieldKey] === false ? "Restaurar" : "X"}
+                      </button>
+                    </div>
+                  ) : null}
+                </>
               ) : (
                 <div className="px-3 py-4 sm:px-5">
                   <ResumeView
@@ -1241,45 +2823,6 @@ export default function CanonicalPageEditor({
                 <div className="grid grid-cols-1 gap-2 2xl:grid-cols-2">
                   <Button
                     type="button"
-                    variant="outline"
-                    size="sm"
-                    loading={busyKey === `reorder:${selectedBlock.id}`}
-                    onClick={() => void moveBlock(selectedBlock.id, -1)}
-                  >
-                    <ArrowUp className="h-4 w-4" aria-hidden="true" />
-                    Subir
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    loading={busyKey === `reorder:${selectedBlock.id}`}
-                    onClick={() => void moveBlock(selectedBlock.id, 1)}
-                  >
-                    <ArrowDown className="h-4 w-4" aria-hidden="true" />
-                    Descer
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    loading={busyKey === `visibility:${selectedBlock.id}`}
-                    onClick={() => void toggleVisibility(selectedBlock)}
-                  >
-                    {selectedBlock.visible ? (
-                      <>
-                        <EyeOff className="h-4 w-4" aria-hidden="true" />
-                        Ocultar
-                      </>
-                    ) : (
-                      <>
-                        <Eye className="h-4 w-4" aria-hidden="true" />
-                        Exibir
-                      </>
-                    )}
-                  </Button>
-                  <Button
-                    type="button"
                     loading={busyKey === `save:${selectedBlock.id}`}
                     onClick={() => void saveSelectedBlock()}
                   >
@@ -1312,7 +2855,7 @@ export default function CanonicalPageEditor({
                 </div>
 
                 <div className="space-y-4">
-                  {getEditableFields(selectedBlockDef).map((field) => renderEditableField(field))}
+                  {selectedEditableFields.map((field) => renderEditableField(field))}
                 </div>
               </>
             ) : (
