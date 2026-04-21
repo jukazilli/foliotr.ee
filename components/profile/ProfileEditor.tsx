@@ -94,6 +94,9 @@ type EditableProject = {
   tagsText: string;
   featured: boolean;
   coverAssetId?: string | null;
+  coverFitMode: "fit" | "fill" | "crop";
+  coverPositionX: number;
+  coverPositionY: number;
   startDate: string;
   endDate: string;
 };
@@ -398,6 +401,12 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
         : text(item.tagsText),
       featured: Boolean(item.featured),
       coverAssetId: item.coverAssetId ?? null,
+      coverFitMode:
+        item.coverFitMode === "fit" || item.coverFitMode === "fill" || item.coverFitMode === "crop"
+          ? item.coverFitMode
+          : "crop",
+      coverPositionX: typeof item.coverPositionX === "number" ? item.coverPositionX : 50,
+      coverPositionY: typeof item.coverPositionY === "number" ? item.coverPositionY : 50,
       startDate: toDateInput(item.startDate),
       endDate: toDateInput(item.endDate),
     })),
@@ -544,6 +553,9 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         tags: compactTags(item.tagsText),
         featured: item.featured,
         coverAssetId: item.coverAssetId ?? null,
+        coverFitMode: item.coverFitMode,
+        coverPositionX: item.coverPositionX,
+        coverPositionY: item.coverPositionY,
         startDate: item.startDate || null,
         endDate: item.endDate || null,
       }));
@@ -1177,6 +1189,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     repoUrl: "",
                     tagsText: "",
                     featured: false,
+                    coverFitMode: "crop",
+                    coverPositionX: 50,
+                    coverPositionY: 50,
                     startDate: "",
                     endDate: "",
                   })

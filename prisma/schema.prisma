@@ -186,6 +186,9 @@ model Project {
   featured     Boolean          @default(false)
   coverAssetId String?
   coverAsset   Asset?           @relation("ProjectCoverAsset", fields: [coverAssetId], references: [id], onDelete: SetNull)
+  coverFitMode String            @default("crop")
+  coverPositionX Int             @default(50)
+  coverPositionY Int             @default(50)
   order        Int              @default(0)
   startDate    DateTime?
   endDate      DateTime?

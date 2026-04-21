@@ -193,6 +193,9 @@ export const projectSchema = z.object({
   tags: z.array(z.string().trim().min(1)).default([]),
   featured: z.boolean().default(false),
   coverAssetId: cuidSchema.optional().nullable(),
+  coverFitMode: z.enum(["fit", "fill", "crop"]).default("crop"),
+  coverPositionX: z.coerce.number().int().min(0).max(100).default(50),
+  coverPositionY: z.coerce.number().int().min(0).max(100).default(50),
   startDate: z.coerce.date().optional().nullable(),
   endDate: z.coerce.date().optional().nullable(),
 });

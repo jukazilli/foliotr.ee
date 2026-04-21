@@ -13354,10 +13354,14 @@ export namespace Prisma {
   }
 
   export type ProjectAvgAggregateOutputType = {
+    coverPositionX: number | null
+    coverPositionY: number | null
     order: number | null
   }
 
   export type ProjectSumAggregateOutputType = {
+    coverPositionX: number | null
+    coverPositionY: number | null
     order: number | null
   }
 
@@ -13371,6 +13375,9 @@ export namespace Prisma {
     repoUrl: string | null
     featured: boolean | null
     coverAssetId: string | null
+    coverFitMode: string | null
+    coverPositionX: number | null
+    coverPositionY: number | null
     order: number | null
     startDate: Date | null
     endDate: Date | null
@@ -13388,6 +13395,9 @@ export namespace Prisma {
     repoUrl: string | null
     featured: boolean | null
     coverAssetId: string | null
+    coverFitMode: string | null
+    coverPositionX: number | null
+    coverPositionY: number | null
     order: number | null
     startDate: Date | null
     endDate: Date | null
@@ -13406,6 +13416,9 @@ export namespace Prisma {
     tags: number
     featured: number
     coverAssetId: number
+    coverFitMode: number
+    coverPositionX: number
+    coverPositionY: number
     order: number
     startDate: number
     endDate: number
@@ -13416,10 +13429,14 @@ export namespace Prisma {
 
 
   export type ProjectAvgAggregateInputType = {
+    coverPositionX?: true
+    coverPositionY?: true
     order?: true
   }
 
   export type ProjectSumAggregateInputType = {
+    coverPositionX?: true
+    coverPositionY?: true
     order?: true
   }
 
@@ -13433,6 +13450,9 @@ export namespace Prisma {
     repoUrl?: true
     featured?: true
     coverAssetId?: true
+    coverFitMode?: true
+    coverPositionX?: true
+    coverPositionY?: true
     order?: true
     startDate?: true
     endDate?: true
@@ -13450,6 +13470,9 @@ export namespace Prisma {
     repoUrl?: true
     featured?: true
     coverAssetId?: true
+    coverFitMode?: true
+    coverPositionX?: true
+    coverPositionY?: true
     order?: true
     startDate?: true
     endDate?: true
@@ -13468,6 +13491,9 @@ export namespace Prisma {
     tags?: true
     featured?: true
     coverAssetId?: true
+    coverFitMode?: true
+    coverPositionX?: true
+    coverPositionY?: true
     order?: true
     startDate?: true
     endDate?: true
@@ -13573,6 +13599,9 @@ export namespace Prisma {
     tags: string[]
     featured: boolean
     coverAssetId: string | null
+    coverFitMode: string
+    coverPositionX: number
+    coverPositionY: number
     order: number
     startDate: Date | null
     endDate: Date | null
@@ -13610,6 +13639,9 @@ export namespace Prisma {
     tags?: boolean
     featured?: boolean
     coverAssetId?: boolean
+    coverFitMode?: boolean
+    coverPositionX?: boolean
+    coverPositionY?: boolean
     order?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -13632,6 +13664,9 @@ export namespace Prisma {
     tags?: boolean
     featured?: boolean
     coverAssetId?: boolean
+    coverFitMode?: boolean
+    coverPositionX?: boolean
+    coverPositionY?: boolean
     order?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -13652,6 +13687,9 @@ export namespace Prisma {
     tags?: boolean
     featured?: boolean
     coverAssetId?: boolean
+    coverFitMode?: boolean
+    coverPositionX?: boolean
+    coverPositionY?: boolean
     order?: boolean
     startDate?: boolean
     endDate?: boolean
@@ -13688,6 +13726,9 @@ export namespace Prisma {
       tags: string[]
       featured: boolean
       coverAssetId: string | null
+      coverFitMode: string
+      coverPositionX: number
+      coverPositionY: number
       order: number
       startDate: Date | null
       endDate: Date | null
@@ -14099,6 +14140,9 @@ export namespace Prisma {
     readonly tags: FieldRef<"Project", 'String[]'>
     readonly featured: FieldRef<"Project", 'Boolean'>
     readonly coverAssetId: FieldRef<"Project", 'String'>
+    readonly coverFitMode: FieldRef<"Project", 'String'>
+    readonly coverPositionX: FieldRef<"Project", 'Int'>
+    readonly coverPositionY: FieldRef<"Project", 'Int'>
     readonly order: FieldRef<"Project", 'Int'>
     readonly startDate: FieldRef<"Project", 'DateTime'>
     readonly endDate: FieldRef<"Project", 'DateTime'>
@@ -34441,6 +34485,9 @@ export namespace Prisma {
     tags: 'tags',
     featured: 'featured',
     coverAssetId: 'coverAssetId',
+    coverFitMode: 'coverFitMode',
+    coverPositionX: 'coverPositionX',
+    coverPositionY: 'coverPositionY',
     order: 'order',
     startDate: 'startDate',
     endDate: 'endDate',
@@ -35639,6 +35686,9 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Project">
     featured?: BoolFilter<"Project"> | boolean
     coverAssetId?: StringNullableFilter<"Project"> | string | null
+    coverFitMode?: StringFilter<"Project"> | string
+    coverPositionX?: IntFilter<"Project"> | number
+    coverPositionY?: IntFilter<"Project"> | number
     order?: IntFilter<"Project"> | number
     startDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -35660,6 +35710,9 @@ export namespace Prisma {
     tags?: SortOrder
     featured?: SortOrder
     coverAssetId?: SortOrderInput | SortOrder
+    coverFitMode?: SortOrder
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
@@ -35684,6 +35737,9 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Project">
     featured?: BoolFilter<"Project"> | boolean
     coverAssetId?: StringNullableFilter<"Project"> | string | null
+    coverFitMode?: StringFilter<"Project"> | string
+    coverPositionX?: IntFilter<"Project"> | number
+    coverPositionY?: IntFilter<"Project"> | number
     order?: IntFilter<"Project"> | number
     startDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -35705,6 +35761,9 @@ export namespace Prisma {
     tags?: SortOrder
     featured?: SortOrder
     coverAssetId?: SortOrderInput | SortOrder
+    coverFitMode?: SortOrder
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
     startDate?: SortOrderInput | SortOrder
     endDate?: SortOrderInput | SortOrder
@@ -35731,6 +35790,9 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Project">
     featured?: BoolWithAggregatesFilter<"Project"> | boolean
     coverAssetId?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    coverFitMode?: StringWithAggregatesFilter<"Project"> | string
+    coverPositionX?: IntWithAggregatesFilter<"Project"> | number
+    coverPositionY?: IntWithAggregatesFilter<"Project"> | number
     order?: IntWithAggregatesFilter<"Project"> | number
     startDate?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     endDate?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
@@ -38121,6 +38183,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -38142,6 +38207,9 @@ export namespace Prisma {
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
     coverAssetId?: string | null
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -38159,6 +38227,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38180,6 +38251,9 @@ export namespace Prisma {
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     coverAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38199,6 +38273,9 @@ export namespace Prisma {
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
     coverAssetId?: string | null
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -38215,6 +38292,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -38233,6 +38313,9 @@ export namespace Prisma {
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     coverAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -40635,6 +40718,9 @@ export namespace Prisma {
     tags?: SortOrder
     featured?: SortOrder
     coverAssetId?: SortOrder
+    coverFitMode?: SortOrder
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -40643,6 +40729,8 @@ export namespace Prisma {
   }
 
   export type ProjectAvgOrderByAggregateInput = {
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
   }
 
@@ -40656,6 +40744,9 @@ export namespace Prisma {
     repoUrl?: SortOrder
     featured?: SortOrder
     coverAssetId?: SortOrder
+    coverFitMode?: SortOrder
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -40673,6 +40764,9 @@ export namespace Prisma {
     repoUrl?: SortOrder
     featured?: SortOrder
     coverAssetId?: SortOrder
+    coverFitMode?: SortOrder
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
@@ -40681,6 +40775,8 @@ export namespace Prisma {
   }
 
   export type ProjectSumOrderByAggregateInput = {
+    coverPositionX?: SortOrder
+    coverPositionY?: SortOrder
     order?: SortOrder
   }
 
@@ -45104,6 +45200,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -45123,6 +45222,9 @@ export namespace Prisma {
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
     coverAssetId?: string | null
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -45557,6 +45659,9 @@ export namespace Prisma {
     tags?: StringNullableListFilter<"Project">
     featured?: BoolFilter<"Project"> | boolean
     coverAssetId?: StringNullableFilter<"Project"> | string | null
+    coverFitMode?: StringFilter<"Project"> | string
+    coverPositionX?: IntFilter<"Project"> | number
+    coverPositionY?: IntFilter<"Project"> | number
     order?: IntFilter<"Project"> | number
     startDate?: DateTimeNullableFilter<"Project"> | Date | string | null
     endDate?: DateTimeNullableFilter<"Project"> | Date | string | null
@@ -47734,6 +47839,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -47753,6 +47861,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -50145,6 +50256,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -50165,6 +50279,9 @@ export namespace Prisma {
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
     coverAssetId?: string | null
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -50254,6 +50371,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -50274,6 +50394,9 @@ export namespace Prisma {
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     coverAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51298,6 +51421,9 @@ export namespace Prisma {
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
     coverAssetId?: string | null
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -51513,6 +51639,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51532,6 +51661,9 @@ export namespace Prisma {
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     coverAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51550,6 +51682,9 @@ export namespace Prisma {
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
     coverAssetId?: NullableStringFieldUpdateOperationsInput | string | null
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -51993,6 +52128,9 @@ export namespace Prisma {
     repoUrl?: string | null
     tags?: ProjectCreatetagsInput | string[]
     featured?: boolean
+    coverFitMode?: string
+    coverPositionX?: number
+    coverPositionY?: number
     order?: number
     startDate?: Date | string | null
     endDate?: Date | string | null
@@ -52063,6 +52201,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -52082,6 +52223,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -52100,6 +52244,9 @@ export namespace Prisma {
     repoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProjectUpdatetagsInput | string[]
     featured?: BoolFieldUpdateOperationsInput | boolean
+    coverFitMode?: StringFieldUpdateOperationsInput | string
+    coverPositionX?: IntFieldUpdateOperationsInput | number
+    coverPositionY?: IntFieldUpdateOperationsInput | number
     order?: IntFieldUpdateOperationsInput | number
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
