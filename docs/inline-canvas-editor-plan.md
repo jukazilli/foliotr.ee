@@ -672,12 +672,31 @@ Validacao executada:
 - `npm run lint`
 - `npm run build`
 
+### Slice 6 parcial entregue em 2026-04-20
+
+Status:
+
+- o editor agora expõe mensagens de feedback em regiao `aria-live`
+- o canvas recebeu papeis e labels mais explicitos para tecnologia assistiva
+- overlays de selecao e edicao passaram a evitar re-render quando o frame calculado nao mudou de fato
+- os refinamentos de foco e teclado foram consolidados sem reestruturar o renderer
+
+Arquivos-base deste slice:
+
+- `components/pages/CanonicalPageEditor.tsx`
+
+Validacao executada:
+
+- `npm run lint`
+- `npm run build`
+
 ### Pendencias imediatas do proximo slice
 
 - substituir o editor de texto simples por affordance mais proxima de caixa ativa de apresentacao
 - decidir se imagens derivadas de projetos selecionados devem continuar read-only ou ganhar um nivel de override local
-- revisar acessibilidade, atalhos, states de foco e custo de re-render do overlay
+- revisar acessibilidade fina de navegacao por teclado entre slots
+- decidir se o plano segue com otimizaçao adicional ou migra para polimento visual / browser QA
 
 ## Proximo passo
 
-Continuar no fechamento do Slice 5 e depois no Slice 6, com foco em acessibilidade, performance, foco e acabamento de interacao.
+Entrar em fechamento final e QA do editor inline, porque a fundacao dos Slices 0 a 6 ja foi coberta de forma executavel.

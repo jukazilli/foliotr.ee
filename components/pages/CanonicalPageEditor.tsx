@@ -129,6 +129,37 @@ interface EditableImageValue {
   positionY: number;
 }
 
+function sameCanvasFrame(
+  left: CanvasSelectionFrame | InlineFieldFrame | InlineImageFrame | EditableSlotFrame | null,
+  right: CanvasSelectionFrame | InlineFieldFrame | InlineImageFrame | EditableSlotFrame | null
+) {
+  if (!left && !right) return true;
+  if (!left || !right) return false;
+
+  return (
+    left.left === right.left &&
+    left.top === right.top &&
+    left.width === right.width &&
+    left.height === right.height
+  );
+}
+
+function sameSlotFrames(left: EditableSlotFrame[], right: EditableSlotFrame[]) {
+  if (left.length !== right.length) return false;
+
+  return left.every((frame, index) => {
+    const next = right[index];
+    return (
+      frame.key === next?.key &&
+      frame.kind === next?.kind &&
+      frame.left === next?.left &&
+      frame.top === next?.top &&
+      frame.width === next?.width &&
+      frame.height === next?.height
+    );
+  });
+}
+
 function asRecord(value: unknown): JsonRecord {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as JsonRecord)
@@ -420,12 +451,14 @@ export default function CanonicalPageEditor({
       const frameRect = currentFrame.getBoundingClientRect();
       const selectedRect = selectedElement.getBoundingClientRect();
 
-      setCanvasSelectionFrame({
+      const nextFrame = {
         left: selectedRect.left - frameRect.left,
         top: selectedRect.top - frameRect.top,
         width: selectedRect.width,
         height: selectedRect.height,
-      });
+      };
+
+      setCanvasSelectionFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
     }
 
     updateSelectionFrame();
@@ -534,6 +567,7 @@ export default function CanonicalPageEditor({
         : null,
     [activeInlineBooleanFieldKey, selectedBooleanFields]
   );
+  const liveMessage = errorMessage || successMessage;
 
   useEffect(() => {
     if (!blocks.some((block) => block.id === selectedBlockId)) {
@@ -642,24 +676,24 @@ export default function CanonicalPageEditor({
         )
       );
 
-      setEditableSlotFrames(
-        nodes
-          .map((node) => {
-            const key = node.dataset.ftConfigPath;
-            if (!key) return null;
+      const nextFrames = nodes
+        .map((node) => {
+          const key = node.dataset.ftConfigPath;
+          if (!key) return null;
 
-            const rect = node.getBoundingClientRect();
-            return {
-              key,
-              kind: editableFieldMap.get(key) ?? inferFieldKindFromCanvas(node.dataset.ftKind),
-              left: rect.left - frameRect.left,
-              top: rect.top - frameRect.top,
-              width: rect.width,
-              height: rect.height,
-            } satisfies EditableSlotFrame;
-          })
-          .filter((item): item is EditableSlotFrame => Boolean(item))
-      );
+          const rect = node.getBoundingClientRect();
+          return {
+            key,
+            kind: editableFieldMap.get(key) ?? inferFieldKindFromCanvas(node.dataset.ftKind),
+            left: rect.left - frameRect.left,
+            top: rect.top - frameRect.top,
+            width: rect.width,
+            height: rect.height,
+          } satisfies EditableSlotFrame;
+        })
+        .filter((item): item is EditableSlotFrame => Boolean(item));
+
+      setEditableSlotFrames((current) => (sameSlotFrames(current, nextFrames) ? current : nextFrames));
     }
 
     updateEditableSlotFrames();
@@ -731,7 +765,7 @@ export default function CanonicalPageEditor({
       const frameRect = currentFrame.getBoundingClientRect();
       const selectedRect = selectedElement.getBoundingClientRect();
 
-      setInlineFieldFrame({
+      const nextFrame = {
         key: currentInlineField.key,
         label: currentInlineField.label,
         kind: currentInlineField.kind,
@@ -739,7 +773,9 @@ export default function CanonicalPageEditor({
         top: selectedRect.top - frameRect.top,
         width: selectedRect.width,
         height: selectedRect.height,
-      });
+      };
+
+      setInlineFieldFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
     }
 
     updateInlineFieldFrame();
@@ -813,14 +849,16 @@ export default function CanonicalPageEditor({
       const frameRect = currentFrame.getBoundingClientRect();
       const selectedRect = selectedElement.getBoundingClientRect();
 
-      setInlineImageFrame({
+      const nextFrame = {
         key: currentImageField.key,
         label: currentImageField.label,
         left: selectedRect.left - frameRect.left,
         top: selectedRect.top - frameRect.top,
         width: selectedRect.width,
         height: selectedRect.height,
-      });
+      };
+
+      setInlineImageFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
     }
 
     updateInlineImageFrame();
@@ -895,14 +933,16 @@ export default function CanonicalPageEditor({
       const frameRect = currentFrame.getBoundingClientRect();
       const selectedRect = selectedElement.getBoundingClientRect();
 
-      setInlineListImageFrame({
+      const nextFrame = {
         key: currentListImage.path,
         label: currentListImage.label,
         left: selectedRect.left - frameRect.left,
         top: selectedRect.top - frameRect.top,
         width: selectedRect.width,
         height: selectedRect.height,
-      });
+      };
+
+      setInlineListImageFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
     }
 
     updateInlineListImageFrame();
@@ -969,12 +1009,14 @@ export default function CanonicalPageEditor({
       const frameRect = currentFrame.getBoundingClientRect();
       const selectedRect = selectedElement.getBoundingClientRect();
 
-      setInlineBooleanFrame({
+      const nextFrame = {
         left: selectedRect.left - frameRect.left,
         top: selectedRect.top - frameRect.top,
         width: selectedRect.width,
         height: selectedRect.height,
-      });
+      };
+
+      setInlineBooleanFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
     }
 
     updateInlineBooleanFrame();
@@ -2321,6 +2363,9 @@ export default function CanonicalPageEditor({
 
   return (
     <section className="grid min-h-[45rem] min-w-0 gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:grid-cols-[20rem_minmax(0,1fr)]">
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {liveMessage}
+      </div>
       <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
         <div className="border-b border-neutral-200 bg-neutral-50/80 p-2">
           <div className="grid grid-cols-2 rounded-lg border border-neutral-200 bg-neutral-100 p-1">
@@ -2475,6 +2520,8 @@ export default function CanonicalPageEditor({
           </div>
           <div
             ref={previewViewportRef}
+            role="region"
+            aria-label="Canvas de edicao do portfolio"
             className="max-h-[70vh] overflow-auto bg-neutral-100 px-2 py-4 sm:px-4 sm:py-4 lg:max-h-[48.75rem] xl:px-3 2xl:px-5"
           >
             <div
@@ -2496,6 +2543,8 @@ export default function CanonicalPageEditor({
                         width: `${previewCanvasWidth}px`,
                         transform: `scale(${previewScale})`,
                       }}
+                      role="application"
+                      aria-label="Preview editavel do template"
                       onClickCapture={handleCanvasBlockSelection}
                     >
                       <TemplateRenderer
