@@ -507,6 +507,10 @@ export default function CanonicalPageEditor({
   const [inlineBooleanFrame, setInlineBooleanFrame] =
     useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
+  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
+  const imageFileTargetRef = useRef<ImageFileTarget | null>(null);
+  const imagePickerOpenRef = useRef(false);
   const saveSelectedBlockRef = useRef<
     ((nextConfig?: JsonRecord, nextAssets?: JsonRecord) => Promise<boolean>) | null
   >(null);
@@ -817,6 +821,30 @@ export default function CanonicalPageEditor({
     setDraftConfig(asRecord(selectedBlock.config));
     setDraftAssets(asRecord(selectedBlock.assets));
   }, [selectedBlock]);
+
+  useEffect(() => {
+    const input = imageFileInputRef.current;
+
+    function releaseImagePicker() {
+      window.setTimeout(() => {
+        imagePickerOpenRef.current = false;
+        setImagePickerOpen(false);
+      }, 150);
+    }
+
+    function cancelImagePicker() {
+      imageFileTargetRef.current = null;
+      releaseImagePicker();
+    }
+
+    input?.addEventListener("cancel", cancelImagePicker);
+    window.addEventListener("focus", releaseImagePicker);
+
+    return () => {
+      input?.removeEventListener("cancel", cancelImagePicker);
+      window.removeEventListener("focus", releaseImagePicker);
+    };
+  }, []);
 
   useEffect(() => {
     setActiveInlineFieldKey(null);
@@ -2206,12 +2234,31 @@ export default function CanonicalPageEditor({
     return asRecord(payload).asset as UploadedAsset;
   }
 
-  function handleImageFileChange(
-    event: ReactChangeEvent<HTMLInputElement>,
-    target: ImageFileTarget
-  ) {
+  function requestImageFile(target: ImageFileTarget) {
+    const input = imageFileInputRef.current;
+    if (!input || imagePickerOpenRef.current || busyKey) return;
+
+    imagePickerOpenRef.current = true;
+    imageFileTargetRef.current = target;
+    setImagePickerOpen(true);
+
+    try {
+      input.value = "";
+      input.click();
+    } catch {
+      imagePickerOpenRef.current = false;
+      imageFileTargetRef.current = null;
+      setImagePickerOpen(false);
+    }
+  }
+
+  function handleSharedImageFileChange(event: ReactChangeEvent<HTMLInputElement>) {
     const file = event.currentTarget.files?.[0] ?? null;
+    const target = imageFileTargetRef.current;
     event.currentTarget.value = "";
+    imageFileTargetRef.current = null;
+    imagePickerOpenRef.current = false;
+    setImagePickerOpen(false);
 
     if (!file || !target) return;
 
@@ -2243,27 +2290,21 @@ export default function CanonicalPageEditor({
     variant?: ButtonProps["variant"];
     size?: ButtonProps["size"];
   }) {
-    const disabled = Boolean(busyKey);
+    const disabled = imagePickerOpen || Boolean(busyKey);
 
     return (
-      <label
-        aria-disabled={disabled}
+      <button
+        type="button"
+        disabled={disabled}
         aria-label={ariaLabel}
         className={cn(
           buttonVariants({ variant, size, className }),
-          "cursor-pointer",
           disabled && "pointer-events-none opacity-50"
         )}
+        onClick={() => requestImageFile(target)}
       >
         {children}
-        <input
-          type="file"
-          accept={IMAGE_FILE_ACCEPT}
-          className="sr-only"
-          disabled={disabled}
-          onChange={(event) => handleImageFileChange(event, target)}
-        />
-      </label>
+      </button>
     );
   }
 
@@ -3107,6 +3148,15 @@ export default function CanonicalPageEditor({
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
+      <input
+        ref={imageFileInputRef}
+        type="file"
+        accept={IMAGE_FILE_ACCEPT}
+        tabIndex={-1}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
+        onChange={handleSharedImageFileChange}
+      />
       <div className="grid min-w-0 gap-3">
         <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">

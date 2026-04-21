@@ -3,7 +3,7 @@
 Status: slice 6 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
-Reference material: `editor-otimizacao/editor`  
+Reference material: `editor-otimizacao/editor`
 
 ## Context
 
@@ -394,6 +394,35 @@ Slice 6 result:
   - Because of this dev-server blocker, editor load and interaction checks could not be completed in browser during Slice 6.
 - No runtime/editor contract changes were made during Slice 6.
 
+### Post-slice maintenance - Image Picker Regression
+
+Date: 2026-04-21
+
+Context:
+
+- Production investigation used `https://foliotree-web.vercel.app/` with the existing Osman account.
+- The reported browser console included React hydration error `#418` and `PUT /api/pages/[pageId]/blocks` returning `422`.
+- The current production flow for the hero portrait upload was reproduced with Playwright: upload succeeded and the subsequent `PUT /api/pages/cmo8ztx3a0002138ji2py1snu/blocks` returned `200`.
+- The profile photo upload was also reproduced in production and returned a saved state with no console errors in Playwright.
+
+Finding:
+
+- Slice `ebc312e`/`b730ce9` had introduced a shared image picker guard for the editor.
+- Commit `34c5ba0` later touched `components/pages/CanonicalPageEditor.tsx` during storage work and removed that shared picker flow, returning to per-button hidden file inputs.
+- That regression increases the chance of duplicated file picker state and stale target handling around inline preview image controls.
+
+Fix applied:
+
+- `components/pages/CanonicalPageEditor.tsx` now uses one shared hidden file input again, with `imagePickerOpen` and cancel/focus release handling.
+- `components/profile/ProfileEditor.tsx` no longer stores selected profile previews as base64 data URLs. It uses `URL.createObjectURL` and revokes the object URL on cleanup.
+- Profile age calculation now waits until browser mount before reading `new Date()`, preventing date-dependent text mismatches during hydration.
+
+Validation:
+
+- `npm run typecheck` passed.
+- `npm run lint` passed.
+- `npm run test` passed: 19 files, 72 tests.
+
 ## Strategic Checklist
 
 - [x] Context and scope confirmed
@@ -419,7 +448,6 @@ Slice 6 result:
 - The reference uses absolute positioning and fixed 1440px assumptions. Implementation must translate the idea into responsive Tailwind layout, not copy the generated structure.
 - High density can reduce clarity if labels and action states are compressed too aggressively. Keep status and destructive actions explicit.
 - Final browser validation remains blocked until the local Next dev server returns HTTP responses after startup.
-- Full `npm run test` currently has 2 failures in `tests/domain/versions-domain.test.ts`, outside the editor UI surface changed here.
 
 ## Definition Of Done
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -159,7 +159,7 @@ type UploadStatus = "idle" | "uploading";
 type ProjectCoverFitMode = "fit" | "fill" | "crop";
 
 type StoredProfilePhoto = {
-  dataUrl: string;
+  objectUrl: string;
   name: string;
   type: string;
   size: number;
@@ -422,8 +422,14 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
       featured: Boolean(item.featured),
       coverAssetId: item.coverAssetId ?? null,
       coverFitMode: normalizeProjectCoverFitMode(item.coverFitMode),
-      coverPositionX: typeof item.coverPositionX === "number" ? clampPercent(item.coverPositionX) : 50,
-      coverPositionY: typeof item.coverPositionY === "number" ? clampPercent(item.coverPositionY) : 50,
+      coverPositionX:
+        typeof item.coverPositionX === "number"
+          ? clampPercent(item.coverPositionX)
+          : 50,
+      coverPositionY:
+        typeof item.coverPositionY === "number"
+          ? clampPercent(item.coverPositionY)
+          : 50,
       startDate: toDateInput(item.startDate),
       endDate: toDateInput(item.endDate),
     })),
@@ -608,13 +614,13 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
   }
 
   return profile.links
-      .filter((item) => item.platform.trim() && cleanUrl(item.url))
-      .map((item) => ({
-        id: persistedId(item.id),
-        platform: item.platform,
-        label: item.label,
-        url: cleanUrl(item.url),
-      }));
+    .filter((item) => item.platform.trim() && cleanUrl(item.url))
+    .map((item) => ({
+      id: persistedId(item.id),
+      platform: item.platform,
+      label: item.label,
+      url: cleanUrl(item.url),
+    }));
 }
 
 function Field({
@@ -630,7 +636,11 @@ function Field({
     <label className="block">
       <span className="flex items-center justify-between gap-3">
         <span className="text-sm font-semibold text-neutral-800">{label}</span>
-        {meta ? <span className="font-data text-[10px] uppercase tracking-[0.16em] text-neutral-400">{meta}</span> : null}
+        {meta ? (
+          <span className="font-data text-[10px] uppercase tracking-[0.16em] text-neutral-400">
+            {meta}
+          </span>
+        ) : null}
       </span>
       <span className="mt-2 block">{children}</span>
     </label>
@@ -695,27 +705,38 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const [profilePhoto, setProfilePhoto] = useState<StoredProfilePhoto | null>(null);
   const [photoError, setPhotoError] = useState("");
   const [projectUploadKey, setProjectUploadKey] = useState<string | null>(null);
-  const [projectImageErrors, setProjectImageErrors] = useState<Record<string, string>>({});
-  const [dirtyCollections, setDirtyCollections] = useState<Set<CollectionField>>(() => new Set());
+  const [projectImageErrors, setProjectImageErrors] = useState<Record<string, string>>(
+    {}
+  );
+  const [dirtyCollections, setDirtyCollections] = useState<Set<CollectionField>>(
+    () => new Set()
+  );
+  const [today, setToday] = useState<Date | null>(null);
 
   const username = profile.user.username;
   const age = useMemo(() => {
-    if (!profile.birthDate) return null;
+    if (!profile.birthDate || !today) return null;
     const birthDate = new Date(`${profile.birthDate}T00:00:00`);
     if (Number.isNaN(birthDate.getTime())) return null;
 
-    const now = new Date();
-    let years = now.getFullYear() - birthDate.getFullYear();
-    const monthDiff = now.getMonth() - birthDate.getMonth();
+    let years = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < birthDate.getDate())) {
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       years -= 1;
     }
 
     return years >= 0 ? years : null;
-  }, [profile.birthDate]);
+  }, [profile.birthDate, today]);
 
-  function setBase<K extends keyof EditableProfile>(field: K, value: EditableProfile[K]) {
+  useEffect(() => {
+    setToday(new Date());
+  }, []);
+
+  function setBase<K extends keyof EditableProfile>(
+    field: K,
+    value: EditableProfile[K]
+  ) {
     setProfile((current) => ({ ...current, [field]: value }));
     setStatus("idle");
   }
@@ -758,10 +779,15 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     setStatus("idle");
   }
 
-  function removeItem<T extends { _key: string }>(field: keyof EditableProfile, keyValue: string) {
+  function removeItem<T extends { _key: string }>(
+    field: keyof EditableProfile,
+    keyValue: string
+  ) {
     setProfile((current) => ({
       ...current,
-      [field]: (current[field] as unknown as T[]).filter((item) => item._key !== keyValue),
+      [field]: (current[field] as unknown as T[]).filter(
+        (item) => item._key !== keyValue
+      ),
     }));
     if (isCollectionField(field)) {
       setDirtyCollections((current) => new Set(current).add(field));
@@ -786,7 +812,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       return;
     }
 
-    const baseBody = (await baseResponse.json()) as { profile: Partial<EditableProfile> };
+    const baseBody = (await baseResponse.json()) as {
+      profile: Partial<EditableProfile>;
+    };
     const savedCollections = new Set<CollectionField>();
     const profilePatch: Record<string, unknown> = { ...baseBody.profile };
 
@@ -824,7 +852,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       savedCollections.add(body.collection);
     }
 
-    setProfile((current) => normalizeProfile({ ...current, ...profilePatch } as EditableProfile));
+    setProfile((current) =>
+      normalizeProfile({ ...current, ...profilePatch } as EditableProfile)
+    );
     setDirtyCollections(new Set());
     setStatus("saved");
     router.refresh();
@@ -839,7 +869,15 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const saveLabel =
     status === "saving" ? "Salvando" : status === "saved" ? "Salvo" : "Salvar";
 
-  const photoPreview = profilePhoto?.dataUrl || profile.avatarUrl || "";
+  useEffect(() => {
+    return () => {
+      if (profilePhoto?.objectUrl) {
+        URL.revokeObjectURL(profilePhoto.objectUrl);
+      }
+    };
+  }, [profilePhoto]);
+
+  const photoPreview = profilePhoto?.objectUrl || profile.avatarUrl || "";
 
   function removeProfilePhoto() {
     setProfilePhoto(null);
@@ -881,7 +919,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     const file = event.target.files?.[0];
     event.target.value = "";
 
-    if (!file) return;
+    if (!file || uploadStatus === "uploading") return;
 
     if (!PROFILE_PHOTO_TYPES.includes(file.type)) {
       setPhotoError("Use JPG, PNG ou WebP.");
@@ -893,17 +931,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       return;
     }
 
-    const reader = new FileReader();
-
-    reader.onload = () => {
-      const result = typeof reader.result === "string" ? reader.result : "";
-      if (!result) {
-        setPhotoError("Nao foi possivel abrir a foto.");
-        return;
-      }
-
+    try {
       const nextPhoto: StoredProfilePhoto = {
-        dataUrl: result,
+        objectUrl: URL.createObjectURL(file),
         name: file.name,
         type: file.type,
         size: file.size,
@@ -914,18 +944,16 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       void uploadProfilePhoto(file)
         .catch((error: unknown) => {
           setProfilePhoto(null);
-          setPhotoError(error instanceof Error ? error.message : "Nao foi possivel enviar a foto.");
+          setPhotoError(
+            error instanceof Error ? error.message : "Nao foi possivel enviar a foto."
+          );
         })
         .finally(() => {
           setUploadStatus("idle");
         });
-    };
-
-    reader.onerror = () => {
+    } catch {
       setPhotoError("Nao foi possivel abrir a foto.");
-    };
-
-    reader.readAsDataURL(file);
+    }
   }
 
   function setProjectImageError(projectKey: string, message: string) {
@@ -974,7 +1002,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     clearProjectImageError(projectKey);
   }
 
-  function handleProjectCoverChange(projectKey: string, event: ChangeEvent<HTMLInputElement>) {
+  function handleProjectCoverChange(
+    projectKey: string,
+    event: ChangeEvent<HTMLInputElement>
+  ) {
     const file = event.target.files?.[0];
     event.target.value = "";
 
@@ -1028,7 +1059,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
             <Badge variant="info">{profile.experiences.length} experiencias</Badge>
             <Badge variant="version">{profile.projects.length} projetos</Badge>
             <Badge variant="premium">
-              {profile.proofs.length + profile.achievements.length + profile.highlights.length} provas
+              {profile.proofs.length +
+                profile.achievements.length +
+                profile.highlights.length}{" "}
+              provas
             </Badge>
             <Badge variant="warning">{profile.versions.length} versoes</Badge>
           </div>
@@ -1052,7 +1086,11 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
             </>
           ) : null}
           <Button onClick={saveProfile} loading={status === "saving"}>
-            {status === "saved" ? <Check className="h-4 w-4" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
+            {status === "saved" ? (
+              <Check className="h-4 w-4" aria-hidden />
+            ) : (
+              <Save className="h-4 w-4" aria-hidden />
+            )}
             {saveLabel}
           </Button>
         </div>
@@ -1077,9 +1115,16 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                     <div className="grid gap-4 rounded-[20px] border border-neutral-200 bg-neutral-50 p-4 sm:grid-cols-[120px_1fr] sm:items-center">
                       <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-neutral-200 bg-white">
                         {photoPreview ? (
-                          <img src={photoPreview} alt="" className="h-full w-full object-cover" />
+                          <img
+                            src={photoPreview}
+                            alt=""
+                            className="h-full w-full object-cover"
+                          />
                         ) : (
-                          <UserRound className="h-10 w-10 text-neutral-400" aria-hidden />
+                          <UserRound
+                            className="h-10 w-10 text-neutral-400"
+                            aria-hidden
+                          />
                         )}
                       </div>
 
@@ -1087,7 +1132,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                         <div>
                           <p className="text-sm font-semibold text-neutral-900">Foto</p>
                           <p className="mt-1 text-sm text-neutral-600">
-                            {photoPreview ? "Preview atualizado." : "Adicione uma foto."}
+                            {photoPreview
+                              ? "Preview atualizado."
+                              : "Adicione uma foto."}
                           </p>
                         </div>
 
@@ -1119,37 +1166,70 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                         </div>
 
                         {photoError ? (
-                          <p className="text-sm font-medium text-coral-800">{photoError}</p>
+                          <p className="text-sm font-medium text-coral-800">
+                            {photoError}
+                          </p>
                         ) : null}
                       </div>
                     </div>
 
                     <Field label="Nome de exibicao">
-                      <input className={inputClass()} value={profile.displayName ?? ""} onChange={onInput("displayName")} />
+                      <input
+                        className={inputClass()}
+                        value={profile.displayName ?? ""}
+                        onChange={onInput("displayName")}
+                      />
                     </Field>
                     <Field label="Handle" meta="URL publica">
-                      <UsernameEditor initialUsername={username} onChanged={setUsername} />
+                      <UsernameEditor
+                        initialUsername={username}
+                        onChanged={setUsername}
+                      />
                     </Field>
                     <Field label="Headline" meta="template e curriculo">
-                      <input className={inputClass()} value={profile.headline ?? ""} onChange={onInput("headline")} />
+                      <input
+                        className={inputClass()}
+                        value={profile.headline ?? ""}
+                        onChange={onInput("headline")}
+                      />
                     </Field>
                     <Field label="Bio curta">
-                      <textarea className={textareaClass()} value={profile.bio ?? ""} onChange={onInput("bio")} />
+                      <textarea
+                        className={textareaClass()}
+                        value={profile.bio ?? ""}
+                        onChange={onInput("bio")}
+                      />
                     </Field>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Localizacao">
-                        <input className={inputClass()} value={profile.location ?? ""} onChange={onInput("location")} />
+                        <input
+                          className={inputClass()}
+                          value={profile.location ?? ""}
+                          onChange={onInput("location")}
+                        />
                       </Field>
                       <Field label="Pronomes">
-                        <input className={inputClass()} value={profile.pronouns ?? ""} onChange={onInput("pronouns")} />
+                        <input
+                          className={inputClass()}
+                          value={profile.pronouns ?? ""}
+                          onChange={onInput("pronouns")}
+                        />
                       </Field>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
                       <Field label="Email publico">
-                        <input className={inputClass()} value={profile.publicEmail ?? ""} onChange={onInput("publicEmail")} />
+                        <input
+                          className={inputClass()}
+                          value={profile.publicEmail ?? ""}
+                          onChange={onInput("publicEmail")}
+                        />
                       </Field>
                       <Field label="Telefone">
-                        <input className={inputClass()} value={profile.phone ?? ""} onChange={onInput("phone")} />
+                        <input
+                          className={inputClass()}
+                          value={profile.phone ?? ""}
+                          onChange={onInput("phone")}
+                        />
                       </Field>
                     </div>
                     <div className="grid gap-4 sm:grid-cols-2">
@@ -1168,7 +1248,11 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                       </Field>
                     </div>
                     <Field label="Site">
-                      <input className={inputClass()} value={profile.websiteUrl ?? ""} onChange={onInput("websiteUrl")} />
+                      <input
+                        className={inputClass()}
+                        value={profile.websiteUrl ?? ""}
+                        onChange={onInput("websiteUrl")}
+                      />
                     </Field>
                   </CardContent>
                 </Card>
@@ -1203,23 +1287,100 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   <Card key={item._key} className="rounded-[20px]">
                     <CardContent className="grid gap-4 p-4 md:grid-cols-[130px_1fr_auto]">
                       <div className="space-y-3">
-                        <input type="date" className={inputClass()} value={item.startDate} onChange={(event) => updateList<EditableEducation>("educations", item._key, { startDate: event.target.value })} />
-                        <input type="date" className={inputClass()} value={item.endDate} disabled={item.current} onChange={(event) => updateList<EditableEducation>("educations", item._key, { endDate: event.target.value })} />
+                        <input
+                          type="date"
+                          className={inputClass()}
+                          value={item.startDate}
+                          onChange={(event) =>
+                            updateList<EditableEducation>("educations", item._key, {
+                              startDate: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          type="date"
+                          className={inputClass()}
+                          value={item.endDate}
+                          disabled={item.current}
+                          onChange={(event) =>
+                            updateList<EditableEducation>("educations", item._key, {
+                              endDate: event.target.value,
+                            })
+                          }
+                        />
                         <label className="flex items-center gap-2 text-xs font-medium text-neutral-600">
-                          <input type="checkbox" checked={item.current} onChange={(event) => updateList<EditableEducation>("educations", item._key, { current: event.target.checked })} />
+                          <input
+                            type="checkbox"
+                            checked={item.current}
+                            onChange={(event) =>
+                              updateList<EditableEducation>("educations", item._key, {
+                                current: event.target.checked,
+                              })
+                            }
+                          />
                           Atual
                         </label>
                       </div>
                       <div className="grid gap-3">
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <input className={inputClass()} placeholder="Instituicao" value={item.institution} onChange={(event) => updateList<EditableEducation>("educations", item._key, { institution: event.target.value })} />
-                          <input className={inputClass()} placeholder="Curso ou grau" value={item.degree} onChange={(event) => updateList<EditableEducation>("educations", item._key, { degree: event.target.value })} />
+                          <input
+                            className={inputClass()}
+                            placeholder="Instituicao"
+                            value={item.institution}
+                            onChange={(event) =>
+                              updateList<EditableEducation>("educations", item._key, {
+                                institution: event.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className={inputClass()}
+                            placeholder="Curso ou grau"
+                            value={item.degree}
+                            onChange={(event) =>
+                              updateList<EditableEducation>("educations", item._key, {
+                                degree: event.target.value,
+                              })
+                            }
+                          />
                         </div>
-                        <input className={inputClass()} placeholder="Area de estudo" value={item.field} onChange={(event) => updateList<EditableEducation>("educations", item._key, { field: event.target.value })} />
-                        <textarea className={textareaClass()} placeholder="Resumo da formacao, enfase, projetos ou conquistas" value={item.description} onChange={(event) => updateList<EditableEducation>("educations", item._key, { description: event.target.value })} />
-                        <input className={inputClass()} placeholder="Logo da instituicao" value={item.logoUrl} onChange={(event) => updateList<EditableEducation>("educations", item._key, { logoUrl: event.target.value })} />
+                        <input
+                          className={inputClass()}
+                          placeholder="Area de estudo"
+                          value={item.field}
+                          onChange={(event) =>
+                            updateList<EditableEducation>("educations", item._key, {
+                              field: event.target.value,
+                            })
+                          }
+                        />
+                        <textarea
+                          className={textareaClass()}
+                          placeholder="Resumo da formacao, enfase, projetos ou conquistas"
+                          value={item.description}
+                          onChange={(event) =>
+                            updateList<EditableEducation>("educations", item._key, {
+                              description: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          className={inputClass()}
+                          placeholder="Logo da instituicao"
+                          value={item.logoUrl}
+                          onChange={(event) =>
+                            updateList<EditableEducation>("educations", item._key, {
+                              logoUrl: event.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <IconButton label="Remover formacao" onClick={() => removeItem<EditableEducation>("educations", item._key)}>
+                      <IconButton
+                        label="Remover formacao"
+                        onClick={() =>
+                          removeItem<EditableEducation>("educations", item._key)
+                        }
+                      >
                         <Trash2 className="h-4 w-4" />
                       </IconButton>
                     </CardContent>
@@ -1256,22 +1417,90 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   <Card key={item._key} className="rounded-[20px]">
                     <CardContent className="grid gap-4 p-4 md:grid-cols-[130px_1fr_auto]">
                       <div className="space-y-3">
-                        <input type="date" className={inputClass()} value={item.startDate} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { startDate: event.target.value })} />
-                        <input type="date" className={inputClass()} value={item.endDate} disabled={item.current} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { endDate: event.target.value })} />
+                        <input
+                          type="date"
+                          className={inputClass()}
+                          value={item.startDate}
+                          onChange={(event) =>
+                            updateList<EditableExperience>("experiences", item._key, {
+                              startDate: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          type="date"
+                          className={inputClass()}
+                          value={item.endDate}
+                          disabled={item.current}
+                          onChange={(event) =>
+                            updateList<EditableExperience>("experiences", item._key, {
+                              endDate: event.target.value,
+                            })
+                          }
+                        />
                         <label className="flex items-center gap-2 text-xs font-medium text-neutral-600">
-                          <input type="checkbox" checked={item.current} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { current: event.target.checked })} />
+                          <input
+                            type="checkbox"
+                            checked={item.current}
+                            onChange={(event) =>
+                              updateList<EditableExperience>("experiences", item._key, {
+                                current: event.target.checked,
+                              })
+                            }
+                          />
                           Atual
                         </label>
                       </div>
                       <div className="grid gap-3">
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <input className={inputClass()} placeholder="Cargo" value={item.role} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { role: event.target.value })} />
-                          <input className={inputClass()} placeholder="Empresa" value={item.company} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { company: event.target.value })} />
+                          <input
+                            className={inputClass()}
+                            placeholder="Cargo"
+                            value={item.role}
+                            onChange={(event) =>
+                              updateList<EditableExperience>("experiences", item._key, {
+                                role: event.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className={inputClass()}
+                            placeholder="Empresa"
+                            value={item.company}
+                            onChange={(event) =>
+                              updateList<EditableExperience>("experiences", item._key, {
+                                company: event.target.value,
+                              })
+                            }
+                          />
                         </div>
-                        <textarea className={textareaClass()} placeholder="Resumo e impacto" value={item.description} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { description: event.target.value })} />
-                        <input className={inputClass()} placeholder="Localizacao" value={item.location} onChange={(event) => updateList<EditableExperience>("experiences", item._key, { location: event.target.value })} />
+                        <textarea
+                          className={textareaClass()}
+                          placeholder="Resumo e impacto"
+                          value={item.description}
+                          onChange={(event) =>
+                            updateList<EditableExperience>("experiences", item._key, {
+                              description: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          className={inputClass()}
+                          placeholder="Localizacao"
+                          value={item.location}
+                          onChange={(event) =>
+                            updateList<EditableExperience>("experiences", item._key, {
+                              location: event.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <IconButton label="Remover experiencia" onClick={() => removeItem<EditableExperience>("experiences", item._key)}>
+                      <IconButton
+                        label="Remover experiencia"
+                        onClick={() =>
+                          removeItem<EditableExperience>("experiences", item._key)
+                        }
+                      >
                         <Trash2 className="h-4 w-4" />
                       </IconButton>
                     </CardContent>
@@ -1341,24 +1570,37 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                               projectUploadKey ? "pointer-events-none opacity-55" : ""
                             }`}
                             title={item.imageUrl ? "Trocar capa" : "Adicionar capa"}
-                            aria-label={item.imageUrl ? "Trocar capa do projeto" : "Adicionar capa ao projeto"}
+                            aria-label={
+                              item.imageUrl
+                                ? "Trocar capa do projeto"
+                                : "Adicionar capa ao projeto"
+                            }
                           >
                             <ImagePlus className="h-4 w-4" aria-hidden="true" />
                             <input
                               type="file"
                               accept="image/jpeg,image/png,image/webp"
                               className="hidden"
-                              onChange={(event) => handleProjectCoverChange(item._key, event)}
+                              onChange={(event) =>
+                                handleProjectCoverChange(item._key, event)
+                              }
                             />
                           </label>
                           {item.imageUrl ? (
-                            <IconButton label="Remover capa do projeto" onClick={() => removeProjectCover(item._key)}>
+                            <IconButton
+                              label="Remover capa do projeto"
+                              onClick={() => removeProjectCover(item._key)}
+                            >
                               <Trash2 className="h-4 w-4" />
                             </IconButton>
                           ) : null}
                           {(["fit", "fill", "crop"] as const).map((mode) => {
                             const Icon =
-                              mode === "fit" ? Minimize2 : mode === "fill" ? Maximize2 : Crop;
+                              mode === "fit"
+                                ? Minimize2
+                                : mode === "fill"
+                                  ? Maximize2
+                                  : Crop;
                             const label =
                               mode === "fit"
                                 ? "Ajustar imagem inteira"
@@ -1399,7 +1641,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                               aria-label="Posicao horizontal da capa"
                               onChange={(event) =>
                                 updateList<EditableProject>("projects", item._key, {
-                                  coverPositionX: clampPercent(Number(event.target.value)),
+                                  coverPositionX: clampPercent(
+                                    Number(event.target.value)
+                                  ),
                                 })
                               }
                               className="w-full accent-lime-500"
@@ -1412,7 +1656,9 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                               aria-label="Posicao vertical da capa"
                               onChange={(event) =>
                                 updateList<EditableProject>("projects", item._key, {
-                                  coverPositionY: clampPercent(Number(event.target.value)),
+                                  coverPositionY: clampPercent(
+                                    Number(event.target.value)
+                                  ),
                                 })
                               }
                               className="w-full accent-lime-500"
@@ -1426,15 +1672,65 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                         ) : null}
                       </div>
                       <div className="grid gap-3">
-                        <input className={inputClass()} placeholder="Titulo" value={item.title} onChange={(event) => updateList<EditableProject>("projects", item._key, { title: event.target.value })} />
-                        <textarea className={textareaClass()} placeholder="Resumo do projeto" value={item.description} onChange={(event) => updateList<EditableProject>("projects", item._key, { description: event.target.value })} />
+                        <input
+                          className={inputClass()}
+                          placeholder="Titulo"
+                          value={item.title}
+                          onChange={(event) =>
+                            updateList<EditableProject>("projects", item._key, {
+                              title: event.target.value,
+                            })
+                          }
+                        />
+                        <textarea
+                          className={textareaClass()}
+                          placeholder="Resumo do projeto"
+                          value={item.description}
+                          onChange={(event) =>
+                            updateList<EditableProject>("projects", item._key, {
+                              description: event.target.value,
+                            })
+                          }
+                        />
                         <div className="grid gap-3 sm:grid-cols-2">
-                          <input className={inputClass()} placeholder="URL publica" value={item.url} onChange={(event) => updateList<EditableProject>("projects", item._key, { url: event.target.value })} />
-                          <input className={inputClass()} placeholder="Repositorio" value={item.repoUrl} onChange={(event) => updateList<EditableProject>("projects", item._key, { repoUrl: event.target.value })} />
+                          <input
+                            className={inputClass()}
+                            placeholder="URL publica"
+                            value={item.url}
+                            onChange={(event) =>
+                              updateList<EditableProject>("projects", item._key, {
+                                url: event.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className={inputClass()}
+                            placeholder="Repositorio"
+                            value={item.repoUrl}
+                            onChange={(event) =>
+                              updateList<EditableProject>("projects", item._key, {
+                                repoUrl: event.target.value,
+                              })
+                            }
+                          />
                         </div>
-                        <input className={inputClass()} placeholder="Tags separadas por virgula" value={item.tagsText} onChange={(event) => updateList<EditableProject>("projects", item._key, { tagsText: event.target.value })} />
+                        <input
+                          className={inputClass()}
+                          placeholder="Tags separadas por virgula"
+                          value={item.tagsText}
+                          onChange={(event) =>
+                            updateList<EditableProject>("projects", item._key, {
+                              tagsText: event.target.value,
+                            })
+                          }
+                        />
                       </div>
-                      <IconButton label="Remover projeto" onClick={() => removeItem<EditableProject>("projects", item._key)}>
+                      <IconButton
+                        label="Remover projeto"
+                        onClick={() =>
+                          removeItem<EditableProject>("projects", item._key)
+                        }
+                      >
                         <Trash2 className="h-4 w-4" />
                       </IconButton>
                     </CardContent>
@@ -1446,7 +1742,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
           {
             value: "reconhecimentos",
             label: "Reconhecimentos",
-            count: profile.achievements.length + profile.highlights.length + profile.skills.length,
+            count:
+              profile.achievements.length +
+              profile.highlights.length +
+              profile.skills.length,
             children: (
               <div className="space-y-6">
                 <ListPanel
@@ -1454,10 +1753,40 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   count={profile.highlights.length}
                   label="highlights"
                   addLabel="Highlight"
-                  onAdd={() => addItem<EditableHighlight>("highlights", { _key: key(), title: "", description: "", metric: "" })}
+                  onAdd={() =>
+                    addItem<EditableHighlight>("highlights", {
+                      _key: key(),
+                      title: "",
+                      description: "",
+                      metric: "",
+                    })
+                  }
                 >
                   {profile.highlights.map((item) => (
-                    <CompactEditableRow key={item._key} title={item.title} detail={item.description} metric={item.metric} onTitle={(value) => updateList<EditableHighlight>("highlights", item._key, { title: value })} onDetail={(value) => updateList<EditableHighlight>("highlights", item._key, { description: value })} onMetric={(value) => updateList<EditableHighlight>("highlights", item._key, { metric: value })} onRemove={() => removeItem<EditableHighlight>("highlights", item._key)} />
+                    <CompactEditableRow
+                      key={item._key}
+                      title={item.title}
+                      detail={item.description}
+                      metric={item.metric}
+                      onTitle={(value) =>
+                        updateList<EditableHighlight>("highlights", item._key, {
+                          title: value,
+                        })
+                      }
+                      onDetail={(value) =>
+                        updateList<EditableHighlight>("highlights", item._key, {
+                          description: value,
+                        })
+                      }
+                      onMetric={(value) =>
+                        updateList<EditableHighlight>("highlights", item._key, {
+                          metric: value,
+                        })
+                      }
+                      onRemove={() =>
+                        removeItem<EditableHighlight>("highlights", item._key)
+                      }
+                    />
                   ))}
                 </ListPanel>
 
@@ -1466,10 +1795,42 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   count={profile.achievements.length}
                   label="reconhecimentos"
                   addLabel="Reconhecimento"
-                  onAdd={() => addItem<EditableAchievement>("achievements", { _key: key(), title: "", description: "", date: "", metric: "", imageUrl: "" })}
+                  onAdd={() =>
+                    addItem<EditableAchievement>("achievements", {
+                      _key: key(),
+                      title: "",
+                      description: "",
+                      date: "",
+                      metric: "",
+                      imageUrl: "",
+                    })
+                  }
                 >
                   {profile.achievements.map((item) => (
-                    <CompactEditableRow key={item._key} title={item.title} detail={item.description} metric={item.metric} onTitle={(value) => updateList<EditableAchievement>("achievements", item._key, { title: value })} onDetail={(value) => updateList<EditableAchievement>("achievements", item._key, { description: value })} onMetric={(value) => updateList<EditableAchievement>("achievements", item._key, { metric: value })} onRemove={() => removeItem<EditableAchievement>("achievements", item._key)} />
+                    <CompactEditableRow
+                      key={item._key}
+                      title={item.title}
+                      detail={item.description}
+                      metric={item.metric}
+                      onTitle={(value) =>
+                        updateList<EditableAchievement>("achievements", item._key, {
+                          title: value,
+                        })
+                      }
+                      onDetail={(value) =>
+                        updateList<EditableAchievement>("achievements", item._key, {
+                          description: value,
+                        })
+                      }
+                      onMetric={(value) =>
+                        updateList<EditableAchievement>("achievements", item._key, {
+                          metric: value,
+                        })
+                      }
+                      onRemove={() =>
+                        removeItem<EditableAchievement>("achievements", item._key)
+                      }
+                    />
                   ))}
                 </ListPanel>
 
@@ -1478,15 +1839,45 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   count={profile.skills.length}
                   label="skills"
                   addLabel="Skill"
-                  onAdd={() => addItem<EditableSkill>("skills", { _key: key(), name: "", category: "", level: "" })}
+                  onAdd={() =>
+                    addItem<EditableSkill>("skills", {
+                      _key: key(),
+                      name: "",
+                      category: "",
+                      level: "",
+                    })
+                  }
                 >
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {profile.skills.map((item) => (
                       <Card key={item._key} className="rounded-[18px]">
                         <CardContent className="grid gap-3 p-4">
-                          <input className={inputClass()} placeholder="Skill" value={item.name} onChange={(event) => updateList<EditableSkill>("skills", item._key, { name: event.target.value })} />
-                          <input className={inputClass()} placeholder="Categoria" value={item.category} onChange={(event) => updateList<EditableSkill>("skills", item._key, { category: event.target.value })} />
-                          <IconButton label="Remover skill" onClick={() => removeItem<EditableSkill>("skills", item._key)}>
+                          <input
+                            className={inputClass()}
+                            placeholder="Skill"
+                            value={item.name}
+                            onChange={(event) =>
+                              updateList<EditableSkill>("skills", item._key, {
+                                name: event.target.value,
+                              })
+                            }
+                          />
+                          <input
+                            className={inputClass()}
+                            placeholder="Categoria"
+                            value={item.category}
+                            onChange={(event) =>
+                              updateList<EditableSkill>("skills", item._key, {
+                                category: event.target.value,
+                              })
+                            }
+                          />
+                          <IconButton
+                            label="Remover skill"
+                            onClick={() =>
+                              removeItem<EditableSkill>("skills", item._key)
+                            }
+                          >
                             <Trash2 className="h-4 w-4" />
                           </IconButton>
                         </CardContent>
@@ -1508,15 +1899,52 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   count={profile.links.length}
                   label="links"
                   addLabel="Link"
-                  onAdd={() => addItem<EditableLink>("links", { _key: key(), platform: "website", label: "", url: "" })}
+                  onAdd={() =>
+                    addItem<EditableLink>("links", {
+                      _key: key(),
+                      platform: "website",
+                      label: "",
+                      url: "",
+                    })
+                  }
                 >
                   {profile.links.map((item) => (
                     <Card key={item._key} className="rounded-[20px]">
                       <CardContent className="grid gap-3 p-4 md:grid-cols-[140px_1fr_1fr_auto]">
-                        <input className={inputClass()} placeholder="Tipo" value={item.platform} onChange={(event) => updateList<EditableLink>("links", item._key, { platform: event.target.value })} />
-                        <input className={inputClass()} placeholder="Label" value={item.label} onChange={(event) => updateList<EditableLink>("links", item._key, { label: event.target.value })} />
-                        <input className={inputClass()} placeholder="URL" value={item.url} onChange={(event) => updateList<EditableLink>("links", item._key, { url: event.target.value })} />
-                        <IconButton label="Remover link" onClick={() => removeItem<EditableLink>("links", item._key)}>
+                        <input
+                          className={inputClass()}
+                          placeholder="Tipo"
+                          value={item.platform}
+                          onChange={(event) =>
+                            updateList<EditableLink>("links", item._key, {
+                              platform: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          className={inputClass()}
+                          placeholder="Label"
+                          value={item.label}
+                          onChange={(event) =>
+                            updateList<EditableLink>("links", item._key, {
+                              label: event.target.value,
+                            })
+                          }
+                        />
+                        <input
+                          className={inputClass()}
+                          placeholder="URL"
+                          value={item.url}
+                          onChange={(event) =>
+                            updateList<EditableLink>("links", item._key, {
+                              url: event.target.value,
+                            })
+                          }
+                        />
+                        <IconButton
+                          label="Remover link"
+                          onClick={() => removeItem<EditableLink>("links", item._key)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
@@ -1529,21 +1957,79 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                   count={profile.proofs.length}
                   label="provas"
                   addLabel="Prova"
-                  onAdd={() => addItem<EditableProof>("proofs", { _key: key(), title: "", description: "", metric: "", url: "", imageUrl: "", tagsText: "" })}
+                  onAdd={() =>
+                    addItem<EditableProof>("proofs", {
+                      _key: key(),
+                      title: "",
+                      description: "",
+                      metric: "",
+                      url: "",
+                      imageUrl: "",
+                      tagsText: "",
+                    })
+                  }
                 >
                   {profile.proofs.map((item) => (
                     <Card key={item._key} className="rounded-[20px]">
                       <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
                         <div className="grid gap-3">
-                          <input className={inputClass()} placeholder="Titulo da prova" value={item.title} onChange={(event) => updateList<EditableProof>("proofs", item._key, { title: event.target.value })} />
-                          <textarea className={textareaClass()} placeholder="Contexto" value={item.description} onChange={(event) => updateList<EditableProof>("proofs", item._key, { description: event.target.value })} />
+                          <input
+                            className={inputClass()}
+                            placeholder="Titulo da prova"
+                            value={item.title}
+                            onChange={(event) =>
+                              updateList<EditableProof>("proofs", item._key, {
+                                title: event.target.value,
+                              })
+                            }
+                          />
+                          <textarea
+                            className={textareaClass()}
+                            placeholder="Contexto"
+                            value={item.description}
+                            onChange={(event) =>
+                              updateList<EditableProof>("proofs", item._key, {
+                                description: event.target.value,
+                              })
+                            }
+                          />
                           <div className="grid gap-3 sm:grid-cols-3">
-                            <input className={inputClass()} placeholder="Metrica" value={item.metric} onChange={(event) => updateList<EditableProof>("proofs", item._key, { metric: event.target.value })} />
-                            <input className={inputClass()} placeholder="URL" value={item.url} onChange={(event) => updateList<EditableProof>("proofs", item._key, { url: event.target.value })} />
-                            <input className={inputClass()} placeholder="Tags" value={item.tagsText} onChange={(event) => updateList<EditableProof>("proofs", item._key, { tagsText: event.target.value })} />
+                            <input
+                              className={inputClass()}
+                              placeholder="Metrica"
+                              value={item.metric}
+                              onChange={(event) =>
+                                updateList<EditableProof>("proofs", item._key, {
+                                  metric: event.target.value,
+                                })
+                              }
+                            />
+                            <input
+                              className={inputClass()}
+                              placeholder="URL"
+                              value={item.url}
+                              onChange={(event) =>
+                                updateList<EditableProof>("proofs", item._key, {
+                                  url: event.target.value,
+                                })
+                              }
+                            />
+                            <input
+                              className={inputClass()}
+                              placeholder="Tags"
+                              value={item.tagsText}
+                              onChange={(event) =>
+                                updateList<EditableProof>("proofs", item._key, {
+                                  tagsText: event.target.value,
+                                })
+                              }
+                            />
                           </div>
                         </div>
-                        <IconButton label="Remover prova" onClick={() => removeItem<EditableProof>("proofs", item._key)}>
+                        <IconButton
+                          label="Remover prova"
+                          onClick={() => removeItem<EditableProof>("proofs", item._key)}
+                        >
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
@@ -1614,9 +2100,24 @@ function CompactEditableRow({
   return (
     <Card className="rounded-[20px]">
       <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_1fr_160px_auto]">
-        <input className={inputClass()} placeholder="Titulo" value={title} onChange={(event) => onTitle(event.target.value)} />
-        <input className={inputClass()} placeholder="Descricao" value={detail} onChange={(event) => onDetail(event.target.value)} />
-        <input className={inputClass()} placeholder="Metrica" value={metric} onChange={(event) => onMetric(event.target.value)} />
+        <input
+          className={inputClass()}
+          placeholder="Titulo"
+          value={title}
+          onChange={(event) => onTitle(event.target.value)}
+        />
+        <input
+          className={inputClass()}
+          placeholder="Descricao"
+          value={detail}
+          onChange={(event) => onDetail(event.target.value)}
+        />
+        <input
+          className={inputClass()}
+          placeholder="Metrica"
+          value={metric}
+          onChange={(event) => onMetric(event.target.value)}
+        />
         <IconButton label="Remover" onClick={onRemove}>
           <Trash2 className="h-4 w-4" />
         </IconButton>
