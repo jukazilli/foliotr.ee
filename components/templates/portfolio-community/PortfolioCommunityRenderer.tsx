@@ -152,6 +152,13 @@ function getRenderableBlockByType(
   return blocks.find((block) => block.blockType === blockType) ?? null;
 }
 
+function getRenderableBlocksByType(
+  blocks: RenderablePageBlock[],
+  blockType: RenderablePageBlock["blockType"]
+) {
+  return blocks.filter((block) => block.blockType === blockType);
+}
+
 function HeroPortrait({
   semantics,
   sourcePackage,
@@ -339,12 +346,14 @@ function HeroSection({
   semantics,
   sourcePackage,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   sourcePackage: PortfolioCommunitySourcePackage;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.hero.visible) return null;
+  if (!renderHidden && !semantics.hero.visible) return null;
 
   return (
     <div
@@ -352,6 +361,7 @@ function HeroSection({
       data-ft-block-type={block?.blockType}
       data-ft-kind={block ? "block" : undefined}
       data-ft-editable={block ? "true" : undefined}
+      className={!semantics.hero.visible ? "grayscale opacity-45" : undefined}
     >
       <div style={{ background: sourcePackage.canvas.background }}>
         <SectionShell id="top" className="pb-0 pt-28 sm:pt-32">
@@ -415,14 +425,20 @@ function HeroSection({
 function AboutSection({
   semantics,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.about.visible) return null;
+  if (!renderHidden && !semantics.about.visible) return null;
 
   return (
-    <SectionShell id="about" className="py-16 lg:py-24" editorBlockId={block?.id}>
+    <SectionShell
+      id="about"
+      className={`py-16 lg:py-24 ${!semantics.about.visible ? "grayscale opacity-45" : ""}`}
+      editorBlockId={block?.id}
+    >
       <div
         data-ft-slot="about.title"
         data-ft-config-path="title"
@@ -447,14 +463,20 @@ function AboutSection({
 function ExperienceSection({
   semantics,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.experience.visible || semantics.experience.items.length === 0) return null;
+  if ((!renderHidden && !semantics.experience.visible) || semantics.experience.items.length === 0) return null;
 
   return (
-    <SectionShell id="experience" className="py-16 lg:py-24" editorBlockId={block?.id}>
+    <SectionShell
+      id="experience"
+      className={`py-16 lg:py-24 ${!semantics.experience.visible ? "grayscale opacity-45" : ""}`}
+      editorBlockId={block?.id}
+    >
       <div
         data-ft-slot="experience.title"
         data-ft-config-path="title"
@@ -493,14 +515,20 @@ function ExperienceSection({
 function EducationSection({
   semantics,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.education.visible || semantics.education.items.length === 0) return null;
+  if ((!renderHidden && !semantics.education.visible) || semantics.education.items.length === 0) return null;
 
   return (
-    <SectionShell id="education" className="py-16 lg:py-24" editorBlockId={block?.id}>
+    <SectionShell
+      id="education"
+      className={`py-16 lg:py-24 ${!semantics.education.visible ? "grayscale opacity-45" : ""}`}
+      editorBlockId={block?.id}
+    >
       <div
         data-ft-slot="education.title"
         data-ft-config-path="title"
@@ -542,14 +570,20 @@ function EducationSection({
 function WorkSection({
   semantics,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.work.visible) return null;
+  if (!renderHidden && !semantics.work.visible) return null;
 
   return (
-    <SectionShell id="work" className="py-16 lg:py-24" editorBlockId={block?.id}>
+    <SectionShell
+      id="work"
+      className={`py-16 lg:py-24 ${!semantics.work.visible ? "grayscale opacity-45" : ""}`}
+      editorBlockId={block?.id}
+    >
       <div
         data-ft-slot="work.title"
         data-ft-config-path="title"
@@ -627,14 +661,20 @@ function WorkSection({
 function ContactSection({
   semantics,
   block,
+  renderHidden,
 }: {
   semantics: PortfolioCommunitySemantics;
   block: RenderablePageBlock | null;
+  renderHidden: boolean;
 }) {
-  if (!semantics.contact.visible) return null;
+  if (!renderHidden && !semantics.contact.visible) return null;
 
   return (
-    <SectionShell id="contact" className="py-16 lg:py-28" editorBlockId={block?.id}>
+    <SectionShell
+      id="contact"
+      className={`py-16 lg:py-28 ${!semantics.contact.visible ? "grayscale opacity-45" : ""}`}
+      editorBlockId={block?.id}
+    >
       <div
         data-ft-slot="contact.title"
         data-ft-config-path="title"
@@ -694,6 +734,124 @@ function ContactSection({
   );
 }
 
+function CustomSections({
+  blocks,
+  renderHidden,
+}: {
+  blocks: RenderablePageBlock[];
+  renderHidden: boolean;
+}) {
+  if (!blocks.length) return null;
+
+  return (
+    <>
+      {blocks.map((block, index) => {
+        if (!renderHidden && !block.visible) return null;
+
+        const config =
+          typeof block.config === "object" && block.config !== null && !Array.isArray(block.config)
+            ? (block.config as Record<string, unknown>)
+            : {};
+        const image =
+          typeof config.image === "object" && config.image !== null && !Array.isArray(config.image)
+            ? (config.image as Record<string, unknown>)
+            : null;
+        const listItems = Array.isArray(config.listItems)
+          ? config.listItems
+              .map((item) =>
+                typeof item === "object" && item !== null && !Array.isArray(item)
+                  ? (item as Record<string, unknown>)
+                  : {}
+              )
+              .flatMap((item) =>
+                typeof item.text === "string" && item.text.trim() ? [item.text.trim()] : []
+              )
+          : [];
+        const imageAlign =
+          config.imageAlign === "left" || config.imageAlign === "right" || config.imageAlign === "center"
+            ? config.imageAlign
+            : "center";
+        const sectionTitle =
+          typeof config.title === "string" && config.title.trim() ? config.title.trim() : "nova secao";
+        const body = typeof config.body === "string" ? config.body : "";
+        const imageSrc = typeof image?.src === "string" ? image.src : "";
+        const imageAlt = typeof image?.alt === "string" ? image.alt : "";
+        const imageStyle = {
+          objectFit: image?.fitMode === "fit" ? ("contain" as const) : ("cover" as const),
+          objectPosition: `${typeof image?.positionX === "number" ? image.positionX : 50}% ${
+            typeof image?.positionY === "number" ? image.positionY : 50
+          }%`,
+        };
+
+        return (
+          <SectionShell
+            key={block.id}
+            id={`custom-${index + 1}`}
+            className={`py-16 lg:py-24 ${!block.visible ? "grayscale opacity-45" : ""}`}
+            editorBlockId={block.id}
+          >
+            <div
+              data-ft-slot={`custom.${index}.title`}
+              data-ft-config-path="title"
+              data-ft-kind="text"
+              data-ft-editable="true"
+            >
+              <SectionTitle>{sectionTitle}</SectionTitle>
+            </div>
+            <div
+              className={`mt-10 grid gap-8 ${
+                imageSrc ? "lg:grid-cols-[minmax(16rem,26rem)_minmax(0,1fr)]" : ""
+              } ${imageAlign === "right" ? "lg:[&>*:first-child]:order-2" : ""}`}
+            >
+              {imageSrc ? (
+                <div
+                  className={`aspect-[4/3] overflow-hidden bg-[#F5EE84] ${
+                    imageAlign === "center" ? "mx-auto max-w-[32rem]" : "w-full"
+                  }`}
+                  data-ft-slot={`custom.${index}.image`}
+                  data-ft-config-path="image"
+                  data-ft-kind="image"
+                  data-ft-editable="true"
+                >
+                  <img alt={imageAlt} className="h-full w-full" src={imageSrc} style={imageStyle} />
+                </div>
+              ) : null}
+              <div className="min-w-0">
+                {body ? (
+                  <p
+                    className="whitespace-pre-line break-words text-xl leading-[1.8] md:text-2xl"
+                    data-ft-slot={`custom.${index}.body`}
+                    data-ft-config-path="body"
+                    data-ft-kind="text"
+                    data-ft-editable="true"
+                  >
+                    {body}
+                  </p>
+                ) : null}
+                {listItems.length ? (
+                  <ul
+                    className="mt-6 space-y-3 text-lg leading-[1.8] md:text-xl"
+                    data-ft-slot={`custom.${index}.listItems`}
+                    data-ft-config-path="listItems"
+                    data-ft-kind="text"
+                    data-ft-editable="true"
+                  >
+                    {listItems.map((item) => (
+                      <li key={item} className="break-words">
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </div>
+          </SectionShell>
+        );
+      })}
+    </>
+  );
+}
+
 export default function PortfolioCommunityRenderer(props: TemplateRendererProps) {
   const sourcePackage = readSourcePackage(props.templateSourcePackage);
   const blockState = buildPortfolioCommunityBlockStateFromBlocks(props.blocks);
@@ -703,6 +861,7 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
   const experienceBlock = getRenderableBlockByType(props.blocks, "portfolio.experience");
   const workBlock = getRenderableBlockByType(props.blocks, "portfolio.work");
   const contactBlock = getRenderableBlockByType(props.blocks, "portfolio.contact");
+  const customBlocks = getRenderableBlocksByType(props.blocks, "portfolio.custom-section");
   const semantics = derivePortfolioCommunitySemantics({
     profile: props.profile,
     version: props.version,
@@ -720,12 +879,18 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
         fontFamily: `var(--font-template-portfolio), ${sourcePackage.canvas.fontFamily}, ui-sans-serif, system-ui, sans-serif`,
       }}
     >
-      <HeroSection semantics={semantics} sourcePackage={sourcePackage} block={heroBlock} />
-      <AboutSection semantics={semantics} block={aboutBlock} />
-      <EducationSection semantics={semantics} block={educationBlock} />
-      <ExperienceSection semantics={semantics} block={experienceBlock} />
-      <WorkSection semantics={semantics} block={workBlock} />
-      <ContactSection semantics={semantics} block={contactBlock} />
+      <HeroSection
+        semantics={semantics}
+        sourcePackage={sourcePackage}
+        block={heroBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      <AboutSection semantics={semantics} block={aboutBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <EducationSection semantics={semantics} block={educationBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <ExperienceSection semantics={semantics} block={experienceBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <WorkSection semantics={semantics} block={workBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <CustomSections blocks={customBlocks} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <ContactSection semantics={semantics} block={contactBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
     </main>
   );
 }

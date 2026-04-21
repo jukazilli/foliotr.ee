@@ -3,7 +3,6 @@ import CanonicalPageEditor from "@/components/pages/CanonicalPageEditor";
 import { prisma } from "@/lib/prisma";
 import { ApiRouteError } from "@/lib/server/api";
 import { getAppViewer } from "@/lib/server/app-viewer";
-import { readPageEditorSnapshot } from "@/lib/server/domain/page-snapshots";
 import { getOwnedPageEditorData } from "@/lib/server/domain/templates";
 import { toLegacyVersionSelection } from "@/lib/server/domain/versions";
 import { setPagePublishStateAction } from "./actions";
@@ -22,16 +21,6 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
     const publishPageAction = setPagePublishStateAction.bind(null, page.id, "PUBLISHED");
-    const editorSnapshot =
-      readPageEditorSnapshot(page.editorSnapshot) ??
-      {
-        profile: viewer.profile,
-        version: {
-          customHeadline: page.version.customHeadline,
-          customBio: page.version.customBio,
-          ...toLegacyVersionSelection(page.version),
-        },
-      };
 
     return (
       <div>
@@ -48,6 +37,7 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
               label: blockDef.label,
               blockType: blockDef.blockType,
               required: blockDef.required,
+              defaultConfig: blockDef.defaultConfig,
               editableFields: Array.isArray(blockDef.editableFields) ? blockDef.editableFields : [],
             }))
           )}
@@ -58,8 +48,12 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
               repeatable: blockDef.repeatable,
             }))
           )}
-          initialProfile={toSerializable(editorSnapshot.profile)}
-          initialVersion={toSerializable(editorSnapshot.version)}
+          initialProfile={toSerializable(viewer.profile)}
+          initialVersion={toSerializable({
+            customHeadline: page.version.customHeadline,
+            customBio: page.version.customBio,
+            ...toLegacyVersionSelection(page.version),
+          })}
           initialResumeConfig={toSerializable(page.version.resumeConfig)}
           initialTemplateSourcePackage={toSerializable(page.template.sourcePackage)}
           publishPageAction={publishPageAction}

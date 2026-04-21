@@ -21,7 +21,8 @@ type PortfolioCommunityBlockType =
   | "portfolio.education"
   | "portfolio.experience"
   | "portfolio.work"
-  | "portfolio.contact";
+  | "portfolio.contact"
+  | "portfolio.custom-section";
 
 type PortfolioProfileInput = TemplateProfile | ProfileAggregate;
 type PortfolioVersionInput = VersionAggregate | VersionForBlocks | null | undefined;
@@ -133,6 +134,15 @@ export interface PortfolioCommunitySemantics {
     links: PortfolioCommunityLink[];
     displayLinks: string[];
   };
+  customSections: Array<{
+    id: string;
+    visible: boolean;
+    title: string;
+    body: string;
+    image: PortfolioCommunityImageValue | null;
+    imageAlign: "left" | "center" | "right";
+    listItems: Array<{ text: string }>;
+  }>;
   selections: {
     skills: Array<{ id: string; name: string; category: string | null }>;
     achievements: Array<{
@@ -156,6 +166,10 @@ function asRecord(value: unknown) {
   return typeof value === "object" && value !== null && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
+}
+
+function asArray(value: unknown) {
+  return Array.isArray(value) ? value : [];
 }
 
 function readString(value: unknown, fallback = "") {
@@ -193,6 +207,10 @@ function readImage(value: unknown): PortfolioCommunityImageValue | null {
     positionX: clampPercentage(image.positionX, 50),
     positionY: clampPercentage(image.positionY, 50),
   };
+}
+
+function readImageAlign(value: unknown): "left" | "center" | "right" {
+  return value === "left" || value === "right" || value === "center" ? value : "center";
 }
 
 function createDefaultImageValue(src: string, alt: string): PortfolioCommunityImageValue {
@@ -303,7 +321,8 @@ export function buildPortfolioCommunityBlockStateFromDefs(
       blockDef.blockType === "portfolio.education" ||
       blockDef.blockType === "portfolio.experience" ||
       blockDef.blockType === "portfolio.work" ||
-      blockDef.blockType === "portfolio.contact"
+      blockDef.blockType === "portfolio.contact" ||
+      blockDef.blockType === "portfolio.custom-section"
     ) {
       configs[blockDef.blockType] = asRecord(blockDef.defaultConfig);
     }
@@ -328,7 +347,8 @@ export function buildPortfolioCommunityBlockStateFromBlocks(
       block.blockType === "portfolio.education" ||
       block.blockType === "portfolio.experience" ||
       block.blockType === "portfolio.work" ||
-      block.blockType === "portfolio.contact"
+      block.blockType === "portfolio.contact" ||
+      block.blockType === "portfolio.custom-section"
     ) {
       configs[block.blockType] = asRecord(block.config);
       visibility[block.blockType] = block.visible;
@@ -356,6 +376,9 @@ export function derivePortfolioCommunitySemantics(args: {
   const experienceConfig = args.blockConfigs?.["portfolio.experience"] ?? {};
   const workConfig = args.blockConfigs?.["portfolio.work"] ?? {};
   const contactConfig = args.blockConfigs?.["portfolio.contact"] ?? {};
+  const customSectionConfigs = Object.entries(args.blockConfigs ?? {})
+    .filter(([key]) => key === "portfolio.custom-section")
+    .map(([, value]) => asRecord(value));
 
   const selectedExperiences = getSelectedByIds(
     profile.experiences,
@@ -427,6 +450,25 @@ export function derivePortfolioCommunitySemantics(args: {
       href: getPlatformUrl(link.platform, link.url),
       type: "profileLink" as const,
     })),
+    ...asArray(contactConfig.links).flatMap((item) => {
+      const record = asRecord(item);
+      if (
+        typeof record.label !== "string" ||
+        !record.label.trim() ||
+        typeof record.href !== "string" ||
+        !record.href.trim()
+      ) {
+        return [];
+      }
+
+      return [
+        {
+          label: record.label.trim(),
+          href: record.href.trim(),
+          type: "contact" as const,
+        },
+      ];
+    }),
     ...selectedProofs
       .filter((proof) => typeof proof.url === "string" && proof.url.trim().length > 0)
       .map((proof) => ({
@@ -603,6 +645,21 @@ export function derivePortfolioCommunitySemantics(args: {
       links: contactLinks,
       displayLinks: contactLinks.slice(0, 2).map((item) => item.label),
     },
+    customSections: customSectionConfigs.map((config, index) => ({
+      id: `custom-${index}`,
+      visible: true,
+      title: readString(config.title, "nova secao"),
+      body: readString(config.body),
+      image: readImage(config.image),
+      imageAlign: readImageAlign(config.imageAlign),
+      listItems: asArray(config.listItems)
+        .map((item) => asRecord(item))
+        .flatMap((item) =>
+          typeof item.text === "string" && item.text.trim()
+            ? [{ text: item.text.trim() }]
+            : []
+        ),
+    })),
     selections: {
       skills: selectedSkills.map((skill) => ({
         id: skill.id,

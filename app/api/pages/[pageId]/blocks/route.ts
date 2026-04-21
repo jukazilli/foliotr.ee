@@ -2,8 +2,8 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
-import { addOwnedPageBlock } from "@/lib/server/domain/templates";
-import { pageBlockCreateSchema } from "@/lib/validations";
+import { addOwnedPageBlock, replaceOwnedPageBlocks } from "@/lib/server/domain/templates";
+import { pageBlockBulkSaveSchema, pageBlockCreateSchema } from "@/lib/validations";
 
 interface RouteContext {
   params: Promise<{ pageId: string }>;
@@ -25,5 +25,24 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return jsonOk({ block }, { status: 201 });
   } catch (error) {
     return handleRouteError("POST /api/pages/[pageId]/blocks", error);
+  }
+}
+
+export async function PUT(request: NextRequest, context: RouteContext) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return jsonError("UNAUTHORIZED", 401);
+    }
+
+    const { pageId } = await context.params;
+    const body = await request.json();
+    const input = pageBlockBulkSaveSchema.parse(body);
+    const blocks = await replaceOwnedPageBlocks(prisma, session.user.id, pageId, input);
+
+    return jsonOk({ blocks }, { status: 200 });
+  } catch (error) {
+    return handleRouteError("PUT /api/pages/[pageId]/blocks", error);
   }
 }

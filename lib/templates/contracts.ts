@@ -17,6 +17,7 @@ export const TEMPLATE_BLOCK_TYPES = [
   "portfolio.experience",
   "portfolio.work",
   "portfolio.contact",
+  "portfolio.custom-section",
 ] as const;
 
 export type TemplateBlockType = (typeof TEMPLATE_BLOCK_TYPES)[number];
@@ -80,6 +81,7 @@ export const editableFieldSchema = z.object({
     "h6",
     "text",
     "image",
+    "icon",
     "link",
     "button",
     "list",
@@ -95,6 +97,9 @@ export type EditableField = z.infer<typeof editableFieldSchema>;
 const imageSchema = z.object({
   src: safeAssetPathSchema,
   alt: safeShortTextSchema.default(""),
+  fitMode: z.enum(["fit", "fill", "crop"]).default("fill"),
+  positionX: z.number().min(0).max(100).default(50),
+  positionY: z.number().min(0).max(100).default(50),
 });
 
 const linkSchema = z.object({
@@ -111,6 +116,9 @@ const portfolioHeroConfigSchema = z.object({
   ctaHref: safeHrefSchema.default("/resume"),
   portrait: imageSchema.optional(),
   navLinks: z.array(linkSchema).max(4).default([]),
+  showSocialIcons: z.boolean().default(true),
+  showPlusCluster: z.boolean().default(true),
+  showSlashMarks: z.boolean().default(true),
 });
 
 const portfolioAboutConfigSchema = z.object({
@@ -153,6 +161,21 @@ const portfolioContactConfigSchema = z.object({
   ).max(6).default([]),
 });
 
+const portfolioCustomSectionConfigSchema = z.object({
+  title: safeShortTextSchema.default("nova secao"),
+  body: safeTextSchema.optional(),
+  image: imageSchema.optional(),
+  imageAlign: z.enum(["left", "center", "right"]).default("center"),
+  listItems: z
+    .array(
+      z.object({
+        text: safeShortTextSchema,
+      })
+    )
+    .max(8)
+    .default([]),
+});
+
 const genericKnownConfigSchema = z
   .object({
     title: safeShortTextSchema.optional(),
@@ -175,6 +198,7 @@ const blockConfigSchemas = {
   "portfolio.experience": portfolioExperienceConfigSchema,
   "portfolio.work": portfolioWorkConfigSchema,
   "portfolio.contact": portfolioContactConfigSchema,
+  "portfolio.custom-section": portfolioCustomSectionConfigSchema,
   hero: genericKnownConfigSchema,
   about: genericKnownConfigSchema,
   experience: genericKnownConfigSchema,

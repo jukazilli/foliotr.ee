@@ -9,6 +9,7 @@ import { validateBlockConfig } from "@/lib/templates/contracts";
 import { mapTemplateInitialBlocks } from "@/lib/templates/template-content-mapper";
 import type {
   PageBlockCreateInput,
+  PageBlockBulkSaveInput,
   PageBlockReorderInput,
   PageBlockUpdateInput,
 } from "@/lib/validations";
@@ -496,6 +497,99 @@ export async function reorderOwnedPageBlocks(
         where: { id: blockId },
         data: { order },
       });
+    }
+
+    return tx.pageBlock.findMany({
+      where: {
+        pageId: page.id,
+        parentId: null,
+      },
+      orderBy: { order: "asc" },
+      include: {
+        templateBlockDef: true,
+        children: {
+          orderBy: { order: "asc" },
+          include: {
+            templateBlockDef: true,
+          },
+        },
+      },
+    });
+  });
+}
+
+export async function replaceOwnedPageBlocks(
+  db: DbClient,
+  userId: string,
+  pageId: string,
+  input: PageBlockBulkSaveInput
+) {
+  return db.$transaction(async (tx) => {
+    const page = await getOwnedPageOrThrow(tx, userId, pageId);
+    const blockDefs = await tx.templateBlockDef.findMany({
+      where: { templateId: page.templateId },
+    });
+
+    const blockDefById = new Map(blockDefs.map((blockDef) => [blockDef.id, blockDef]));
+    const payloadIds = new Set(input.blocks.map((block) => block.id));
+    const assetIds = input.blocks.flatMap((block) => collectAssetIdsFromPayload(block.assets));
+    await assertOwnedAssetIds(tx, userId, assetIds);
+
+    for (const item of input.blocks) {
+      if (item.parentId && !payloadIds.has(item.parentId)) {
+        throw new ApiRouteError("BAD_REQUEST", 400, {
+          message: "Bloco pai invalido na estrutura enviada",
+        });
+      }
+
+      const blockDef =
+        (item.templateBlockDefId ? blockDefById.get(item.templateBlockDefId) : null) ??
+        blockDefs.find((blockDef) => blockDef.blockType === item.blockType) ??
+        null;
+
+      if (!blockDef) {
+        throw new ApiRouteError("BAD_REQUEST", 400, {
+          message: `Bloco ${item.blockType} nao compativel com este template`,
+        });
+      }
+
+      validateAllowedBlockConfig(blockDef.blockType, item.config);
+    }
+
+    await tx.pageBlock.deleteMany({ where: { pageId: page.id } });
+
+    const persistedBySourceId = new Map<string, string>();
+
+    const sortedItems = [...input.blocks].sort((left, right) => {
+      if (left.parentId === right.parentId) return left.order - right.order;
+      if (!left.parentId) return -1;
+      if (!right.parentId) return 1;
+      return left.order - right.order;
+    });
+
+    for (const item of sortedItems) {
+      const blockDef =
+        (item.templateBlockDefId ? blockDefById.get(item.templateBlockDefId) : null) ??
+        blockDefs.find((blockDef) => blockDef.blockType === item.blockType)!;
+      const assets = sanitizeBlockAssets(blockDef.assetFields, item.assets);
+
+      const created = await tx.pageBlock.create({
+        data: {
+          pageId: page.id,
+          templateBlockDefId: blockDef.id,
+          parentId: item.parentId ? persistedBySourceId.get(item.parentId) ?? null : null,
+          key: item.key,
+          blockType: blockDef.blockType,
+          order: item.order,
+          visible: item.visible,
+          config: asJsonValue(validateAllowedBlockConfig(blockDef.blockType, item.config)),
+          props: asJsonValue(item.props ?? {}),
+          assets: asJsonValue(assets),
+        },
+        select: { id: true },
+      });
+
+      persistedBySourceId.set(item.id, created.id);
     }
 
     return tx.pageBlock.findMany({

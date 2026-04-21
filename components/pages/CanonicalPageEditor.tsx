@@ -39,6 +39,7 @@ interface TemplateBlockDefLike {
   label: string;
   blockType: string;
   required: boolean;
+  defaultConfig?: unknown;
   editableFields: unknown[];
 }
 
@@ -268,6 +269,10 @@ function createDefaultListItem(fieldKey: string) {
     };
   }
 
+  if (fieldKey === "listItems") {
+    return { text: "" };
+  }
+
   return {};
 }
 
@@ -345,6 +350,8 @@ export default function CanonicalPageEditor({
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("portfolio");
   const previewFrameRef = useRef<HTMLDivElement | null>(null);
   const previewViewportRef = useRef<HTMLDivElement | null>(null);
@@ -1087,19 +1094,63 @@ export default function CanonicalPageEditor({
     );
   }
 
-  async function saveSelectedBlock(nextConfig = draftConfig, nextAssets = draftAssets) {
-    if (!selectedBlock) return true;
+  function mergeSelectedDraftIntoBlocks(
+    sourceBlocks: RenderablePageBlock[],
+    nextConfig = draftConfig,
+    nextAssets = draftAssets
+  ) {
+    if (!selectedBlock) {
+      return sortBlocks(sourceBlocks);
+    }
 
-    setBusyKey(`save:${selectedBlock.id}`);
+    const nextBlock = {
+      ...selectedBlock,
+      config: asJsonValue(nextConfig),
+      assets: asJsonValue(nextAssets),
+    } as RenderablePageBlock;
+
+    return sortBlocks(
+      sourceBlocks.map((block) => (block.id === nextBlock.id ? nextBlock : block))
+    );
+  }
+
+  async function saveSelectedBlock(nextConfig = draftConfig, nextAssets = draftAssets) {
+    const nextBlocks = mergeSelectedDraftIntoBlocks(blocks, nextConfig, nextAssets);
+    const nextSelectedBlock = selectedBlock
+      ? nextBlocks.find((block) => block.id === selectedBlock.id) ?? null
+      : null;
+
+    setBlocks(nextBlocks);
+    setDraftConfig(nextSelectedBlock ? asRecord(nextSelectedBlock.config) : {});
+    setDraftAssets(nextSelectedBlock ? asRecord(nextSelectedBlock.assets) : {});
+    setHasUnsavedChanges(true);
+    return nextBlocks;
+  }
+
+  async function persistPageDraft() {
+    const nextBlocks = await saveSelectedBlock();
+
+    setBusyKey("save-page");
     setErrorMessage("");
     setSuccessMessage("");
 
-    const response = await fetch(`/api/pages/${pageId}/blocks/${selectedBlock.id}`, {
-      method: "PATCH",
+    const selectedBlockKey = selectedBlock?.key ?? null;
+    const response = await fetch(`/api/pages/${pageId}/blocks`, {
+      method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        config: nextConfig,
-        assets: nextAssets,
+        blocks: nextBlocks.map((block) => ({
+          id: block.id,
+          templateBlockDefId: block.templateBlockDefId ?? null,
+          parentId: block.parentId ?? null,
+          key: block.key,
+          blockType: block.blockType,
+          order: block.order,
+          visible: block.visible,
+          config: asRecord(block.config),
+          props: asRecord(block.props),
+          assets: asRecord(block.assets),
+        })),
       }),
     });
     const payload = await parseJsonResponse(response);
@@ -1107,21 +1158,27 @@ export default function CanonicalPageEditor({
     if (!response.ok) {
       setBusyKey(null);
       setErrorMessage(
-        formatApiError(payload, response.status, "Nao foi possivel salvar este bloco")
+        formatApiError(payload, response.status, "Nao foi possivel salvar a pagina")
       );
       return false;
     }
 
-    const nextBlock = asRecord(payload).block as RenderablePageBlock;
-    replaceBlock(nextBlock);
-    setDraftConfig(asRecord(nextBlock.config));
-    setDraftAssets(asRecord(nextBlock.assets));
+    const persistedBlocks = sortBlocks((asRecord(payload).blocks as RenderablePageBlock[]) ?? []);
+    setBlocks(persistedBlocks);
+    setHasUnsavedChanges(false);
+    if (selectedBlockKey) {
+      const nextSelected =
+        persistedBlocks.find((block) => block.key === selectedBlockKey) ??
+        persistedBlocks[0] ??
+        null;
+      setSelectedBlockId(nextSelected?.id ?? null);
+    }
     setBusyKey(null);
-    setSuccessMessage("Bloco salvo.");
+    setSuccessMessage("Rascunho salvo.");
     return true;
   }
 
-  saveSelectedBlockRef.current = saveSelectedBlock;
+  saveSelectedBlockRef.current = persistPageDraft;
 
   function clearInlineEditing() {
     setActiveInlineFieldKey(null);
@@ -1129,8 +1186,6 @@ export default function CanonicalPageEditor({
     setInlineFieldFrame(null);
     setActiveInlineImageFieldKey(null);
     setInlineImageFrame(null);
-    setActiveInlineListImage(null);
-    setInlineListImageFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
   }
@@ -1413,7 +1468,7 @@ export default function CanonicalPageEditor({
     setErrorMessage("");
     setSuccessMessage("");
 
-    const saved = await saveSelectedBlock();
+    const saved = await persistPageDraft();
     if (!saved) return;
 
     setBusyKey("publish");
@@ -1429,28 +1484,15 @@ export default function CanonicalPageEditor({
   }
 
   async function toggleVisibility(block: RenderablePageBlock) {
-    setBusyKey(`visibility:${block.id}`);
     setErrorMessage("");
     setSuccessMessage("");
 
-    const response = await fetch(`/api/pages/${pageId}/blocks/${block.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ visible: !block.visible }),
+    replaceBlock({
+      ...block,
+      visible: !block.visible,
     });
-    const payload = await parseJsonResponse(response);
-
-    if (!response.ok) {
-      setBusyKey(null);
-      setErrorMessage(
-        formatApiError(payload, response.status, "Nao foi possivel alterar a visibilidade")
-      );
-      return;
-    }
-
-    replaceBlock(asRecord(payload).block as RenderablePageBlock);
-    setBusyKey(null);
-    setSuccessMessage(block.visible ? "Bloco ocultado." : "Bloco exibido.");
+    setHasUnsavedChanges(true);
+    setSuccessMessage(block.visible ? "Bloco marcado como oculto." : "Bloco marcado como visivel.");
   }
 
   async function moveBlock(blockId: string, direction: -1 | 1) {
@@ -1465,59 +1507,48 @@ export default function CanonicalPageEditor({
     const [moved] = nextOrder.splice(currentIndex, 1);
     nextOrder.splice(nextIndex, 0, moved);
 
-    setBusyKey(`reorder:${blockId}`);
     setErrorMessage("");
     setSuccessMessage("");
-
-    const response = await fetch(`/api/pages/${pageId}/blocks/reorder`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        blockIds: nextOrder.map((block) => block.id),
-      }),
-    });
-    const payload = await parseJsonResponse(response);
-
-    if (!response.ok) {
-      setBusyKey(null);
-      setErrorMessage(
-        formatApiError(payload, response.status, "Nao foi possivel reordenar os blocos")
-      );
-      return;
-    }
-
-    setBlocks(sortBlocks((asRecord(payload).blocks as RenderablePageBlock[]) ?? []));
-    setBusyKey(null);
-    setSuccessMessage("Ordem atualizada.");
+    setBlocks(sortBlocks(nextOrder.map((block, index) => ({ ...block, order: index }))));
+    setHasUnsavedChanges(true);
+    setSuccessMessage("Ordem atualizada no rascunho.");
   }
 
   async function addBlock(templateBlockKey: string) {
-    setBusyKey(`add:${templateBlockKey}`);
     setErrorMessage("");
     setSuccessMessage("");
+    const blockDef = templateBlockDefs.find((item) => item.key === templateBlockKey) ?? null;
 
-    const response = await fetch(`/api/pages/${pageId}/blocks`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        templateBlockKey,
-      }),
-    });
-    const payload = await parseJsonResponse(response);
-
-    if (!response.ok) {
-      setBusyKey(null);
-      setErrorMessage(
-        formatApiError(payload, response.status, "Nao foi possivel adicionar este bloco")
-      );
+    if (!blockDef) {
+      setErrorMessage("Bloco nao compativel com este template");
       return;
     }
 
-    const nextBlock = asRecord(payload).block as RenderablePageBlock;
+    const nextBlock = {
+      id: `tmp-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+      pageId,
+      templateBlockDefId: blockDef.id,
+      parentId: null,
+      key: `${blockDef.key}-${Date.now()}`,
+      blockType: blockDef.blockType,
+      order: blocks.length,
+      visible: true,
+      config: asJsonValue(asRecord(blockDef.defaultConfig)),
+      props: asJsonValue({}),
+      assets: asJsonValue({}),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      templateBlockDef: blockDef as never,
+      children: [],
+    } as unknown as RenderablePageBlock;
+
     setBlocks((current) => sortBlocks([...current, nextBlock]));
     setSelectedBlockId(nextBlock.id);
-    setBusyKey(null);
-    setSuccessMessage("Bloco adicionado.");
+    setDraftConfig(asRecord(nextBlock.config));
+    setDraftAssets(asRecord(nextBlock.assets));
+    setHasUnsavedChanges(true);
+    setShowAddMenu(false);
+    setSuccessMessage("Bloco adicionado ao rascunho.");
   }
 
   function handleCanvasBlockSelection(event: ReactMouseEvent<HTMLDivElement>) {
@@ -1586,30 +1617,16 @@ export default function CanonicalPageEditor({
 
   async function removeSelectedBlock() {
     if (!selectedBlock) return;
-
-    setBusyKey(`remove:${selectedBlock.id}`);
     setErrorMessage("");
     setSuccessMessage("");
 
-    const response = await fetch(`/api/pages/${pageId}/blocks/${selectedBlock.id}`, {
-      method: "DELETE",
-    });
-    const payload = await parseJsonResponse(response);
-
-    if (!response.ok) {
-      setBusyKey(null);
-      setErrorMessage(
-        formatApiError(payload, response.status, "Nao foi possivel remover este bloco")
-      );
-      return;
-    }
-
     setBlocks((current) => current.filter((block) => block.id !== selectedBlock.id));
-    setBusyKey(null);
-    setSuccessMessage("Bloco removido.");
+    setHasUnsavedChanges(true);
+    setSuccessMessage("Bloco removido do rascunho.");
   }
 
   function updateDraftField(fieldKey: string, value: unknown) {
+    setHasUnsavedChanges(true);
     setDraftConfig((current) => ({
       ...current,
       [fieldKey]: value,
@@ -1617,6 +1634,7 @@ export default function CanonicalPageEditor({
   }
 
   function removeDraftField(fieldKey: string) {
+    setHasUnsavedChanges(true);
     setDraftConfig((current) => {
       const next = { ...current };
       delete next[fieldKey];
@@ -1650,6 +1668,7 @@ export default function CanonicalPageEditor({
   }
 
   function setTopLevelAssetMeta(fieldKey: string, asset: UploadedAsset, altText: string) {
+    setHasUnsavedChanges(true);
     setDraftAssets((current) => ({
       ...current,
       [fieldKey]: {
@@ -1662,6 +1681,7 @@ export default function CanonicalPageEditor({
   }
 
   function removeTopLevelAssetMeta(fieldKey: string) {
+    setHasUnsavedChanges(true);
     setDraftAssets((current) => {
       const next = { ...current };
       delete next[fieldKey];
@@ -1670,6 +1690,7 @@ export default function CanonicalPageEditor({
   }
 
   function setListAssetMeta(fieldKey: string, index: number, asset: UploadedAsset, altText: string) {
+    setHasUnsavedChanges(true);
     const nextAssets = [...asArray(draftAssets[fieldKey])];
     nextAssets[index] = {
       assetId: asset.id,
@@ -1685,6 +1706,7 @@ export default function CanonicalPageEditor({
   }
 
   function removeListAssetMeta(fieldKey: string, index: number) {
+    setHasUnsavedChanges(true);
     const nextAssets = [...asArray(draftAssets[fieldKey])];
     nextAssets[index] = null;
 
@@ -2284,6 +2306,32 @@ export default function CanonicalPageEditor({
       );
     }
 
+    if (field.key === "imageAlign") {
+      const currentValue =
+        value === "left" || value === "center" || value === "right" ? value : "center";
+
+      return (
+        <div key={field.key} className="space-y-2">
+          <label className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            {field.label}
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {(["left", "center", "right"] as const).map((align) => (
+              <Button
+                key={align}
+                type="button"
+                variant={currentValue === align ? "primary" : "outline"}
+                size="sm"
+                onClick={() => updateDraftField(field.key, align)}
+              >
+                {align === "left" ? "Esquerda" : align === "center" ? "Centro" : "Direita"}
+              </Button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     if (typeof value === "number") {
       return (
         <div key={field.key} className="space-y-2">
@@ -2553,6 +2601,7 @@ export default function CanonicalPageEditor({
                         profile={initialProfile}
                         version={initialVersion}
                         templateSourcePackage={initialTemplateSourcePackage}
+                        renderHiddenBlocks
                       />
                     </div>
                   </div>
@@ -2642,15 +2691,6 @@ export default function CanonicalPageEditor({
                             <Eye className="h-4 w-4" aria-hidden="true" />
                           )}
                         </Button>
-                      </div>
-                      <div
-                        className="pointer-events-none absolute z-10 rounded-full border border-neutral-200 bg-white/92 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-neutral-500 shadow-sm backdrop-blur"
-                        style={{
-                          right: `${Math.max(12, previewFrameRef.current ? 12 : 12)}px`,
-                          top: `${Math.max(canvasSelectionFrame.top + 10, 10)}px`,
-                        }}
-                      >
-                        clique no conteudo para editar
                       </div>
                     </>
                   ) : null}
@@ -2767,7 +2807,7 @@ export default function CanonicalPageEditor({
                           <p className="px-1 pt-2 text-[0.72rem] text-neutral-500">
                             {inlineFieldFrame.kind === "longText"
                               ? "Ctrl/Cmd + Enter salva. Esc cancela."
-                              : "Enter salva. Esc cancela. Ctrl/Cmd + S salva o bloco."}
+                              : "Enter salva. Esc cancela. Ctrl/Cmd + S salva o rascunho."}
                           </p>
                         </div>
                       </div>
@@ -2824,6 +2864,29 @@ export default function CanonicalPageEditor({
                             </Button>
                           );
                         })}
+                        {selectedBlock?.blockType === "portfolio.custom-section" &&
+                        activeInlineImageField.key === "image" ? (
+                          <>
+                            {(["left", "center", "right"] as const).map((align) => (
+                              <Button
+                                key={align}
+                                type="button"
+                                variant={
+                                  draftConfig.imageAlign === align ? "primary" : "ghost"
+                                }
+                                size="sm"
+                                className="h-8 rounded-full px-3"
+                                onClick={() => updateDraftField("imageAlign", align)}
+                              >
+                                {align === "left"
+                                  ? "Esq."
+                                  : align === "center"
+                                    ? "Centro"
+                                    : "Dir."}
+                              </Button>
+                            ))}
+                          </>
+                        ) : null}
                         <label className="inline-flex h-8 cursor-pointer items-center rounded-full border border-neutral-200 px-3 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
                           Trocar
                           <input
@@ -2967,6 +3030,54 @@ export default function CanonicalPageEditor({
                       </button>
                     </div>
                   ) : null}
+                  <div className="border-t border-neutral-200 bg-white/94 px-4 py-4">
+                    <div className="flex items-center justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-semibold text-neutral-900">Adicionar ao final</p>
+                        <p className="text-xs text-neutral-500">
+                          Novas secoes entram no rascunho e so aparecem publicamente depois de publicar.
+                        </p>
+                      </div>
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="h-10 rounded-full px-4"
+                        onClick={() => setShowAddMenu((current) => !current)}
+                        aria-expanded={showAddMenu}
+                        aria-label="Adicionar nova secao"
+                      >
+                        <Plus className="h-4 w-4" aria-hidden="true" />
+                      </Button>
+                    </div>
+                    {showAddMenu ? (
+                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {availableBlockDefs.length === 0 ? (
+                          <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500 sm:col-span-2">
+                            Nao ha mais blocos disponiveis para este template.
+                          </div>
+                        ) : (
+                          availableBlockDefs.map((blockDef) => (
+                            <button
+                              key={blockDef.id}
+                              type="button"
+                              onClick={() => void addBlock(blockDef.key)}
+                              className="flex min-h-14 items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-lime-300 hover:bg-lime-50"
+                            >
+                              <span>
+                                <span className="block text-sm font-semibold text-neutral-900">
+                                  {blockDef.label}
+                                </span>
+                                <span className="block text-xs text-neutral-500">
+                                  {blockDef.blockType}
+                                </span>
+                              </span>
+                              <Plus className="h-4 w-4 text-neutral-500" aria-hidden="true" />
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
                 </>
               ) : (
                 <div className="px-3 py-4 sm:px-5">
@@ -3010,41 +3121,43 @@ export default function CanonicalPageEditor({
               </div>
             ) : null}
 
+            <div className="grid grid-cols-1 gap-2 2xl:grid-cols-2">
+              <Button
+                type="button"
+                loading={busyKey === "save-page"}
+                disabled={!hasUnsavedChanges && busyKey !== "save-page"}
+                onClick={() => void persistPageDraft()}
+              >
+                <Save className="h-4 w-4" aria-hidden="true" />
+                Salvar
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                loading={busyKey === "publish" || busyKey === "save-page"}
+                onClick={() => void publishPage()}
+                className="2xl:col-span-2"
+              >
+                <UploadCloud className="h-4 w-4" aria-hidden="true" />
+                Publicar
+              </Button>
+              {!selectedBlockDef?.required && selectedBlock ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  loading={busyKey === `remove:${selectedBlock.id}`}
+                  onClick={() => void removeSelectedBlock()}
+                  className="2xl:col-span-2"
+                >
+                  <Trash2 className="h-4 w-4" aria-hidden="true" />
+                  Remover
+                </Button>
+              ) : null}
+            </div>
+
             {selectedBlock && selectedBlockDef ? (
               <>
-                <div className="grid grid-cols-1 gap-2 2xl:grid-cols-2">
-                  <Button
-                    type="button"
-                    loading={busyKey === `save:${selectedBlock.id}`}
-                    onClick={() => void saveSelectedBlock()}
-                  >
-                    <Save className="h-4 w-4" aria-hidden="true" />
-                    Salvar
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="primary"
-                    loading={busyKey === "publish" || busyKey === `save:${selectedBlock.id}`}
-                    onClick={() => void publishPage()}
-                    className="2xl:col-span-2"
-                  >
-                    <UploadCloud className="h-4 w-4" aria-hidden="true" />
-                    Publicar
-                  </Button>
-                  {!selectedBlockDef.required ? (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      loading={busyKey === `remove:${selectedBlock.id}`}
-                      onClick={() => void removeSelectedBlock()}
-                    className="2xl:col-span-2"
-                    >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      Remover
-                    </Button>
-                  ) : null}
-                </div>
 
                 {inlineEditableFields.length > 0 ? (
                   <div className="rounded-[1.1rem] border border-lime-200 bg-lime-50/80 px-4 py-3">

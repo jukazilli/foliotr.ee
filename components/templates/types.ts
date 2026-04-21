@@ -20,4 +20,5 @@ export interface TemplateRendererProps {
   profile: TemplateProfile;
   version?: VersionForBlocks | null;
   templateSourcePackage?: unknown;
+  renderHiddenBlocks?: boolean;
 }

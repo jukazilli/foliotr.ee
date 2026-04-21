@@ -306,6 +306,23 @@ export const pageBlockReorderSchema = z.object({
   blockIds: z.array(cuidSchema).min(1).max(50),
 });
 
+export const pageBlockBulkItemSchema = z.object({
+  id: z.string().min(1).max(120),
+  templateBlockDefId: cuidSchema.nullable().optional(),
+  parentId: z.string().min(1).max(120).nullable().optional(),
+  key: z.string().min(1).max(180),
+  blockType: z.string().min(1).max(120),
+  order: z.number().int().min(0).max(500),
+  visible: z.boolean().default(true),
+  config: z.record(safeJsonValueSchema).default({}),
+  props: z.record(safeJsonValueSchema).default({}),
+  assets: z.record(safeJsonValueSchema).default({}),
+});
+
+export const pageBlockBulkSaveSchema = z.object({
+  blocks: z.array(pageBlockBulkItemSchema).max(120),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
@@ -330,3 +347,4 @@ export type ResumeOutputInput = z.infer<typeof resumeOutputSchema>;
 export type PageBlockCreateInput = z.infer<typeof pageBlockCreateSchema>;
 export type PageBlockUpdateInput = z.infer<typeof pageBlockUpdateSchema>;
 export type PageBlockReorderInput = z.infer<typeof pageBlockReorderSchema>;
+export type PageBlockBulkSaveInput = z.infer<typeof pageBlockBulkSaveSchema>;

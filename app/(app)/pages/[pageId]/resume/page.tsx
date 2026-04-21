@@ -9,7 +9,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
 import { ApiRouteError } from "@/lib/server/api";
 import { getAppViewer } from "@/lib/server/app-viewer";
-import { readPageEditorSnapshot } from "@/lib/server/domain/page-snapshots";
 import { getOwnedPageEditorData } from "@/lib/server/domain/templates";
 import { toLegacyVersionSelection } from "@/lib/server/domain/versions";
 
@@ -24,16 +23,6 @@ export default async function AuthenticatedResumePage({
 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
-    const editorSnapshot =
-      readPageEditorSnapshot(page.editorSnapshot) ??
-      {
-        profile: viewer.profile,
-        version: {
-          customHeadline: page.version.customHeadline,
-          customBio: page.version.customBio,
-          ...toLegacyVersionSelection(page.version),
-        },
-      };
     const publicTemplateHref = viewer.user.username ? `/${viewer.user.username}/${page.slug}` : null;
     const publicResumeHref = viewer.user.username
       ? `/${viewer.user.username}/${page.slug}/resume`
@@ -105,8 +94,12 @@ export default async function AuthenticatedResumePage({
           <ResumeView
             templateSlug={page.template.slug}
             blocks={page.blocks}
-            profile={editorSnapshot.profile}
-            version={editorSnapshot.version}
+            profile={viewer.profile}
+            version={{
+              customHeadline: page.version.customHeadline,
+              customBio: page.version.customBio,
+              ...toLegacyVersionSelection(page.version),
+            }}
             config={page.version.resumeConfig}
           />
         </div>
