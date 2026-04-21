@@ -295,20 +295,30 @@ Prova local:
 
 ### Slice 6: Reorganizacao Da Interface Do Editor
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] esconder/remover lista lateral de blocos da UI visivel
-- [ ] mover "adicionar bloco" para o topo do canvas
-- [ ] mover salvar/publicar/ordem/visibilidade/remocao para toolbar do bloco ativo
-- [ ] remover barras de acao laterais duplicadas
-- [ ] garantir alternativa para campos ainda nao contextuais
-- [ ] validar acessibilidade e navegacao por teclado
-- [ ] commit do slice
-- [ ] sync/push do slice
+- [x] esconder/remover lista lateral de blocos da UI visivel
+- [x] mover "adicionar bloco" para o topo do canvas
+- [x] mover salvar/publicar/ordem/visibilidade/remocao para toolbar do bloco ativo
+- [x] remover barras de acao laterais duplicadas
+- [x] garantir alternativa para campos ainda nao contextuais
+- [x] validar acessibilidade e navegacao por teclado
+- [x] commit do slice
+- [x] sync/push do slice
 
 Criterio de aceite:
 
 - editor fica limpo, com acoes no contexto do bloco selecionado e sem perda funcional
+
+Prova local:
+
+- lista lateral de blocos removida da UI visivel; selecao segue pelo canvas editavel
+- adicionar bloco movido para o topo do canvas, mantendo insercao ao final
+- salvar, publicar, mover, visibilidade e remover ficam na toolbar do bloco ativo
+- painel inferior aparece apenas quando ha campos ainda nao contextuais ou mensagens de status
+- QA Playwright desktop/mobile confirmou ausencia de overflow horizontal, toolbar ativa e menu de adicionar no topo
 
 ### Slice 7: QA Visual E Fechamento
 

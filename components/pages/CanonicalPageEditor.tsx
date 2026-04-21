@@ -26,7 +26,6 @@ import {
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
 import ResumeView from "@/components/resume/ResumeView";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
@@ -2814,151 +2813,18 @@ export default function CanonicalPageEditor({
     );
   }
 
+  const shouldShowFallbackPanel =
+    Boolean(errorMessage || successMessage) ||
+    (Boolean(selectedBlock && selectedBlockDef) && sidebarEditableFields.length > 0);
+
   return (
-    <section className="grid min-h-[45rem] min-w-0 gap-3 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3 xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:grid-cols-[20rem_minmax(0,1fr)]">
+    <section className="min-h-[45rem] min-w-0 overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-100/80 p-2 shadow-sm sm:p-3">
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
-      <aside className="overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:self-start">
-        <div className="border-b border-neutral-200 bg-neutral-50/80 p-2">
-          <div className="grid grid-cols-2 rounded-lg border border-neutral-200 bg-neutral-100 p-1">
-            {[
-              { key: "portfolio", label: "Portfolio" },
-              { key: "resume", label: "Curriculo" },
-            ].map((item) => {
-              const isActive = previewMode === item.key;
-
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => setPreviewMode(item.key as PreviewMode)}
-                  className={`h-9 rounded-md px-2 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 ${
-                    isActive
-                      ? "bg-white text-neutral-950 shadow-sm"
-                      : "text-neutral-600 hover:bg-white/70 hover:text-neutral-950"
-                  }`}
-                  aria-pressed={isActive}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="border-b border-neutral-200 px-3 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <h2 className="text-sm font-semibold text-neutral-950">Blocos</h2>
-              <p className="mt-0.5 text-xs text-neutral-500">{blocks.length} secoes no template</p>
-            </div>
-            <span className="hidden shrink-0 text-xs font-medium text-neutral-500 sm:inline">Selecionar</span>
-          </div>
-        </div>
-
-        <div className="max-h-[27.5rem] space-y-1 overflow-y-auto p-2">
-          {blocks.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-4 text-sm text-neutral-500">
-              Nenhum bloco criado.
-            </div>
-          ) : (
-            blocks.map((block, index) => {
-              const blockDef =
-                templateBlockDefs.find((item) => item.id === block.templateBlockDefId) ?? null;
-              const isSelected = block.id === selectedBlockId;
-
-              return (
-                <button
-                  key={block.id}
-                  type="button"
-                  aria-current={isSelected ? "true" : undefined}
-                  onClick={() => setSelectedBlockId(block.id)}
-                  className={`group flex min-h-14 w-full items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-2 ${
-                    isSelected
-                      ? "border-lime-400 bg-lime-50 shadow-sm"
-                      : "border-transparent bg-white hover:border-neutral-200 hover:bg-neutral-50"
-                  }`}
-                >
-                  <span
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md border text-[0.6875rem] font-semibold ${
-                      isSelected
-                        ? "border-lime-300 bg-white text-lime-700"
-                        : "border-neutral-200 bg-neutral-50 text-neutral-500"
-                    }`}
-                  >
-                    {index + 1}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-neutral-900">
-                      {blockDef?.label ?? block.key}
-                    </span>
-                    <span className="mt-0.5 block truncate text-[0.6875rem] text-neutral-500">
-                      {blockDef?.blockType ?? block.blockType}
-                    </span>
-                  </span>
-                  <span className="flex shrink-0 items-center gap-1">
-                    <span
-                      className={`h-2 w-2 rounded-full ${
-                        block.visible ? "bg-lime-500" : "bg-neutral-300"
-                      }`}
-                      title={block.visible ? "Visivel" : "Oculto"}
-                      aria-label={block.visible ? "Visivel" : "Oculto"}
-                    />
-                    {blockDef?.required ? (
-                      <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-amber-700">
-                        fixo
-                      </span>
-                    ) : null}
-                  </span>
-                </button>
-              );
-            })
-          )}
-        </div>
-
-        <div className="border-t border-neutral-200 bg-neutral-50/80 p-2">
-          <div className="mb-2 flex items-center justify-between gap-2 px-1">
-            <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-500">
-              Adicionar
-            </h3>
-            <span className="shrink-0 text-xs text-neutral-500">{availableBlockDefs.length} disponiveis</span>
-          </div>
-          <div className="space-y-1">
-            {availableBlockDefs.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-neutral-300 bg-white px-3 py-3 text-sm text-neutral-500">
-                Nao ha mais blocos para adicionar.
-              </div>
-            ) : (
-              availableBlockDefs.map((blockDef) => (
-                <div
-                  key={blockDef.id}
-                  className="flex min-h-12 items-center gap-2 rounded-lg border border-neutral-200 bg-white px-2 py-2"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-neutral-900">{blockDef.label}</p>
-                    <p className="truncate text-[0.6875rem] text-neutral-500">{blockDef.blockType}</p>
-                  </div>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    loading={busyKey === `add:${blockDef.key}`}
-                    onClick={() => void addBlock(blockDef.key)}
-                    aria-label={`Adicionar bloco ${blockDef.label}`}
-                  >
-                    <Plus className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      </aside>
-
-      <div className="grid min-w-0 gap-3 xl:grid-cols-[minmax(0,1fr)_20rem] 2xl:grid-cols-[minmax(0,1fr)_22rem]">
-        <section className="order-2 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70 xl:order-1">
-          <div className="flex items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
+      <div className="grid min-w-0 gap-3">
+        <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
+          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
             <div className="min-w-0">
               <h2 className="text-sm font-semibold text-neutral-950">
                 {previewMode === "portfolio" ? "Portfolio" : "Curriculo"}
@@ -2967,9 +2833,74 @@ export default function CanonicalPageEditor({
                 {pageTitle} em {templateName}
               </p>
             </div>
-            <span className="hidden shrink-0 rounded-md border border-neutral-200 bg-neutral-50 px-2 py-1 text-[0.6875rem] font-semibold text-neutral-500 sm:inline-flex">
-              Canvas
-            </span>
+            <div className="flex shrink-0 items-center gap-2">
+              <div className="grid grid-cols-2 rounded-full border border-neutral-200 bg-neutral-100 p-1">
+                {[
+                  { key: "portfolio", label: "Portfolio" },
+                  { key: "resume", label: "Curriculo" },
+                ].map((item) => {
+                  const isActive = previewMode === item.key;
+
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      onClick={() => setPreviewMode(item.key as PreviewMode)}
+                      className={`h-8 rounded-full px-3 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 ${
+                        isActive
+                          ? "bg-white text-neutral-950 shadow-sm"
+                          : "text-neutral-600 hover:bg-white/70 hover:text-neutral-950"
+                      }`}
+                      aria-pressed={isActive}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {previewMode === "portfolio" ? (
+                <div className="relative">
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-9 w-9 rounded-full px-0"
+                    onClick={() => setShowAddMenu((current) => !current)}
+                    aria-expanded={showAddMenu}
+                    aria-label="Adicionar nova secao"
+                  >
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  {showAddMenu ? (
+                    <div className="absolute right-0 top-11 z-40 grid w-72 gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
+                      {availableBlockDefs.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500">
+                          Nao ha blocos disponiveis.
+                        </div>
+                      ) : (
+                        availableBlockDefs.map((blockDef) => (
+                          <button
+                            key={blockDef.id}
+                            type="button"
+                            onClick={() => void addBlock(blockDef.key)}
+                            className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-lime-300 hover:bg-lime-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
+                          >
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm font-semibold text-neutral-900">
+                                {blockDef.label}
+                              </span>
+                              <span className="block truncate text-xs text-neutral-500">
+                                {blockDef.blockType}
+                              </span>
+                            </span>
+                            <Plus className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden="true" />
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
           </div>
           <div
             ref={previewViewportRef}
@@ -3084,6 +3015,29 @@ export default function CanonicalPageEditor({
                           type="button"
                           variant="ghost"
                           size="sm"
+                          loading={busyKey === "save-page"}
+                          disabled={!hasUnsavedChanges && busyKey !== "save-page"}
+                          onClick={() => void persistPageDraft()}
+                          aria-label="Salvar pagina"
+                          className="h-8 w-8 rounded-full px-0"
+                        >
+                          <Save className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          loading={busyKey === "publish" || busyKey === "save-page"}
+                          onClick={() => void publishPage()}
+                          aria-label="Publicar pagina"
+                          className="h-8 w-8 rounded-full px-0"
+                        >
+                          <UploadCloud className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
                           loading={busyKey === `reorder:${selectedBlock.id}`}
                           onClick={() => void moveBlock(selectedBlock.id, -1)}
                           aria-label="Mover bloco para cima"
@@ -3117,6 +3071,19 @@ export default function CanonicalPageEditor({
                             <Eye className="h-4 w-4" aria-hidden="true" />
                           )}
                         </Button>
+                        {!selectedBlockDef?.required ? (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            loading={busyKey === `remove:${selectedBlock.id}`}
+                            onClick={() => void removeSelectedBlock()}
+                            aria-label="Remover bloco"
+                            className="h-8 w-8 rounded-full px-0 text-coral-700"
+                          >
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
+                          </Button>
+                        ) : null}
                         {selectedBlock.blockType === "portfolio.work"
                           ? asArray(draftConfig.hiddenProjectIds)
                               .filter((item): item is string => typeof item === "string")
@@ -3651,54 +3618,6 @@ export default function CanonicalPageEditor({
                       </button>
                     </div>
                   ) : null}
-                  <div className="border-t border-neutral-200 bg-white/94 px-4 py-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-semibold text-neutral-900">Adicionar ao final</p>
-                        <p className="text-xs text-neutral-500">
-                          Novas secoes entram no rascunho e so aparecem publicamente depois de publicar.
-                        </p>
-                      </div>
-                      <Button
-                        type="button"
-                        size="sm"
-                        className="h-10 rounded-full px-4"
-                        onClick={() => setShowAddMenu((current) => !current)}
-                        aria-expanded={showAddMenu}
-                        aria-label="Adicionar nova secao"
-                      >
-                        <Plus className="h-4 w-4" aria-hidden="true" />
-                      </Button>
-                    </div>
-                    {showAddMenu ? (
-                      <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                        {availableBlockDefs.length === 0 ? (
-                          <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500 sm:col-span-2">
-                            Nao ha mais blocos disponiveis para este template.
-                          </div>
-                        ) : (
-                          availableBlockDefs.map((blockDef) => (
-                            <button
-                              key={blockDef.id}
-                              type="button"
-                              onClick={() => void addBlock(blockDef.key)}
-                              className="flex min-h-14 items-center justify-between rounded-2xl border border-neutral-200 bg-neutral-50 px-4 py-3 text-left transition hover:border-lime-300 hover:bg-lime-50"
-                            >
-                              <span>
-                                <span className="block text-sm font-semibold text-neutral-900">
-                                  {blockDef.label}
-                                </span>
-                                <span className="block text-xs text-neutral-500">
-                                  {blockDef.blockType}
-                                </span>
-                              </span>
-                              <Plus className="h-4 w-4 text-neutral-500" aria-hidden="true" />
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
                 </>
               ) : (
                 <div className="px-3 py-4 sm:px-5">
@@ -3715,98 +3634,28 @@ export default function CanonicalPageEditor({
           </div>
         </section>
 
-        <aside className="order-1 min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white/95 xl:sticky xl:top-20 xl:order-2 xl:self-start">
-          <div className="border-b border-neutral-200 px-3 py-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="truncate text-sm font-semibold text-neutral-950">
-                  {selectedBlockDef?.label ?? "Escolha um bloco"}
-                </h2>
-                <p className="mt-0.5 truncate text-xs text-neutral-500">
-                  {selectedBlockDef?.blockType ?? "Painel do bloco"}
-                </p>
-              </div>
-              {selectedBlockDef?.required ? <Badge variant="warning">fixo</Badge> : null}
-            </div>
-          </div>
+        {shouldShowFallbackPanel ? (
+          <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-white/95">
+            <div className="space-y-3 p-3">
+              {errorMessage ? (
+                <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
+                  {errorMessage}
+                </div>
+              ) : null}
+              {successMessage ? (
+                <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-900">
+                  {successMessage}
+                </div>
+              ) : null}
 
-          <div className="space-y-3 overflow-visible p-3 xl:max-h-[48.75rem] xl:overflow-y-auto">
-            {errorMessage ? (
-              <div className="rounded-lg border border-coral-200 bg-coral-50 px-3 py-2 text-sm font-medium text-coral-900">
-                {errorMessage}
-              </div>
-            ) : null}
-            {successMessage ? (
-              <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2 text-sm font-medium text-green-900">
-                {successMessage}
-              </div>
-            ) : null}
-
-            <div className="grid grid-cols-1 gap-2 2xl:grid-cols-2">
-              <Button
-                type="button"
-                loading={busyKey === "save-page"}
-                disabled={!hasUnsavedChanges && busyKey !== "save-page"}
-                onClick={() => void persistPageDraft()}
-              >
-                <Save className="h-4 w-4" aria-hidden="true" />
-                Salvar
-              </Button>
-              <Button
-                type="button"
-                variant="primary"
-                loading={busyKey === "publish" || busyKey === "save-page"}
-                onClick={() => void publishPage()}
-                className="2xl:col-span-2"
-              >
-                <UploadCloud className="h-4 w-4" aria-hidden="true" />
-                Publicar
-              </Button>
-              {!selectedBlockDef?.required && selectedBlock ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  loading={busyKey === `remove:${selectedBlock.id}`}
-                  onClick={() => void removeSelectedBlock()}
-                  className="2xl:col-span-2"
-                >
-                  <Trash2 className="h-4 w-4" aria-hidden="true" />
-                  Remover
-                </Button>
+              {selectedBlock && selectedBlockDef && sidebarEditableFields.length > 0 ? (
+                <div className="grid gap-4 lg:grid-cols-2">
+                  {sidebarEditableFields.map((field) => renderEditableField(field))}
+                </div>
               ) : null}
             </div>
-
-            {selectedBlock && selectedBlockDef ? (
-              <>
-
-                {inlineEditableFields.length > 0 ? (
-                  <div className="rounded-[1.1rem] border border-lime-200 bg-lime-50/80 px-4 py-3">
-                    <p className="text-sm font-semibold text-lime-950">Edicao direta no canvas</p>
-                    <p className="mt-1 text-xs leading-6 text-lime-900/80">
-                      {inlineEditableFields.length} campo(s) deste bloco ja podem ser editados direto
-                      na preview: texto, imagem e elementos visuais.
-                    </p>
-                  </div>
-                ) : null}
-
-                {sidebarEditableFields.length > 0 ? (
-                  <div className="space-y-4">
-                    {sidebarEditableFields.map((field) => renderEditableField(field))}
-                  </div>
-                ) : (
-                  <div className="rounded-[1.1rem] border border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-sm leading-7 text-neutral-500">
-                    Este bloco nao precisa mais do painel lateral para os campos principais.
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-8 text-sm leading-7 text-neutral-500">
-                Escolha um bloco para editar.
-              </div>
-            )}
-          </div>
-        </aside>
+          </section>
+        ) : null}
       </div>
     </section>
   );
