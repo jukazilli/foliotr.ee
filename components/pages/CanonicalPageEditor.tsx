@@ -472,8 +472,10 @@ export default function CanonicalPageEditor({
   const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
   const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
+  const [imagePickerOpen, setImagePickerOpen] = useState(false);
   const imageFileInputRef = useRef<HTMLInputElement | null>(null);
   const imageFileTargetRef = useRef<ImageFileTarget | null>(null);
+  const imagePickerOpenRef = useRef(false);
   const saveSelectedBlockRef = useRef<((
     nextConfig?: JsonRecord,
     nextAssets?: JsonRecord
@@ -762,6 +764,30 @@ export default function CanonicalPageEditor({
     setDraftConfig(asRecord(selectedBlock.config));
     setDraftAssets(asRecord(selectedBlock.assets));
   }, [selectedBlock]);
+
+  useEffect(() => {
+    const input = imageFileInputRef.current;
+
+    function releaseImagePicker() {
+      window.setTimeout(() => {
+        imagePickerOpenRef.current = false;
+        setImagePickerOpen(false);
+      }, 150);
+    }
+
+    function cancelImagePicker() {
+      imageFileTargetRef.current = null;
+      releaseImagePicker();
+    }
+
+    input?.addEventListener("cancel", cancelImagePicker);
+    window.addEventListener("focus", releaseImagePicker);
+
+    return () => {
+      input?.removeEventListener("cancel", cancelImagePicker);
+      window.removeEventListener("focus", releaseImagePicker);
+    };
+  }, []);
 
   useEffect(() => {
     setActiveInlineFieldKey(null);
@@ -2084,12 +2110,21 @@ export default function CanonicalPageEditor({
   }
 
   function requestImageFile(target: ImageFileTarget) {
-    imageFileTargetRef.current = target;
     const input = imageFileInputRef.current;
-    if (!input) return;
+    if (!input || imagePickerOpenRef.current || busyKey) return;
 
-    input.value = "";
-    input.click();
+    imagePickerOpenRef.current = true;
+    imageFileTargetRef.current = target;
+    setImagePickerOpen(true);
+
+    try {
+      input.value = "";
+      input.click();
+    } catch {
+      imagePickerOpenRef.current = false;
+      imageFileTargetRef.current = null;
+      setImagePickerOpen(false);
+    }
   }
 
   function handleSharedImageFileChange(event: ReactChangeEvent<HTMLInputElement>) {
@@ -2097,6 +2132,8 @@ export default function CanonicalPageEditor({
     const target = imageFileTargetRef.current;
     event.currentTarget.value = "";
     imageFileTargetRef.current = null;
+    imagePickerOpenRef.current = false;
+    setImagePickerOpen(false);
 
     if (!file || !target) return;
 
@@ -2146,9 +2183,11 @@ export default function CanonicalPageEditor({
       setDraftConfig(nextConfig);
       setDraftAssets(nextAssets);
       await saveSelectedBlock(nextConfig, nextAssets);
+      setSuccessMessage("Imagem atualizada nesta pagina.");
     } catch (error) {
-      setBusyKey(null);
       setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+    } finally {
+      setBusyKey(null);
     }
   }
 
@@ -2218,9 +2257,11 @@ export default function CanonicalPageEditor({
       setDraftConfig(nextConfig);
       setDraftAssets(nextAssets);
       await saveSelectedBlock(nextConfig, nextAssets);
+      setSuccessMessage("Imagem atualizada nesta pagina.");
     } catch (error) {
-      setBusyKey(null);
       setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+    } finally {
+      setBusyKey(null);
     }
   }
 
@@ -2584,6 +2625,7 @@ export default function CanonicalPageEditor({
             variant="outline"
             size="sm"
             className="rounded-xl bg-white"
+            disabled={imagePickerOpen || Boolean(busyKey)}
             onClick={() => requestImageFile({ kind: "topLevel", fieldKey })}
           >
             <Upload className="h-4 w-4" aria-hidden="true" />
@@ -2685,6 +2727,7 @@ export default function CanonicalPageEditor({
                         variant="outline"
                         size="sm"
                         className="rounded-xl bg-white"
+                        disabled={imagePickerOpen || Boolean(busyKey)}
                         onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
                       >
                         <ImagePlus className="h-4 w-4" aria-hidden="true" />
@@ -2761,6 +2804,7 @@ export default function CanonicalPageEditor({
                   variant="outline"
                   size="sm"
                   className="rounded-xl bg-white"
+                  disabled={imagePickerOpen || Boolean(busyKey)}
                   onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
                 >
                   <ImagePlus className="h-4 w-4" aria-hidden="true" />
@@ -3415,6 +3459,7 @@ export default function CanonicalPageEditor({
                           variant="ghost"
                           size="sm"
                           className="h-8 rounded-full px-3"
+                          disabled={imagePickerOpen || Boolean(busyKey)}
                           onClick={() =>
                             requestImageFile({
                               kind: "topLevel",
@@ -3505,6 +3550,7 @@ export default function CanonicalPageEditor({
                           size="sm"
                           className="h-8 w-8 rounded-full px-0"
                           aria-label="Trocar imagem"
+                          disabled={imagePickerOpen || Boolean(busyKey)}
                           onClick={() =>
                             requestImageFile({
                               kind: "list",
@@ -3643,6 +3689,7 @@ export default function CanonicalPageEditor({
                           size="sm"
                           className="h-8 w-8 rounded-full px-0"
                           aria-label="Trocar capa do projeto"
+                          disabled={imagePickerOpen || Boolean(busyKey)}
                           onClick={() =>
                             requestImageFile({
                               kind: "projectCover",

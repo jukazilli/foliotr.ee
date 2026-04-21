@@ -194,6 +194,7 @@ function HeroPortrait({
       <div className="absolute inset-[1%] translate-x-[2%] overflow-hidden rounded-[48%] bg-[#F5EE84]">
         {semantics.hero.portrait ? (
           <img
+            key={semantics.hero.portrait.src}
             alt=""
             className="h-full w-full object-cover"
             src={semantics.hero.portrait.src}
@@ -662,6 +663,7 @@ function WorkProjectCard({
       >
         {item.image ? (
           <img
+            key={item.image}
             alt={item.title}
             className="h-full w-full"
             src={item.image}
@@ -730,6 +732,7 @@ function ContactSection({
         >
           {semantics.contact.supportImage ? (
             <img
+              key={semantics.contact.supportImage.src}
               alt=""
               className="h-full w-full"
               src={semantics.contact.supportImage.src}
@@ -850,7 +853,7 @@ function CustomSections({
                   data-ft-kind="image"
                   data-ft-editable="true"
                 >
-                  <img alt={imageAlt} className="h-full w-full" src={imageSrc} style={imageStyle} />
+                  <img key={imageSrc} alt={imageAlt} className="h-full w-full" src={imageSrc} style={imageStyle} />
                 </div>
               ) : null}
               <div className="min-w-0">
