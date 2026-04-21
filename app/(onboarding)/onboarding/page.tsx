@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -95,6 +95,8 @@ export default function OnboardingPage() {
   const [step1Values, setStep1Values] = useState<Step1Data | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
+  const [usernameStatus, setUsernameStatus] = useState<"idle" | "checking" | "available" | "taken">("idle");
+  const [usernameMessage, setUsernameMessage] = useState("");
 
   const form1 = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -105,10 +107,11 @@ export default function OnboardingPage() {
   });
 
   const username = form1.watch("username") ?? "";
+  const normalizedUsername = useMemo(() => normalizeUsernameInput(username), [username]);
 
   async function checkUsername(usernameValue: string) {
     const response = await fetch(
-      `/api/onboarding?username=${encodeURIComponent(usernameValue)}`,
+      `/api/username?username=${encodeURIComponent(usernameValue)}`,
       { method: "GET" }
     );
     const body = (await response.json().catch(() => null)) as UsernameAvailability | unknown;
@@ -120,6 +123,69 @@ export default function OnboardingPage() {
     return body as UsernameAvailability;
   }
 
+  useEffect(() => {
+    setUsernameSuggestions([]);
+    setUsernameMessage("");
+
+    if (!username.trim()) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    const parsed = step1Schema.shape.username.safeParse(normalizedUsername);
+    if (!parsed.success) {
+      setUsernameStatus("idle");
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => {
+      setUsernameStatus("checking");
+      fetch(`/api/username?username=${encodeURIComponent(normalizedUsername)}`, {
+        method: "GET",
+        signal: controller.signal,
+      })
+        .then(async (response) => {
+          const body = (await response.json().catch(() => null)) as
+            | UsernameAvailability
+            | unknown;
+
+          if (!response.ok) {
+            throw new Error(readApiMessage(body) ?? "Nao foi possivel validar o username.");
+          }
+
+          const availability = body as UsernameAvailability;
+          if (availability.available) {
+            setUsernameStatus("available");
+            setUsernameMessage("Username disponivel.");
+            setUsernameSuggestions([]);
+            form1.clearErrors("username");
+            return;
+          }
+
+          setUsernameStatus("taken");
+          setUsernameMessage(availability.message ?? "Esse username ja esta em uso.");
+          setUsernameSuggestions(availability.suggestions ?? []);
+          form1.setError("username", {
+            type: "validate",
+            message: availability.message ?? "Esse username ja esta em uso.",
+          });
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return;
+          setUsernameStatus("idle");
+          setUsernameMessage(
+            error instanceof Error ? error.message : "Nao foi possivel validar o username."
+          );
+        });
+    }, 450);
+
+    return () => {
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [form1, normalizedUsername, username]);
+
   async function handleStep1(data: Step1Data) {
     const normalizedUsername = normalizeUsernameInput(data.username);
     form1.setValue("username", normalizedUsername, {
@@ -128,10 +194,13 @@ export default function OnboardingPage() {
     });
     setUsernameSuggestions([]);
     setServerError(null);
+    setUsernameMessage("");
 
     const availability = await checkUsername(normalizedUsername);
     if (!availability.available) {
       setUsernameSuggestions(availability.suggestions ?? []);
+      setUsernameStatus("taken");
+      setUsernameMessage(availability.message ?? "Esse username ja esta em uso.");
       form1.setError("username", {
         type: "validate",
         message: availability.message ?? "Esse username ja esta em uso.",
@@ -139,6 +208,7 @@ export default function OnboardingPage() {
       return;
     }
 
+    setUsernameStatus("available");
     setStep1Values({ username: availability.username });
     setStep(1);
   }
@@ -149,6 +219,8 @@ export default function OnboardingPage() {
       shouldValidate: true,
     });
     setUsernameSuggestions([]);
+    setUsernameMessage("");
+    setUsernameStatus("idle");
     form1.clearErrors("username");
   }
 
@@ -224,6 +296,18 @@ export default function OnboardingPage() {
                 </p>
               ) : null}
 
+              {usernameMessage ? (
+                <p
+                  className={
+                    usernameStatus === "available"
+                      ? "text-xs font-medium text-lime-800"
+                      : "text-xs font-medium text-coral-700"
+                  }
+                >
+                  {usernameMessage}
+                </p>
+              ) : null}
+
               {usernameSuggestions.length > 0 ? (
                 <div className="rounded-xl border border-lime-200 bg-lime-50 p-3">
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-900">
@@ -260,6 +344,9 @@ export default function OnboardingPage() {
                   >
                     {normalizeUsernameInput(username)}
                   </span>
+                  {usernameStatus === "checking" ? (
+                    <span className="ml-auto text-xs text-neutral-400">verificando</span>
+                  ) : null}
                 </div>
               ) : null}
             </div>
@@ -268,10 +355,13 @@ export default function OnboardingPage() {
               type="submit"
               variant="primary"
               size="lg"
-              loading={form1.formState.isSubmitting}
+              loading={form1.formState.isSubmitting || usernameStatus === "checking"}
+              disabled={usernameStatus === "taken"}
               className="w-full"
             >
-              {form1.formState.isSubmitting ? "Validando" : "Continuar"}
+              {form1.formState.isSubmitting || usernameStatus === "checking"
+                ? "Validando"
+                : "Continuar"}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </form>

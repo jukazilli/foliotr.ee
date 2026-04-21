@@ -22,6 +22,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
+import { UsernameEditor } from "@/components/settings/UsernameEditor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -719,6 +720,16 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     setStatus("idle");
   }
 
+  function setUsername(usernameValue: string) {
+    setProfile((current) => ({
+      ...current,
+      user: {
+        ...current.user,
+        username: usernameValue,
+      },
+    }));
+  }
+
   function updateList<T extends { _key: string }>(
     field: keyof EditableProfile,
     keyValue: string,
@@ -1117,10 +1128,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                       <input className={inputClass()} value={profile.displayName ?? ""} onChange={onInput("displayName")} />
                     </Field>
                     <Field label="Handle" meta="URL publica">
-                      <div className="flex items-center rounded-xl border border-neutral-200 bg-white pl-3">
-                        <span className="font-data text-xs text-neutral-400">foliotree.com/@</span>
-                        <input className="min-w-0 flex-1 bg-transparent px-2 py-2.5 text-sm text-neutral-700 outline-none" value={username ?? ""} readOnly />
-                      </div>
+                      <UsernameEditor initialUsername={username} onChanged={setUsername} />
                     </Field>
                     <Field label="Headline" meta="template e curriculo">
                       <input className={inputClass()} value={profile.headline ?? ""} onChange={onInput("headline")} />

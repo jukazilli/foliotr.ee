@@ -1,7 +1,9 @@
 import { auth } from "@/auth";
+import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { User, Lock, Globe } from "lucide-react";
 import { DeleteAccountCard } from "@/components/settings/DeleteAccountCard";
+import { UsernameEditor } from "@/components/settings/UsernameEditor";
 import {
   Card,
   CardHeader,
@@ -13,12 +15,17 @@ import { Button } from "@/components/ui/button";
 
 export default async function SettingsPage() {
   const session = await auth();
-  if (!session?.user) redirect("/login");
+  if (!session?.user?.id) redirect("/login");
 
-  const user = session.user as typeof session.user & {
-    username?: string;
-    email?: string;
-  };
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      email: true,
+      username: true,
+    },
+  });
+
+  if (!user) redirect("/login");
 
   return (
     <div className="max-w-2xl space-y-8">
@@ -80,19 +87,7 @@ export default async function SettingsPage() {
         <CardContent className="space-y-6">
           <div className="space-y-2">
             <label className="text-sm font-medium text-neutral-700">Username</label>
-            <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-neutral-50 px-4 py-3">
-              <div>
-                <span className="font-mono text-sm text-neutral-700">{user.username ?? "-"}</span>
-                {user.username ? (
-                  <p className="mt-0.5 font-mono text-xs text-neutral-400">
-                    foliotr.ee/{user.username}
-                  </p>
-                ) : null}
-              </div>
-              <Button variant="ghost" size="sm">
-                Alterar
-              </Button>
-            </div>
+            <UsernameEditor initialUsername={user.username} />
           </div>
 
           <div className="space-y-2">

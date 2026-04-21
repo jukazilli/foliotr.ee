@@ -2,13 +2,11 @@ import { NextRequest } from "next/server";
 import { ZodError } from "zod";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { onboardingSchema } from "@/lib/validations";
 import {
   getUsernameAvailability,
   isUniqueUsernameError,
   parseUsernameInput,
   usernameConflictDetails,
-  usernameExists,
 } from "@/lib/server/domain/usernames";
 import {
   handleRouteError,
@@ -32,11 +30,11 @@ export async function GET(request: NextRequest) {
       return jsonValidationError(error);
     }
 
-    return handleRouteError("GET /api/onboarding", error);
+    return handleRouteError("GET /api/username", error);
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   try {
     const session = await auth();
 
@@ -44,46 +42,41 @@ export async function POST(request: NextRequest) {
       return jsonError("UNAUTHORIZED", 401);
     }
 
-    const userId = session.user.id;
     const body = await request.json();
-    const data = onboardingSchema.parse({
-      ...body,
-      username: parseUsernameInput(body?.username),
-    });
+    const username = parseUsernameInput(body?.username);
+    const availability = await getUsernameAvailability(username, session.user.id);
 
-    if (await usernameExists(data.username, userId)) {
-      return jsonError("CONFLICT", 409, await usernameConflictDetails(data.username, userId));
+    if (!availability.available) {
+      return jsonError("CONFLICT", 409, availability);
     }
 
     try {
-      await prisma.$transaction(async (tx) => {
-        await tx.user.update({
-          where: { id: userId },
-          data: { username: data.username },
-        });
-
-        await tx.profile.update({
-          where: { userId },
-          data: {
-            headline: data.headline,
-            onboardingDone: true,
-          },
-        });
+      const user = await prisma.user.update({
+        where: { id: session.user.id },
+        data: { username },
+        select: {
+          id: true,
+          username: true,
+        },
       });
+
+      return jsonOk({ user }, { status: 200 });
     } catch (error) {
       if (isUniqueUsernameError(error)) {
-        return jsonError("CONFLICT", 409, await usernameConflictDetails(data.username, userId));
+        return jsonError(
+          "CONFLICT",
+          409,
+          await usernameConflictDetails(username, session.user.id)
+        );
       }
 
       throw error;
     }
-
-    return jsonOk({ success: true }, { status: 200 });
   } catch (error) {
     if (error instanceof ZodError) {
       return jsonValidationError(error);
     }
 
-    return handleRouteError("POST /api/onboarding", error);
+    return handleRouteError("PATCH /api/username", error);
   }
 }
