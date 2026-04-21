@@ -542,7 +542,11 @@ export function derivePortfolioCommunitySemantics(args: {
   const visibleSelectedProjects = selectedProjects.filter(
     (project) => !hiddenProjectIds.has(project.id)
   );
-  const configuredWorkMaxItems = Math.max(1, Math.min(readNumber(workConfig.maxItems, 2), 6));
+  const minimumWorkItems = visibleSelectedProjects.length > 1 ? 2 : 1;
+  const configuredWorkMaxItems = Math.max(
+    minimumWorkItems,
+    Math.min(readNumber(workConfig.maxItems, 2), 6)
+  );
   const fallbackWorkItems = Array.isArray(workConfig.fallbackProjects)
     ? workConfig.fallbackProjects.map(asRecord)
     : [];

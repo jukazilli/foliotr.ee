@@ -249,13 +249,15 @@ Criterio de aceite:
 
 ### Slice 4: Carrossel De Projetos No Template
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] substituir grid de `portfolio.work` por card unico/carrossel conforme quantidade
-- [ ] manter dimensoes estaveis e imagens ajustaveis
-- [ ] expor slots editaveis por item/slide no preview
-- [ ] adicionar controles iconicos anterior/proximo
-- [ ] validar teclado, mobile e desktop
+- [x] substituir grid de `portfolio.work` por card unico/carrossel conforme quantidade
+- [x] manter dimensoes estaveis e imagens ajustaveis
+- [x] expor slots editaveis por item/slide no preview
+- [x] adicionar controles iconicos anterior/proximo
+- [x] validar teclado, mobile e desktop
 - [ ] commit do slice
 - [ ] sync/push do slice
 

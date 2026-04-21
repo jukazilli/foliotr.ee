@@ -2,6 +2,7 @@ import {
   buildPortfolioCommunityBlockStateFromBlocks,
   derivePortfolioCommunitySemantics,
   type PortfolioCommunitySemantics,
+  type PortfolioCommunityWorkItem,
 } from "@/lib/templates/portfolio-community-semantics";
 import {
   readPortfolioCommunitySourcePackage,
@@ -9,6 +10,7 @@ import {
 } from "@/lib/templates/source-package";
 import type { TemplateRendererProps } from "@/components/templates/types";
 import type { RenderablePageBlock } from "@/components/templates/types";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const FALLBACK_SOURCE_PACKAGE: PortfolioCommunitySourcePackage = {
   variant: "template1",
@@ -578,6 +580,10 @@ function WorkSection({
 }) {
   if (!renderHidden && !semantics.work.visible) return null;
 
+  const workItems = semantics.work.items.slice(0, semantics.work.maxItems);
+  const isCarousel = workItems.length > 1;
+  const carouselId = `${block?.id ?? "portfolio-work"}-carousel`;
+
   return (
     <SectionShell
       id="work"
@@ -604,57 +610,119 @@ function WorkSection({
         </p>
       ) : null}
 
-      <div className="mt-16 grid gap-12 lg:grid-cols-2 lg:gap-20">
-        {semantics.work.items.slice(0, semantics.work.maxItems).map((item) => {
-          const content = (
-            <>
-              <div
-                className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]"
-                data-ft-slot={item.imageConfigPath ? `work.${item.imageConfigPath}` : undefined}
-                data-ft-config-path={item.imageConfigPath}
-                data-ft-kind={item.imageConfigPath ? "image" : undefined}
-                data-ft-editable={item.imageConfigPath ? "true" : undefined}
-              >
-                {item.image ? (
-                  <img
-                    alt={item.title}
-                    className="h-full w-full"
-                    src={item.image}
-                    style={
-                      item.imageValue
-                        ? {
-                            objectFit: item.imageValue.fitMode === "fit" ? "contain" : "cover",
-                            objectPosition: `${item.imageValue.positionX}% ${item.imageValue.positionY}%`,
-                          }
-                        : { objectFit: "cover" }
-                    }
-                  />
-                ) : null}
-              </div>
-              <p className="mt-5 break-words text-sm italic leading-relaxed">{item.date}</p>
-              <h3 className="mt-1 break-words text-2xl font-semibold leading-snug">
-                {item.title}
-              </h3>
-              <p className="mt-3 whitespace-pre-line break-words text-lg leading-[1.75]">
-                {item.description}
-              </p>
-            </>
-          );
+      {isCarousel ? (
+        <div
+          className="mt-16"
+          aria-roledescription="carousel"
+          aria-label="Projetos"
+        >
+          <div
+            id={carouselId}
+            className="flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:thin] lg:gap-12"
+          >
+            {workItems.map((item, index) => {
+              const previousIndex = (index - 1 + workItems.length) % workItems.length;
+              const nextIndex = (index + 1) % workItems.length;
+              const slideId = `${carouselId}-slide-${index}`;
+              const previousId = `${carouselId}-slide-${previousIndex}`;
+              const nextId = `${carouselId}-slide-${nextIndex}`;
 
-          return item.href ? (
-            <a key={item.key} href={item.href} className="group block min-w-0">
-              <article className="transition duration-200 group-hover:-translate-y-1 group-hover:opacity-90">
-                {content}
-              </article>
-            </a>
-          ) : (
-            <article key={item.key} className="min-w-0">
-              {content}
-            </article>
-          );
-        })}
-      </div>
+              return (
+                <div
+                  key={item.key}
+                  id={slideId}
+                  className="min-w-full snap-start scroll-mt-28 md:min-w-[78%] lg:min-w-[56%]"
+                  aria-roledescription="slide"
+                  aria-label={`${index + 1} de ${workItems.length}`}
+                >
+                  <WorkProjectCard item={item} index={index} />
+                  <div className="mt-5 flex items-center justify-end gap-2">
+                    <a
+                      href={`#${previousId}`}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#03045E]/20 bg-white/70 text-[#03045E] transition hover:bg-[#F5EE84]"
+                      aria-label="Projeto anterior"
+                      title="Projeto anterior"
+                    >
+                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
+                    </a>
+                    <a
+                      href={`#${nextId}`}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#03045E]/20 bg-white/70 text-[#03045E] transition hover:bg-[#F5EE84]"
+                      aria-label="Proximo projeto"
+                      title="Proximo projeto"
+                    >
+                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="mt-16 max-w-[44rem]">
+          {workItems.map((item, index) => (
+            <WorkProjectCard key={item.key} item={item} index={index} />
+          ))}
+        </div>
+      )}
     </SectionShell>
+  );
+}
+
+function WorkProjectCard({
+  item,
+  index,
+}: {
+  item: PortfolioCommunityWorkItem;
+  index: number;
+}) {
+  const content = (
+    <article
+      className="min-w-0 transition duration-200 group-hover:-translate-y-1 group-hover:opacity-90"
+      data-ft-work-item-source={item.source}
+      data-ft-project-id={item.projectId}
+      data-ft-work-item-index={index}
+    >
+      <div
+        className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]"
+        data-ft-slot={item.imageConfigPath ? `work.${item.imageConfigPath}` : undefined}
+        data-ft-config-path={item.imageConfigPath}
+        data-ft-kind={item.imageConfigPath ? "image" : undefined}
+        data-ft-editable={item.imageConfigPath ? "true" : undefined}
+      >
+        {item.image ? (
+          <img
+            alt={item.title}
+            className="h-full w-full"
+            src={item.image}
+            style={
+              item.imageValue
+                ? {
+                    objectFit: item.imageValue.fitMode === "fit" ? "contain" : "cover",
+                    objectPosition: `${item.imageValue.positionX}% ${item.imageValue.positionY}%`,
+                  }
+                : { objectFit: "cover" }
+            }
+          />
+        ) : null}
+      </div>
+      <p className="mt-5 break-words text-sm italic leading-relaxed">{item.date}</p>
+      <h3 className="mt-1 break-words text-2xl font-semibold leading-snug">
+        {item.title}
+      </h3>
+      <p className="mt-3 whitespace-pre-line break-words text-lg leading-[1.75]">
+        {item.description}
+      </p>
+    </article>
+  );
+
+  return item.href ? (
+    <a href={item.href} className="group block min-w-0">
+      {content}
+    </a>
+  ) : (
+    content
   );
 }
 
