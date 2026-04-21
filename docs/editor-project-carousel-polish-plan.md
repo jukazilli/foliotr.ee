@@ -322,21 +322,34 @@ Prova local:
 
 ### Slice 7: QA Visual E Fechamento
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] testar desktop e mobile no editor
-- [ ] testar perfil base com upload real ou mockado conforme ambiente
-- [ ] testar portfolio preview
-- [ ] testar curriculo preview
-- [ ] testar publicar apos alteracoes
-- [ ] executar `typecheck`, `lint`, testes focados e `build`
-- [ ] registrar memoria final no documento de editor
-- [ ] commit do fechamento
-- [ ] sync/push do fechamento
+- [x] testar desktop e mobile no editor
+- [x] testar perfil base com upload real ou mockado conforme ambiente
+- [x] testar portfolio preview
+- [x] testar curriculo preview
+- [x] testar publicar apos alteracoes
+- [x] executar `typecheck`, `lint`, testes focados e `build`
+- [x] registrar memoria final no documento de editor
+- [x] commit do fechamento
+- [x] sync/push do fechamento
 
 Criterio de aceite:
 
 - fluxo completo de projeto com capa, carrossel, ocultacao e edicao contextual validado localmente
+
+Prova local:
+
+- QA Playwright desktop confirmou editor sem sidebar de blocos, adicionar no topo, toolbar com salvar/publicar e carrossel com 2 projetos
+- upload real de capa de projeto validado por `/api/assets/upload?purpose=project` e persistido por `/api/profile/projects/[projectId]/cover`
+- preview de curriculo no editor renderizou projetos e manteve layout sem overflow
+- publicacao apos alteracao de `ctaHref` confirmou `publishState=PUBLISHED`, `publishedAt` e `publishedSnapshotAt`
+- rota publica da pagina publicada carregou sem controles de edicao e sem erros de console
+- QA mobile confirmou ausencia de overflow horizontal no editor
+- dados temporarios de pagina, projetos e asset foram removidos do banco local apos a validacao
+- `npm run typecheck`, `npm run lint`, `npx vitest run tests/templates/template-semantic-mapper.test.ts tests/templates/resume-projection.test.ts` e `npm run build` passaram em 2026-04-21
 
 ## Riscos E Decisoes A Confirmar
 
