@@ -65,31 +65,24 @@ export function projectPortfolioCommunityResume(
   }
 
   if (semantics.work.visible && semantics.work.items.length > 0) {
-    const resumeProjects =
-      semantics.work.fallbackProjects.length > 0
-        ? semantics.work.fallbackProjects.map((item, index) => ({
-            id: `project-${index}`,
-            title: item.title,
-            description: item.description,
-            href: item.href ?? "",
-            tags: [],
-          }))
-        : semantics.work.items
-            .slice(0, semantics.work.maxItems)
-            .filter((item) => item.title.trim().length > 0)
-            .map((item) => ({
-              id: item.key,
-              title: item.title,
-              description: item.description,
-              href: item.href,
-              tags: [],
-            }));
+    const resumeProjects = semantics.work.items
+      .slice(0, semantics.work.maxItems)
+      .filter((item) => item.source === "project" && item.title.trim().length > 0)
+      .map((item) => ({
+        id: item.projectId ?? item.key,
+        title: item.title,
+        description: item.description,
+        href: item.href,
+        tags: [],
+      }));
 
-    sectionMap.set("projects", {
-      key: "projects",
-      title: semantics.work.title || "Projetos",
-      items: resumeProjects,
-    });
+    if (resumeProjects.length > 0) {
+      sectionMap.set("projects", {
+        key: "projects",
+        title: semantics.work.title || "Projetos",
+        items: resumeProjects,
+      });
+    }
   }
 
   if (semantics.selections.achievements.length > 0) {

@@ -231,13 +231,15 @@ Criterio de aceite:
 
 ### Slice 3: Semantica De Projetos Para Portfolio E Curriculo
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] resolver imagem de projeto usando capa base + ajuste persistido
-- [ ] manter fallback visual do template quando projeto nao tiver imagem
-- [ ] adicionar suporte a `hiddenProjectIds`
-- [ ] garantir que curriculo em preview usa os mesmos projetos visiveis quando estiver no contexto da pagina
-- [ ] ampliar testes de mapper e resume projection
+- [x] resolver imagem de projeto usando capa base + ajuste persistido
+- [x] manter fallback visual do template quando projeto nao tiver imagem
+- [x] adicionar suporte a `hiddenProjectIds`
+- [x] garantir que curriculo em preview usa os mesmos projetos visiveis quando estiver no contexto da pagina
+- [x] ampliar testes de mapper e resume projection
 - [ ] commit do slice
 - [ ] sync/push do slice
 

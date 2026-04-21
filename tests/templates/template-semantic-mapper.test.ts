@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mapTemplateInitialBlocks } from "@/lib/templates/template-content-mapper";
+import { derivePortfolioCommunitySemantics } from "@/lib/templates/portfolio-community-semantics";
 
 describe("template semantic mapper", () => {
   it("maps profile and version data into portfolio-community semantic blocks", () => {
@@ -242,6 +243,86 @@ describe("template semantic mapper", () => {
           }),
         ],
       }),
+    });
+  });
+
+  it("resolves visible project cards with base cover framing", () => {
+    const semantics = derivePortfolioCommunitySemantics({
+      profile: {
+        displayName: "Juliano Pedroso",
+        headline: "Designer",
+        bio: "Bio",
+        avatarUrl: null,
+        location: null,
+        publicEmail: null,
+        phone: null,
+        user: null,
+        experiences: [],
+        educations: [],
+        skills: [],
+        achievements: [],
+        highlights: [],
+        links: [],
+        proofs: [],
+        projects: [
+          {
+            id: "project_1",
+            title: "Projeto visivel",
+            description: "Descricao",
+            imageUrl: "/uploads/project-1.png",
+            url: "https://example.com/project-1",
+            repoUrl: null,
+            tags: [],
+            featured: true,
+            coverAssetId: null,
+            coverFitMode: "crop",
+            coverPositionX: 30,
+            coverPositionY: 70,
+            order: 0,
+            startDate: null,
+            endDate: null,
+          },
+          {
+            id: "project_2",
+            title: "Projeto oculto",
+            description: "Nao deve aparecer",
+            imageUrl: "/uploads/project-2.png",
+            url: null,
+            repoUrl: null,
+            tags: [],
+            featured: false,
+            coverAssetId: null,
+            coverFitMode: "fill",
+            coverPositionX: 50,
+            coverPositionY: 50,
+            order: 1,
+            startDate: null,
+            endDate: null,
+          },
+        ],
+      } as never,
+      version: {
+        selectedProjectIds: ["project_1", "project_2"],
+      } as never,
+      blockConfigs: {
+        "portfolio.work": {
+          maxItems: 3,
+          hiddenProjectIds: ["project_2"],
+        },
+      },
+    });
+
+    expect(semantics.work.items).toHaveLength(1);
+    expect(semantics.work.items[0]).toMatchObject({
+      key: "project_1",
+      projectId: "project_1",
+      source: "project",
+      image: "/uploads/project-1.png",
+      imageValue: {
+        fitMode: "crop",
+        positionX: 30,
+        positionY: 70,
+      },
     });
   });
 

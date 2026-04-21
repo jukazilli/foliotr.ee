@@ -151,6 +151,47 @@ describe("resume projection", () => {
     expect(projection.rules.hides).toContain("imagens decorativas do contato");
   });
 
+  it("respects hidden project ids when projecting page resume preview", () => {
+    const hiddenProjectBlocks = (blocks as unknown as Array<{
+      blockType: string;
+      config: Record<string, unknown>;
+    }>).map((block) =>
+      block.blockType === "portfolio.work"
+        ? {
+            ...block,
+            config: {
+              ...block.config,
+              hiddenProjectIds: ["project_1"],
+            },
+          }
+        : block
+    );
+
+    const projection = resolveTemplateResumeProjection({
+      templateSlug: "portfolio-community",
+      blocks: hiddenProjectBlocks as never,
+      profile,
+      version: {
+        selectedExperienceIds: [],
+        selectedProjectIds: ["project_1"],
+        selectedSkillIds: [],
+        selectedAchievementIds: [],
+        selectedProofIds: [],
+        selectedHighlightIds: [],
+        selectedLinkIds: [],
+      },
+      config: {
+        sections: ["projects"],
+        layout: "classic",
+        accentColor: "#474306",
+        showPhoto: false,
+        showLinks: true,
+      } as never,
+    });
+
+    expect(projection.sections.some((section) => section.key === "projects")).toBe(false);
+  });
+
   it("fails clearly when a template slug has no registered resume implementation", () => {
     expect(() =>
       resolveTemplateResumeProjection({

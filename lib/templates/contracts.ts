@@ -135,6 +135,7 @@ const portfolioWorkConfigSchema = z.object({
   title: safeShortTextSchema.default("projetos."),
   intro: safeTextSchema.optional(),
   maxItems: z.number().int().min(1).max(6).default(2),
+  hiddenProjectIds: z.array(z.string().trim().min(1)).max(40).default([]),
   fallbackProjects: z
     .array(
       z.object({
@@ -143,6 +144,7 @@ const portfolioWorkConfigSchema = z.object({
         date: safeShortTextSchema.default("24 de novembro de 2019"),
         image: imageSchema.optional(),
         href: safeUrlSchema.optional(),
+        hidden: z.boolean().default(false),
       })
     )
     .max(6)

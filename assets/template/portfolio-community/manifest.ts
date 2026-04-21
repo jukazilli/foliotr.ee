@@ -207,6 +207,7 @@ export const portfolioCommunityManifest = {
         title: "projetos.",
         intro: "",
         maxItems: 2,
+        hiddenProjectIds: [],
         fallbackProjects: [],
       },
       editableFields: [

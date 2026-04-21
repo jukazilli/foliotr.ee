@@ -63,6 +63,8 @@ export interface PortfolioCommunityEducationItem {
 
 export interface PortfolioCommunityWorkItem {
   key: string;
+  projectId?: string;
+  source: "project" | "fallback";
   title: string;
   description: string;
   date: string;
@@ -123,6 +125,7 @@ export interface PortfolioCommunitySemantics {
       date: string;
       href?: string;
       image?: { src: string; alt: string };
+      hidden?: boolean;
     }>;
   };
   contact: {
@@ -170,6 +173,12 @@ function asRecord(value: unknown) {
 
 function asArray(value: unknown) {
   return Array.isArray(value) ? value : [];
+}
+
+function readStringArray(value: unknown) {
+  return asArray(value).filter(
+    (item): item is string => typeof item === "string" && item.trim().length > 0
+  );
 }
 
 function readString(value: unknown, fallback = "") {
@@ -220,6 +229,31 @@ function createDefaultImageValue(src: string, alt: string): PortfolioCommunityIm
     fitMode: "fill",
     positionX: 50,
     positionY: 50,
+  };
+}
+
+function readProjectCoverImage(project: {
+  title: string;
+  imageUrl?: string | null;
+  coverFitMode?: string | null;
+  coverPositionX?: number | null;
+  coverPositionY?: number | null;
+}): PortfolioCommunityImageValue | null {
+  if (!project.imageUrl) return null;
+
+  const fitMode =
+    project.coverFitMode === "fit" ||
+    project.coverFitMode === "fill" ||
+    project.coverFitMode === "crop"
+      ? project.coverFitMode
+      : "crop";
+
+  return {
+    src: normalizeStoragePublicUrl(project.imageUrl),
+    alt: project.title,
+    fitMode,
+    positionX: clampPercentage(project.coverPositionX, 50),
+    positionY: clampPercentage(project.coverPositionY, 50),
   };
 }
 
@@ -504,6 +538,11 @@ export function derivePortfolioCommunitySemantics(args: {
     endDate: education.endDate,
   }));
 
+  const hiddenProjectIds = new Set(readStringArray(workConfig.hiddenProjectIds));
+  const visibleSelectedProjects = selectedProjects.filter(
+    (project) => !hiddenProjectIds.has(project.id)
+  );
+  const configuredWorkMaxItems = Math.max(1, Math.min(readNumber(workConfig.maxItems, 2), 6));
   const fallbackWorkItems = Array.isArray(workConfig.fallbackProjects)
     ? workConfig.fallbackProjects.map(asRecord)
     : [];
@@ -511,40 +550,50 @@ export function derivePortfolioCommunitySemantics(args: {
     args.sourcePackage?.imports.default.imgRectangle8 ?? "",
     args.sourcePackage?.imports.default.imgUnsplashUbIWo074QlU ?? "",
   ];
-  const workItems = Array.from({ length: 2 }, (_, index) => {
-    const project = selectedProjects[index];
-    const fallback = fallbackWorkItems[index] ?? {};
+  const projectWorkItems = visibleSelectedProjects
+    .slice(0, configuredWorkMaxItems)
+    .map((project, index): PortfolioCommunityWorkItem => {
+      const projectImage = readProjectCoverImage(project);
+      const fallbackImage = workFallbackImages[index] ?? "";
+      const imageValue =
+        projectImage ??
+        (fallbackImage ? createDefaultImageValue(fallbackImage, project.title) : null);
 
-    if (project) {
       return {
         key: project.id,
+        projectId: project.id,
+        source: "project",
         title: project.title,
         description: project.description ?? "",
         date: formatProjectDate(project.startDate, "24 de novembro de 2019"),
-        image: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : workFallbackImages[index] ?? "",
+        image: imageValue?.src ?? "",
         href: project.url ?? project.repoUrl ?? "",
-        imageValue: project.imageUrl
-          ? createDefaultImageValue(normalizeStoragePublicUrl(project.imageUrl), project.title)
-          : null,
+        imageValue,
       };
-    }
+    });
+  const fallbackItems = fallbackWorkItems
+    .slice(0, configuredWorkMaxItems)
+    .map((fallback, index): PortfolioCommunityWorkItem | null => {
+      if (readBoolean(fallback.hidden) === true) return null;
+      const fallbackImage = readImage(fallback.image);
 
-    const fallbackImage = readImage(fallback.image);
-
-    return {
-      key: `fallback-${index}`,
-      title: readString(fallback.title, "Projeto em destaque"),
-      description: readString(
-        fallback.description,
+      return {
+        key: `fallback-${index}`,
+        source: "fallback",
+        title: readString(fallback.title, "Projeto em destaque"),
+        description: readString(
+          fallback.description,
         "Resumo do projeto com contexto, abordagem e impacto gerado."
       ),
       date: readString(fallback.date, "24 de novembro de 2019"),
       image: fallbackImage?.src ?? workFallbackImages[index] ?? "",
       href: readString(fallback.href),
       imageValue: fallbackImage,
-      imageConfigPath: `fallbackProjects.${index}.image`,
-    };
-  });
+        imageConfigPath: `fallbackProjects.${index}.image`,
+      };
+    })
+    .filter((item): item is PortfolioCommunityWorkItem => Boolean(item));
+  const workItems = projectWorkItems.length > 0 ? projectWorkItems : fallbackItems;
 
   const selectedProofImageUrl = selectedProofs.find((proof) => proof.imageUrl)?.imageUrl;
   const supportImage =
@@ -611,15 +660,12 @@ export function derivePortfolioCommunitySemantics(args: {
     work: {
       visible:
         readBoolean(args.visibility?.["portfolio.work"]) ??
-        selectedProjects.length > 0,
+        workItems.length > 0,
       title: readString(workConfig.title, "projetos."),
       intro: readString(workConfig.intro),
-      maxItems:
-        selectedProjects.length > 0
-          ? Math.min(selectedProjects.length, readNumber(workConfig.maxItems, 2))
-          : readNumber(workConfig.maxItems, 2),
+      maxItems: Math.max(1, Math.min(workItems.length || configuredWorkMaxItems, configuredWorkMaxItems)),
       items: workItems,
-      fallbackProjects: selectedProjects.slice(0, 2).map((project) => ({
+      fallbackProjects: visibleSelectedProjects.slice(0, configuredWorkMaxItems).map((project) => ({
         title: project.title,
         description: project.description ?? "",
         date: formatProjectDate(project.startDate, "Projeto em destaque"),
