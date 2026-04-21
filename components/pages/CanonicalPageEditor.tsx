@@ -332,6 +332,10 @@ export default function CanonicalPageEditor({
   const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
   const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
+  const saveSelectedBlockRef = useRef<((
+    nextConfig?: JsonRecord,
+    nextAssets?: JsonRecord
+  ) => Promise<boolean>) | null>(null);
 
   const previewCanvasWidth = useMemo(
     () =>
@@ -536,6 +540,50 @@ export default function CanonicalPageEditor({
       setSelectedBlockId(blocks[0]?.id ?? null);
     }
   }, [blocks, selectedBlockId]);
+
+  useEffect(() => {
+    function handleGlobalEditorKeys(event: KeyboardEvent) {
+      const target = event.target;
+      const isTypingTarget =
+        target instanceof HTMLElement &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable);
+
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
+        event.preventDefault();
+        void saveSelectedBlockRef.current?.();
+        return;
+      }
+
+      if (event.key === "Escape") {
+        if (
+          activeInlineFieldKey ||
+          activeInlineImageFieldKey ||
+          activeInlineListImage ||
+          activeInlineBooleanFieldKey
+        ) {
+          event.preventDefault();
+          clearInlineEditing();
+          return;
+        }
+
+        if (!isTypingTarget && selectedBlockId) {
+          event.preventDefault();
+          setSelectedBlockId(null);
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleGlobalEditorKeys);
+    return () => window.removeEventListener("keydown", handleGlobalEditorKeys);
+  }, [
+    activeInlineBooleanFieldKey,
+    activeInlineFieldKey,
+    activeInlineImageFieldKey,
+    activeInlineListImage,
+    selectedBlockId,
+  ]);
 
   useEffect(() => {
     if (!selectedBlock) {
@@ -1031,6 +1079,20 @@ export default function CanonicalPageEditor({
     return true;
   }
 
+  saveSelectedBlockRef.current = saveSelectedBlock;
+
+  function clearInlineEditing() {
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+  }
+
   function openInlineImageEditor(
     block: RenderablePageBlock,
     blockDef: TemplateBlockDefLike | null,
@@ -1249,8 +1311,7 @@ export default function CanonicalPageEditor({
 
     const didSave = await saveSelectedBlock(nextConfig, draftAssets);
     if (didSave) {
-      setActiveInlineFieldKey(null);
-      setInlineFieldFrame(null);
+      clearInlineEditing();
     }
   }
 
@@ -1261,8 +1322,7 @@ export default function CanonicalPageEditor({
         : "";
 
     setActiveInlineFieldValue(fallbackValue);
-    setActiveInlineFieldKey(null);
-    setInlineFieldFrame(null);
+    clearInlineEditing();
   }
 
   function openInlineBooleanEditor(
@@ -2550,58 +2610,118 @@ export default function CanonicalPageEditor({
                       className="absolute z-30"
                       style={{
                         left: `${inlineFieldFrame.left}px`,
-                        top: `${inlineFieldFrame.top}px`,
-                        width: `${Math.max(inlineFieldFrame.width, 120)}px`,
+                        top: `${Math.max(inlineFieldFrame.top - 42, 8)}px`,
+                        width: `${Math.max(inlineFieldFrame.width, 180)}px`,
                         minHeight: `${Math.max(inlineFieldFrame.height, inlineFieldFrame.kind === "longText" ? 120 : 44)}px`,
                       }}
                       onClick={(event) => event.stopPropagation()}
                     >
-                      {inlineFieldFrame.kind === "longText" ? (
-                        <textarea
-                          autoFocus
-                          value={activeInlineFieldValue}
-                          data-ft-inline-editor="true"
-                          className="min-h-[7.5rem] w-full rounded-2xl border border-lime-300 bg-white/96 px-4 py-3 text-sm font-medium text-neutral-950 shadow-xl outline-none ring-2 ring-lime-400/70 backdrop-blur"
-                          placeholder={inlineFieldFrame.label}
-                          onChange={(event) => setActiveInlineFieldValue(event.target.value)}
-                          onBlur={(event) => void commitInlineFieldChange(event.target.value)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Escape") {
-                              event.preventDefault();
-                              cancelInlineFieldChange();
-                              return;
-                            }
+                      <div className="overflow-hidden rounded-[1.35rem] border border-lime-300 bg-white/97 shadow-xl ring-2 ring-lime-400/70 backdrop-blur">
+                        <div className="flex items-center justify-between gap-3 border-b border-neutral-200/80 bg-lime-50/80 px-4 py-2.5">
+                          <div className="min-w-0">
+                            <p className="truncate text-[0.72rem] font-semibold uppercase tracking-[0.16em] text-lime-900/70">
+                              Editando texto
+                            </p>
+                            <p className="truncate text-sm font-semibold text-neutral-900">
+                              {inlineFieldFrame.label}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 rounded-full px-3"
+                              data-ft-inline-action="true"
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => cancelInlineFieldChange()}
+                            >
+                              Cancelar
+                            </Button>
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="h-8 rounded-full px-3"
+                              data-ft-inline-action="true"
+                              onMouseDown={(event) => event.preventDefault()}
+                              onClick={() => void commitInlineFieldChange(activeInlineFieldValue)}
+                            >
+                              Salvar
+                            </Button>
+                          </div>
+                        </div>
+                        <div className="p-3">
+                          {inlineFieldFrame.kind === "longText" ? (
+                            <textarea
+                              autoFocus
+                              value={activeInlineFieldValue}
+                              data-ft-inline-editor="true"
+                              className="min-h-[8.5rem] w-full rounded-2xl border border-transparent bg-white px-3 py-3 text-sm font-medium text-neutral-950 outline-none placeholder:text-neutral-400"
+                              placeholder={inlineFieldFrame.label}
+                              onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                              onBlur={(event) => {
+                                const nextTarget = event.relatedTarget;
+                                if (
+                                  nextTarget instanceof HTMLElement &&
+                                  nextTarget.dataset.ftInlineAction === "true"
+                                ) {
+                                  return;
+                                }
+                                void commitInlineFieldChange(event.target.value);
+                              }}
+                              onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                  event.preventDefault();
+                                  cancelInlineFieldChange();
+                                  return;
+                                }
 
-                            if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-                              event.preventDefault();
-                              void commitInlineFieldChange(activeInlineFieldValue);
-                            }
-                          }}
-                        />
-                      ) : (
-                        <input
-                          autoFocus
-                          type="text"
-                          value={activeInlineFieldValue}
-                          data-ft-inline-editor="true"
-                          className="h-11 w-full rounded-2xl border border-lime-300 bg-white/96 px-4 text-sm font-medium text-neutral-950 shadow-xl outline-none ring-2 ring-lime-400/70 backdrop-blur"
-                          placeholder={inlineFieldFrame.label}
-                          onChange={(event) => setActiveInlineFieldValue(event.target.value)}
-                          onBlur={(event) => void commitInlineFieldChange(event.target.value)}
-                          onKeyDown={(event) => {
-                            if (event.key === "Escape") {
-                              event.preventDefault();
-                              cancelInlineFieldChange();
-                              return;
-                            }
+                                if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                                  event.preventDefault();
+                                  void commitInlineFieldChange(activeInlineFieldValue);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <input
+                              autoFocus
+                              type="text"
+                              value={activeInlineFieldValue}
+                              data-ft-inline-editor="true"
+                              className="h-12 w-full rounded-2xl border border-transparent bg-white px-3 text-sm font-medium text-neutral-950 outline-none placeholder:text-neutral-400"
+                              placeholder={inlineFieldFrame.label}
+                              onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                              onBlur={(event) => {
+                                const nextTarget = event.relatedTarget;
+                                if (
+                                  nextTarget instanceof HTMLElement &&
+                                  nextTarget.dataset.ftInlineAction === "true"
+                                ) {
+                                  return;
+                                }
+                                void commitInlineFieldChange(event.target.value);
+                              }}
+                              onKeyDown={(event) => {
+                                if (event.key === "Escape") {
+                                  event.preventDefault();
+                                  cancelInlineFieldChange();
+                                  return;
+                                }
 
-                            if (event.key === "Enter") {
-                              event.preventDefault();
-                              void commitInlineFieldChange(activeInlineFieldValue);
-                            }
-                          }}
-                        />
-                      )}
+                                if (event.key === "Enter") {
+                                  event.preventDefault();
+                                  void commitInlineFieldChange(activeInlineFieldValue);
+                                }
+                              }}
+                            />
+                          )}
+                          <p className="px-1 pt-2 text-[0.72rem] text-neutral-500">
+                            {inlineFieldFrame.kind === "longText"
+                              ? "Ctrl/Cmd + Enter salva. Esc cancela."
+                              : "Enter salva. Esc cancela. Ctrl/Cmd + S salva o bloco."}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   ) : null}
                   {selectedBlock && activeInlineImageField && inlineImageFrame ? (

@@ -660,6 +660,8 @@ Status:
 - o inspector passou a priorizar apenas campos ainda dependentes de painel, como listas e links
 - quando um bloco pode ser editado quase todo na preview, o painel indica isso explicitamente
 - a preview agora exibe uma dica contextual curta no bloco ativo para reforcar a interacao direta
+- o editor inline de texto ganhou chrome proprio com estado de caixa ativa, acoes explicitas de salvar/cancelar e hints de teclado
+- `Esc` fecha a edicao inline atual e `Ctrl/Cmd + S` salva o bloco selecionado
 
 Arquivos-base deste slice:
 
