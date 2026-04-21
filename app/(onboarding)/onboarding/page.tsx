@@ -9,26 +9,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { normalizeUsernameInput } from "@/lib/usernames";
 import { z } from "zod";
 
 const step1Schema = z.object({
   username: z
     .string()
     .min(3, "Username deve ter pelo menos 3 caracteres")
-    .max(20, "Username deve ter no máximo 20 caracteres")
-    .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens são permitidos"),
+    .max(20, "Username deve ter no maximo 20 caracteres")
+    .regex(
+      /^[a-z0-9._-]+$/,
+      "Apenas letras minusculas, numeros, ponto, underline e hifen sao permitidos"
+    ),
 });
 
 const step2Schema = z.object({
   headline: z
     .string()
-    .min(5, "Título deve ter pelo menos 5 caracteres")
-    .max(120, "Título deve ter no máximo 120 caracteres"),
+    .min(5, "Titulo deve ter pelo menos 5 caracteres")
+    .max(120, "Titulo deve ter no maximo 120 caracteres"),
   focus: z.string().optional(),
 });
 
 type Step1Data = z.infer<typeof step1Schema>;
 type Step2Data = z.infer<typeof step2Schema>;
+type UsernameAvailability = {
+  available: boolean;
+  username: string;
+  message?: string;
+  suggestions?: string[];
+};
 
 const FOCUS_OPTIONS = [
   { value: "developer", label: "Desenvolvedor(a)" },
@@ -41,7 +51,7 @@ const FOCUS_OPTIONS = [
 
 function StepIndicator({ current, total }: { current: number; total: number }) {
   return (
-    <div className="flex items-center gap-3 mb-8">
+    <div className="mb-8 flex items-center gap-3">
       {Array.from({ length: total }).map((_, i) => (
         <div key={i} className="flex items-center gap-3">
           <div
@@ -56,14 +66,14 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
           >
             {i < current ? <CheckCircle2 className="h-4 w-4" /> : i + 1}
           </div>
-          {i < total - 1 && (
+          {i < total - 1 ? (
             <div
               className={cn(
                 "h-px w-12 transition-all",
                 i < current ? "bg-lime-500" : "bg-neutral-200"
               )}
             />
-          )}
+          ) : null}
         </div>
       ))}
       <span className="ml-2 text-sm text-neutral-500">
@@ -73,11 +83,18 @@ function StepIndicator({ current, total }: { current: number; total: number }) {
   );
 }
 
+function readApiMessage(body: unknown) {
+  if (!body || typeof body !== "object") return null;
+  const error = (body as { error?: { message?: string; details?: { message?: string } } }).error;
+  return error?.details?.message ?? error?.message ?? null;
+}
+
 export default function OnboardingPage() {
   const router = useRouter();
   const [step, setStep] = useState(0);
   const [step1Values, setStep1Values] = useState<Step1Data | null>(null);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [usernameSuggestions, setUsernameSuggestions] = useState<string[]>([]);
 
   const form1 = useForm<Step1Data>({
     resolver: zodResolver(step1Schema),
@@ -89,9 +106,50 @@ export default function OnboardingPage() {
 
   const username = form1.watch("username") ?? "";
 
-  function handleStep1(data: Step1Data) {
-    setStep1Values(data);
+  async function checkUsername(usernameValue: string) {
+    const response = await fetch(
+      `/api/onboarding?username=${encodeURIComponent(usernameValue)}`,
+      { method: "GET" }
+    );
+    const body = (await response.json().catch(() => null)) as UsernameAvailability | unknown;
+
+    if (!response.ok) {
+      throw new Error(readApiMessage(body) ?? "Nao foi possivel validar o username.");
+    }
+
+    return body as UsernameAvailability;
+  }
+
+  async function handleStep1(data: Step1Data) {
+    const normalizedUsername = normalizeUsernameInput(data.username);
+    form1.setValue("username", normalizedUsername, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setUsernameSuggestions([]);
+    setServerError(null);
+
+    const availability = await checkUsername(normalizedUsername);
+    if (!availability.available) {
+      setUsernameSuggestions(availability.suggestions ?? []);
+      form1.setError("username", {
+        type: "validate",
+        message: availability.message ?? "Esse username ja esta em uso.",
+      });
+      return;
+    }
+
+    setStep1Values({ username: availability.username });
     setStep(1);
+  }
+
+  function applyUsernameSuggestion(suggestion: string) {
+    form1.setValue("username", suggestion, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
+    setUsernameSuggestions([]);
+    form1.clearErrors("username");
   }
 
   async function handleStep2(data: Step2Data) {
@@ -102,7 +160,7 @@ export default function OnboardingPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        username: step1Values.username,
+        username: normalizeUsernameInput(step1Values.username),
         headline: data.headline,
         focus: data.focus,
       }),
@@ -110,7 +168,19 @@ export default function OnboardingPage() {
 
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      setServerError(body.message ?? "Ocorreu um erro. Tente novamente.");
+      const details = body?.error?.details;
+
+      if (res.status === 409 && Array.isArray(details?.suggestions)) {
+        setUsernameSuggestions(details.suggestions);
+        setStep(0);
+        form1.setError("username", {
+          type: "validate",
+          message: details.message ?? "Esse username ja esta em uso.",
+        });
+        return;
+      }
+
+      setServerError(readApiMessage(body) ?? "Ocorreu um erro. Tente novamente.");
       return;
     }
 
@@ -121,14 +191,14 @@ export default function OnboardingPage() {
     <div className="mx-auto max-w-lg">
       <StepIndicator current={step} total={2} />
 
-      {step === 0 && (
+      {step === 0 ? (
         <div className="space-y-8">
           <div className="space-y-2">
             <h1 className="font-display text-3xl font-bold text-neutral-900">
               Escolha seu username
             </h1>
             <p className="text-neutral-500">
-              Essa será a URL da sua página pública. Você pode mudar depois.
+              Essa sera a URL da sua pagina publica. Voce pode mudar depois.
             </p>
           </div>
 
@@ -142,11 +212,11 @@ export default function OnboardingPage() {
               <Input
                 id="username"
                 type="text"
-                placeholder="ana-souza"
+                placeholder="ana.souza"
                 autoComplete="off"
                 autoFocus
                 error={!!form1.formState.errors.username}
-                {...form1.register("username")}
+                {...form1.register("username", { setValueAs: normalizeUsernameInput })}
               />
               {form1.formState.errors.username ? (
                 <p className="text-xs text-coral-600">
@@ -154,9 +224,29 @@ export default function OnboardingPage() {
                 </p>
               ) : null}
 
-              {username && (
-                <div className="flex items-center gap-2 rounded-xl bg-neutral-100 border border-neutral-200 px-3 py-2 mt-2">
-                  <Globe className="h-4 w-4 text-neutral-400 shrink-0" />
+              {usernameSuggestions.length > 0 ? (
+                <div className="rounded-xl border border-lime-200 bg-lime-50 p-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-lime-900">
+                    Sugestoes disponiveis
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {usernameSuggestions.map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        type="button"
+                        onClick={() => applyUsernameSuggestion(suggestion)}
+                        className="rounded-full border border-lime-300 bg-white px-3 py-1.5 font-mono text-xs font-semibold text-lime-950 transition hover:bg-lime-100"
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {username ? (
+                <div className="mt-2 flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-100 px-3 py-2">
+                  <Globe className="h-4 w-4 shrink-0 text-neutral-400" />
                   <span className="font-mono text-sm text-neutral-500">
                     foliotr.ee/
                   </span>
@@ -168,28 +258,34 @@ export default function OnboardingPage() {
                         : "text-neutral-900"
                     )}
                   >
-                    {username}
+                    {normalizeUsernameInput(username)}
                   </span>
                 </div>
-              )}
+              ) : null}
             </div>
 
-            <Button type="submit" variant="primary" size="lg" className="w-full">
-              Continuar
+            <Button
+              type="submit"
+              variant="primary"
+              size="lg"
+              loading={form1.formState.isSubmitting}
+              className="w-full"
+            >
+              {form1.formState.isSubmitting ? "Validando" : "Continuar"}
               <ChevronRight className="h-4 w-4" />
             </Button>
           </form>
         </div>
-      )}
+      ) : null}
 
-      {step === 1 && (
+      {step === 1 ? (
         <div className="space-y-8">
           <div className="space-y-2">
             <h1 className="font-display text-3xl font-bold text-neutral-900">
-              Conte um pouco sobre você
+              Conte um pouco sobre voce
             </h1>
             <p className="text-neutral-500">
-              Essas informações aparecem no topo da sua página pública.
+              Essas informacoes aparecem no topo da sua pagina publica.
             </p>
           </div>
 
@@ -199,33 +295,33 @@ export default function OnboardingPage() {
             noValidate
           >
             <div className="space-y-2">
-              <Label htmlFor="headline">Título profissional</Label>
+              <Label htmlFor="headline">Titulo profissional</Label>
               <Input
                 id="headline"
                 type="text"
-                placeholder="Designer de Produto em São Paulo"
+                placeholder="Designer de Produto em Sao Paulo"
                 autoFocus
                 error={!!form2.formState.errors.headline}
                 {...form2.register("headline")}
               />
-              {form2.formState.errors.headline && (
+              {form2.formState.errors.headline ? (
                 <p className="text-xs text-coral-600">
                   {form2.formState.errors.headline.message}
                 </p>
-              )}
+              ) : null}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="focus">
-                Área de atuação{" "}
-                <span className="text-neutral-400 font-normal">(opcional)</span>
+                Area de atuacao{" "}
+                <span className="font-normal text-neutral-400">(opcional)</span>
               </Label>
               <select
                 id="focus"
-                className="w-full rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:outline-none focus:ring-2 focus:ring-lime-500 focus:border-transparent"
+                className="w-full rounded-xl border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500"
                 {...form2.register("focus")}
               >
-                <option value="">Selecione uma área...</option>
+                <option value="">Selecione uma area...</option>
                 {FOCUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -234,11 +330,11 @@ export default function OnboardingPage() {
               </select>
             </div>
 
-            {serverError && (
-              <div className="rounded-xl bg-coral-50 border border-coral-200 px-4 py-3">
+            {serverError ? (
+              <div className="rounded-xl border border-coral-200 bg-coral-50 px-4 py-3">
                 <p className="text-sm text-coral-700">{serverError}</p>
               </div>
-            )}
+            ) : null}
 
             <div className="flex gap-3">
               <Button
@@ -262,7 +358,7 @@ export default function OnboardingPage() {
             </div>
           </form>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

@@ -5,7 +5,10 @@ export const usernameSchema = z
   .trim()
   .min(3, "Nome de usuario deve ter pelo menos 3 caracteres")
   .max(20, "Nome de usuario deve ter no maximo 20 caracteres")
-  .regex(/^[a-z0-9-]+$/, "Apenas letras minusculas, numeros e hifens sao permitidos");
+  .regex(
+    /^[a-z0-9._-]+$/,
+    "Apenas letras minusculas, numeros, ponto, underline e hifen sao permitidos"
+  );
 
 const cuidSchema = z.string().cuid("Identificador invalido");
 
