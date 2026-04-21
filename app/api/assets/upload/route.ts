@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
+import { uploadImageToLocal } from "@/lib/storage/local";
 import { getImageAssetPolicy, validateImageAssetCandidate } from "@/lib/storage/policy";
 import { uploadImageToS3 } from "@/lib/storage/s3";
 
@@ -40,23 +41,34 @@ export async function POST(request: Request) {
       return jsonError("BAD_REQUEST", 400, { reason: validation.reason });
     }
 
-    if (policy.provider !== "s3") {
+    if (policy.provider !== "s3" && policy.provider !== "local") {
       return jsonError("INTERNAL_ERROR", 503, {
-        message: "Storage S3 nao configurado.",
+        message: "Storage de imagens nao configurado.",
       });
     }
 
     const profile = await getOwnedProfileBase(prisma, session.user.id);
     const extension = MIME_EXTENSIONS[file.type] ?? "bin";
     const filename = `${randomUUID()}.${extension}`;
-    const purpose = String(formData.get("purpose") ?? "asset").replace(/[^a-z0-9_-]/gi, "");
+    const purpose = String(formData.get("purpose") ?? "asset").replace(
+      /[^a-z0-9_-]/gi,
+      ""
+    );
     const storageKey = `uploads/${session.user.id}/${purpose || "asset"}/${filename}`;
     let uploadErrorMessage = "";
-    const uploaded = await uploadImageToS3({
-      key: storageKey,
-      body: Buffer.from(await file.arrayBuffer()),
-      contentType: file.type,
-    }).catch((error: unknown) => {
+    const body = Buffer.from(await file.arrayBuffer());
+    const uploaded = await (
+      policy.provider === "local"
+        ? uploadImageToLocal({
+            key: storageKey,
+            body,
+          })
+        : uploadImageToS3({
+            key: storageKey,
+            body,
+            contentType: file.type,
+          })
+    ).catch((error: unknown) => {
       uploadErrorMessage =
         error instanceof Error ? error.message : "Falha ao enviar imagem ao storage.";
       return null;
@@ -64,7 +76,7 @@ export async function POST(request: Request) {
 
     if (!uploaded) {
       return jsonError("INTERNAL_ERROR", 500, {
-        message: `Falha ao enviar imagem ao storage S3: ${uploadErrorMessage}`,
+        message: `Falha ao enviar imagem ao storage ${policy.provider}: ${uploadErrorMessage}`,
       });
     }
 
@@ -94,7 +106,10 @@ export async function POST(request: Request) {
       });
     }
 
-    return jsonOk({ asset, profile: shouldSetAvatar ? { avatarUrl: uploaded.url } : undefined }, { status: 201 });
+    return jsonOk(
+      { asset, profile: shouldSetAvatar ? { avatarUrl: uploaded.url } : undefined },
+      { status: 201 }
+    );
   } catch (error) {
     return handleRouteError("POST /api/assets/upload", error);
   }

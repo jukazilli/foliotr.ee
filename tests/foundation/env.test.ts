@@ -39,6 +39,15 @@ describe("server env validation", () => {
     expect(parsed.success).toBe(false);
   });
 
+  it("accepts local storage for development uploads without S3 credentials", () => {
+    const parsed = parseServerEnv({
+      ...validEnv,
+      STORAGE_PROVIDER: "local",
+    });
+
+    expect(parsed.success).toBe(true);
+  });
+
   it("accepts Supabase S3-compatible storage configuration", () => {
     const parsed = parseServerEnv({
       ...validEnv,

@@ -29,4 +29,18 @@ describe("asset storage foundation", () => {
       allowedMimeTypes: ["image/png", "image/webp"],
     });
   });
+
+  it("allows local storage readiness for development uploads", () => {
+    const result = prepareImageAssetUpload(
+      { purpose: "project", mimeType: "image/png", size: 512 },
+      { ...basePolicy, provider: "local" }
+    );
+
+    expect(result).toEqual({
+      ready: true,
+      provider: "local",
+      maxBytes: 1024,
+      allowedMimeTypes: ["image/png", "image/webp"],
+    });
+  });
 });

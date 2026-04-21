@@ -51,19 +51,23 @@ function getS3Client() {
   if (cachedClient) return cachedClient;
 
   const config = requireS3Config();
-  const requestHandler = config.tlsRejectUnauthorized
-    ? undefined
-    : new NodeHttpHandler({
-        httpsAgent: new Agent({
+  const requestHandler = new NodeHttpHandler({
+    connectionTimeout: 5000,
+    requestTimeout: 20000,
+    httpsAgent: config.tlsRejectUnauthorized
+      ? undefined
+      : new Agent({
           rejectUnauthorized: false,
         }),
-      });
+  });
 
   cachedClient = new S3Client({
     endpoint: config.endpoint,
     region: config.region,
     forcePathStyle: true,
     requestHandler,
+    requestChecksumCalculation: "WHEN_REQUIRED",
+    responseChecksumValidation: "WHEN_REQUIRED",
     credentials: {
       accessKeyId: config.accessKeyId,
       secretAccessKey: config.secretAccessKey,
@@ -76,16 +80,25 @@ function getS3Client() {
 function toPublicBaseUrl(endpoint: string, bucket: string) {
   const url = new URL(endpoint);
   url.hostname = url.hostname.replace(".storage.supabase.co", ".supabase.co");
-  url.pathname = url.pathname.replace(/\/storage\/v1\/s3\/?$/, "/storage/v1/object/public");
+  url.pathname = url.pathname.replace(
+    /\/storage\/v1\/s3\/?$/,
+    "/storage/v1/object/public"
+  );
   return `${url.toString().replace(/\/$/, "")}/${bucket}`;
 }
 
 function buildPublicUrl(config: ReturnType<typeof requireS3Config>, key: string) {
-  const baseUrl = config.publicBaseUrl?.replace(/\/$/, "") ?? toPublicBaseUrl(config.endpoint, config.bucket);
-  return normalizeStoragePublicUrl(`${baseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`);
+  const baseUrl =
+    config.publicBaseUrl?.replace(/\/$/, "") ??
+    toPublicBaseUrl(config.endpoint, config.bucket);
+  return normalizeStoragePublicUrl(
+    `${baseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`
+  );
 }
 
-export async function uploadImageToS3(input: UploadImageToS3Input): Promise<UploadedS3Object> {
+export async function uploadImageToS3(
+  input: UploadImageToS3Input
+): Promise<UploadedS3Object> {
   const config = requireS3Config();
   const client = getS3Client();
 

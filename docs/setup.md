@@ -38,6 +38,8 @@ Optional storage variables:
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
+Use `STORAGE_PROVIDER=local` for local development when an external object store is not reachable. Local uploads are written to `public/uploads/` and served by Next.js as static files.
+
 When `STORAGE_PROVIDER=s3`, all `STORAGE_S3_*` values are required. Supabase Storage can be used through its S3-compatible endpoint.
 
 Validate configuration:

@@ -1,21 +1,18 @@
 import { z } from "zod";
 
-const storageProviderSchema = z.enum(["disabled", "vercel-blob", "s3"]);
+const storageProviderSchema = z.enum(["disabled", "local", "vercel-blob", "s3"]);
 const optionalUrlSchema = z.string().url().optional().or(z.literal(""));
-const booleanStringSchema = z.preprocess(
-  (value) => {
-    if (typeof value === "boolean") return value;
-    if (typeof value !== "string") return value;
+const booleanStringSchema = z.preprocess((value) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value !== "string") return value;
 
-    const normalized = value.trim().toLowerCase();
+  const normalized = value.trim().toLowerCase();
 
-    if (["true", "1", "yes", "on"].includes(normalized)) return true;
-    if (["false", "0", "no", "off"].includes(normalized)) return false;
+  if (["true", "1", "yes", "on"].includes(normalized)) return true;
+  if (["false", "0", "no", "off"].includes(normalized)) return false;
 
-    return value;
-  },
-  z.boolean()
-);
+  return value;
+}, z.boolean());
 const postgresUrlSchema = z
   .string()
   .url()

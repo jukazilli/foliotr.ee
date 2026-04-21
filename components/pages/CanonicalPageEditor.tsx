@@ -25,10 +25,14 @@ import {
   UploadCloud,
 } from "lucide-react";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
-import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
+import type {
+  RenderablePageBlock,
+  TemplateProfile,
+} from "@/components/templates/types";
 import ResumeView from "@/components/resume/ResumeView";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants, type ButtonProps } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type JsonRecord = Record<string, unknown>;
@@ -39,6 +43,7 @@ const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
 const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
 const MIN_PREVIEW_SCALE = 0.24;
 const MAX_PREVIEW_SCALE = 1;
+const IMAGE_FILE_ACCEPT = ".png,.jpg,.jpeg,.webp,.gif";
 
 interface TemplateBlockDefLike {
   id: string;
@@ -150,8 +155,18 @@ interface EditableImageValue {
 }
 
 function sameCanvasFrame(
-  left: CanvasSelectionFrame | InlineFieldFrame | InlineImageFrame | EditableSlotFrame | null,
-  right: CanvasSelectionFrame | InlineFieldFrame | InlineImageFrame | EditableSlotFrame | null
+  left:
+    | CanvasSelectionFrame
+    | InlineFieldFrame
+    | InlineImageFrame
+    | EditableSlotFrame
+    | null,
+  right:
+    | CanvasSelectionFrame
+    | InlineFieldFrame
+    | InlineImageFrame
+    | EditableSlotFrame
+    | null
 ) {
   if (!left && !right) return true;
   if (!left || !right) return false;
@@ -204,7 +219,9 @@ function readPreviewCanvasDimension(
   const canvas = asRecord(packageRecord.canvas);
   const value = canvas[key];
 
-  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : fallback;
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? value
+    : fallback;
 }
 
 function sortBlocks(blocks: RenderablePageBlock[]) {
@@ -219,7 +236,9 @@ function escapeCssAttribute(value: string) {
   return value.replace(/["\\]/g, "\\$&");
 }
 
-function inferFieldKindFromCanvas(value: string | undefined): EditableFieldLike["kind"] | "unknown" {
+function inferFieldKindFromCanvas(
+  value: string | undefined
+): EditableFieldLike["kind"] | "unknown" {
   if (value === "image") return "image";
   if (value === "icon") return "boolean";
   if (value === "text") return "text";
@@ -324,8 +343,12 @@ function readEditableImageValue(value: unknown): EditableImageValue {
     src: typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "",
     alt: typeof image.alt === "string" ? image.alt : "",
     fitMode,
-    positionX: clampPercentage(typeof image.positionX === "number" ? image.positionX : 50),
-    positionY: clampPercentage(typeof image.positionY === "number" ? image.positionY : 50),
+    positionX: clampPercentage(
+      typeof image.positionX === "number" ? image.positionX : 50
+    ),
+    positionY: clampPercentage(
+      typeof image.positionY === "number" ? image.positionY : 50
+    ),
   };
 }
 
@@ -456,30 +479,37 @@ export default function CanonicalPageEditor({
   const previewFrameRef = useRef<HTMLDivElement | null>(null);
   const previewViewportRef = useRef<HTMLDivElement | null>(null);
   const [previewScale, setPreviewScale] = useState(0.5);
-  const [canvasSelectionFrame, setCanvasSelectionFrame] = useState<CanvasSelectionFrame | null>(
-    null
-  );
+  const [canvasSelectionFrame, setCanvasSelectionFrame] =
+    useState<CanvasSelectionFrame | null>(null);
   const [editableSlotFrames, setEditableSlotFrames] = useState<EditableSlotFrame[]>([]);
   const [activeInlineFieldKey, setActiveInlineFieldKey] = useState<string | null>(null);
   const [activeInlineFieldValue, setActiveInlineFieldValue] = useState("");
-  const [inlineFieldFrame, setInlineFieldFrame] = useState<InlineFieldFrame | null>(null);
-  const [activeInlineImageFieldKey, setActiveInlineImageFieldKey] = useState<string | null>(null);
-  const [inlineImageFrame, setInlineImageFrame] = useState<InlineImageFrame | null>(null);
-  const [activeInlineListImage, setActiveInlineListImage] = useState<InlineListImageTarget | null>(null);
-  const [inlineListImageFrame, setInlineListImageFrame] = useState<InlineImageFrame | null>(null);
-  const [activeInlineProjectCover, setActiveInlineProjectCover] = useState<InlineProjectCoverTarget | null>(null);
-  const [inlineProjectCoverFrame, setInlineProjectCoverFrame] = useState<InlineImageFrame | null>(null);
-  const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
-  const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
+  const [inlineFieldFrame, setInlineFieldFrame] = useState<InlineFieldFrame | null>(
+    null
+  );
+  const [activeInlineImageFieldKey, setActiveInlineImageFieldKey] = useState<
+    string | null
+  >(null);
+  const [inlineImageFrame, setInlineImageFrame] = useState<InlineImageFrame | null>(
+    null
+  );
+  const [activeInlineListImage, setActiveInlineListImage] =
+    useState<InlineListImageTarget | null>(null);
+  const [inlineListImageFrame, setInlineListImageFrame] =
+    useState<InlineImageFrame | null>(null);
+  const [activeInlineProjectCover, setActiveInlineProjectCover] =
+    useState<InlineProjectCoverTarget | null>(null);
+  const [inlineProjectCoverFrame, setInlineProjectCoverFrame] =
+    useState<InlineImageFrame | null>(null);
+  const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<
+    string | null
+  >(null);
+  const [inlineBooleanFrame, setInlineBooleanFrame] =
+    useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
-  const [imagePickerOpen, setImagePickerOpen] = useState(false);
-  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
-  const imageFileTargetRef = useRef<ImageFileTarget | null>(null);
-  const imagePickerOpenRef = useRef(false);
-  const saveSelectedBlockRef = useRef<((
-    nextConfig?: JsonRecord,
-    nextAssets?: JsonRecord
-  ) => Promise<boolean>) | null>(null);
+  const saveSelectedBlockRef = useRef<
+    ((nextConfig?: JsonRecord, nextAssets?: JsonRecord) => Promise<boolean>) | null
+  >(null);
   const slotButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const previewCanvasWidth = useMemo(
@@ -572,7 +602,9 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setCanvasSelectionFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setCanvasSelectionFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateSelectionFrame();
@@ -609,7 +641,9 @@ export default function CanonicalPageEditor({
   );
 
   const selectedBlockDef = selectedBlock?.templateBlockDefId
-    ? templateBlockDefs.find((blockDef) => blockDef.id === selectedBlock.templateBlockDefId) ?? null
+    ? (templateBlockDefs.find(
+        (blockDef) => blockDef.id === selectedBlock.templateBlockDefId
+      ) ?? null)
     : null;
   const selectedEditableFields = useMemo(
     () => getEditableFields(selectedBlockDef),
@@ -625,7 +659,9 @@ export default function CanonicalPageEditor({
   const activeInlineField = useMemo(
     () =>
       activeInlineFieldKey
-        ? selectedInlineEditableFields.find((field) => field.key === activeInlineFieldKey) ?? null
+        ? (selectedInlineEditableFields.find(
+            (field) => field.key === activeInlineFieldKey
+          ) ?? null)
         : null,
     [activeInlineFieldKey, selectedInlineEditableFields]
   );
@@ -639,37 +675,52 @@ export default function CanonicalPageEditor({
   const activeInlineImageField = useMemo(
     () =>
       activeInlineImageFieldKey
-        ? selectedImageFields.find((field) => field.key === activeInlineImageFieldKey) ?? null
+        ? (selectedImageFields.find(
+            (field) => field.key === activeInlineImageFieldKey
+          ) ?? null)
         : null,
     [activeInlineImageFieldKey, selectedImageFields]
   );
   const activeInlineImageValue = useMemo(
     () =>
-      activeInlineImageField ? readEditableImageValue(draftConfig[activeInlineImageField.key]) : null,
+      activeInlineImageField
+        ? readEditableImageValue(draftConfig[activeInlineImageField.key])
+        : null,
     [activeInlineImageField, draftConfig]
   );
   const activeInlineListImageValue = useMemo(() => {
     if (!activeInlineListImage) return null;
-    const list = asArray(draftConfig[activeInlineListImage.fieldKey]).map((item) => asRecord(item));
+    const list = asArray(draftConfig[activeInlineListImage.fieldKey]).map((item) =>
+      asRecord(item)
+    );
     return readEditableImageValue(list[activeInlineListImage.index]?.image);
   }, [activeInlineListImage, draftConfig]);
   const activeInlineProjectCoverValue = useMemo(() => {
     if (!activeInlineProjectCover) return null;
-    const override = readProjectCoverOverride(draftConfig, activeInlineProjectCover.projectId);
+    const override = readProjectCoverOverride(
+      draftConfig,
+      activeInlineProjectCover.projectId
+    );
     if (override.src) return override;
 
-    const project = previewProfile.projects.find((item) => item.id === activeInlineProjectCover.projectId);
+    const project = previewProfile.projects.find(
+      (item) => item.id === activeInlineProjectCover.projectId
+    );
     if (!project) return null;
 
     return {
       src: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : "",
       alt: project.title,
       fitMode:
-        project.coverFitMode === "fit" || project.coverFitMode === "fill" || project.coverFitMode === "crop"
+        project.coverFitMode === "fit" ||
+        project.coverFitMode === "fill" ||
+        project.coverFitMode === "crop"
           ? project.coverFitMode
           : "crop",
-      positionX: typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
-      positionY: typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
+      positionX:
+        typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
+      positionY:
+        typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
     } satisfies EditableImageValue;
   }, [activeInlineProjectCover, draftConfig, previewProfile.projects]);
   const selectedBooleanFields = useMemo(
@@ -696,7 +747,9 @@ export default function CanonicalPageEditor({
   const activeInlineBooleanField = useMemo(
     () =>
       activeInlineBooleanFieldKey
-        ? selectedBooleanFields.find((field) => field.key === activeInlineBooleanFieldKey) ?? null
+        ? (selectedBooleanFields.find(
+            (field) => field.key === activeInlineBooleanFieldKey
+          ) ?? null)
         : null,
     [activeInlineBooleanFieldKey, selectedBooleanFields]
   );
@@ -766,30 +819,6 @@ export default function CanonicalPageEditor({
   }, [selectedBlock]);
 
   useEffect(() => {
-    const input = imageFileInputRef.current;
-
-    function releaseImagePicker() {
-      window.setTimeout(() => {
-        imagePickerOpenRef.current = false;
-        setImagePickerOpen(false);
-      }, 150);
-    }
-
-    function cancelImagePicker() {
-      imageFileTargetRef.current = null;
-      releaseImagePicker();
-    }
-
-    input?.addEventListener("cancel", cancelImagePicker);
-    window.addEventListener("focus", releaseImagePicker);
-
-    return () => {
-      input?.removeEventListener("cancel", cancelImagePicker);
-      window.removeEventListener("focus", releaseImagePicker);
-    };
-  }, []);
-
-  useEffect(() => {
     setActiveInlineFieldKey(null);
     setActiveInlineFieldValue("");
     setInlineFieldFrame(null);
@@ -819,7 +848,9 @@ export default function CanonicalPageEditor({
     }
 
     const escapedBlockId = escapeCssAttribute(selectedBlockId);
-    const editableFieldMap = new Map(selectedEditableFields.map((field) => [field.key, field]));
+    const editableFieldMap = new Map(
+      selectedEditableFields.map((field) => [field.key, field])
+    );
 
     function updateEditableSlotFrames() {
       const currentFrame = previewFrameRef.current;
@@ -844,7 +875,9 @@ export default function CanonicalPageEditor({
           return {
             key,
             label: editableFieldMap.get(key)?.label ?? key,
-            kind: editableFieldMap.get(key)?.kind ?? inferFieldKindFromCanvas(node.dataset.ftKind),
+            kind:
+              editableFieldMap.get(key)?.kind ??
+              inferFieldKindFromCanvas(node.dataset.ftKind),
             left: rect.left - frameRect.left,
             top: rect.top - frameRect.top,
             width: rect.width,
@@ -853,7 +886,9 @@ export default function CanonicalPageEditor({
         })
         .filter((item): item is EditableSlotFrame => Boolean(item));
 
-      setEditableSlotFrames((current) => (sameSlotFrames(current, nextFrames) ? current : nextFrames));
+      setEditableSlotFrames((current) =>
+        sameSlotFrames(current, nextFrames) ? current : nextFrames
+      );
     }
 
     updateEditableSlotFrames();
@@ -946,7 +981,9 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setInlineFieldFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setInlineFieldFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateInlineFieldFrame();
@@ -970,7 +1007,14 @@ export default function CanonicalPageEditor({
       window.removeEventListener("resize", updateInlineFieldFrame);
       observer?.disconnect();
     };
-  }, [activeInlineField, activeInlineFieldKey, blocks, previewMode, previewScale, selectedBlockId]);
+  }, [
+    activeInlineField,
+    activeInlineFieldKey,
+    blocks,
+    previewMode,
+    previewScale,
+    selectedBlockId,
+  ]);
 
   useEffect(() => {
     if (!activeInlineImageFieldKey || previewMode !== "portfolio") {
@@ -1029,7 +1073,9 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setInlineImageFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setInlineImageFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateInlineImageFrame();
@@ -1113,7 +1159,9 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setInlineListImageFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setInlineListImageFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateInlineListImageFrame();
@@ -1191,11 +1239,15 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setInlineProjectCoverFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setInlineProjectCoverFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateInlineProjectCoverFrame();
-    viewport.addEventListener("scroll", updateInlineProjectCoverFrame, { passive: true });
+    viewport.addEventListener("scroll", updateInlineProjectCoverFrame, {
+      passive: true,
+    });
     window.addEventListener("resize", updateInlineProjectCoverFrame);
 
     let observer: ResizeObserver | null = null;
@@ -1259,7 +1311,9 @@ export default function CanonicalPageEditor({
         height: selectedRect.height,
       };
 
-      setInlineBooleanFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+      setInlineBooleanFrame((current) =>
+        sameCanvasFrame(current, nextFrame) ? current : nextFrame
+      );
     }
 
     updateInlineBooleanFrame();
@@ -1326,7 +1380,9 @@ export default function CanonicalPageEditor({
 
   function replaceBlock(nextBlock: RenderablePageBlock) {
     setBlocks((current) =>
-      sortBlocks(current.map((block) => (block.id === nextBlock.id ? nextBlock : block)))
+      sortBlocks(
+        current.map((block) => (block.id === nextBlock.id ? nextBlock : block))
+      )
     );
   }
 
@@ -1353,7 +1409,7 @@ export default function CanonicalPageEditor({
   async function saveSelectedBlock(nextConfig = draftConfig, nextAssets = draftAssets) {
     const nextBlocks = mergeSelectedDraftIntoBlocks(blocks, nextConfig, nextAssets);
     const nextSelectedBlock = selectedBlock
-      ? nextBlocks.find((block) => block.id === selectedBlock.id) ?? null
+      ? (nextBlocks.find((block) => block.id === selectedBlock.id) ?? null)
       : null;
 
     setBlocks(nextBlocks);
@@ -1399,7 +1455,9 @@ export default function CanonicalPageEditor({
       return false;
     }
 
-    const persistedBlocks = sortBlocks((asRecord(payload).blocks as RenderablePageBlock[]) ?? []);
+    const persistedBlocks = sortBlocks(
+      (asRecord(payload).blocks as RenderablePageBlock[]) ?? []
+    );
     setBlocks(persistedBlocks);
     setHasUnsavedChanges(false);
     if (selectedBlockKey) {
@@ -1515,7 +1573,10 @@ export default function CanonicalPageEditor({
     setInlineBooleanFrame(null);
   }
 
-  function updateTopLevelImageField(fieldKey: string, updater: (image: EditableImageValue) => EditableImageValue) {
+  function updateTopLevelImageField(
+    fieldKey: string,
+    updater: (image: EditableImageValue) => EditableImageValue
+  ) {
     const currentImage = readEditableImageValue(draftConfig[fieldKey]);
     const nextImage = updater(currentImage);
 
@@ -1565,7 +1626,10 @@ export default function CanonicalPageEditor({
     }));
   }
 
-  async function commitTopLevelImageField(fieldKey: string, updater: (image: EditableImageValue) => EditableImageValue) {
+  async function commitTopLevelImageField(
+    fieldKey: string,
+    updater: (image: EditableImageValue) => EditableImageValue
+  ) {
     if (!selectedBlock) return;
 
     const currentImage = readEditableImageValue(draftConfig[fieldKey]);
@@ -1622,16 +1686,21 @@ export default function CanonicalPageEditor({
     await saveSelectedBlock(nextConfig, draftAssets);
   }
 
-  async function commitProjectCoverField(projectId: string, updater: (image: EditableImageValue) => EditableImageValue) {
+  async function commitProjectCoverField(
+    projectId: string,
+    updater: (image: EditableImageValue) => EditableImageValue
+  ) {
     if (!selectedBlock) return;
 
-    const currentImage = activeInlineProjectCoverValue ?? {
-      src: "",
-      alt: "",
-      fitMode: "crop",
-      positionX: 50,
-      positionY: 50,
-    } satisfies EditableImageValue;
+    const currentImage =
+      activeInlineProjectCoverValue ??
+      ({
+        src: "",
+        alt: "",
+        fitMode: "crop",
+        positionX: 50,
+        positionY: 50,
+      } satisfies EditableImageValue);
     const nextImage = updater(currentImage);
     const nextConfig = writeProjectCoverOverride(draftConfig, projectId, nextImage);
 
@@ -1651,7 +1720,8 @@ export default function CanonicalPageEditor({
     }
 
     const field = getEditableFields(blockDef).find(
-      (item) => item.key === fieldKey && (item.kind === "text" || item.kind === "longText")
+      (item) =>
+        item.key === fieldKey && (item.kind === "text" || item.kind === "longText")
     );
 
     if (!field) {
@@ -1660,7 +1730,8 @@ export default function CanonicalPageEditor({
       return;
     }
 
-    const sourceConfig = block.id === selectedBlock?.id ? draftConfig : asRecord(block.config);
+    const sourceConfig =
+      block.id === selectedBlock?.id ? draftConfig : asRecord(block.config);
     const nextValue = sourceConfig[field.key];
 
     setActiveInlineFieldKey(field.key);
@@ -1772,7 +1843,9 @@ export default function CanonicalPageEditor({
       visible: !block.visible,
     });
     setHasUnsavedChanges(true);
-    setSuccessMessage(block.visible ? "Bloco marcado como oculto." : "Bloco marcado como visivel.");
+    setSuccessMessage(
+      block.visible ? "Bloco marcado como oculto." : "Bloco marcado como visivel."
+    );
   }
 
   async function moveBlock(blockId: string, direction: -1 | 1) {
@@ -1789,7 +1862,9 @@ export default function CanonicalPageEditor({
 
     setErrorMessage("");
     setSuccessMessage("");
-    setBlocks(sortBlocks(nextOrder.map((block, index) => ({ ...block, order: index }))));
+    setBlocks(
+      sortBlocks(nextOrder.map((block, index) => ({ ...block, order: index })))
+    );
     setHasUnsavedChanges(true);
     setSuccessMessage("Ordem atualizada no rascunho.");
   }
@@ -1797,7 +1872,8 @@ export default function CanonicalPageEditor({
   async function addBlock(templateBlockKey: string) {
     setErrorMessage("");
     setSuccessMessage("");
-    const blockDef = templateBlockDefs.find((item) => item.key === templateBlockKey) ?? null;
+    const blockDef =
+      templateBlockDefs.find((item) => item.key === templateBlockKey) ?? null;
 
     if (!blockDef) {
       setErrorMessage("Bloco nao compativel com este template");
@@ -1844,7 +1920,9 @@ export default function CanonicalPageEditor({
 
     const nextBlock = blocks.find((block) => block.id === nextBlockId) ?? null;
     const nextBlockDef = nextBlock?.templateBlockDefId
-      ? templateBlockDefs.find((blockDef) => blockDef.id === nextBlock.templateBlockDefId) ?? null
+      ? (templateBlockDefs.find(
+          (blockDef) => blockDef.id === nextBlock.templateBlockDefId
+        ) ?? null)
       : null;
     const fieldElement = target.closest<HTMLElement>("[data-ft-config-path]");
     const nextFieldKey = fieldElement?.dataset.ftConfigPath;
@@ -1853,8 +1931,8 @@ export default function CanonicalPageEditor({
     }
     const nextFieldKind =
       fieldElement && nextFieldKey
-        ? getEditableFields(nextBlockDef).find((field) => field.key === nextFieldKey)?.kind ??
-          inferFieldKindFromCanvas(fieldElement.dataset.ftKind)
+        ? (getEditableFields(nextBlockDef).find((field) => field.key === nextFieldKey)
+            ?.kind ?? inferFieldKindFromCanvas(fieldElement.dataset.ftKind))
         : "unknown";
 
     setSelectedBlockId(nextBlockId);
@@ -1956,7 +2034,9 @@ export default function CanonicalPageEditor({
   }
 
   function focusEditableSlot(currentKey: string, offset: -1 | 1) {
-    const currentIndex = editableSlotFrames.findIndex((frame) => frame.key === currentKey);
+    const currentIndex = editableSlotFrames.findIndex(
+      (frame) => frame.key === currentKey
+    );
     if (currentIndex < 0 || editableSlotFrames.length === 0) return;
 
     const nextIndex =
@@ -2016,7 +2096,12 @@ export default function CanonicalPageEditor({
     });
   }
 
-  function updateListField(fieldKey: string, index: number, prop: string, value: unknown) {
+  function updateListField(
+    fieldKey: string,
+    index: number,
+    prop: string,
+    value: unknown
+  ) {
     const currentList = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
     const nextList = currentList.map((item, itemIndex) =>
       itemIndex === index
@@ -2031,7 +2116,10 @@ export default function CanonicalPageEditor({
   }
 
   function addListItem(fieldKey: string) {
-    updateDraftField(fieldKey, [...asArray(draftConfig[fieldKey]), createDefaultListItem(fieldKey)]);
+    updateDraftField(fieldKey, [
+      ...asArray(draftConfig[fieldKey]),
+      createDefaultListItem(fieldKey),
+    ]);
   }
 
   function removeListItem(fieldKey: string, index: number) {
@@ -2041,7 +2129,11 @@ export default function CanonicalPageEditor({
     );
   }
 
-  function setTopLevelAssetMeta(fieldKey: string, asset: UploadedAsset, altText: string) {
+  function setTopLevelAssetMeta(
+    fieldKey: string,
+    asset: UploadedAsset,
+    altText: string
+  ) {
     setHasUnsavedChanges(true);
     setDraftAssets((current) => ({
       ...current,
@@ -2063,7 +2155,12 @@ export default function CanonicalPageEditor({
     });
   }
 
-  function setListAssetMeta(fieldKey: string, index: number, asset: UploadedAsset, altText: string) {
+  function setListAssetMeta(
+    fieldKey: string,
+    index: number,
+    asset: UploadedAsset,
+    altText: string
+  ) {
     setHasUnsavedChanges(true);
     const nextAssets = [...asArray(draftAssets[fieldKey])];
     nextAssets[index] = {
@@ -2109,31 +2206,12 @@ export default function CanonicalPageEditor({
     return asRecord(payload).asset as UploadedAsset;
   }
 
-  function requestImageFile(target: ImageFileTarget) {
-    const input = imageFileInputRef.current;
-    if (!input || imagePickerOpenRef.current || busyKey) return;
-
-    imagePickerOpenRef.current = true;
-    imageFileTargetRef.current = target;
-    setImagePickerOpen(true);
-
-    try {
-      input.value = "";
-      input.click();
-    } catch {
-      imagePickerOpenRef.current = false;
-      imageFileTargetRef.current = null;
-      setImagePickerOpen(false);
-    }
-  }
-
-  function handleSharedImageFileChange(event: ReactChangeEvent<HTMLInputElement>) {
+  function handleImageFileChange(
+    event: ReactChangeEvent<HTMLInputElement>,
+    target: ImageFileTarget
+  ) {
     const file = event.currentTarget.files?.[0] ?? null;
-    const target = imageFileTargetRef.current;
     event.currentTarget.value = "";
-    imageFileTargetRef.current = null;
-    imagePickerOpenRef.current = false;
-    setImagePickerOpen(false);
 
     if (!file || !target) return;
 
@@ -2148,6 +2226,45 @@ export default function CanonicalPageEditor({
     }
 
     void uploadProjectCover(target.projectId, file);
+  }
+
+  function renderImageFileTrigger({
+    target,
+    children,
+    className,
+    ariaLabel,
+    variant = "outline",
+    size = "sm",
+  }: {
+    target: ImageFileTarget;
+    children: React.ReactNode;
+    className?: string;
+    ariaLabel?: string;
+    variant?: ButtonProps["variant"];
+    size?: ButtonProps["size"];
+  }) {
+    const disabled = Boolean(busyKey);
+
+    return (
+      <label
+        aria-disabled={disabled}
+        aria-label={ariaLabel}
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          "cursor-pointer",
+          disabled && "pointer-events-none opacity-50"
+        )}
+      >
+        {children}
+        <input
+          type="file"
+          accept={IMAGE_FILE_ACCEPT}
+          className="sr-only"
+          disabled={disabled}
+          onChange={(event) => handleImageFileChange(event, target)}
+        />
+      </label>
+    );
   }
 
   async function uploadTopLevelImage(fieldKey: string, file: File) {
@@ -2185,7 +2302,9 @@ export default function CanonicalPageEditor({
       await saveSelectedBlock(nextConfig, nextAssets);
       setSuccessMessage("Imagem atualizada nesta pagina.");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Falha no upload da imagem"
+      );
     } finally {
       setBusyKey(null);
     }
@@ -2259,7 +2378,9 @@ export default function CanonicalPageEditor({
       await saveSelectedBlock(nextConfig, nextAssets);
       setSuccessMessage("Imagem atualizada nesta pagina.");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Falha no upload da imagem"
+      );
     } finally {
       setBusyKey(null);
     }
@@ -2302,7 +2423,9 @@ export default function CanonicalPageEditor({
       await saveSelectedBlock(nextConfig, nextAssets);
       setSuccessMessage("Capa do projeto atualizada nesta pagina.");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+      setErrorMessage(
+        error instanceof Error ? error.message : "Falha no upload da imagem"
+      );
     } finally {
       setBusyKey(null);
     }
@@ -2387,7 +2510,9 @@ export default function CanonicalPageEditor({
 
     const nextConfig = {
       ...draftConfig,
-      hiddenProjectIds: asArray(draftConfig.hiddenProjectIds).filter((item) => item !== projectId),
+      hiddenProjectIds: asArray(draftConfig.hiddenProjectIds).filter(
+        (item) => item !== projectId
+      ),
     };
 
     setDraftConfig(nextConfig);
@@ -2438,7 +2563,8 @@ export default function CanonicalPageEditor({
   }
 
   function handleInlineImagePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!activeInlineImageField || !inlineImageFrame || !activeInlineImageValue?.src) return;
+    if (!activeInlineImageField || !inlineImageFrame || !activeInlineImageValue?.src)
+      return;
     if (activeInlineImageValue.fitMode === "fit") return;
 
     const currentImageField = activeInlineImageField;
@@ -2526,7 +2652,12 @@ export default function CanonicalPageEditor({
   }
 
   function handleInlineListImagePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!activeInlineListImage || !inlineListImageFrame || !activeInlineListImageValue?.src) return;
+    if (
+      !activeInlineListImage ||
+      !inlineListImageFrame ||
+      !activeInlineListImageValue?.src
+    )
+      return;
     if (activeInlineListImageValue.fitMode === "fit") return;
 
     const currentListImage = activeInlineListImage;
@@ -2548,7 +2679,10 @@ export default function CanonicalPageEditor({
 
     if (!naturalWidth || !naturalHeight || !containerWidth || !containerHeight) return;
 
-    const scale = Math.max(containerWidth / naturalWidth, containerHeight / naturalHeight);
+    const scale = Math.max(
+      containerWidth / naturalWidth,
+      containerHeight / naturalHeight
+    );
     const renderWidth = naturalWidth * scale;
     const renderHeight = naturalHeight * scale;
     const overflowX = Math.max(0, renderWidth - containerWidth);
@@ -2570,17 +2704,21 @@ export default function CanonicalPageEditor({
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
 
-      updateListImageField(currentListImage.fieldKey, currentListImage.index, (image) => ({
-        ...image,
-        positionX:
-          overflowX > 0
-            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
-            : startPositionX,
-        positionY:
-          overflowY > 0
-            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
-            : startPositionY,
-      }));
+      updateListImageField(
+        currentListImage.fieldKey,
+        currentListImage.index,
+        (image) => ({
+          ...image,
+          positionX:
+            overflowX > 0
+              ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+              : startPositionX,
+          positionY:
+            overflowY > 0
+              ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+              : startPositionY,
+        })
+      );
     }
 
     function handlePointerUp(upEvent: PointerEvent) {
@@ -2591,17 +2729,21 @@ export default function CanonicalPageEditor({
       window.removeEventListener("pointerup", handlePointerUp);
       setImageDragActive(false);
 
-      void commitListImageField(currentListImage.fieldKey, currentListImage.index, (image) => ({
-        ...image,
-        positionX:
-          overflowX > 0
-            ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
-            : startPositionX,
-        positionY:
-          overflowY > 0
-            ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
-            : startPositionY,
-      }));
+      void commitListImageField(
+        currentListImage.fieldKey,
+        currentListImage.index,
+        (image) => ({
+          ...image,
+          positionX:
+            overflowX > 0
+              ? clampPercentage(startPositionX - (deltaX / overflowX) * 100)
+              : startPositionX,
+          positionY:
+            overflowY > 0
+              ? clampPercentage(startPositionY - (deltaY / overflowY) * 100)
+              : startPositionY,
+        })
+      );
     }
 
     window.addEventListener("pointermove", handlePointerMove);
@@ -2610,7 +2752,8 @@ export default function CanonicalPageEditor({
 
   function renderImageField(fieldKey: string, label: string) {
     const image = asRecord(draftConfig[fieldKey]);
-    const src = typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
+    const src =
+      typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
     const alt = typeof image.alt === "string" ? image.alt : "";
 
     return (
@@ -2620,17 +2763,16 @@ export default function CanonicalPageEditor({
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
             <p className="text-xs text-neutral-500">Envie uma imagem.</p>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="rounded-xl bg-white"
-            disabled={imagePickerOpen || Boolean(busyKey)}
-            onClick={() => requestImageFile({ kind: "topLevel", fieldKey })}
-          >
-            <Upload className="h-4 w-4" aria-hidden="true" />
-            Trocar imagem
-          </Button>
+          {renderImageFileTrigger({
+            target: { kind: "topLevel", fieldKey },
+            className: "rounded-xl bg-white",
+            children: (
+              <>
+                <Upload className="h-4 w-4" aria-hidden="true" />
+                Trocar imagem
+              </>
+            ),
+          })}
         </div>
         {src ? (
           <img src={src} alt={alt} className="h-44 w-full rounded-2xl object-cover" />
@@ -2684,7 +2826,12 @@ export default function CanonicalPageEditor({
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
             <p className="text-xs text-neutral-500">Adicione itens.</p>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => addListItem(fieldKey)}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => addListItem(fieldKey)}
+          >
             <Plus className="h-4 w-4" aria-hidden="true" />
             Adicionar item
           </Button>
@@ -2697,7 +2844,10 @@ export default function CanonicalPageEditor({
         ) : null}
 
         {items.map((item, index) => (
-          <div key={`${fieldKey}-${index}`} className="space-y-3 rounded-2xl border border-white/80 bg-white p-4 shadow-sm">
+          <div
+            key={`${fieldKey}-${index}`}
+            className="space-y-3 rounded-2xl border border-white/80 bg-white p-4 shadow-sm"
+          >
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm font-semibold text-neutral-900">Item {index + 1}</p>
               <Button
@@ -2715,27 +2865,35 @@ export default function CanonicalPageEditor({
               if (propKey === "image") {
                 const image = asRecord(propValue);
                 const imageSrc =
-                  typeof image.src === "string" ? normalizeStoragePublicUrl(image.src) : "";
+                  typeof image.src === "string"
+                    ? normalizeStoragePublicUrl(image.src)
+                    : "";
                 const imageAlt = typeof image.alt === "string" ? image.alt : "";
 
                 return (
-                  <div key={`${fieldKey}-${index}-${propKey}`} className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
+                  <div
+                    key={`${fieldKey}-${index}-${propKey}`}
+                    className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3"
+                  >
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-semibold text-neutral-900">Imagem</p>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="rounded-xl bg-white"
-                        disabled={imagePickerOpen || Boolean(busyKey)}
-                        onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
-                      >
-                        <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                        Trocar
-                      </Button>
+                      {renderImageFileTrigger({
+                        target: { kind: "list", fieldKey, index },
+                        className: "rounded-xl bg-white",
+                        children: (
+                          <>
+                            <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                            Trocar
+                          </>
+                        ),
+                      })}
                     </div>
                     {imageSrc ? (
-                      <img src={imageSrc} alt={imageAlt} className="h-40 w-full rounded-xl object-cover" />
+                      <img
+                        src={imageSrc}
+                        alt={imageAlt}
+                        className="h-40 w-full rounded-xl object-cover"
+                      />
                     ) : (
                       <div className="flex h-40 items-center justify-center rounded-xl border border-dashed border-neutral-300 bg-white text-sm text-neutral-500">
                         Nenhuma imagem vinculada
@@ -2767,7 +2925,8 @@ export default function CanonicalPageEditor({
               }
 
               const isLongText =
-                typeof propValue === "string" && propValue.length > 120 || propKey === "description";
+                (typeof propValue === "string" && propValue.length > 120) ||
+                propKey === "description";
               const inputType = propKey.includes("href") ? "url" : "text";
 
               return (
@@ -2799,17 +2958,16 @@ export default function CanonicalPageEditor({
             {!Object.prototype.hasOwnProperty.call(item, "image") &&
             fieldKey === "fallbackProjects" ? (
               <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 p-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="rounded-xl bg-white"
-                  disabled={imagePickerOpen || Boolean(busyKey)}
-                  onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
-                >
-                  <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                  Adicionar imagem
-                </Button>
+                {renderImageFileTrigger({
+                  target: { kind: "list", fieldKey, index },
+                  className: "rounded-xl bg-white",
+                  children: (
+                    <>
+                      <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                      Adicionar imagem
+                    </>
+                  ),
+                })}
               </div>
             ) : null}
           </div>
@@ -2822,19 +2980,11 @@ export default function CanonicalPageEditor({
     const value = draftConfig[field.key];
 
     if (field.kind === "image" || field.element === "image") {
-      return (
-        <div key={field.key}>
-          {renderImageField(field.key, field.label)}
-        </div>
-      );
+      return <div key={field.key}>{renderImageField(field.key, field.label)}</div>;
     }
 
     if (Array.isArray(value)) {
-      return (
-        <div key={field.key}>
-          {renderRepeaterField(field.key, field.label)}
-        </div>
-      );
+      return <div key={field.key}>{renderRepeaterField(field.key, field.label)}</div>;
     }
 
     if (field.key === "imageAlign") {
@@ -2855,7 +3005,11 @@ export default function CanonicalPageEditor({
                 size="sm"
                 onClick={() => updateDraftField(field.key, align)}
               >
-                {align === "left" ? "Esquerda" : align === "center" ? "Centro" : "Direita"}
+                {align === "left"
+                  ? "Esquerda"
+                  : align === "center"
+                    ? "Centro"
+                    : "Direita"}
               </Button>
             ))}
           </div>
@@ -2874,7 +3028,9 @@ export default function CanonicalPageEditor({
             min={1}
             max={12}
             value={String(value)}
-            onChange={(event) => updateDraftField(field.key, Number(event.target.value || 0))}
+            onChange={(event) =>
+              updateDraftField(field.key, Number(event.target.value || 0))
+            }
           />
         </div>
       );
@@ -2890,7 +3046,9 @@ export default function CanonicalPageEditor({
         >
           <div>
             <p className="text-sm font-semibold text-neutral-900">{field.label}</p>
-            <p className="text-xs text-neutral-500">Mostra ou oculta este elemento no template.</p>
+            <p className="text-xs text-neutral-500">
+              Mostra ou oculta este elemento no template.
+            </p>
           </div>
           <button
             type="button"
@@ -2949,15 +3107,6 @@ export default function CanonicalPageEditor({
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
-      <input
-        ref={imageFileInputRef}
-        type="file"
-        accept="image/png,image/jpeg,image/webp,image/gif"
-        tabIndex={-1}
-        aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
-        onChange={handleSharedImageFileChange}
-      />
       <div className="grid min-w-0 gap-3">
         <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
@@ -2995,46 +3144,49 @@ export default function CanonicalPageEditor({
                 })}
               </div>
               {previewMode === "portfolio" ? (
-                  <div className="relative">
-                    <Button
-                      type="button"
-                      size="sm"
-                      className="h-9 w-9 rounded-full px-0"
-                      onClick={() => setShowAddMenu((current) => !current)}
-                      aria-expanded={showAddMenu}
-                      aria-label="Adicionar nova secao"
-                    >
-                      <Plus className="h-4 w-4" aria-hidden="true" />
-                    </Button>
-                    {showAddMenu ? (
-                      <div className="absolute right-0 top-11 z-40 grid w-72 gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
-                        {availableBlockDefs.length === 0 ? (
-                          <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500">
-                            Nao ha blocos disponiveis.
-                          </div>
-                        ) : (
-                          availableBlockDefs.map((blockDef) => (
-                            <button
-                              key={blockDef.id}
-                              type="button"
-                              onClick={() => void addBlock(blockDef.key)}
-                              className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-lime-300 hover:bg-lime-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
-                            >
-                              <span className="min-w-0">
-                                <span className="block truncate text-sm font-semibold text-neutral-900">
-                                  {blockDef.label}
-                                </span>
-                                <span className="block truncate text-xs text-neutral-500">
-                                  {blockDef.blockType}
-                                </span>
+                <div className="relative">
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="h-9 w-9 rounded-full px-0"
+                    onClick={() => setShowAddMenu((current) => !current)}
+                    aria-expanded={showAddMenu}
+                    aria-label="Adicionar nova secao"
+                  >
+                    <Plus className="h-4 w-4" aria-hidden="true" />
+                  </Button>
+                  {showAddMenu ? (
+                    <div className="absolute right-0 top-11 z-40 grid w-72 gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
+                      {availableBlockDefs.length === 0 ? (
+                        <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500">
+                          Nao ha blocos disponiveis.
+                        </div>
+                      ) : (
+                        availableBlockDefs.map((blockDef) => (
+                          <button
+                            key={blockDef.id}
+                            type="button"
+                            onClick={() => void addBlock(blockDef.key)}
+                            className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-lime-300 hover:bg-lime-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
+                          >
+                            <span className="min-w-0">
+                              <span className="block truncate text-sm font-semibold text-neutral-900">
+                                {blockDef.label}
                               </span>
-                              <Plus className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden="true" />
-                            </button>
-                          ))
-                        )}
-                      </div>
-                    ) : null}
-                  </div>
+                              <span className="block truncate text-xs text-neutral-500">
+                                {blockDef.blockType}
+                              </span>
+                            </span>
+                            <Plus
+                              className="h-4 w-4 shrink-0 text-neutral-500"
+                              aria-hidden="true"
+                            />
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  ) : null}
+                </div>
               ) : null}
               <Button
                 type="button"
@@ -3108,7 +3260,8 @@ export default function CanonicalPageEditor({
                           slotFrame.key === activeInlineImageFieldKey ||
                           slotFrame.key === activeInlineProjectCover?.path ||
                           slotFrame.key === activeInlineListImage?.path;
-                        const isActiveBoolean = slotFrame.key === activeInlineBooleanFieldKey;
+                        const isActiveBoolean =
+                          slotFrame.key === activeInlineBooleanFieldKey;
                         const isImage = slotFrame.kind === "image";
                         const isBoolean = slotFrame.kind === "boolean";
                         const ariaLabel = `Editar ${slotFrame.label} no canvas`;
@@ -3135,7 +3288,7 @@ export default function CanonicalPageEditor({
                                 ? "border-sky-400/90 bg-sky-400/10"
                                 : isBoolean
                                   ? "border-amber-400/95 bg-amber-300/10"
-                                : "border-lime-400/90 bg-lime-300/10"
+                                  : "border-lime-400/90 bg-lime-300/10"
                             }`}
                             style={{
                               left: `${slotFrame.left}px`,
@@ -3147,7 +3300,9 @@ export default function CanonicalPageEditor({
                               event.stopPropagation();
                               activateEditableSlot(slotFrame);
                             }}
-                            onKeyDown={(event) => handleEditableSlotKeyDown(event, slotFrame)}
+                            onKeyDown={(event) =>
+                              handleEditableSlotKeyDown(event, slotFrame)
+                            }
                           >
                             <span className="sr-only">{ariaLabel}</span>
                           </button>
@@ -3198,7 +3353,9 @@ export default function CanonicalPageEditor({
                           size="sm"
                           loading={busyKey === `visibility:${selectedBlock.id}`}
                           onClick={() => void toggleVisibility(selectedBlock)}
-                          aria-label={selectedBlock.visible ? "Ocultar bloco" : "Exibir bloco"}
+                          aria-label={
+                            selectedBlock.visible ? "Ocultar bloco" : "Exibir bloco"
+                          }
                           className="h-8 w-8 rounded-full px-0"
                         >
                           {selectedBlock.visible ? (
@@ -3222,16 +3379,22 @@ export default function CanonicalPageEditor({
                         ) : null}
                         {selectedBlock.blockType === "portfolio.work"
                           ? asArray(draftConfig.hiddenProjectIds)
-                              .filter((item): item is string => typeof item === "string")
+                              .filter(
+                                (item): item is string => typeof item === "string"
+                              )
                               .map((projectId) => {
-                                const project = previewProfile.projects.find((item) => item.id === projectId);
+                                const project = previewProfile.projects.find(
+                                  (item) => item.id === projectId
+                                );
                                 return (
                                   <Button
                                     key={projectId}
                                     type="button"
                                     variant="ghost"
                                     size="sm"
-                                    onClick={() => void restoreProjectInWorkBlock(projectId)}
+                                    onClick={() =>
+                                      void restoreProjectInWorkBlock(projectId)
+                                    }
                                     aria-label={`Restaurar ${project?.title ?? "projeto"}`}
                                     className="h-8 w-8 rounded-full px-0 text-neutral-700"
                                   >
@@ -3300,7 +3463,9 @@ export default function CanonicalPageEditor({
                               className="h-8 rounded-full px-3"
                               data-ft-inline-action="true"
                               onMouseDown={(event) => event.preventDefault()}
-                              onClick={() => void commitInlineFieldChange(activeInlineFieldValue)}
+                              onClick={() =>
+                                void commitInlineFieldChange(activeInlineFieldValue)
+                              }
                             >
                               Salvar
                             </Button>
@@ -3314,7 +3479,9 @@ export default function CanonicalPageEditor({
                               data-ft-inline-editor="true"
                               className="min-h-[8.5rem] w-full rounded-2xl border border-transparent bg-white px-3 py-3 text-sm font-medium text-neutral-950 outline-none placeholder:text-neutral-400"
                               placeholder={inlineFieldFrame.label}
-                              onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                              onChange={(event) =>
+                                setActiveInlineFieldValue(event.target.value)
+                              }
                               onBlur={(event) => {
                                 const nextTarget = event.relatedTarget;
                                 if (
@@ -3332,7 +3499,10 @@ export default function CanonicalPageEditor({
                                   return;
                                 }
 
-                                if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+                                if (
+                                  event.key === "Enter" &&
+                                  (event.metaKey || event.ctrlKey)
+                                ) {
                                   event.preventDefault();
                                   void commitInlineFieldChange(activeInlineFieldValue);
                                 }
@@ -3346,7 +3516,9 @@ export default function CanonicalPageEditor({
                               data-ft-inline-editor="true"
                               className="h-12 w-full rounded-2xl border border-transparent bg-white px-3 text-sm font-medium text-neutral-950 outline-none placeholder:text-neutral-400"
                               placeholder={inlineFieldFrame.label}
-                              onChange={(event) => setActiveInlineFieldValue(event.target.value)}
+                              onChange={(event) =>
+                                setActiveInlineFieldValue(event.target.value)
+                              }
                               onBlur={(event) => {
                                 const nextTarget = event.relatedTarget;
                                 if (
@@ -3384,7 +3556,11 @@ export default function CanonicalPageEditor({
                     <>
                       <div
                         className={`absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8 ${
-                          imageDragActive ? "cursor-grabbing" : activeInlineImageValue?.fitMode === "fit" ? "cursor-default" : "cursor-grab"
+                          imageDragActive
+                            ? "cursor-grabbing"
+                            : activeInlineImageValue?.fitMode === "fit"
+                              ? "cursor-default"
+                              : "cursor-grab"
                         }`}
                         style={{
                           left: `${inlineImageFrame.left}px`,
@@ -3421,10 +3597,13 @@ export default function CanonicalPageEditor({
                               size="sm"
                               className="h-8 rounded-full px-3"
                               onClick={() =>
-                                void commitTopLevelImageField(activeInlineImageField.key, (image) => ({
-                                  ...image,
-                                  fitMode: mode,
-                                }))
+                                void commitTopLevelImageField(
+                                  activeInlineImageField.key,
+                                  (image) => ({
+                                    ...image,
+                                    fitMode: mode,
+                                  })
+                                )
                               }
                             >
                               {labels[mode]}
@@ -3454,27 +3633,23 @@ export default function CanonicalPageEditor({
                             ))}
                           </>
                         ) : null}
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 rounded-full px-3"
-                          disabled={imagePickerOpen || Boolean(busyKey)}
-                          onClick={() =>
-                            requestImageFile({
-                              kind: "topLevel",
-                              fieldKey: activeInlineImageField.key,
-                            })
-                          }
-                        >
-                          Trocar
-                        </Button>
+                        {renderImageFileTrigger({
+                          target: {
+                            kind: "topLevel",
+                            fieldKey: activeInlineImageField.key,
+                          },
+                          variant: "ghost",
+                          className: "h-8 rounded-full px-3",
+                          children: "Trocar",
+                        })}
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           className="h-8 rounded-full px-3 text-coral-700"
-                          onClick={() => void removeTopLevelImage(activeInlineImageField.key)}
+                          onClick={() =>
+                            void removeTopLevelImage(activeInlineImageField.key)
+                          }
                         >
                           Remover
                         </Button>
@@ -3490,7 +3665,11 @@ export default function CanonicalPageEditor({
                     <>
                       <div
                         className={`absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8 ${
-                          imageDragActive ? "cursor-grabbing" : activeInlineListImageValue?.fitMode === "fit" ? "cursor-default" : "cursor-grab"
+                          imageDragActive
+                            ? "cursor-grabbing"
+                            : activeInlineListImageValue?.fitMode === "fit"
+                              ? "cursor-default"
+                              : "cursor-grab"
                         }`}
                         style={{
                           left: `${inlineListImageFrame.left}px`,
@@ -3508,9 +3687,7 @@ export default function CanonicalPageEditor({
                         }}
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <span className="sr-only">
-                          {inlineListImageFrame.label}
-                        </span>
+                        <span className="sr-only">{inlineListImageFrame.label}</span>
                         {(["fit", "fill", "crop"] as const).map((mode) => {
                           const isActive = activeInlineListImageValue?.fitMode === mode;
                           return (
@@ -3528,10 +3705,14 @@ export default function CanonicalPageEditor({
                                     : "Recortar imagem"
                               }
                               onClick={() =>
-                                void commitListImageField(activeInlineListImage.fieldKey, activeInlineListImage.index, (image) => ({
-                                  ...image,
-                                  fitMode: mode,
-                                }))
+                                void commitListImageField(
+                                  activeInlineListImage.fieldKey,
+                                  activeInlineListImage.index,
+                                  (image) => ({
+                                    ...image,
+                                    fitMode: mode,
+                                  })
+                                )
                               }
                             >
                               {mode === "fit" ? (
@@ -3544,31 +3725,34 @@ export default function CanonicalPageEditor({
                             </Button>
                           );
                         })}
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 rounded-full px-0"
-                          aria-label="Trocar imagem"
-                          disabled={imagePickerOpen || Boolean(busyKey)}
-                          onClick={() =>
-                            requestImageFile({
-                              kind: "list",
-                              fieldKey: activeInlineListImage.fieldKey,
-                              index: activeInlineListImage.index,
-                            })
-                          }
-                        >
-                          <span className="sr-only">Trocar imagem</span>
-                          <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                        </Button>
+                        {renderImageFileTrigger({
+                          target: {
+                            kind: "list",
+                            fieldKey: activeInlineListImage.fieldKey,
+                            index: activeInlineListImage.index,
+                          },
+                          variant: "ghost",
+                          className: "h-8 w-8 rounded-full px-0",
+                          ariaLabel: "Trocar imagem",
+                          children: (
+                            <>
+                              <span className="sr-only">Trocar imagem</span>
+                              <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                            </>
+                          ),
+                        })}
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 rounded-full px-0 text-coral-700"
                           aria-label="Remover imagem"
-                          onClick={() => void removeListImage(activeInlineListImage.fieldKey, activeInlineListImage.index)}
+                          onClick={() =>
+                            void removeListImage(
+                              activeInlineListImage.fieldKey,
+                              activeInlineListImage.index
+                            )
+                          }
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
@@ -3580,7 +3764,10 @@ export default function CanonicalPageEditor({
                             className="h-8 w-8 rounded-full px-0 text-neutral-700"
                             aria-label="Ocultar item"
                             onClick={() =>
-                              void hideFallbackWorkItem(activeInlineListImage.fieldKey, activeInlineListImage.index)
+                              void hideFallbackWorkItem(
+                                activeInlineListImage.fieldKey,
+                                activeInlineListImage.index
+                              )
                             }
                           >
                             <EyeOff className="h-4 w-4" aria-hidden="true" />
@@ -3589,7 +3776,9 @@ export default function CanonicalPageEditor({
                       </div>
                     </>
                   ) : null}
-                  {selectedBlock && activeInlineProjectCover && inlineProjectCoverFrame ? (
+                  {selectedBlock &&
+                  activeInlineProjectCover &&
+                  inlineProjectCoverFrame ? (
                     <>
                       <div
                         className="absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8"
@@ -3609,7 +3798,8 @@ export default function CanonicalPageEditor({
                         onClick={(event) => event.stopPropagation()}
                       >
                         {(["fit", "fill", "crop"] as const).map((mode) => {
-                          const isActive = activeInlineProjectCoverValue?.fitMode === mode;
+                          const isActive =
+                            activeInlineProjectCoverValue?.fitMode === mode;
                           return (
                             <Button
                               key={mode}
@@ -3625,10 +3815,13 @@ export default function CanonicalPageEditor({
                                     : "Recortar imagem"
                               }
                               onClick={() =>
-                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
-                                  ...image,
-                                  fitMode: mode,
-                                }))
+                                void commitProjectCoverField(
+                                  activeInlineProjectCover.projectId,
+                                  (image) => ({
+                                    ...image,
+                                    fitMode: mode,
+                                  })
+                                )
                               }
                             >
                               {mode === "fit" ? (
@@ -3643,7 +3836,10 @@ export default function CanonicalPageEditor({
                         })}
                         {activeInlineProjectCoverValue?.src ? (
                           <div className="flex h-8 items-center gap-1 rounded-full border border-neutral-200 px-2">
-                            <label className="sr-only" htmlFor="project-cover-position-x">
+                            <label
+                              className="sr-only"
+                              htmlFor="project-cover-position-x"
+                            >
                               Posição horizontal da capa
                             </label>
                             <input
@@ -3656,13 +3852,19 @@ export default function CanonicalPageEditor({
                               aria-label="Posição horizontal da capa"
                               className="h-2 w-14 accent-neutral-950"
                               onChange={(event) =>
-                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
-                                  ...image,
-                                  positionX: Number(event.currentTarget.value),
-                                }))
+                                void commitProjectCoverField(
+                                  activeInlineProjectCover.projectId,
+                                  (image) => ({
+                                    ...image,
+                                    positionX: Number(event.currentTarget.value),
+                                  })
+                                )
                               }
                             />
-                            <label className="sr-only" htmlFor="project-cover-position-y">
+                            <label
+                              className="sr-only"
+                              htmlFor="project-cover-position-y"
+                            >
                               Posição vertical da capa
                             </label>
                             <input
@@ -3675,38 +3877,41 @@ export default function CanonicalPageEditor({
                               aria-label="Posição vertical da capa"
                               className="h-2 w-14 accent-neutral-950"
                               onChange={(event) =>
-                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
-                                  ...image,
-                                  positionY: Number(event.currentTarget.value),
-                                }))
+                                void commitProjectCoverField(
+                                  activeInlineProjectCover.projectId,
+                                  (image) => ({
+                                    ...image,
+                                    positionY: Number(event.currentTarget.value),
+                                  })
+                                )
                               }
                             />
                           </div>
                         ) : null}
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 rounded-full px-0"
-                          aria-label="Trocar capa do projeto"
-                          disabled={imagePickerOpen || Boolean(busyKey)}
-                          onClick={() =>
-                            requestImageFile({
-                              kind: "projectCover",
-                              projectId: activeInlineProjectCover.projectId,
-                            })
-                          }
-                        >
-                          <span className="sr-only">Trocar capa do projeto</span>
-                          <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                        </Button>
+                        {renderImageFileTrigger({
+                          target: {
+                            kind: "projectCover",
+                            projectId: activeInlineProjectCover.projectId,
+                          },
+                          variant: "ghost",
+                          className: "h-8 w-8 rounded-full px-0",
+                          ariaLabel: "Trocar capa do projeto",
+                          children: (
+                            <>
+                              <span className="sr-only">Trocar capa do projeto</span>
+                              <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                            </>
+                          ),
+                        })}
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
                           className="h-8 w-8 rounded-full px-0 text-coral-700"
                           aria-label="Remover capa do projeto"
-                          onClick={() => void removeProjectCover(activeInlineProjectCover.projectId)}
+                          onClick={() =>
+                            void removeProjectCover(activeInlineProjectCover.projectId)
+                          }
                         >
                           <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
@@ -3716,14 +3921,20 @@ export default function CanonicalPageEditor({
                           size="sm"
                           className="h-8 w-8 rounded-full px-0 text-neutral-700"
                           aria-label="Ocultar projeto nesta pagina"
-                          onClick={() => void hideProjectInWorkBlock(activeInlineProjectCover.projectId)}
+                          onClick={() =>
+                            void hideProjectInWorkBlock(
+                              activeInlineProjectCover.projectId
+                            )
+                          }
                         >
                           <EyeOff className="h-4 w-4" aria-hidden="true" />
                         </Button>
                       </div>
                     </>
                   ) : null}
-                  {selectedBlock && activeInlineBooleanFieldKey && inlineBooleanFrame ? (
+                  {selectedBlock &&
+                  activeInlineBooleanFieldKey &&
+                  inlineBooleanFrame ? (
                     <div
                       className="absolute z-30"
                       style={{
@@ -3742,7 +3953,8 @@ export default function CanonicalPageEditor({
                         onClick={() =>
                           void commitBooleanFieldChange(
                             activeInlineBooleanFieldKey,
-                            !(typeof draftConfig[activeInlineBooleanFieldKey] === "boolean"
+                            !(typeof draftConfig[activeInlineBooleanFieldKey] ===
+                            "boolean"
                               ? Boolean(draftConfig[activeInlineBooleanFieldKey])
                               : false)
                           )
@@ -3753,7 +3965,9 @@ export default function CanonicalPageEditor({
                             : `Ocultar ${activeInlineBooleanField?.label ?? activeInlineBooleanFieldKey}`
                         }
                       >
-                        {draftConfig[activeInlineBooleanFieldKey] === false ? "Restaurar" : "X"}
+                        {draftConfig[activeInlineBooleanFieldKey] === false
+                          ? "Restaurar"
+                          : "X"}
                       </button>
                     </div>
                   ) : null}
@@ -3799,5 +4013,3 @@ export default function CanonicalPageEditor({
     </section>
   );
 }
-
-
