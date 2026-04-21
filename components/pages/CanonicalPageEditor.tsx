@@ -509,6 +509,20 @@ export default function CanonicalPageEditor({
       >,
     [selectedEditableFields]
   );
+  const inlineEditableFields = useMemo(
+    () =>
+      selectedEditableFields.filter((field) =>
+        ["text", "longText", "image", "boolean"].includes(field.kind)
+      ),
+    [selectedEditableFields]
+  );
+  const sidebarEditableFields = useMemo(
+    () =>
+      selectedEditableFields.filter(
+        (field) => !["text", "longText", "image", "boolean"].includes(field.kind)
+      ),
+    [selectedEditableFields]
+  );
   const activeInlineBooleanField = useMemo(
     () =>
       activeInlineBooleanFieldKey
@@ -2520,6 +2534,15 @@ export default function CanonicalPageEditor({
                           )}
                         </Button>
                       </div>
+                      <div
+                        className="pointer-events-none absolute z-10 rounded-full border border-neutral-200 bg-white/92 px-3 py-1 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-neutral-500 shadow-sm backdrop-blur"
+                        style={{
+                          right: `${Math.max(12, previewFrameRef.current ? 12 : 12)}px`,
+                          top: `${Math.max(canvasSelectionFrame.top + 10, 10)}px`,
+                        }}
+                      >
+                        clique no conteudo para editar
+                      </div>
                     </>
                   ) : null}
                   {selectedBlock && activeInlineField && inlineFieldFrame ? (
@@ -2854,9 +2877,25 @@ export default function CanonicalPageEditor({
                   ) : null}
                 </div>
 
-                <div className="space-y-4">
-                  {selectedEditableFields.map((field) => renderEditableField(field))}
-                </div>
+                {inlineEditableFields.length > 0 ? (
+                  <div className="rounded-[1.1rem] border border-lime-200 bg-lime-50/80 px-4 py-3">
+                    <p className="text-sm font-semibold text-lime-950">Edicao direta no canvas</p>
+                    <p className="mt-1 text-xs leading-6 text-lime-900/80">
+                      {inlineEditableFields.length} campo(s) deste bloco ja podem ser editados direto
+                      na preview: texto, imagem e elementos visuais.
+                    </p>
+                  </div>
+                ) : null}
+
+                {sidebarEditableFields.length > 0 ? (
+                  <div className="space-y-4">
+                    {sidebarEditableFields.map((field) => renderEditableField(field))}
+                  </div>
+                ) : (
+                  <div className="rounded-[1.1rem] border border-dashed border-neutral-300 bg-neutral-50 px-4 py-6 text-sm leading-7 text-neutral-500">
+                    Este bloco nao precisa mais do painel lateral para os campos principais.
+                  </div>
+                )}
               </>
             ) : (
               <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-8 text-sm leading-7 text-neutral-500">

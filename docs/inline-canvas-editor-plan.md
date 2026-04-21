@@ -652,13 +652,30 @@ Validacao executada:
 - `npm run test -- tests/templates/template-domain.test.ts tests/templates/template-semantic-mapper.test.ts tests/templates/resume-projection.test.ts`
 - `npm run build`
 
+### Slice 5 parcial entregue em 2026-04-20
+
+Status:
+
+- o painel lateral agora deixa de listar campos que ja estao editaveis inline no canvas
+- o inspector passou a priorizar apenas campos ainda dependentes de painel, como listas e links
+- quando um bloco pode ser editado quase todo na preview, o painel indica isso explicitamente
+- a preview agora exibe uma dica contextual curta no bloco ativo para reforcar a interacao direta
+
+Arquivos-base deste slice:
+
+- `components/pages/CanonicalPageEditor.tsx`
+
+Validacao executada:
+
+- `npm run lint`
+- `npm run build`
+
 ### Pendencias imediatas do proximo slice
 
 - substituir o editor de texto simples por affordance mais proxima de caixa ativa de apresentacao
-- reduzir dependencia do painel lateral para campos simples que ja estao expostos no canvas
 - decidir se imagens derivadas de projetos selecionados devem continuar read-only ou ganhar um nivel de override local
 - revisar acessibilidade, atalhos, states de foco e custo de re-render do overlay
 
 ## Proximo passo
 
-Continuar no Slice 5, com foco em reduzir a dependencia do painel lateral e aproximar a edicao inline do comportamento de ferramenta de apresentacao.
+Continuar no fechamento do Slice 5 e depois no Slice 6, com foco em acessibilidade, performance, foco e acabamento de interacao.
