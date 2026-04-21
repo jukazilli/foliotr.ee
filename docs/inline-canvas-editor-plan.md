@@ -694,8 +694,21 @@ Validacao executada:
 
 - substituir o editor de texto simples por affordance mais proxima de caixa ativa de apresentacao
 - decidir se imagens derivadas de projetos selecionados devem continuar read-only ou ganhar um nivel de override local
-- revisar acessibilidade fina de navegacao por teclado entre slots
 - decidir se o plano segue com otimizaçao adicional ou migra para polimento visual / browser QA
+
+### Retomada de Slice 6 em 2026-04-21
+
+Status:
+
+- os overlays de slots editaveis do canvas passaram de marcadores puramente visuais para botoes focaveis com `aria-label`
+- `Enter` e `Espaco` ativam o slot focado, mantendo o mesmo fluxo de edicao usado pelo clique
+- setas direcionais navegam entre os slots editaveis do bloco selecionado sem abrir edicao acidentalmente
+- a limpeza de estado inline tambem cobre imagens de listas, evitando residuo de foco/editor em casos derivados
+
+Arquivos-base deste ajuste:
+
+- `components/pages/CanonicalPageEditor.tsx`
+- `docs/inline-canvas-editor-plan.md`
 
 ## Proximo passo
 

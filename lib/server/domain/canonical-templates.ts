@@ -9,6 +9,9 @@ import { templateListInclude, type TemplateListItem } from "@/lib/server/domain/
 import type { VersionAggregate } from "@/lib/server/domain/includes";
 
 type DbClient = PrismaClient;
+type ReadonlyTemplateEligibility = Omit<CanonicalTemplateEligibility, "requiredProfileFields"> & {
+  readonly requiredProfileFields: readonly CanonicalTemplateEligibility["requiredProfileFields"][number][];
+};
 
 export interface TemplateEligibilityIssue {
   key: string;
@@ -118,7 +121,7 @@ function hydrateCanonicalTemplate(template: TemplateListItem): CanonicalTemplate
 }
 
 export function evaluateTemplateEligibility(
-  source: CanonicalTemplateEligibility | Pick<CanonicalTemplateListItem, "eligibility">,
+  source: ReadonlyTemplateEligibility | Pick<CanonicalTemplateListItem, "eligibility">,
   profile: EligibilityProfile,
   version?: VersionAggregate | null
 ): TemplateEligibilityResult {

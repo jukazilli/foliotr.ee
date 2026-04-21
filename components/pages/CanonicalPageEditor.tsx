@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { MouseEvent as ReactMouseEvent, PointerEvent as ReactPointerEvent } from "react";
+import type {
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  PointerEvent as ReactPointerEvent,
+} from "react";
 import type { JsonValue } from "@prisma/client/runtime/library";
 import type { ResumeConfig } from "@/generated/prisma-client";
 import {
@@ -107,6 +111,7 @@ interface InlineFieldFrame extends CanvasSelectionFrame {
 
 interface EditableSlotFrame extends CanvasSelectionFrame {
   key: string;
+  label: string;
   kind: EditableFieldLike["kind"] | "unknown";
 }
 
@@ -152,6 +157,7 @@ function sameSlotFrames(left: EditableSlotFrame[], right: EditableSlotFrame[]) {
     const next = right[index];
     return (
       frame.key === next?.key &&
+      frame.label === next?.label &&
       frame.kind === next?.kind &&
       frame.left === next?.left &&
       frame.top === next?.top &&
@@ -374,6 +380,7 @@ export default function CanonicalPageEditor({
     nextConfig?: JsonRecord,
     nextAssets?: JsonRecord
   ) => Promise<boolean>) | null>(null);
+  const slotButtonRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const previewCanvasWidth = useMemo(
     () =>
@@ -665,9 +672,7 @@ export default function CanonicalPageEditor({
     }
 
     const escapedBlockId = escapeCssAttribute(selectedBlockId);
-    const editableFieldMap = new Map(
-      selectedEditableFields.map((field) => [field.key, field.kind] as const)
-    );
+    const editableFieldMap = new Map(selectedEditableFields.map((field) => [field.key, field]));
 
     function updateEditableSlotFrames() {
       const currentFrame = previewFrameRef.current;
@@ -691,7 +696,8 @@ export default function CanonicalPageEditor({
           const rect = node.getBoundingClientRect();
           return {
             key,
-            kind: editableFieldMap.get(key) ?? inferFieldKindFromCanvas(node.dataset.ftKind),
+            label: editableFieldMap.get(key)?.label ?? key,
+            kind: editableFieldMap.get(key)?.kind ?? inferFieldKindFromCanvas(node.dataset.ftKind),
             left: rect.left - frameRect.left,
             top: rect.top - frameRect.top,
             width: rect.width,
@@ -1186,6 +1192,8 @@ export default function CanonicalPageEditor({
     setInlineFieldFrame(null);
     setActiveInlineImageFieldKey(null);
     setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
   }
@@ -1613,6 +1621,73 @@ export default function CanonicalPageEditor({
     setInlineImageFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
+  }
+
+  function activateEditableSlot(slotFrame: EditableSlotFrame) {
+    if (!selectedBlock) return;
+
+    setSelectedBlockId(selectedBlock.id);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const repeaterImagePath =
+      slotFrame.kind === "image" ? parseRepeaterImagePath(slotFrame.key) : null;
+
+    if (repeaterImagePath) {
+      openInlineListImageEditor(
+        selectedBlock,
+        repeaterImagePath.fieldKey,
+        repeaterImagePath.index,
+        repeaterImagePath.path
+      );
+      return;
+    }
+
+    if (slotFrame.kind === "image") {
+      openInlineImageEditor(selectedBlock, selectedBlockDef, slotFrame.key);
+      return;
+    }
+
+    if (slotFrame.kind === "boolean") {
+      openInlineBooleanEditor(selectedBlock, selectedBlockDef, slotFrame.key);
+      return;
+    }
+
+    openInlineFieldEditor(selectedBlock, selectedBlockDef, slotFrame.key);
+  }
+
+  function focusEditableSlot(currentKey: string, offset: -1 | 1) {
+    const currentIndex = editableSlotFrames.findIndex((frame) => frame.key === currentKey);
+    if (currentIndex < 0 || editableSlotFrames.length === 0) return;
+
+    const nextIndex =
+      (currentIndex + offset + editableSlotFrames.length) % editableSlotFrames.length;
+    const nextFrame = editableSlotFrames[nextIndex];
+    if (!nextFrame) return;
+
+    slotButtonRefs.current.get(nextFrame.key)?.focus();
+  }
+
+  function handleEditableSlotKeyDown(
+    event: ReactKeyboardEvent<HTMLButtonElement>,
+    slotFrame: EditableSlotFrame
+  ) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      activateEditableSlot(slotFrame);
+      return;
+    }
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      focusEditableSlot(slotFrame.key, 1);
+      return;
+    }
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      focusEditableSlot(slotFrame.key, -1);
+    }
   }
 
   async function removeSelectedBlock() {
@@ -2613,11 +2688,22 @@ export default function CanonicalPageEditor({
                         const isActiveBoolean = slotFrame.key === activeInlineBooleanFieldKey;
                         const isImage = slotFrame.kind === "image";
                         const isBoolean = slotFrame.kind === "boolean";
+                        const ariaLabel = `Editar ${slotFrame.label} no canvas`;
 
                         return (
-                          <div
+                          <button
                             key={`${selectedBlock.id}:${slotFrame.key}:${slotFrame.left}:${slotFrame.top}`}
-                            className={`pointer-events-none absolute rounded-xl transition ${
+                            ref={(node) => {
+                              if (node) {
+                                slotButtonRefs.current.set(slotFrame.key, node);
+                              } else {
+                                slotButtonRefs.current.delete(slotFrame.key);
+                              }
+                            }}
+                            type="button"
+                            aria-label={ariaLabel}
+                            title={ariaLabel}
+                            className={`absolute rounded-xl text-left outline-none transition focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 focus-visible:ring-offset-white ${
                               isActiveText || isActiveImage || isActiveBoolean
                                 ? "border-2 shadow-[0_0_0_1px_rgba(255,255,255,0.82)]"
                                 : "border border-dashed"
@@ -2634,7 +2720,14 @@ export default function CanonicalPageEditor({
                               width: `${slotFrame.width}px`,
                               height: `${slotFrame.height}px`,
                             }}
-                          />
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              activateEditableSlot(slotFrame);
+                            }}
+                            onKeyDown={(event) => handleEditableSlotKeyDown(event, slotFrame)}
+                          >
+                            <span className="sr-only">{ariaLabel}</span>
+                          </button>
                         );
                       })}
                       <div
