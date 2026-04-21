@@ -1682,9 +1682,9 @@ export default function CanonicalPageEditor({
 
     try {
       await publishPageAction();
-      setSuccessMessage("Pagina publicada.");
+      setSuccessMessage("Pagina e curriculo publicados.");
     } catch {
-      setErrorMessage("Nao foi possivel publicar a pagina.");
+      setErrorMessage("Nao foi possivel publicar a pagina e o curriculo.");
     } finally {
       setBusyKey(null);
     }
@@ -2859,47 +2859,70 @@ export default function CanonicalPageEditor({
                 })}
               </div>
               {previewMode === "portfolio" ? (
-                <div className="relative">
-                  <Button
-                    type="button"
-                    size="sm"
-                    className="h-9 w-9 rounded-full px-0"
-                    onClick={() => setShowAddMenu((current) => !current)}
-                    aria-expanded={showAddMenu}
-                    aria-label="Adicionar nova secao"
-                  >
-                    <Plus className="h-4 w-4" aria-hidden="true" />
-                  </Button>
-                  {showAddMenu ? (
-                    <div className="absolute right-0 top-11 z-40 grid w-72 gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
-                      {availableBlockDefs.length === 0 ? (
-                        <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500">
-                          Nao ha blocos disponiveis.
-                        </div>
-                      ) : (
-                        availableBlockDefs.map((blockDef) => (
-                          <button
-                            key={blockDef.id}
-                            type="button"
-                            onClick={() => void addBlock(blockDef.key)}
-                            className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-lime-300 hover:bg-lime-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
-                          >
-                            <span className="min-w-0">
-                              <span className="block truncate text-sm font-semibold text-neutral-900">
-                                {blockDef.label}
+                  <div className="relative">
+                    <Button
+                      type="button"
+                      size="sm"
+                      className="h-9 w-9 rounded-full px-0"
+                      onClick={() => setShowAddMenu((current) => !current)}
+                      aria-expanded={showAddMenu}
+                      aria-label="Adicionar nova secao"
+                    >
+                      <Plus className="h-4 w-4" aria-hidden="true" />
+                    </Button>
+                    {showAddMenu ? (
+                      <div className="absolute right-0 top-11 z-40 grid w-72 gap-2 rounded-2xl border border-neutral-200 bg-white p-2 shadow-xl">
+                        {availableBlockDefs.length === 0 ? (
+                          <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 px-4 py-4 text-sm text-neutral-500">
+                            Nao ha blocos disponiveis.
+                          </div>
+                        ) : (
+                          availableBlockDefs.map((blockDef) => (
+                            <button
+                              key={blockDef.id}
+                              type="button"
+                              onClick={() => void addBlock(blockDef.key)}
+                              className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-left transition hover:border-lime-300 hover:bg-lime-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500"
+                            >
+                              <span className="min-w-0">
+                                <span className="block truncate text-sm font-semibold text-neutral-900">
+                                  {blockDef.label}
+                                </span>
+                                <span className="block truncate text-xs text-neutral-500">
+                                  {blockDef.blockType}
+                                </span>
                               </span>
-                              <span className="block truncate text-xs text-neutral-500">
-                                {blockDef.blockType}
-                              </span>
-                            </span>
-                            <Plus className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden="true" />
-                          </button>
-                        ))
-                      )}
-                    </div>
-                  ) : null}
-                </div>
+                              <Plus className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden="true" />
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    ) : null}
+                  </div>
               ) : null}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                loading={busyKey === "save-page"}
+                disabled={!hasUnsavedChanges && busyKey !== "save-page"}
+                onClick={() => void persistPageDraft()}
+                className="h-9 rounded-full px-3"
+              >
+                <Save className="h-4 w-4" aria-hidden="true" />
+                Salvar
+              </Button>
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                loading={busyKey === "publish" || busyKey === "save-page"}
+                onClick={() => void publishPage()}
+                className="h-9 rounded-full px-3"
+              >
+                <UploadCloud className="h-4 w-4" aria-hidden="true" />
+                Publicar
+              </Button>
             </div>
           </div>
           <div
@@ -3011,29 +3034,6 @@ export default function CanonicalPageEditor({
                         }}
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          loading={busyKey === "save-page"}
-                          disabled={!hasUnsavedChanges && busyKey !== "save-page"}
-                          onClick={() => void persistPageDraft()}
-                          aria-label="Salvar pagina"
-                          className="h-8 w-8 rounded-full px-0"
-                        >
-                          <Save className="h-4 w-4" aria-hidden="true" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          loading={busyKey === "publish" || busyKey === "save-page"}
-                          onClick={() => void publishPage()}
-                          aria-label="Publicar pagina"
-                          className="h-8 w-8 rounded-full px-0"
-                        >
-                          <UploadCloud className="h-4 w-4" aria-hidden="true" />
-                        </Button>
                         <Button
                           type="button"
                           variant="ghost"

@@ -45,6 +45,23 @@ export async function setPagePublishStateAction(pageId: string, nextState: "DRAF
     publishState: nextState,
   });
 
+  if (nextState === "PUBLISHED") {
+    const resumeDefaults = readTemplateResumeDefaults(page.template.resumeDefaults);
+
+    await upsertOwnedResumeOutput(prisma, session.user.id, page.versionId, {
+      sections:
+        page.version.resumeConfig?.sections?.length && page.version.resumeConfig.sections.length > 0
+          ? page.version.resumeConfig.sections
+          : resumeDefaults.sections,
+      layout: page.version.resumeConfig?.layout ?? resumeDefaults.layout,
+      accentColor:
+        page.version.resumeConfig?.accentColor ?? resumeDefaults.accentColor ?? "",
+      showPhoto: page.version.resumeConfig?.showPhoto ?? resumeDefaults.showPhoto,
+      showLinks: page.version.resumeConfig?.showLinks ?? resumeDefaults.showLinks,
+      publishState: "PUBLISHED",
+    });
+  }
+
   revalidatePath(`/pages/${pageId}/editor`);
   revalidatePublicPaths(session.user.username, page.slug);
 }

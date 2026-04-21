@@ -10,7 +10,7 @@ import {
 } from "@/lib/templates/source-package";
 import type { TemplateRendererProps } from "@/components/templates/types";
 import type { RenderablePageBlock } from "@/components/templates/types";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import WorkWheelCarousel from "./WorkWheelCarousel";
 
 const FALLBACK_SOURCE_PACKAGE: PortfolioCommunitySourcePackage = {
   variant: "template1",
@@ -611,54 +611,19 @@ function WorkSection({
       ) : null}
 
       {isCarousel ? (
-        <div
-          className="mt-16"
-          aria-roledescription="carousel"
-          aria-label="Projetos"
-        >
-          <div
-            id={carouselId}
-            className="flex snap-x snap-mandatory gap-8 overflow-x-auto scroll-smooth pb-6 [scrollbar-width:thin] lg:gap-12"
-          >
-            {workItems.map((item, index) => {
-              const previousIndex = (index - 1 + workItems.length) % workItems.length;
-              const nextIndex = (index + 1) % workItems.length;
-              const slideId = `${carouselId}-slide-${index}`;
-              const previousId = `${carouselId}-slide-${previousIndex}`;
-              const nextId = `${carouselId}-slide-${nextIndex}`;
-
-              return (
-                <div
-                  key={item.key}
-                  id={slideId}
-                  className="min-w-full snap-start scroll-mt-28 md:min-w-[78%] lg:min-w-[56%]"
-                  aria-roledescription="slide"
-                  aria-label={`${index + 1} de ${workItems.length}`}
-                >
-                  <WorkProjectCard item={item} index={index} />
-                  <div className="mt-5 flex items-center justify-end gap-2">
-                    <a
-                      href={`#${previousId}`}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#03045E]/20 bg-white/70 text-[#03045E] transition hover:bg-[#F5EE84]"
-                      aria-label="Projeto anterior"
-                      title="Projeto anterior"
-                    >
-                      <ChevronLeft className="h-5 w-5" aria-hidden="true" />
-                    </a>
-                    <a
-                      href={`#${nextId}`}
-                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#03045E]/20 bg-white/70 text-[#03045E] transition hover:bg-[#F5EE84]"
-                      aria-label="Proximo projeto"
-                      title="Proximo projeto"
-                    >
-                      <ChevronRight className="h-5 w-5" aria-hidden="true" />
-                    </a>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        <WorkWheelCarousel id={carouselId}>
+          {workItems.map((item, index) => (
+            <div
+              key={item.key}
+              id={`${carouselId}-slide-${index}`}
+              className="min-w-full snap-start scroll-mt-28 md:min-w-[78%] lg:min-w-[56%]"
+              aria-roledescription="slide"
+              aria-label={`${index + 1} de ${workItems.length}`}
+            >
+              <WorkProjectCard item={item} index={index} />
+            </div>
+          ))}
+        </WorkWheelCarousel>
       ) : (
         <div className="mt-16 max-w-[44rem]">
           {workItems.map((item, index) => (
