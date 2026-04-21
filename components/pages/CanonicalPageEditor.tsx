@@ -11,9 +11,12 @@ import type { ResumeConfig } from "@/generated/prisma-client";
 import {
   ArrowDown,
   ArrowUp,
+  Crop,
   Eye,
   EyeOff,
   ImagePlus,
+  Maximize2,
+  Minimize2,
   Plus,
   Save,
   Trash2,
@@ -127,6 +130,12 @@ interface InlineListImageTarget {
   path: string;
 }
 
+interface InlineProjectCoverTarget {
+  projectId: string;
+  path: string;
+  label: string;
+}
+
 interface EditableImageValue {
   src: string;
   alt: string;
@@ -221,6 +230,18 @@ function parseRepeaterImagePath(path: string | undefined) {
   return {
     fieldKey: match[1],
     index: Number(match[2]),
+    path,
+  };
+}
+
+function parseProjectCoverPath(path: string | undefined) {
+  if (!path) return null;
+
+  const match = /^projectCovers\.([a-zA-Z0-9_-]+)\.image$/.exec(path);
+  if (!match) return null;
+
+  return {
+    projectId: match[1],
     path,
   };
 }
@@ -348,6 +369,7 @@ export default function CanonicalPageEditor({
   publishPageAction,
 }: CanonicalPageEditorProps) {
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
+  const [previewProfile, setPreviewProfile] = useState<TemplateProfile>(initialProfile);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
     initialBlocks[0]?.id ?? null
   );
@@ -373,6 +395,8 @@ export default function CanonicalPageEditor({
   const [inlineImageFrame, setInlineImageFrame] = useState<InlineImageFrame | null>(null);
   const [activeInlineListImage, setActiveInlineListImage] = useState<InlineListImageTarget | null>(null);
   const [inlineListImageFrame, setInlineListImageFrame] = useState<InlineImageFrame | null>(null);
+  const [activeInlineProjectCover, setActiveInlineProjectCover] = useState<InlineProjectCoverTarget | null>(null);
+  const [inlineProjectCoverFrame, setInlineProjectCoverFrame] = useState<InlineImageFrame | null>(null);
   const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
   const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
@@ -553,6 +577,22 @@ export default function CanonicalPageEditor({
     const list = asArray(draftConfig[activeInlineListImage.fieldKey]).map((item) => asRecord(item));
     return readEditableImageValue(list[activeInlineListImage.index]?.image);
   }, [activeInlineListImage, draftConfig]);
+  const activeInlineProjectCoverValue = useMemo(() => {
+    if (!activeInlineProjectCover) return null;
+    const project = previewProfile.projects.find((item) => item.id === activeInlineProjectCover.projectId);
+    if (!project) return null;
+
+    return {
+      src: project.imageUrl ? normalizeStoragePublicUrl(project.imageUrl) : "",
+      alt: project.title,
+      fitMode:
+        project.coverFitMode === "fit" || project.coverFitMode === "fill" || project.coverFitMode === "crop"
+          ? project.coverFitMode
+          : "crop",
+      positionX: typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
+      positionY: typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
+    } satisfies EditableImageValue;
+  }, [activeInlineProjectCover, previewProfile.projects]);
   const selectedBooleanFields = useMemo(
     () =>
       selectedEditableFields.filter((field) => field.kind === "boolean") as Array<
@@ -609,6 +649,7 @@ export default function CanonicalPageEditor({
           activeInlineFieldKey ||
           activeInlineImageFieldKey ||
           activeInlineListImage ||
+          activeInlineProjectCover ||
           activeInlineBooleanFieldKey
         ) {
           event.preventDefault();
@@ -630,6 +671,7 @@ export default function CanonicalPageEditor({
     activeInlineFieldKey,
     activeInlineImageFieldKey,
     activeInlineListImage,
+    activeInlineProjectCover,
     selectedBlockId,
   ]);
 
@@ -652,6 +694,8 @@ export default function CanonicalPageEditor({
     setInlineImageFrame(null);
     setActiveInlineListImage(null);
     setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
     setEditableSlotFrames([]);
@@ -723,10 +767,21 @@ export default function CanonicalPageEditor({
       nodes.forEach((node) => observer?.observe(node));
     }
 
+    let mutationObserver: MutationObserver | null = null;
+    if (typeof MutationObserver !== "undefined") {
+      mutationObserver = new MutationObserver(() => updateEditableSlotFrames());
+      mutationObserver.observe(frame, {
+        attributes: true,
+        childList: true,
+        subtree: true,
+      });
+    }
+
     return () => {
       viewport.removeEventListener("scroll", updateEditableSlotFrames);
       window.removeEventListener("resize", updateEditableSlotFrames);
       observer?.disconnect();
+      mutationObserver?.disconnect();
     };
   }, [previewMode, previewScale, selectedBlockId, selectedEditableFields]);
 
@@ -982,6 +1037,78 @@ export default function CanonicalPageEditor({
   }, [activeInlineListImage, previewMode, previewScale, selectedBlockId]);
 
   useEffect(() => {
+    if (!activeInlineProjectCover || previewMode !== "portfolio") {
+      setInlineProjectCoverFrame(null);
+      return;
+    }
+
+    const currentProjectCover = activeInlineProjectCover;
+
+    if (!selectedBlockId) {
+      setInlineProjectCoverFrame(null);
+      return;
+    }
+
+    const frame = previewFrameRef.current;
+    const viewport = previewViewportRef.current;
+
+    if (!frame || !viewport) {
+      setInlineProjectCoverFrame(null);
+      return;
+    }
+
+    const escapedBlockId = escapeCssAttribute(selectedBlockId);
+    const escapedFieldKey = escapeCssAttribute(currentProjectCover.path);
+
+    function updateInlineProjectCoverFrame() {
+      const currentFrame = previewFrameRef.current;
+      if (!currentFrame) {
+        setInlineProjectCoverFrame(null);
+        return;
+      }
+
+      const selectedElement = currentFrame.querySelector<HTMLElement>(
+        `[data-ft-block-id="${escapedBlockId}"] [data-ft-config-path="${escapedFieldKey}"]`
+      );
+
+      if (!selectedElement) {
+        setInlineProjectCoverFrame(null);
+        return;
+      }
+
+      const frameRect = currentFrame.getBoundingClientRect();
+      const selectedRect = selectedElement.getBoundingClientRect();
+
+      const nextFrame = {
+        key: currentProjectCover.path,
+        label: currentProjectCover.label,
+        left: selectedRect.left - frameRect.left,
+        top: selectedRect.top - frameRect.top,
+        width: selectedRect.width,
+        height: selectedRect.height,
+      };
+
+      setInlineProjectCoverFrame((current) => (sameCanvasFrame(current, nextFrame) ? current : nextFrame));
+    }
+
+    updateInlineProjectCoverFrame();
+    viewport.addEventListener("scroll", updateInlineProjectCoverFrame, { passive: true });
+    window.addEventListener("resize", updateInlineProjectCoverFrame);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      observer = new ResizeObserver(() => updateInlineProjectCoverFrame());
+      observer.observe(frame);
+    }
+
+    return () => {
+      viewport.removeEventListener("scroll", updateInlineProjectCoverFrame);
+      window.removeEventListener("resize", updateInlineProjectCoverFrame);
+      observer?.disconnect();
+    };
+  }, [activeInlineProjectCover, previewMode, previewScale, selectedBlockId]);
+
+  useEffect(() => {
     if (!activeInlineBooleanFieldKey || previewMode !== "portfolio") {
       setInlineBooleanFrame(null);
       return;
@@ -1230,6 +1357,8 @@ export default function CanonicalPageEditor({
     setInlineFieldFrame(null);
     setActiveInlineListImage(null);
     setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
   }
@@ -1250,6 +1379,27 @@ export default function CanonicalPageEditor({
       index,
       label: `Imagem ${index + 1}`,
       path,
+    });
+    setActiveInlineFieldKey(null);
+    setActiveInlineFieldValue("");
+    setInlineFieldFrame(null);
+    setActiveInlineImageFieldKey(null);
+    setInlineImageFrame(null);
+    setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
+    setActiveInlineBooleanFieldKey(null);
+    setInlineBooleanFrame(null);
+  }
+
+  function openInlineProjectCoverEditor(projectId: string, path: string) {
+    const project = previewProfile.projects.find((item) => item.id === projectId);
+    if (!project) return;
+
+    setActiveInlineProjectCover({
+      projectId,
+      path,
+      label: project.title || "Capa do projeto",
     });
     setActiveInlineFieldKey(null);
     setActiveInlineFieldValue("");
@@ -1369,6 +1519,54 @@ export default function CanonicalPageEditor({
     await saveSelectedBlock(nextConfig, draftAssets);
   }
 
+  async function patchProjectCover(projectId: string, patch: Partial<Omit<EditableImageValue, "src">> & { src?: string | null; assetId?: string | null }) {
+    const response = await fetch(`/api/profile/projects/${projectId}/cover`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        imageUrl: patch.src,
+        coverAssetId: patch.assetId,
+        coverFitMode: patch.fitMode,
+        coverPositionX: patch.positionX,
+        coverPositionY: patch.positionY,
+      }),
+    });
+    const payload = await response.json().catch(() => null);
+
+    if (!response.ok) {
+      throw new Error(formatApiError(payload, response.status, "Nao foi possivel salvar a capa"));
+    }
+
+    const project = asRecord(asRecord(payload).project);
+    setPreviewProfile((current) => ({
+      ...current,
+      projects: current.projects.map((item) =>
+        item.id === projectId
+          ? {
+              ...item,
+              imageUrl: typeof project.imageUrl === "string" ? project.imageUrl : null,
+              coverAssetId: typeof project.coverAssetId === "string" ? project.coverAssetId : null,
+              coverFitMode: typeof project.coverFitMode === "string" ? project.coverFitMode : "crop",
+              coverPositionX: typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
+              coverPositionY: typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
+            }
+          : item
+      ),
+    }));
+  }
+
+  async function commitProjectCoverField(projectId: string, updater: (image: EditableImageValue) => EditableImageValue) {
+    const currentImage = activeInlineProjectCoverValue ?? {
+      src: "",
+      alt: "",
+      fitMode: "crop",
+      positionX: 50,
+      positionY: 50,
+    } satisfies EditableImageValue;
+    const nextImage = updater(currentImage);
+    await patchProjectCover(projectId, nextImage);
+  }
+
   function openInlineFieldEditor(
     block: RenderablePageBlock,
     blockDef: TemplateBlockDefLike | null,
@@ -1458,6 +1656,8 @@ export default function CanonicalPageEditor({
     setInlineImageFrame(null);
     setActiveInlineListImage(null);
     setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
   }
 
   async function commitBooleanFieldChange(fieldKey: string, nextValue: boolean) {
@@ -1588,6 +1788,12 @@ export default function CanonicalPageEditor({
 
     const repeaterImagePath =
       nextFieldKind === "image" ? parseRepeaterImagePath(nextFieldKey) : null;
+    const projectCoverPath = parseProjectCoverPath(nextFieldKey);
+
+    if (projectCoverPath) {
+      openInlineProjectCoverEditor(projectCoverPath.projectId, projectCoverPath.path);
+      return;
+    }
 
     if (nextBlock && repeaterImagePath) {
       openInlineListImageEditor(
@@ -1619,6 +1825,10 @@ export default function CanonicalPageEditor({
     setInlineFieldFrame(null);
     setActiveInlineImageFieldKey(null);
     setInlineImageFrame(null);
+    setActiveInlineListImage(null);
+    setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
   }
@@ -1632,6 +1842,20 @@ export default function CanonicalPageEditor({
 
     const repeaterImagePath =
       slotFrame.kind === "image" ? parseRepeaterImagePath(slotFrame.key) : null;
+    const projectCoverPath = parseProjectCoverPath(slotFrame.key);
+
+    if (projectCoverPath) {
+      openInlineProjectCoverEditor(projectCoverPath.projectId, projectCoverPath.path);
+      setInlineProjectCoverFrame({
+        key: slotFrame.key,
+        label: slotFrame.label,
+        left: slotFrame.left,
+        top: slotFrame.top,
+        width: slotFrame.width,
+        height: slotFrame.height,
+      });
+      return;
+    }
 
     if (repeaterImagePath) {
       openInlineListImageEditor(
@@ -1921,6 +2145,28 @@ export default function CanonicalPageEditor({
     }
   }
 
+  async function uploadProjectCover(projectId: string, file: File) {
+    setBusyKey(`project-cover:${projectId}`);
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    try {
+      const uploadedAsset = await uploadImage(file);
+      await patchProjectCover(projectId, {
+        src: uploadedAsset.url,
+        assetId: uploadedAsset.id,
+        fitMode: "crop",
+        positionX: 50,
+        positionY: 50,
+      });
+      setSuccessMessage("Capa do projeto atualizada.");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
+    } finally {
+      setBusyKey(null);
+    }
+  }
+
   async function removeTopLevelImage(fieldKey: string) {
     if (!selectedBlock) return;
 
@@ -1964,6 +2210,90 @@ export default function CanonicalPageEditor({
     setDraftConfig(nextConfig);
     setDraftAssets(nextAssets);
     await saveSelectedBlock(nextConfig, nextAssets);
+  }
+
+  async function removeProjectCover(projectId: string) {
+    await patchProjectCover(projectId, {
+      src: null,
+      assetId: null,
+      fitMode: "crop",
+      positionX: 50,
+      positionY: 50,
+    });
+    setSuccessMessage("Capa do projeto removida.");
+  }
+
+  async function hideProjectInWorkBlock(projectId: string) {
+    if (!selectedBlock) return;
+
+    const hiddenProjectIds = asArray(draftConfig.hiddenProjectIds).filter(
+      (item): item is string => typeof item === "string" && item.length > 0
+    );
+    if (hiddenProjectIds.includes(projectId)) return;
+
+    const nextConfig = {
+      ...draftConfig,
+      hiddenProjectIds: [...hiddenProjectIds, projectId],
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
+    clearInlineEditing();
+  }
+
+  async function restoreProjectInWorkBlock(projectId: string) {
+    if (!selectedBlock) return;
+
+    const nextConfig = {
+      ...draftConfig,
+      hiddenProjectIds: asArray(draftConfig.hiddenProjectIds).filter((item) => item !== projectId),
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
+  }
+
+  async function hideFallbackWorkItem(fieldKey: string, index: number) {
+    if (!selectedBlock || fieldKey !== "fallbackProjects") return;
+
+    const items = asArray(draftConfig.fallbackProjects).map((item) => asRecord(item));
+    const nextItems = items.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            hidden: true,
+          }
+        : item
+    );
+    const nextConfig = {
+      ...draftConfig,
+      fallbackProjects: nextItems,
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
+    clearInlineEditing();
+  }
+
+  async function restoreFallbackWorkItem(index: number) {
+    if (!selectedBlock) return;
+
+    const items = asArray(draftConfig.fallbackProjects).map((item) => asRecord(item));
+    const nextItems = items.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            hidden: false,
+          }
+        : item
+    );
+    const nextConfig = {
+      ...draftConfig,
+      fallbackProjects: nextItems,
+    };
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
   }
 
   function handleInlineImagePointerDown(event: ReactPointerEvent<HTMLDivElement>) {
@@ -2673,7 +3003,7 @@ export default function CanonicalPageEditor({
                       <TemplateRenderer
                         templateSlug={templateSlug}
                         blocks={previewBlocks}
-                        profile={initialProfile}
+                        profile={previewProfile}
                         version={initialVersion}
                         templateSourcePackage={initialTemplateSourcePackage}
                         renderHiddenBlocks
@@ -2684,7 +3014,10 @@ export default function CanonicalPageEditor({
                     <>
                       {editableSlotFrames.map((slotFrame) => {
                         const isActiveText = slotFrame.key === activeInlineFieldKey;
-                        const isActiveImage = slotFrame.key === activeInlineImageFieldKey;
+                        const isActiveImage =
+                          slotFrame.key === activeInlineImageFieldKey ||
+                          slotFrame.key === activeInlineProjectCover?.path ||
+                          slotFrame.key === activeInlineListImage?.path;
                         const isActiveBoolean = slotFrame.key === activeInlineBooleanFieldKey;
                         const isImage = slotFrame.kind === "image";
                         const isBoolean = slotFrame.kind === "boolean";
@@ -2784,6 +3117,44 @@ export default function CanonicalPageEditor({
                             <Eye className="h-4 w-4" aria-hidden="true" />
                           )}
                         </Button>
+                        {selectedBlock.blockType === "portfolio.work"
+                          ? asArray(draftConfig.hiddenProjectIds)
+                              .filter((item): item is string => typeof item === "string")
+                              .map((projectId) => {
+                                const project = previewProfile.projects.find((item) => item.id === projectId);
+                                return (
+                                  <Button
+                                    key={projectId}
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => void restoreProjectInWorkBlock(projectId)}
+                                    aria-label={`Restaurar ${project?.title ?? "projeto"}`}
+                                    className="h-8 w-8 rounded-full px-0 text-neutral-700"
+                                  >
+                                    <Eye className="h-4 w-4" aria-hidden="true" />
+                                  </Button>
+                                );
+                              })
+                          : null}
+                        {selectedBlock.blockType === "portfolio.work"
+                          ? asArray(draftConfig.fallbackProjects)
+                              .map((item, index) => ({ item: asRecord(item), index }))
+                              .filter(({ item }) => item.hidden === true)
+                              .map(({ item, index }) => (
+                                <Button
+                                  key={`fallback:${index}`}
+                                  type="button"
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => void restoreFallbackWorkItem(index)}
+                                  aria-label={`Restaurar ${typeof item.title === "string" && item.title.trim() ? item.title : "item"}`}
+                                  className="h-8 w-8 rounded-full px-0 text-neutral-700"
+                                >
+                                  <Eye className="h-4 w-4" aria-hidden="true" />
+                                </Button>
+                              ))
+                          : null}
                       </div>
                     </>
                   ) : null}
@@ -3034,7 +3405,7 @@ export default function CanonicalPageEditor({
                         }}
                         onClick={(event) => event.stopPropagation()}
                       >
-                        <span className="mr-2 text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-neutral-500">
+                        <span className="sr-only">
                           {inlineListImageFrame.label}
                         </span>
                         {(["fit", "fill", "crop"] as const).map((mode) => {
@@ -3045,7 +3416,14 @@ export default function CanonicalPageEditor({
                               type="button"
                               variant={isActive ? "primary" : "ghost"}
                               size="sm"
-                              className="h-8 rounded-full px-3"
+                              className="h-8 w-8 rounded-full px-0"
+                              aria-label={
+                                mode === "fit"
+                                  ? "Ajustar imagem inteira"
+                                  : mode === "fill"
+                                    ? "Preencher quadro"
+                                    : "Recortar imagem"
+                              }
                               onClick={() =>
                                 void commitListImageField(activeInlineListImage.fieldKey, activeInlineListImage.index, (image) => ({
                                   ...image,
@@ -3053,12 +3431,19 @@ export default function CanonicalPageEditor({
                                 }))
                               }
                             >
-                              {mode === "fit" ? "Fit" : mode === "fill" ? "Fill" : "Crop"}
+                              {mode === "fit" ? (
+                                <Minimize2 className="h-4 w-4" aria-hidden="true" />
+                              ) : mode === "fill" ? (
+                                <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                              ) : (
+                                <Crop className="h-4 w-4" aria-hidden="true" />
+                              )}
                             </Button>
                           );
                         })}
-                        <label className="inline-flex h-8 cursor-pointer items-center rounded-full border border-neutral-200 px-3 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
-                          Trocar
+                        <label className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-700 transition hover:bg-neutral-50">
+                          <span className="sr-only">Trocar imagem</span>
+                          <ImagePlus className="h-4 w-4" aria-hidden="true" />
                           <input
                             type="file"
                             accept="image/png,image/jpeg,image/webp,image/gif"
@@ -3076,16 +3461,159 @@ export default function CanonicalPageEditor({
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="h-8 rounded-full px-3 text-coral-700"
+                          className="h-8 w-8 rounded-full px-0 text-coral-700"
+                          aria-label="Remover imagem"
                           onClick={() => void removeListImage(activeInlineListImage.fieldKey, activeInlineListImage.index)}
                         >
-                          Remover
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
                         </Button>
-                        {activeInlineListImageValue?.fitMode !== "fit" ? (
-                          <span className="ml-1 text-[0.72rem] text-neutral-500">
-                            Arraste para reposicionar
-                          </span>
+                        {activeInlineListImage.fieldKey === "fallbackProjects" ? (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 rounded-full px-0 text-neutral-700"
+                            aria-label="Ocultar item"
+                            onClick={() =>
+                              void hideFallbackWorkItem(activeInlineListImage.fieldKey, activeInlineListImage.index)
+                            }
+                          >
+                            <EyeOff className="h-4 w-4" aria-hidden="true" />
+                          </Button>
                         ) : null}
+                      </div>
+                    </>
+                  ) : null}
+                  {selectedBlock && activeInlineProjectCover && inlineProjectCoverFrame ? (
+                    <>
+                      <div
+                        className="absolute z-20 rounded-[1.1rem] border-2 border-sky-500/95 bg-sky-400/8"
+                        style={{
+                          left: `${inlineProjectCoverFrame.left}px`,
+                          top: `${inlineProjectCoverFrame.top}px`,
+                          width: `${inlineProjectCoverFrame.width}px`,
+                          height: `${inlineProjectCoverFrame.height}px`,
+                        }}
+                      />
+                      <div
+                        className="absolute z-30 flex max-w-[min(24rem,calc(100%-1rem))] flex-wrap items-center gap-1 rounded-2xl border border-neutral-200 bg-white/96 p-2 shadow-xl backdrop-blur"
+                        style={{
+                          left: `${Math.max(inlineProjectCoverFrame.left + 8, 8)}px`,
+                          top: `${Math.max(inlineProjectCoverFrame.top + 8, 8)}px`,
+                        }}
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        {(["fit", "fill", "crop"] as const).map((mode) => {
+                          const isActive = activeInlineProjectCoverValue?.fitMode === mode;
+                          return (
+                            <Button
+                              key={mode}
+                              type="button"
+                              variant={isActive ? "primary" : "ghost"}
+                              size="sm"
+                              className="h-8 w-8 rounded-full px-0"
+                              aria-label={
+                                mode === "fit"
+                                  ? "Ajustar imagem inteira"
+                                  : mode === "fill"
+                                    ? "Preencher quadro"
+                                    : "Recortar imagem"
+                              }
+                              onClick={() =>
+                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
+                                  ...image,
+                                  fitMode: mode,
+                                }))
+                              }
+                            >
+                              {mode === "fit" ? (
+                                <Minimize2 className="h-4 w-4" aria-hidden="true" />
+                              ) : mode === "fill" ? (
+                                <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                              ) : (
+                                <Crop className="h-4 w-4" aria-hidden="true" />
+                              )}
+                            </Button>
+                          );
+                        })}
+                        {activeInlineProjectCoverValue?.src ? (
+                          <div className="flex h-8 items-center gap-1 rounded-full border border-neutral-200 px-2">
+                            <label className="sr-only" htmlFor="project-cover-position-x">
+                              Posição horizontal da capa
+                            </label>
+                            <input
+                              id="project-cover-position-x"
+                              type="range"
+                              min={0}
+                              max={100}
+                              step={1}
+                              value={activeInlineProjectCoverValue.positionX}
+                              aria-label="Posição horizontal da capa"
+                              className="h-2 w-14 accent-neutral-950"
+                              onChange={(event) =>
+                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
+                                  ...image,
+                                  positionX: Number(event.currentTarget.value),
+                                }))
+                              }
+                            />
+                            <label className="sr-only" htmlFor="project-cover-position-y">
+                              Posição vertical da capa
+                            </label>
+                            <input
+                              id="project-cover-position-y"
+                              type="range"
+                              min={0}
+                              max={100}
+                              step={1}
+                              value={activeInlineProjectCoverValue.positionY}
+                              aria-label="Posição vertical da capa"
+                              className="h-2 w-14 accent-neutral-950"
+                              onChange={(event) =>
+                                void commitProjectCoverField(activeInlineProjectCover.projectId, (image) => ({
+                                  ...image,
+                                  positionY: Number(event.currentTarget.value),
+                                }))
+                              }
+                            />
+                          </div>
+                        ) : null}
+                        <label className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-700 transition hover:bg-neutral-50">
+                          <span className="sr-only">Trocar capa do projeto</span>
+                          <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                          <input
+                            type="file"
+                            accept="image/png,image/jpeg,image/webp,image/gif"
+                            className="hidden"
+                            onChange={(event) => {
+                              const file = event.target.files?.[0];
+                              if (file) {
+                                void uploadProjectCover(activeInlineProjectCover.projectId, file);
+                              }
+                              event.currentTarget.value = "";
+                            }}
+                          />
+                        </label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 rounded-full px-0 text-coral-700"
+                          aria-label="Remover capa do projeto"
+                          onClick={() => void removeProjectCover(activeInlineProjectCover.projectId)}
+                        >
+                          <Trash2 className="h-4 w-4" aria-hidden="true" />
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 rounded-full px-0 text-neutral-700"
+                          aria-label="Ocultar projeto nesta pagina"
+                          onClick={() => void hideProjectInWorkBlock(activeInlineProjectCover.projectId)}
+                        >
+                          <EyeOff className="h-4 w-4" aria-hidden="true" />
+                        </Button>
                       </div>
                     </>
                   ) : null}
@@ -3177,7 +3705,7 @@ export default function CanonicalPageEditor({
                   <ResumeView
                     templateSlug={templateSlug}
                     blocks={previewBlocks}
-                    profile={initialProfile}
+                    profile={previewProfile}
                     version={initialVersion}
                     config={initialResumeConfig}
                   />

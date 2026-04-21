@@ -677,6 +677,9 @@ function WorkProjectCard({
   item: PortfolioCommunityWorkItem;
   index: number;
 }) {
+  const imageConfigPath =
+    item.imageConfigPath ?? (item.projectId ? `projectCovers.${item.projectId}.image` : undefined);
+
   const content = (
     <article
       className="min-w-0 transition duration-200 group-hover:-translate-y-1 group-hover:opacity-90"
@@ -686,10 +689,11 @@ function WorkProjectCard({
     >
       <div
         className="aspect-[7/5] w-full overflow-hidden bg-[#F5EE84]"
-        data-ft-slot={item.imageConfigPath ? `work.${item.imageConfigPath}` : undefined}
-        data-ft-config-path={item.imageConfigPath}
-        data-ft-kind={item.imageConfigPath ? "image" : undefined}
-        data-ft-editable={item.imageConfigPath ? "true" : undefined}
+        data-ft-slot={imageConfigPath ? `work.${imageConfigPath}` : undefined}
+        data-ft-config-path={imageConfigPath}
+        data-ft-kind={imageConfigPath ? "image" : undefined}
+        data-ft-project-id={item.projectId}
+        data-ft-editable={imageConfigPath ? "true" : undefined}
       >
         {item.image ? (
           <img

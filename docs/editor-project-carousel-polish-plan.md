@@ -202,8 +202,8 @@ Checklist:
 - [x] atualizar sync de profile base
 - [x] validar testes de dominio existentes
 - [x] validar `typecheck`, `lint` e testes focados
-- [ ] commit do slice
-- [ ] sync/push do slice
+- [x] commit do slice
+- [x] sync/push do slice
 
 Criterio de aceite:
 
@@ -268,20 +268,30 @@ Criterio de aceite:
 
 ### Slice 5: Acoes De Item No Preview
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] selecionar item/slide do carrossel no preview
-- [ ] ocultar/restaurar item sem remover do perfil
-- [ ] trocar/remover imagem do projeto selecionado quando item vier do perfil base
-- [ ] ajustar fit/fill/crop e posicao no preview persistindo no projeto base
-- [ ] manter fallback local editavel quando item for fallback do template
-- [ ] validar comportamento com projetos reais e fallbacks
-- [ ] commit do slice
-- [ ] sync/push do slice
+- [x] selecionar item/slide do carrossel no preview
+- [x] ocultar/restaurar item sem remover do perfil
+- [x] trocar/remover imagem do projeto selecionado quando item vier do perfil base
+- [x] ajustar fit/fill/crop e posicao no preview persistindo no projeto base
+- [x] manter fallback local editavel quando item for fallback do template
+- [x] validar comportamento com projetos reais
+- [x] validar comportamento com fallbacks derivados
+- [x] commit do slice
+- [x] sync/push do slice
 
 Criterio de aceite:
 
 - usuario manipula item do carrossel diretamente no preview, com icones e sem depender da sidebar
+
+Prova local:
+
+- `typecheck`, `lint` e testes focados de templates/resume passaram em 2026-04-21
+- QA Playwright em pagina temporaria local confirmou toolbar de capa do projeto no canvas com trocar/remover imagem, ocultar item, fit/fill/crop e posicao X/Y
+- QA Playwright em pagina temporaria sem projetos confirmou `fallbackProjects.0.image`, ocultar item fallback e restaurar item fallback no preview
+- dados temporarios de QA foram removidos do banco local apos a validacao
 
 ### Slice 6: Reorganizacao Da Interface Do Editor
 

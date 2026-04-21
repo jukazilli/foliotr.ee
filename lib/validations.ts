@@ -25,7 +25,7 @@ function isInternalAssetProxyUrl(value: string) {
 }
 
 const nullableUrlSchema = z.string().url("URL invalida").optional().or(z.literal(""));
-const nullableAssetUrlSchema = z
+export const nullableAssetUrlSchema = z
   .string()
   .trim()
   .refine((value) => value.length === 0 || isInternalAssetProxyUrl(value) || z.string().url().safeParse(value).success, {
