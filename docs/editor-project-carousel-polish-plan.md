@@ -212,14 +212,16 @@ Criterio de aceite:
 
 ### Slice 2: Upload E Ajuste De Capa No Perfil Base
 
+Status: entregue em 2026-04-21.
+
 Checklist:
 
-- [ ] substituir input textual de imagem por controle visual de capa
-- [ ] integrar upload com `/api/assets/upload`
-- [ ] adicionar trocar/remover com icones
-- [ ] adicionar fit/fill/crop e posicao da imagem
-- [ ] garantir responsividade e foco por teclado
-- [ ] validar fluxo no browser
+- [x] substituir input textual de imagem por controle visual de capa
+- [x] integrar upload com `/api/assets/upload`
+- [x] adicionar trocar/remover com icones
+- [x] adicionar fit/fill/crop e posicao da imagem
+- [x] garantir responsividade e foco por teclado
+- [x] validar fluxo no browser
 - [ ] commit do slice
 - [ ] sync/push do slice
 

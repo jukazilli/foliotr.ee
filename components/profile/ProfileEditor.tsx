@@ -7,11 +7,15 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Check,
+  Crop,
   ExternalLink,
   FolderOpenDot,
   GraduationCap,
+  ImagePlus,
   Link2,
+  Maximize2,
   Medal,
+  Minimize2,
   Plus,
   Save,
   Trash2,
@@ -94,7 +98,7 @@ type EditableProject = {
   tagsText: string;
   featured: boolean;
   coverAssetId?: string | null;
-  coverFitMode: "fit" | "fill" | "crop";
+  coverFitMode: ProjectCoverFitMode;
   coverPositionX: number;
   coverPositionY: number;
   startDate: string;
@@ -151,6 +155,7 @@ type EditableSkill = {
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 type UploadStatus = "idle" | "uploading";
+type ProjectCoverFitMode = "fit" | "fill" | "crop";
 
 type StoredProfilePhoto = {
   dataUrl: string;
@@ -161,6 +166,8 @@ type StoredProfilePhoto = {
 
 const PROFILE_PHOTO_MAX_SIZE = 5 * 1024 * 1024;
 const PROFILE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const PROJECT_COVER_MAX_SIZE = PROFILE_PHOTO_MAX_SIZE;
+const PROJECT_COVER_TYPES = PROFILE_PHOTO_TYPES;
 
 function key() {
   return `tmp_${Math.random().toString(36).slice(2, 10)}`;
@@ -172,6 +179,18 @@ function persistedId(id?: string) {
 
 function text(value: unknown) {
   return typeof value === "string" ? value : "";
+}
+
+function normalizeProjectCoverFitMode(value: unknown): ProjectCoverFitMode {
+  return value === "fit" || value === "fill" || value === "crop" ? value : "crop";
+}
+
+function coverObjectFit(mode: ProjectCoverFitMode) {
+  return mode === "fit" ? "contain" : "cover";
+}
+
+function clampPercent(value: number) {
+  return Math.max(0, Math.min(100, Math.round(value)));
 }
 
 function toDateInput(value: unknown) {
@@ -401,12 +420,9 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
         : text(item.tagsText),
       featured: Boolean(item.featured),
       coverAssetId: item.coverAssetId ?? null,
-      coverFitMode:
-        item.coverFitMode === "fit" || item.coverFitMode === "fill" || item.coverFitMode === "crop"
-          ? item.coverFitMode
-          : "crop",
-      coverPositionX: typeof item.coverPositionX === "number" ? item.coverPositionX : 50,
-      coverPositionY: typeof item.coverPositionY === "number" ? item.coverPositionY : 50,
+      coverFitMode: normalizeProjectCoverFitMode(item.coverFitMode),
+      coverPositionX: typeof item.coverPositionX === "number" ? clampPercent(item.coverPositionX) : 50,
+      coverPositionY: typeof item.coverPositionY === "number" ? clampPercent(item.coverPositionY) : 50,
       startDate: toDateInput(item.startDate),
       endDate: toDateInput(item.endDate),
     })),
@@ -677,6 +693,8 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const [error, setError] = useState("");
   const [profilePhoto, setProfilePhoto] = useState<StoredProfilePhoto | null>(null);
   const [photoError, setPhotoError] = useState("");
+  const [projectUploadKey, setProjectUploadKey] = useState<string | null>(null);
+  const [projectImageErrors, setProjectImageErrors] = useState<Record<string, string>>({});
   const [dirtyCollections, setDirtyCollections] = useState<Set<CollectionField>>(() => new Set());
 
   const username = profile.user.username;
@@ -897,6 +915,91 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     };
 
     reader.readAsDataURL(file);
+  }
+
+  function setProjectImageError(projectKey: string, message: string) {
+    setProjectImageErrors((current) => ({
+      ...current,
+      [projectKey]: message,
+    }));
+  }
+
+  function clearProjectImageError(projectKey: string) {
+    setProjectImageErrors((current) => {
+      const next = { ...current };
+      delete next[projectKey];
+      return next;
+    });
+  }
+
+  async function uploadProjectCover(projectKey: string, file: File) {
+    setProjectUploadKey(projectKey);
+
+    const formData = new FormData();
+    formData.set("file", file);
+    formData.set("purpose", "project");
+
+    const response = await fetch("/api/assets/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(formatApiError(body));
+    }
+
+    const body = (await response.json()) as {
+      asset: { id: string; url: string };
+    };
+
+    updateList<EditableProject>("projects", projectKey, {
+      imageUrl: body.asset.url,
+      coverAssetId: body.asset.id,
+      coverFitMode: "crop",
+      coverPositionX: 50,
+      coverPositionY: 50,
+    });
+    clearProjectImageError(projectKey);
+  }
+
+  function handleProjectCoverChange(projectKey: string, event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!file) return;
+
+    if (!PROJECT_COVER_TYPES.includes(file.type)) {
+      setProjectImageError(projectKey, "Use JPG, PNG ou WebP.");
+      return;
+    }
+
+    if (file.size > PROJECT_COVER_MAX_SIZE) {
+      setProjectImageError(projectKey, "A imagem deve ter ate 5 MB.");
+      return;
+    }
+
+    void uploadProjectCover(projectKey, file)
+      .catch((error: unknown) => {
+        setProjectImageError(
+          projectKey,
+          error instanceof Error ? error.message : "Nao foi possivel enviar a imagem."
+        );
+      })
+      .finally(() => {
+        setProjectUploadKey(null);
+      });
+  }
+
+  function removeProjectCover(projectKey: string) {
+    updateList<EditableProject>("projects", projectKey, {
+      imageUrl: "",
+      coverAssetId: null,
+      coverFitMode: "crop",
+      coverPositionX: 50,
+      coverPositionY: 50,
+    });
+    clearProjectImageError(projectKey);
   }
 
   return (
@@ -1199,9 +1302,120 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
               >
                 {profile.projects.map((item) => (
                   <Card key={item._key} className="rounded-[20px]">
-                    <CardContent className="grid gap-4 p-4 md:grid-cols-[96px_1fr_auto]">
-                      <div className="h-20 overflow-hidden rounded-xl bg-cyan-50">
-                        {item.imageUrl ? <img src={item.imageUrl} alt="" className="h-full w-full object-cover" /> : null}
+                    <CardContent className="grid gap-4 p-4 lg:grid-cols-[12rem_1fr_auto]">
+                      <div className="space-y-2">
+                        <div className="relative aspect-[7/5] overflow-hidden rounded-xl border border-neutral-200 bg-cyan-50">
+                          {item.imageUrl ? (
+                            <img
+                              src={item.imageUrl}
+                              alt=""
+                              className="h-full w-full bg-white"
+                              style={{
+                                objectFit: coverObjectFit(item.coverFitMode),
+                                objectPosition: `${item.coverPositionX}% ${item.coverPositionY}%`,
+                              }}
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-neutral-300">
+                              <ImagePlus className="h-7 w-7" aria-hidden="true" />
+                            </div>
+                          )}
+                          {projectUploadKey === item._key ? (
+                            <div className="absolute inset-0 grid place-items-center bg-white/72 backdrop-blur-sm">
+                              <span className="sr-only">Enviando capa do projeto</span>
+                              <span className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-300 border-t-lime-600" />
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <label
+                            className={`inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-neutral-200 bg-white text-neutral-600 transition hover:bg-lime-50 hover:text-lime-800 ${
+                              projectUploadKey ? "pointer-events-none opacity-55" : ""
+                            }`}
+                            title={item.imageUrl ? "Trocar capa" : "Adicionar capa"}
+                            aria-label={item.imageUrl ? "Trocar capa do projeto" : "Adicionar capa ao projeto"}
+                          >
+                            <ImagePlus className="h-4 w-4" aria-hidden="true" />
+                            <input
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="hidden"
+                              onChange={(event) => handleProjectCoverChange(item._key, event)}
+                            />
+                          </label>
+                          {item.imageUrl ? (
+                            <IconButton label="Remover capa do projeto" onClick={() => removeProjectCover(item._key)}>
+                              <Trash2 className="h-4 w-4" />
+                            </IconButton>
+                          ) : null}
+                          {(["fit", "fill", "crop"] as const).map((mode) => {
+                            const Icon =
+                              mode === "fit" ? Minimize2 : mode === "fill" ? Maximize2 : Crop;
+                            const label =
+                              mode === "fit"
+                                ? "Ajustar imagem inteira"
+                                : mode === "fill"
+                                  ? "Preencher quadro"
+                                  : "Recortar imagem";
+
+                            return (
+                              <button
+                                key={mode}
+                                type="button"
+                                aria-label={label}
+                                title={label}
+                                disabled={!item.imageUrl}
+                                onClick={() =>
+                                  updateList<EditableProject>("projects", item._key, {
+                                    coverFitMode: mode,
+                                  })
+                                }
+                                className={`inline-flex h-8 w-8 items-center justify-center rounded-lg border transition ${
+                                  item.coverFitMode === mode
+                                    ? "border-lime-300 bg-lime-50 text-lime-900"
+                                    : "border-neutral-200 bg-white text-neutral-500 hover:bg-neutral-50"
+                                } disabled:pointer-events-none disabled:opacity-40`}
+                              >
+                                <Icon className="h-4 w-4" aria-hidden="true" />
+                              </button>
+                            );
+                          })}
+                        </div>
+                        {item.imageUrl ? (
+                          <div className="grid gap-2">
+                            <input
+                              type="range"
+                              min={0}
+                              max={100}
+                              value={item.coverPositionX}
+                              aria-label="Posicao horizontal da capa"
+                              onChange={(event) =>
+                                updateList<EditableProject>("projects", item._key, {
+                                  coverPositionX: clampPercent(Number(event.target.value)),
+                                })
+                              }
+                              className="w-full accent-lime-500"
+                            />
+                            <input
+                              type="range"
+                              min={0}
+                              max={100}
+                              value={item.coverPositionY}
+                              aria-label="Posicao vertical da capa"
+                              onChange={(event) =>
+                                updateList<EditableProject>("projects", item._key, {
+                                  coverPositionY: clampPercent(Number(event.target.value)),
+                                })
+                              }
+                              className="w-full accent-lime-500"
+                            />
+                          </div>
+                        ) : null}
+                        {projectImageErrors[item._key] ? (
+                          <p className="text-xs font-medium text-coral-700">
+                            {projectImageErrors[item._key]}
+                          </p>
+                        ) : null}
                       </div>
                       <div className="grid gap-3">
                         <input className={inputClass()} placeholder="Titulo" value={item.title} onChange={(event) => updateList<EditableProject>("projects", item._key, { title: event.target.value })} />
@@ -1210,7 +1424,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                           <input className={inputClass()} placeholder="URL publica" value={item.url} onChange={(event) => updateList<EditableProject>("projects", item._key, { url: event.target.value })} />
                           <input className={inputClass()} placeholder="Repositorio" value={item.repoUrl} onChange={(event) => updateList<EditableProject>("projects", item._key, { repoUrl: event.target.value })} />
                         </div>
-                        <input className={inputClass()} placeholder="Imagem" value={item.imageUrl} onChange={(event) => updateList<EditableProject>("projects", item._key, { imageUrl: event.target.value })} />
                         <input className={inputClass()} placeholder="Tags separadas por virgula" value={item.tagsText} onChange={(event) => updateList<EditableProject>("projects", item._key, { tagsText: event.target.value })} />
                       </div>
                       <IconButton label="Remover projeto" onClick={() => removeItem<EditableProject>("projects", item._key)}>
