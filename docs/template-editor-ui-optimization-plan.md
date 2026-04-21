@@ -414,6 +414,8 @@ Finding:
 Fix applied:
 
 - `components/pages/CanonicalPageEditor.tsx` now uses one shared hidden file input again, with `imagePickerOpen` and cancel/focus release handling.
+- The editor now initializes the selected block draft from the persisted block before first render, so the server HTML and first client render use the same preview text.
+- `lib/templates/portfolio-community-semantics.ts` formats years and long project dates in UTC, avoiding `2025-01-01T00:00:00.000Z` becoming `2024` in America/Sao_Paulo during client hydration.
 - `components/profile/ProfileEditor.tsx` no longer stores selected profile previews as base64 data URLs. It uses `URL.createObjectURL` and revokes the object URL on cleanup.
 - Profile age calculation now waits until browser mount before reading `new Date()`, preventing date-dependent text mismatches during hydration.
 

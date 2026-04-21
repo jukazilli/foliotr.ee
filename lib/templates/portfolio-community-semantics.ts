@@ -275,7 +275,7 @@ function formatYear(value: Date | string | null | undefined) {
   if (!value) return "";
   const date = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(date.getTime())) return "";
-  return String(date.getFullYear());
+  return String(date.getUTCFullYear());
 }
 
 function formatPeriod(
@@ -296,6 +296,7 @@ function formatProjectDate(value: Date | string | null | undefined, fallback: st
     month: "long",
     day: "numeric",
     year: "numeric",
+    timeZone: "UTC",
   });
 }
 

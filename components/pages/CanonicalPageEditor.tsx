@@ -463,13 +463,18 @@ export default function CanonicalPageEditor({
   initialTemplateSourcePackage,
   publishPageAction,
 }: CanonicalPageEditorProps) {
+  const initialSelectedBlock = initialBlocks[0] ?? null;
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
   const [previewProfile, setPreviewProfile] = useState<TemplateProfile>(initialProfile);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
-    initialBlocks[0]?.id ?? null
+    initialSelectedBlock?.id ?? null
   );
-  const [draftConfig, setDraftConfig] = useState<JsonRecord>({});
-  const [draftAssets, setDraftAssets] = useState<JsonRecord>({});
+  const [draftConfig, setDraftConfig] = useState<JsonRecord>(() =>
+    asRecord(initialSelectedBlock?.config)
+  );
+  const [draftAssets, setDraftAssets] = useState<JsonRecord>(() =>
+    asRecord(initialSelectedBlock?.assets)
+  );
   const [errorMessage, setErrorMessage] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [busyKey, setBusyKey] = useState<string | null>(null);
