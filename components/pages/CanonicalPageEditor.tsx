@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type {
+  ChangeEvent as ReactChangeEvent,
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
@@ -134,6 +135,11 @@ interface InlineProjectCoverTarget {
   path: string;
   label: string;
 }
+
+type ImageFileTarget =
+  | { kind: "topLevel"; fieldKey: string }
+  | { kind: "list"; fieldKey: string; index: number }
+  | { kind: "projectCover"; projectId: string };
 
 interface EditableImageValue {
   src: string;
@@ -323,6 +329,73 @@ function readEditableImageValue(value: unknown): EditableImageValue {
   };
 }
 
+function readProjectCoverOverride(config: JsonRecord, projectId: string) {
+  const projectCovers = asRecord(config.projectCovers);
+  const override = asRecord(projectCovers[projectId]);
+  return readEditableImageValue(override.image);
+}
+
+function writeProjectCoverOverride(
+  config: JsonRecord,
+  projectId: string,
+  image: EditableImageValue | null
+) {
+  const projectCovers = { ...asRecord(config.projectCovers) };
+
+  if (image) {
+    projectCovers[projectId] = {
+      ...asRecord(projectCovers[projectId]),
+      image: {
+        src: image.src,
+        alt: image.alt,
+        fitMode: image.fitMode,
+        positionX: image.positionX,
+        positionY: image.positionY,
+      },
+    };
+  } else {
+    delete projectCovers[projectId];
+  }
+
+  const nextConfig = { ...config };
+  if (Object.keys(projectCovers).length > 0) {
+    nextConfig.projectCovers = projectCovers;
+  } else {
+    delete nextConfig.projectCovers;
+  }
+
+  return nextConfig;
+}
+
+function writeProjectCoverAssetMeta(
+  assets: JsonRecord,
+  projectId: string,
+  asset: UploadedAsset | null,
+  altText: string
+) {
+  const projectCovers = { ...asRecord(assets.projectCovers) };
+
+  if (asset) {
+    projectCovers[projectId] = {
+      assetId: asset.id,
+      url: asset.url,
+      src: asset.url,
+      alt: altText,
+    };
+  } else {
+    delete projectCovers[projectId];
+  }
+
+  const nextAssets = { ...assets };
+  if (Object.keys(projectCovers).length > 0) {
+    nextAssets.projectCovers = projectCovers;
+  } else {
+    delete nextAssets.projectCovers;
+  }
+
+  return nextAssets;
+}
+
 function textareaClassName() {
   return "min-h-[7.5rem] w-full rounded-xl border border-white/80 bg-white/76 px-3 py-2 text-sm font-medium text-neutral-900 shadow-sm backdrop-blur placeholder:text-neutral-400 transition-colors focus:border-transparent focus:outline-none focus:ring-2 focus:ring-lime-500";
 }
@@ -399,6 +472,8 @@ export default function CanonicalPageEditor({
   const [activeInlineBooleanFieldKey, setActiveInlineBooleanFieldKey] = useState<string | null>(null);
   const [inlineBooleanFrame, setInlineBooleanFrame] = useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
+  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
+  const imageFileTargetRef = useRef<ImageFileTarget | null>(null);
   const saveSelectedBlockRef = useRef<((
     nextConfig?: JsonRecord,
     nextAssets?: JsonRecord
@@ -578,6 +653,9 @@ export default function CanonicalPageEditor({
   }, [activeInlineListImage, draftConfig]);
   const activeInlineProjectCoverValue = useMemo(() => {
     if (!activeInlineProjectCover) return null;
+    const override = readProjectCoverOverride(draftConfig, activeInlineProjectCover.projectId);
+    if (override.src) return override;
+
     const project = previewProfile.projects.find((item) => item.id === activeInlineProjectCover.projectId);
     if (!project) return null;
 
@@ -591,7 +669,7 @@ export default function CanonicalPageEditor({
       positionX: typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
       positionY: typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
     } satisfies EditableImageValue;
-  }, [activeInlineProjectCover, previewProfile.projects]);
+  }, [activeInlineProjectCover, draftConfig, previewProfile.projects]);
   const selectedBooleanFields = useMemo(
     () =>
       selectedEditableFields.filter((field) => field.kind === "boolean") as Array<
@@ -1518,43 +1596,9 @@ export default function CanonicalPageEditor({
     await saveSelectedBlock(nextConfig, draftAssets);
   }
 
-  async function patchProjectCover(projectId: string, patch: Partial<Omit<EditableImageValue, "src">> & { src?: string | null; assetId?: string | null }) {
-    const response = await fetch(`/api/profile/projects/${projectId}/cover`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        imageUrl: patch.src,
-        coverAssetId: patch.assetId,
-        coverFitMode: patch.fitMode,
-        coverPositionX: patch.positionX,
-        coverPositionY: patch.positionY,
-      }),
-    });
-    const payload = await response.json().catch(() => null);
-
-    if (!response.ok) {
-      throw new Error(formatApiError(payload, response.status, "Nao foi possivel salvar a capa"));
-    }
-
-    const project = asRecord(asRecord(payload).project);
-    setPreviewProfile((current) => ({
-      ...current,
-      projects: current.projects.map((item) =>
-        item.id === projectId
-          ? {
-              ...item,
-              imageUrl: typeof project.imageUrl === "string" ? project.imageUrl : null,
-              coverAssetId: typeof project.coverAssetId === "string" ? project.coverAssetId : null,
-              coverFitMode: typeof project.coverFitMode === "string" ? project.coverFitMode : "crop",
-              coverPositionX: typeof project.coverPositionX === "number" ? project.coverPositionX : 50,
-              coverPositionY: typeof project.coverPositionY === "number" ? project.coverPositionY : 50,
-            }
-          : item
-      ),
-    }));
-  }
-
   async function commitProjectCoverField(projectId: string, updater: (image: EditableImageValue) => EditableImageValue) {
+    if (!selectedBlock) return;
+
     const currentImage = activeInlineProjectCoverValue ?? {
       src: "",
       alt: "",
@@ -1563,7 +1607,10 @@ export default function CanonicalPageEditor({
       positionY: 50,
     } satisfies EditableImageValue;
     const nextImage = updater(currentImage);
-    await patchProjectCover(projectId, nextImage);
+    const nextConfig = writeProjectCoverOverride(draftConfig, projectId, nextImage);
+
+    setDraftConfig(nextConfig);
+    await saveSelectedBlock(nextConfig, draftAssets);
   }
 
   function openInlineFieldEditor(
@@ -1775,6 +1822,9 @@ export default function CanonicalPageEditor({
       : null;
     const fieldElement = target.closest<HTMLElement>("[data-ft-config-path]");
     const nextFieldKey = fieldElement?.dataset.ftConfigPath;
+    if (fieldElement) {
+      event.preventDefault();
+    }
     const nextFieldKind =
       fieldElement && nextFieldKey
         ? getEditableFields(nextBlockDef).find((field) => field.key === nextFieldKey)?.kind ??
@@ -2033,6 +2083,36 @@ export default function CanonicalPageEditor({
     return asRecord(payload).asset as UploadedAsset;
   }
 
+  function requestImageFile(target: ImageFileTarget) {
+    imageFileTargetRef.current = target;
+    const input = imageFileInputRef.current;
+    if (!input) return;
+
+    input.value = "";
+    input.click();
+  }
+
+  function handleSharedImageFileChange(event: ReactChangeEvent<HTMLInputElement>) {
+    const file = event.currentTarget.files?.[0] ?? null;
+    const target = imageFileTargetRef.current;
+    event.currentTarget.value = "";
+    imageFileTargetRef.current = null;
+
+    if (!file || !target) return;
+
+    if (target.kind === "topLevel") {
+      void uploadTopLevelImage(target.fieldKey, file);
+      return;
+    }
+
+    if (target.kind === "list") {
+      void uploadListImage(target.fieldKey, target.index, file);
+      return;
+    }
+
+    void uploadProjectCover(target.projectId, file);
+  }
+
   async function uploadTopLevelImage(fieldKey: string, file: File) {
     if (!selectedBlock) return;
 
@@ -2145,20 +2225,41 @@ export default function CanonicalPageEditor({
   }
 
   async function uploadProjectCover(projectId: string, file: File) {
+    if (!selectedBlock) return;
+
     setBusyKey(`project-cover:${projectId}`);
     setErrorMessage("");
     setSuccessMessage("");
 
     try {
       const uploadedAsset = await uploadImage(file);
-      await patchProjectCover(projectId, {
-        src: uploadedAsset.url,
-        assetId: uploadedAsset.id,
+      const project = previewProfile.projects.find((item) => item.id === projectId);
+      const currentImage = activeInlineProjectCoverValue ?? {
+        src: "",
+        alt: project?.title ?? "",
         fitMode: "crop",
         positionX: 50,
         positionY: 50,
-      });
-      setSuccessMessage("Capa do projeto atualizada.");
+      };
+      const nextImage = {
+        src: uploadedAsset.url,
+        alt: currentImage.alt || project?.title || "",
+        fitMode: "crop",
+        positionX: 50,
+        positionY: 50,
+      } satisfies EditableImageValue;
+      const nextConfig = writeProjectCoverOverride(draftConfig, projectId, nextImage);
+      const nextAssets = writeProjectCoverAssetMeta(
+        draftAssets,
+        projectId,
+        uploadedAsset,
+        nextImage.alt
+      );
+
+      setDraftConfig(nextConfig);
+      setDraftAssets(nextAssets);
+      await saveSelectedBlock(nextConfig, nextAssets);
+      setSuccessMessage("Capa do projeto atualizada nesta pagina.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Falha no upload da imagem");
     } finally {
@@ -2212,14 +2313,14 @@ export default function CanonicalPageEditor({
   }
 
   async function removeProjectCover(projectId: string) {
-    await patchProjectCover(projectId, {
-      src: null,
-      assetId: null,
-      fitMode: "crop",
-      positionX: 50,
-      positionY: 50,
-    });
-    setSuccessMessage("Capa do projeto removida.");
+    if (!selectedBlock) return;
+
+    const nextConfig = writeProjectCoverOverride(draftConfig, projectId, null);
+    const nextAssets = writeProjectCoverAssetMeta(draftAssets, projectId, null, "");
+    setDraftConfig(nextConfig);
+    setDraftAssets(nextAssets);
+    await saveSelectedBlock(nextConfig, nextAssets);
+    setSuccessMessage("Capa personalizada removida desta pagina.");
   }
 
   async function hideProjectInWorkBlock(projectId: string) {
@@ -2478,22 +2579,16 @@ export default function CanonicalPageEditor({
             <p className="text-sm font-semibold text-neutral-900">{label}</p>
             <p className="text-xs text-neutral-500">Envie uma imagem.</p>
           </div>
-          <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/80 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 shadow-sm">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="rounded-xl bg-white"
+            onClick={() => requestImageFile({ kind: "topLevel", fieldKey })}
+          >
             <Upload className="h-4 w-4" aria-hidden="true" />
             Trocar imagem
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp,image/gif"
-              className="hidden"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) {
-                  void uploadTopLevelImage(fieldKey, file);
-                }
-                event.currentTarget.value = "";
-              }}
-            />
-          </label>
+          </Button>
         </div>
         {src ? (
           <img src={src} alt={alt} className="h-44 w-full rounded-2xl object-cover" />
@@ -2585,22 +2680,16 @@ export default function CanonicalPageEditor({
                   <div key={`${fieldKey}-${index}-${propKey}`} className="space-y-3 rounded-xl border border-neutral-200 bg-neutral-50 p-3">
                     <div className="flex items-center justify-between gap-3">
                       <p className="text-sm font-semibold text-neutral-900">Imagem</p>
-                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/80 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 shadow-sm">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="rounded-xl bg-white"
+                        onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
+                      >
                         <ImagePlus className="h-4 w-4" aria-hidden="true" />
                         Trocar
-                        <input
-                          type="file"
-                          accept="image/png,image/jpeg,image/webp,image/gif"
-                          className="hidden"
-                          onChange={(event) => {
-                            const file = event.target.files?.[0];
-                            if (file) {
-                              void uploadListImage(fieldKey, index, file);
-                            }
-                            event.currentTarget.value = "";
-                          }}
-                        />
-                      </label>
+                      </Button>
                     </div>
                     {imageSrc ? (
                       <img src={imageSrc} alt={imageAlt} className="h-40 w-full rounded-xl object-cover" />
@@ -2667,22 +2756,16 @@ export default function CanonicalPageEditor({
             {!Object.prototype.hasOwnProperty.call(item, "image") &&
             fieldKey === "fallbackProjects" ? (
               <div className="rounded-xl border border-dashed border-neutral-300 bg-neutral-50 p-3">
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-white/80 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 shadow-sm">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="rounded-xl bg-white"
+                  onClick={() => requestImageFile({ kind: "list", fieldKey, index })}
+                >
                   <ImagePlus className="h-4 w-4" aria-hidden="true" />
                   Adicionar imagem
-                  <input
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp,image/gif"
-                    className="hidden"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) {
-                        void uploadListImage(fieldKey, index, file);
-                      }
-                      event.currentTarget.value = "";
-                    }}
-                  />
-                </label>
+                </Button>
               </div>
             ) : null}
           </div>
@@ -2822,6 +2905,15 @@ export default function CanonicalPageEditor({
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
+      <input
+        ref={imageFileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp,image/gif"
+        tabIndex={-1}
+        aria-hidden="true"
+        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
+        onChange={handleSharedImageFileChange}
+      />
       <div className="grid min-w-0 gap-3">
         <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
@@ -3318,21 +3410,20 @@ export default function CanonicalPageEditor({
                             ))}
                           </>
                         ) : null}
-                        <label className="inline-flex h-8 cursor-pointer items-center rounded-full border border-neutral-200 px-3 text-xs font-semibold text-neutral-700 transition hover:bg-neutral-50">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 rounded-full px-3"
+                          onClick={() =>
+                            requestImageFile({
+                              kind: "topLevel",
+                              fieldKey: activeInlineImageField.key,
+                            })
+                          }
+                        >
                           Trocar
-                          <input
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp,image/gif"
-                            className="hidden"
-                            onChange={(event) => {
-                              const file = event.target.files?.[0];
-                              if (file) {
-                                void uploadTopLevelImage(activeInlineImageField.key, file);
-                              }
-                              event.currentTarget.value = "";
-                            }}
-                          />
-                        </label>
+                        </Button>
                         <Button
                           type="button"
                           variant="ghost"
@@ -3408,22 +3499,23 @@ export default function CanonicalPageEditor({
                             </Button>
                           );
                         })}
-                        <label className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-700 transition hover:bg-neutral-50">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 rounded-full px-0"
+                          aria-label="Trocar imagem"
+                          onClick={() =>
+                            requestImageFile({
+                              kind: "list",
+                              fieldKey: activeInlineListImage.fieldKey,
+                              index: activeInlineListImage.index,
+                            })
+                          }
+                        >
                           <span className="sr-only">Trocar imagem</span>
                           <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                          <input
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp,image/gif"
-                            className="hidden"
-                            onChange={(event) => {
-                              const file = event.target.files?.[0];
-                              if (file) {
-                                void uploadListImage(activeInlineListImage.fieldKey, activeInlineListImage.index, file);
-                              }
-                              event.currentTarget.value = "";
-                            }}
-                          />
-                        </label>
+                        </Button>
                         <Button
                           type="button"
                           variant="ghost"
@@ -3545,22 +3637,22 @@ export default function CanonicalPageEditor({
                             />
                           </div>
                         ) : null}
-                        <label className="inline-flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-neutral-200 text-neutral-700 transition hover:bg-neutral-50">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 rounded-full px-0"
+                          aria-label="Trocar capa do projeto"
+                          onClick={() =>
+                            requestImageFile({
+                              kind: "projectCover",
+                              projectId: activeInlineProjectCover.projectId,
+                            })
+                          }
+                        >
                           <span className="sr-only">Trocar capa do projeto</span>
                           <ImagePlus className="h-4 w-4" aria-hidden="true" />
-                          <input
-                            type="file"
-                            accept="image/png,image/jpeg,image/webp,image/gif"
-                            className="hidden"
-                            onChange={(event) => {
-                              const file = event.target.files?.[0];
-                              if (file) {
-                                void uploadProjectCover(activeInlineProjectCover.projectId, file);
-                              }
-                              event.currentTarget.value = "";
-                            }}
-                          />
-                        </label>
+                        </Button>
                         <Button
                           type="button"
                           variant="ghost"

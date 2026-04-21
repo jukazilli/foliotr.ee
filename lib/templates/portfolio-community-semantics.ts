@@ -257,6 +257,12 @@ function readProjectCoverImage(project: {
   };
 }
 
+function readProjectCoverOverride(config: Record<string, unknown>, projectId: string) {
+  const projectCovers = asRecord(config.projectCovers);
+  const override = asRecord(projectCovers[projectId]);
+  return readImage(override.image);
+}
+
 function hasText(value: string | null | undefined) {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -557,7 +563,8 @@ export function derivePortfolioCommunitySemantics(args: {
   const projectWorkItems = visibleSelectedProjects
     .slice(0, configuredWorkMaxItems)
     .map((project, index): PortfolioCommunityWorkItem => {
-      const projectImage = readProjectCoverImage(project);
+      const projectImage =
+        readProjectCoverOverride(workConfig, project.id) ?? readProjectCoverImage(project);
       const fallbackImage = workFallbackImages[index] ?? "";
       const imageValue =
         projectImage ??
@@ -669,18 +676,23 @@ export function derivePortfolioCommunitySemantics(args: {
       intro: readString(workConfig.intro),
       maxItems: Math.max(1, Math.min(workItems.length || configuredWorkMaxItems, configuredWorkMaxItems)),
       items: workItems,
-      fallbackProjects: visibleSelectedProjects.slice(0, configuredWorkMaxItems).map((project) => ({
-        title: project.title,
-        description: project.description ?? "",
-        date: formatProjectDate(project.startDate, "Projeto em destaque"),
-        href: project.url ?? project.repoUrl ?? undefined,
-        image: project.imageUrl
-          ? {
-              src: project.imageUrl,
-              alt: project.title,
-            }
-          : undefined,
-      })),
+      fallbackProjects: visibleSelectedProjects.slice(0, configuredWorkMaxItems).map((project) => {
+        const projectImage =
+          readProjectCoverOverride(workConfig, project.id) ?? readProjectCoverImage(project);
+
+        return {
+          title: project.title,
+          description: project.description ?? "",
+          date: formatProjectDate(project.startDate, "Projeto em destaque"),
+          href: project.url ?? project.repoUrl ?? undefined,
+          image: projectImage
+            ? {
+                src: projectImage.src,
+                alt: projectImage.alt || project.title,
+              }
+            : undefined,
+        };
+      }),
     },
     contact: {
       visible:

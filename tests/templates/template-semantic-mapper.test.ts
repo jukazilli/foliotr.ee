@@ -326,6 +326,80 @@ describe("template semantic mapper", () => {
     });
   });
 
+  it("uses page-level project cover overrides before profile base images", () => {
+    const semantics = derivePortfolioCommunitySemantics({
+      profile: {
+        displayName: "Juliano Pedroso",
+        headline: "Designer",
+        bio: "Bio",
+        avatarUrl: null,
+        location: null,
+        publicEmail: null,
+        phone: null,
+        user: null,
+        experiences: [],
+        educations: [],
+        skills: [],
+        achievements: [],
+        highlights: [],
+        links: [],
+        proofs: [],
+        projects: [
+          {
+            id: "project_1",
+            title: "Projeto com override",
+            description: "Descricao",
+            imageUrl: "/uploads/base-project.png",
+            url: null,
+            repoUrl: null,
+            tags: [],
+            featured: true,
+            coverAssetId: null,
+            coverFitMode: "crop",
+            coverPositionX: 25,
+            coverPositionY: 75,
+            order: 0,
+            startDate: null,
+            endDate: null,
+          },
+        ],
+      } as never,
+      version: {
+        selectedProjectIds: ["project_1"],
+      } as never,
+      blockConfigs: {
+        "portfolio.work": {
+          projectCovers: {
+            project_1: {
+              image: {
+                src: "/uploads/page-override.png",
+                alt: "Override da pagina",
+                fitMode: "fit",
+                positionX: 60,
+                positionY: 40,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    expect(semantics.work.items[0]).toMatchObject({
+      image: "/uploads/page-override.png",
+      imageValue: {
+        src: "/uploads/page-override.png",
+        alt: "Override da pagina",
+        fitMode: "fit",
+        positionX: 60,
+        positionY: 40,
+      },
+    });
+    expect(semantics.work.fallbackProjects[0].image).toMatchObject({
+      src: "/uploads/page-override.png",
+      alt: "Override da pagina",
+    });
+  });
+
   it("fails clearly when a template slug has no registered semantic implementation", () => {
     expect(() =>
       mapTemplateInitialBlocks({
