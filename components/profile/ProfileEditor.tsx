@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ChangeEvent,
-  type ReactNode,
-} from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -28,11 +21,16 @@ import {
   Trash2,
   UserRound,
 } from "lucide-react";
+import {
+  AssetGalleryPicker,
+  type GalleryImageAsset,
+} from "@/components/assets/AssetGalleryPicker";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
 import { UsernameEditor } from "@/components/settings/UsernameEditor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
 type EditableProfile = {
   id: string;
@@ -162,25 +160,11 @@ type EditableSkill = {
 };
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
-type UploadStatus = "idle" | "uploading";
 type ProjectCoverFitMode = "fit" | "fill" | "crop";
 
-type StoredProfilePhoto = {
-  objectUrl: string;
-  name: string;
-  type: string;
-  size: number;
-};
-
-type ProfileImageFileTarget =
+type ProfileGalleryTarget =
   | { kind: "avatar" }
   | { kind: "projectCover"; projectKey: string };
-
-const PROFILE_PHOTO_MAX_SIZE = 5 * 1024 * 1024;
-const PROFILE_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
-const PROFILE_IMAGE_FILE_ACCEPT = "image/png,image/jpeg,image/webp";
-const PROJECT_COVER_MAX_SIZE = PROFILE_PHOTO_MAX_SIZE;
-const PROJECT_COVER_TYPES = PROFILE_PHOTO_TYPES;
 
 function key() {
   return `tmp_${Math.random().toString(36).slice(2, 10)}`;
@@ -238,8 +222,9 @@ function cleanUrl(value: string | null | undefined) {
 function cleanAssetUrl(value: string | null | undefined) {
   const raw = value?.trim() ?? "";
   if (!raw) return "";
-  if (raw.startsWith("/api/assets/proxy?key=")) return raw;
-  return cleanUrl(raw);
+  const normalized = normalizeStoragePublicUrl(raw);
+  if (normalized.startsWith("/")) return normalized;
+  return cleanUrl(normalized);
 }
 
 const ERROR_LABELS: Record<string, string> = {
@@ -386,7 +371,7 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
   return {
     ...profile,
     displayName: text(profile.displayName),
-    avatarUrl: text(profile.avatarUrl),
+    avatarUrl: cleanAssetUrl(profile.avatarUrl),
     headline: text(profile.headline),
     bio: text(profile.bio),
     location: text(profile.location),
@@ -712,22 +697,14 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const router = useRouter();
   const [profile, setProfile] = useState(() => normalizeProfile(initialProfile));
   const [status, setStatus] = useState<SaveStatus>("idle");
-  const [uploadStatus, setUploadStatus] = useState<UploadStatus>("idle");
   const [error, setError] = useState("");
-  const [profilePhoto, setProfilePhoto] = useState<StoredProfilePhoto | null>(null);
   const [photoError, setPhotoError] = useState("");
-  const [projectUploadKey, setProjectUploadKey] = useState<string | null>(null);
-  const [projectImageErrors, setProjectImageErrors] = useState<Record<string, string>>(
-    {}
-  );
   const [dirtyCollections, setDirtyCollections] = useState<Set<CollectionField>>(
     () => new Set()
   );
   const [today, setToday] = useState<Date | null>(null);
-  const [profileImagePickerOpen, setProfileImagePickerOpen] = useState(false);
-  const profileImageFileInputRef = useRef<HTMLInputElement | null>(null);
-  const profileImageFileTargetRef = useRef<ProfileImageFileTarget | null>(null);
-  const profileImagePickerOpenRef = useRef(false);
+  const [profileGalleryTarget, setProfileGalleryTarget] =
+    useState<ProfileGalleryTarget | null>(null);
 
   const username = profile.user.username;
   const age = useMemo(() => {
@@ -747,30 +724,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
 
   useEffect(() => {
     setToday(new Date());
-  }, []);
-
-  useEffect(() => {
-    const input = profileImageFileInputRef.current;
-
-    function releaseProfileImagePicker() {
-      window.setTimeout(() => {
-        profileImagePickerOpenRef.current = false;
-        setProfileImagePickerOpen(false);
-      }, 150);
-    }
-
-    function cancelProfileImagePicker() {
-      profileImageFileTargetRef.current = null;
-      releaseProfileImagePicker();
-    }
-
-    input?.addEventListener("cancel", cancelProfileImagePicker);
-    window.addEventListener("focus", releaseProfileImagePicker);
-
-    return () => {
-      input?.removeEventListener("cancel", cancelProfileImagePicker);
-      window.removeEventListener("focus", releaseProfileImagePicker);
-    };
   }, []);
 
   function setBase<K extends keyof EditableProfile>(
@@ -909,32 +862,28 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
   const saveLabel =
     status === "saving" ? "Salvando" : status === "saved" ? "Salvo" : "Salvar";
 
-  useEffect(() => {
-    return () => {
-      if (profilePhoto?.objectUrl) {
-        URL.revokeObjectURL(profilePhoto.objectUrl);
-      }
-    };
-  }, [profilePhoto]);
-
-  const photoPreview = profilePhoto?.objectUrl || profile.avatarUrl || "";
+  const photoPreview = profile.avatarUrl || "";
 
   function removeProfilePhoto() {
-    setProfilePhoto(null);
     setBase("avatarUrl", "" as EditableProfile["avatarUrl"]);
     setPhotoError("");
   }
 
-  async function uploadProfilePhoto(file: File) {
-    setUploadStatus("uploading");
+  function openProfileGallery(target: ProfileGalleryTarget) {
+    setPhotoError("");
+    setProfileGalleryTarget(target);
+  }
 
-    const formData = new FormData();
-    formData.set("file", file);
-    formData.set("purpose", "avatar");
+  async function applyAvatarAsset(asset: GalleryImageAsset) {
+    const nextProfile = {
+      ...profile,
+      avatarUrl: asset.url,
+    };
 
-    const response = await fetch("/api/assets/upload", {
-      method: "POST",
-      body: formData,
+    const response = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBasePayload(nextProfile)),
     });
 
     if (!response.ok) {
@@ -943,169 +892,36 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
     }
 
     const body = (await response.json()) as {
-      asset: { url: string };
-      profile?: { avatarUrl?: string | null };
+      profile: Partial<EditableProfile>;
     };
-    const avatarUrl = body.profile?.avatarUrl ?? body.asset.url;
 
-    setProfilePhoto(null);
-    setBase("avatarUrl", avatarUrl as EditableProfile["avatarUrl"]);
+    setProfile((current) =>
+      normalizeProfile({ ...current, ...body.profile, avatarUrl: asset.url })
+    );
     setPhotoError("");
     setStatus("saved");
     router.refresh();
   }
 
-  function processProfilePhotoFile(file: File | null) {
-    if (!file || uploadStatus === "uploading") return;
-
-    if (!PROFILE_PHOTO_TYPES.includes(file.type)) {
-      setPhotoError("Use JPG, PNG ou WebP.");
-      return;
-    }
-
-    if (file.size > PROFILE_PHOTO_MAX_SIZE) {
-      setPhotoError("A foto deve ter ate 5 MB.");
-      return;
-    }
-
-    try {
-      const nextPhoto: StoredProfilePhoto = {
-        objectUrl: URL.createObjectURL(file),
-        name: file.name,
-        type: file.type,
-        size: file.size,
-      };
-
-      setProfilePhoto(nextPhoto);
-      setPhotoError("");
-      void uploadProfilePhoto(file)
-        .catch((error: unknown) => {
-          setProfilePhoto(null);
-          setPhotoError(
-            error instanceof Error ? error.message : "Nao foi possivel enviar a foto."
-          );
-        })
-        .finally(() => {
-          setUploadStatus("idle");
-        });
-    } catch {
-      setPhotoError("Nao foi possivel abrir a foto.");
-    }
-  }
-
-  function setProjectImageError(projectKey: string, message: string) {
-    setProjectImageErrors((current) => ({
-      ...current,
-      [projectKey]: message,
-    }));
-  }
-
-  function clearProjectImageError(projectKey: string) {
-    setProjectImageErrors((current) => {
-      const next = { ...current };
-      delete next[projectKey];
-      return next;
-    });
-  }
-
-  async function uploadProjectCover(projectKey: string, file: File) {
-    setProjectUploadKey(projectKey);
-
-    const formData = new FormData();
-    formData.set("file", file);
-    formData.set("purpose", "project");
-
-    const response = await fetch("/api/assets/upload", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const body = await response.json().catch(() => null);
-      throw new Error(formatApiError(body));
-    }
-
-    const body = (await response.json()) as {
-      asset: { id: string; url: string };
-    };
-
+  function applyProjectCoverAsset(projectKey: string, asset: GalleryImageAsset) {
     updateList<EditableProject>("projects", projectKey, {
-      imageUrl: body.asset.url,
-      coverAssetId: body.asset.id,
+      imageUrl: asset.url,
+      coverAssetId: asset.id,
       coverFitMode: "crop",
       coverPositionX: 50,
       coverPositionY: 50,
     });
-    clearProjectImageError(projectKey);
   }
 
-  function processProjectCoverFile(projectKey: string, file: File | null) {
-    if (!file) return;
+  async function handleProfileGallerySelect(asset: GalleryImageAsset) {
+    if (!profileGalleryTarget) return;
 
-    if (!PROJECT_COVER_TYPES.includes(file.type)) {
-      setProjectImageError(projectKey, "Use JPG, PNG ou WebP.");
+    if (profileGalleryTarget.kind === "avatar") {
+      await applyAvatarAsset(asset);
       return;
     }
 
-    if (file.size > PROJECT_COVER_MAX_SIZE) {
-      setProjectImageError(projectKey, "A imagem deve ter ate 5 MB.");
-      return;
-    }
-
-    void uploadProjectCover(projectKey, file)
-      .catch((error: unknown) => {
-        setProjectImageError(
-          projectKey,
-          error instanceof Error ? error.message : "Nao foi possivel enviar a imagem."
-        );
-      })
-      .finally(() => {
-        setProjectUploadKey(null);
-      });
-  }
-
-  function requestProfileImageFile(target: ProfileImageFileTarget) {
-    const input = profileImageFileInputRef.current;
-    if (
-      !input ||
-      profileImagePickerOpenRef.current ||
-      profileImagePickerOpen ||
-      uploadStatus === "uploading" ||
-      Boolean(projectUploadKey)
-    ) {
-      return;
-    }
-
-    profileImagePickerOpenRef.current = true;
-    profileImageFileTargetRef.current = target;
-    setProfileImagePickerOpen(true);
-
-    try {
-      input.value = "";
-      input.click();
-    } catch {
-      profileImagePickerOpenRef.current = false;
-      profileImageFileTargetRef.current = null;
-      setProfileImagePickerOpen(false);
-    }
-  }
-
-  function handleSharedProfileImageChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.currentTarget.files?.[0] ?? null;
-    const target = profileImageFileTargetRef.current;
-    event.currentTarget.value = "";
-    profileImageFileTargetRef.current = null;
-    profileImagePickerOpenRef.current = false;
-    setProfileImagePickerOpen(false);
-
-    if (!file || !target) return;
-
-    if (target.kind === "avatar") {
-      processProfilePhotoFile(file);
-      return;
-    }
-
-    processProjectCoverFile(target.projectKey, file);
+    applyProjectCoverAsset(profileGalleryTarget.projectKey, asset);
   }
 
   function removeProjectCover(projectKey: string) {
@@ -1116,21 +932,32 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       coverPositionX: 50,
       coverPositionY: 50,
     });
-    clearProjectImageError(projectKey);
   }
 
   return (
     <div className="space-y-8">
-      <input
-        ref={profileImageFileInputRef}
-        id="profile-image-file-input"
-        name="profileImageFile"
-        type="file"
-        accept={PROFILE_IMAGE_FILE_ACCEPT}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
-        onChange={handleSharedProfileImageChange}
+      <AssetGalleryPicker
+        open={Boolean(profileGalleryTarget)}
+        title={
+          profileGalleryTarget?.kind === "projectCover"
+            ? "Galeria de capas"
+            : "Galeria de fotos"
+        }
+        description="Escolha uma imagem ja enviada ou envie uma nova."
+        uploadPurpose={
+          profileGalleryTarget?.kind === "projectCover" ? "project" : "avatar"
+        }
+        currentUrl={
+          profileGalleryTarget?.kind === "projectCover"
+            ? profile.projects.find(
+                (item) => item._key === profileGalleryTarget.projectKey
+              )?.imageUrl
+            : profile.avatarUrl
+        }
+        onOpenChange={(open) => {
+          if (!open) setProfileGalleryTarget(null);
+        }}
+        onSelect={handleProfileGallerySelect}
       />
       <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
@@ -1227,17 +1054,10 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            disabled={
-                              uploadStatus === "uploading" || profileImagePickerOpen
-                            }
-                            onClick={() => requestProfileImageFile({ kind: "avatar" })}
+                            onClick={() => openProfileGallery({ kind: "avatar" })}
                             className="inline-flex cursor-pointer items-center rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 disabled:pointer-events-none disabled:opacity-55"
                           >
-                            {uploadStatus === "uploading"
-                              ? "Enviando..."
-                              : photoPreview
-                                ? "Trocar foto"
-                                : "Adicionar foto"}
+                            {photoPreview ? "Trocar foto" : "Adicionar foto"}
                           </button>
 
                           {photoPreview ? (
@@ -1661,21 +1481,12 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                               <ImagePlus className="h-7 w-7" aria-hidden="true" />
                             </div>
                           )}
-                          {projectUploadKey === item._key ? (
-                            <div className="absolute inset-0 grid place-items-center bg-white/72 backdrop-blur-sm">
-                              <span className="sr-only">Enviando capa do projeto</span>
-                              <span className="h-5 w-5 animate-spin rounded-full border-2 border-neutral-300 border-t-lime-600" />
-                            </div>
-                          ) : null}
                         </div>
                         <div className="flex items-center gap-1">
                           <button
                             type="button"
-                            disabled={
-                              profileImagePickerOpen || Boolean(projectUploadKey)
-                            }
                             onClick={() =>
-                              requestProfileImageFile({
+                              openProfileGallery({
                                 kind: "projectCover",
                                 projectKey: item._key,
                               })
@@ -1768,11 +1579,6 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
                               className="w-full accent-lime-500"
                             />
                           </div>
-                        ) : null}
-                        {projectImageErrors[item._key] ? (
-                          <p className="text-xs font-medium text-coral-700">
-                            {projectImageErrors[item._key]}
-                          </p>
                         ) : null}
                       </div>
                       <div className="grid gap-3">

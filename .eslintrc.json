@@ -5,6 +5,7 @@
     "out",
     "build",
     "coverage",
+    "assets/curriculo-code/**",
     "doc/Design System/**",
     "apps/**/dist",
     "packages/**/dist"

@@ -27,13 +27,23 @@ function isInternalAssetProxyUrl(value: string) {
   return value.startsWith("/api/assets/proxy?key=");
 }
 
+function isInternalAssetUrl(value: string) {
+  return isInternalAssetProxyUrl(value) || value.startsWith("/uploads/");
+}
+
 const nullableUrlSchema = z.string().url("URL invalida").optional().or(z.literal(""));
 export const nullableAssetUrlSchema = z
   .string()
   .trim()
-  .refine((value) => value.length === 0 || isInternalAssetProxyUrl(value) || z.string().url().safeParse(value).success, {
-    message: "URL invalida",
-  })
+  .refine(
+    (value) =>
+      value.length === 0 ||
+      isInternalAssetUrl(value) ||
+      z.string().url().safeParse(value).success,
+    {
+      message: "URL invalida",
+    }
+  )
   .optional()
   .or(z.literal(""));
 const nullableStringSchema = z.string().optional().or(z.literal(""));
@@ -42,9 +52,12 @@ export const publishStateSchema = z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"], {
   errorMap: () => ({ message: "Estado de publicacao invalido" }),
 });
 
-export const assetKindSchema = z.enum(["IMAGE", "DOCUMENT", "VIDEO", "AUDIO", "OTHER"], {
-  errorMap: () => ({ message: "Tipo de asset invalido" }),
-});
+export const assetKindSchema = z.enum(
+  ["IMAGE", "DOCUMENT", "VIDEO", "AUDIO", "OTHER"],
+  {
+    errorMap: () => ({ message: "Tipo de asset invalido" }),
+  }
+);
 
 export const assetStatusSchema = z.enum(["PENDING", "READY", "FAILED"], {
   errorMap: () => ({ message: "Status de asset invalido" }),
@@ -133,14 +146,21 @@ export const assetInputSchema = z.object({
   url: z
     .string()
     .trim()
-    .refine((value) => isInternalAssetProxyUrl(value) || z.string().url().safeParse(value).success, {
-      message: "URL do asset invalida",
-    }),
+    .refine(
+      (value) => isInternalAssetUrl(value) || z.string().url().safeParse(value).success,
+      {
+        message: "URL do asset invalida",
+      }
+    ),
   storageKey: z.string().trim().min(1, "Storage key obrigatoria").max(255),
   name: nullableStringSchema,
   altText: nullableStringSchema,
   mimeType: z.string().trim().min(1, "Mime type obrigatorio").max(120),
-  size: z.number().int().min(0, "Tamanho invalido").max(25 * 1024 * 1024),
+  size: z
+    .number()
+    .int()
+    .min(0, "Tamanho invalido")
+    .max(25 * 1024 * 1024),
   width: z.number().int().min(1).max(12000).optional().nullable(),
   height: z.number().int().min(1).max(12000).optional().nullable(),
   metadata: z.record(safeAssetMetadataValueSchema).default({}),

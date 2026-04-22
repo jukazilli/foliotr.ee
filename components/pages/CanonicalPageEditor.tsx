@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type {
-  ChangeEvent as ReactChangeEvent,
   KeyboardEvent as ReactKeyboardEvent,
   MouseEvent as ReactMouseEvent,
   PointerEvent as ReactPointerEvent,
@@ -24,6 +23,10 @@ import {
   Upload,
   UploadCloud,
 } from "lucide-react";
+import {
+  AssetGalleryPicker,
+  type GalleryImageAsset,
+} from "@/components/assets/AssetGalleryPicker";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
 import type {
   RenderablePageBlock,
@@ -43,7 +46,6 @@ const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
 const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
 const MIN_PREVIEW_SCALE = 0.24;
 const MAX_PREVIEW_SCALE = 1;
-const IMAGE_FILE_ACCEPT = ".png,.jpg,.jpeg,.webp,.gif";
 
 interface TemplateBlockDefLike {
   id: string;
@@ -512,10 +514,9 @@ export default function CanonicalPageEditor({
   const [inlineBooleanFrame, setInlineBooleanFrame] =
     useState<CanvasSelectionFrame | null>(null);
   const [imageDragActive, setImageDragActive] = useState(false);
-  const [imagePickerOpen, setImagePickerOpen] = useState(false);
-  const imageFileInputRef = useRef<HTMLInputElement | null>(null);
-  const imageFileTargetRef = useRef<ImageFileTarget | null>(null);
-  const imagePickerOpenRef = useRef(false);
+  const [imageGalleryTarget, setImageGalleryTarget] = useState<ImageFileTarget | null>(
+    null
+  );
   const saveSelectedBlockRef = useRef<
     ((nextConfig?: JsonRecord, nextAssets?: JsonRecord) => Promise<boolean>) | null
   >(null);
@@ -826,30 +827,6 @@ export default function CanonicalPageEditor({
     setDraftConfig(asRecord(selectedBlock.config));
     setDraftAssets(asRecord(selectedBlock.assets));
   }, [selectedBlock]);
-
-  useEffect(() => {
-    const input = imageFileInputRef.current;
-
-    function releaseImagePicker() {
-      window.setTimeout(() => {
-        imagePickerOpenRef.current = false;
-        setImagePickerOpen(false);
-      }, 150);
-    }
-
-    function cancelImagePicker() {
-      imageFileTargetRef.current = null;
-      releaseImagePicker();
-    }
-
-    input?.addEventListener("cancel", cancelImagePicker);
-    window.addEventListener("focus", releaseImagePicker);
-
-    return () => {
-      input?.removeEventListener("cancel", cancelImagePicker);
-      window.removeEventListener("focus", releaseImagePicker);
-    };
-  }, []);
 
   useEffect(() => {
     setActiveInlineFieldKey(null);
@@ -1515,6 +1492,8 @@ export default function CanonicalPageEditor({
     setInlineImageFrame(null);
     setActiveInlineListImage(null);
     setInlineListImageFrame(null);
+    setActiveInlineProjectCover(null);
+    setInlineProjectCoverFrame(null);
     setActiveInlineBooleanFieldKey(null);
     setInlineBooleanFrame(null);
   }
@@ -2220,66 +2199,6 @@ export default function CanonicalPageEditor({
     }));
   }
 
-  async function uploadImage(file: File) {
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await fetch("/api/assets/upload", {
-      method: "POST",
-      body: formData,
-    });
-    const payload = await parseJsonResponse(response);
-
-    if (!response.ok) {
-      throw new Error(
-        formatApiError(payload, response.status, "Nao foi possivel enviar a imagem")
-      );
-    }
-
-    return asRecord(payload).asset as UploadedAsset;
-  }
-
-  function requestImageFile(target: ImageFileTarget) {
-    const input = imageFileInputRef.current;
-    if (!input || imagePickerOpenRef.current || busyKey) return;
-
-    imagePickerOpenRef.current = true;
-    imageFileTargetRef.current = target;
-    setImagePickerOpen(true);
-
-    try {
-      input.value = "";
-      input.click();
-    } catch {
-      imagePickerOpenRef.current = false;
-      imageFileTargetRef.current = null;
-      setImagePickerOpen(false);
-    }
-  }
-
-  function handleSharedImageFileChange(event: ReactChangeEvent<HTMLInputElement>) {
-    const file = event.currentTarget.files?.[0] ?? null;
-    const target = imageFileTargetRef.current;
-    event.currentTarget.value = "";
-    imageFileTargetRef.current = null;
-    imagePickerOpenRef.current = false;
-    setImagePickerOpen(false);
-
-    if (!file || !target) return;
-
-    if (target.kind === "topLevel") {
-      void uploadTopLevelImage(target.fieldKey, file);
-      return;
-    }
-
-    if (target.kind === "list") {
-      void uploadListImage(target.fieldKey, target.index, file);
-      return;
-    }
-
-    void uploadProjectCover(target.projectId, file);
-  }
-
   function renderImageFileTrigger({
     target,
     children,
@@ -2295,7 +2214,7 @@ export default function CanonicalPageEditor({
     variant?: ButtonProps["variant"];
     size?: ButtonProps["size"];
   }) {
-    const disabled = imagePickerOpen || Boolean(busyKey);
+    const disabled = Boolean(imageGalleryTarget) || Boolean(busyKey);
 
     return (
       <button
@@ -2306,14 +2225,17 @@ export default function CanonicalPageEditor({
           buttonVariants({ variant, size, className }),
           disabled && "pointer-events-none opacity-50"
         )}
-        onClick={() => requestImageFile(target)}
+        onClick={() => setImageGalleryTarget(target)}
       >
         {children}
       </button>
     );
   }
 
-  async function uploadTopLevelImage(fieldKey: string, file: File) {
+  async function applyTopLevelImageAsset(
+    fieldKey: string,
+    uploadedAsset: UploadedAsset
+  ) {
     if (!selectedBlock) return;
 
     setBusyKey(`image:${fieldKey}`);
@@ -2321,7 +2243,6 @@ export default function CanonicalPageEditor({
     setSuccessMessage("");
 
     try {
-      const uploadedAsset = await uploadImage(file);
       const currentImage = readEditableImageValue(draftConfig[fieldKey]);
       const nextConfig = {
         ...draftConfig,
@@ -2356,13 +2277,16 @@ export default function CanonicalPageEditor({
     }
   }
 
-  async function uploadListImage(fieldKey: string, index: number, file: File) {
+  async function applyListImageAsset(
+    fieldKey: string,
+    index: number,
+    uploadedAsset: UploadedAsset
+  ) {
     setBusyKey(`image:${fieldKey}:${index}`);
     setErrorMessage("");
     setSuccessMessage("");
 
     try {
-      const uploadedAsset = await uploadImage(file);
       const list = asArray(draftConfig[fieldKey]).map((item) => asRecord(item));
       const currentItem = list[index] ?? {};
       const nextList = list.map((item, itemIndex) =>
@@ -2432,7 +2356,10 @@ export default function CanonicalPageEditor({
     }
   }
 
-  async function uploadProjectCover(projectId: string, file: File) {
+  async function applyProjectCoverAsset(
+    projectId: string,
+    uploadedAsset: UploadedAsset
+  ) {
     if (!selectedBlock) return;
 
     setBusyKey(`project-cover:${projectId}`);
@@ -2440,7 +2367,6 @@ export default function CanonicalPageEditor({
     setSuccessMessage("");
 
     try {
-      const uploadedAsset = await uploadImage(file);
       const project = previewProfile.projects.find((item) => item.id === projectId);
       const currentImage = activeInlineProjectCoverValue ?? {
         src: "",
@@ -2475,6 +2401,26 @@ export default function CanonicalPageEditor({
     } finally {
       setBusyKey(null);
     }
+  }
+
+  async function handlePageGallerySelect(asset: GalleryImageAsset) {
+    if (!imageGalleryTarget) return;
+
+    if (imageGalleryTarget.kind === "topLevel") {
+      await applyTopLevelImageAsset(imageGalleryTarget.fieldKey, asset);
+      return;
+    }
+
+    if (imageGalleryTarget.kind === "list") {
+      await applyListImageAsset(
+        imageGalleryTarget.fieldKey,
+        imageGalleryTarget.index,
+        asset
+      );
+      return;
+    }
+
+    await applyProjectCoverAsset(imageGalleryTarget.projectId, asset);
   }
 
   async function removeTopLevelImage(fieldKey: string) {
@@ -3179,16 +3125,28 @@ export default function CanonicalPageEditor({
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </div>
-      <input
-        ref={imageFileInputRef}
-        id="page-editor-image-file-input"
-        name="pageEditorImageFile"
-        type="file"
-        accept={IMAGE_FILE_ACCEPT}
-        tabIndex={-1}
-        aria-hidden="true"
-        className="pointer-events-none fixed left-0 top-0 h-px w-px opacity-0"
-        onChange={handleSharedImageFileChange}
+      <AssetGalleryPicker
+        open={Boolean(imageGalleryTarget)}
+        title="Galeria do editor"
+        description="Use uma imagem ja enviada ou adicione uma nova ao bloco."
+        uploadPurpose="page"
+        currentUrl={
+          imageGalleryTarget?.kind === "topLevel"
+            ? readEditableImageValue(draftConfig[imageGalleryTarget.fieldKey]).src
+            : imageGalleryTarget?.kind === "list"
+              ? readEditableImageValue(
+                  asRecord(
+                    asArray(draftConfig[imageGalleryTarget.fieldKey])[
+                      imageGalleryTarget.index
+                    ]
+                  ).image
+                ).src
+              : activeInlineProjectCoverValue?.src
+        }
+        onOpenChange={(open) => {
+          if (!open) setImageGalleryTarget(null);
+        }}
+        onSelect={handlePageGallerySelect}
       />
       <div className="grid min-w-0 gap-3">
         <section className="min-w-0 overflow-hidden rounded-lg border border-neutral-200 bg-neutral-200/70">

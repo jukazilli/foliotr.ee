@@ -9,6 +9,9 @@ node_modules/
 /coverage
 /public/uploads/
 
+# Local design references
+/assets/curriculo-code/
+
 # Next.js
 /.next/
 **/.next/

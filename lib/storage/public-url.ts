@@ -17,6 +17,14 @@ export function normalizeStoragePublicUrl(url: string) {
       return `/api/assets/proxy?key=${encodeURIComponent(decodeURIComponent(key))}`;
     }
 
+    if (parsed.hostname === "uploads") {
+      const key = ["uploads", ...parsed.pathname.split("/").filter(Boolean)].join("/");
+
+      if (key !== "uploads") {
+        return `/api/assets/proxy?key=${encodeURIComponent(decodeURIComponent(key))}`;
+      }
+    }
+
     if (parsed.pathname.startsWith("/storage/v1/object/public/")) {
       const [, , , , , bucket, ...keyParts] = parsed.pathname.split("/");
       const key = keyParts.join("/");

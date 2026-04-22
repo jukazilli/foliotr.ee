@@ -26,6 +26,7 @@
     "build",
     "coverage",
     "editor-otimizacao",
+    "assets/curriculo-code",
     "assets/template/**/template-code/**",
     "apps/**/dist",
     "packages/**/dist"

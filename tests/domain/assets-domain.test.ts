@@ -88,4 +88,104 @@ describe("assets domain", () => {
       status: 404,
     } satisfies Partial<ApiRouteError>);
   });
+
+  it("lists only assets from the owned profile with pagination", async () => {
+    mocks.getOwnedProfileBase.mockResolvedValue({ id: "profile_1" });
+
+    const db = {
+      asset: {
+        findMany: vi.fn().mockResolvedValue([
+          {
+            id: "asset_1",
+            url: "https://uploads/profile/avatar.jpg",
+            storageKey: "uploads/user_1/avatar.jpg",
+            metadata: { provider: "s3" },
+            createdAt: new Date("2026-04-21T10:00:00.000Z"),
+          },
+          {
+            id: "asset_2",
+            url: "https://cdn.foliotree.test/image.jpg",
+            storageKey: "external/image.jpg",
+            metadata: { provider: "external" },
+            createdAt: new Date("2026-04-21T09:00:00.000Z"),
+          },
+        ]),
+      },
+    };
+
+    const { listOwnedAssets } = await import("@/lib/server/domain/assets");
+    const result = await listOwnedAssets(db as never, "user_1", {
+      kind: "IMAGE",
+      status: "READY",
+      limit: 1,
+    });
+
+    expect(result).toEqual({
+      assets: [
+        {
+          id: "asset_1",
+          url: "/api/assets/proxy?key=uploads%2Fuser_1%2Favatar.jpg",
+          metadata: { provider: "s3" },
+          createdAt: new Date("2026-04-21T10:00:00.000Z"),
+        },
+      ],
+      nextCursor: "asset_1",
+    });
+    expect(db.asset.findMany).toHaveBeenCalledWith({
+      where: {
+        profileId: "profile_1",
+        kind: "IMAGE",
+        status: "READY",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 2,
+      select: {
+        id: true,
+        kind: true,
+        status: true,
+        url: true,
+        storageKey: true,
+        name: true,
+        altText: true,
+        mimeType: true,
+        size: true,
+        width: true,
+        height: true,
+        metadata: true,
+        createdAt: true,
+      },
+    });
+  });
+
+  it("hides local-only upload assets when local storage is not active", async () => {
+    mocks.getOwnedProfileBase.mockResolvedValue({ id: "profile_1" });
+
+    const db = {
+      asset: {
+        findMany: vi.fn().mockResolvedValue([
+          {
+            id: "asset_local",
+            url: "/uploads/user_1/avatar/local.jpg",
+            storageKey: "uploads/user_1/avatar/local.jpg",
+            metadata: { provider: "local" },
+            createdAt: new Date("2026-04-21T10:00:00.000Z"),
+          },
+        ]),
+      },
+    };
+
+    const { listOwnedAssets } = await import("@/lib/server/domain/assets");
+    const result = await listOwnedAssets(db as never, "user_1", {
+      kind: "IMAGE",
+      status: "READY",
+      limit: 48,
+    });
+
+    expect(result).toEqual({
+      assets: [],
+      nextCursor: null,
+    });
+  });
 });

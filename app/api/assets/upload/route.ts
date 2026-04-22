@@ -16,6 +16,17 @@ const MIME_EXTENSIONS: Record<string, string> = {
   "image/gif": "gif",
 };
 
+function toStoredAssetUrl(
+  uploaded: { provider: string; url: string },
+  storageKey: string
+) {
+  if (uploaded.provider === "s3") {
+    return `/api/assets/proxy?key=${encodeURIComponent(storageKey)}`;
+  }
+
+  return uploaded.url;
+}
+
 export async function POST(request: Request) {
   try {
     const session = await auth();
@@ -80,12 +91,13 @@ export async function POST(request: Request) {
       });
     }
 
+    const assetUrl = toStoredAssetUrl(uploaded, storageKey);
     const asset = await prisma.asset.create({
       data: {
         profileId: profile.id,
         kind: "IMAGE",
         status: "READY",
-        url: uploaded.url,
+        url: assetUrl,
         storageKey,
         name: file.name,
         mimeType: file.type,
@@ -102,12 +114,12 @@ export async function POST(request: Request) {
     if (shouldSetAvatar) {
       await prisma.profile.update({
         where: { id: profile.id },
-        data: { avatarUrl: uploaded.url },
+        data: { avatarUrl: assetUrl },
       });
     }
 
     return jsonOk(
-      { asset, profile: shouldSetAvatar ? { avatarUrl: uploaded.url } : undefined },
+      { asset, profile: shouldSetAvatar ? { avatarUrl: assetUrl } : undefined },
       { status: 201 }
     );
   } catch (error) {
