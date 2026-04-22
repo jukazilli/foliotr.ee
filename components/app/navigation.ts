@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   FileText,
   Globe,
+  Images,
   LayoutDashboard,
   Layers3,
   Library,
@@ -34,6 +35,14 @@ export const appNavigation: AppNavItem[] = [
     icon: UserRound,
     section: "principal",
     description: "Complete suas informacoes.",
+  },
+  {
+    href: "/gallery",
+    label: "Galeria",
+    shortLabel: "Galeria",
+    icon: Images,
+    section: "principal",
+    description: "Reutilize imagens enviadas.",
   },
   {
     href: "/versions",

@@ -32,7 +32,7 @@ const menuGroups: MenuGroup[] = [
   {
     label: "Conteudo",
     items: appNavigation.filter((item) =>
-      ["/profile", "/versions"].includes(item.href)
+      ["/profile", "/gallery", "/versions"].includes(item.href)
     ),
   },
   {
