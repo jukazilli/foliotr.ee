@@ -23,40 +23,42 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="sticky top-3 z-50 px-3 sm:px-5">
+    <header className="sticky top-4 z-50 px-4 sm:px-6">
       <div
         className={cn(
-          "glass-nav mx-auto flex h-16 max-w-7xl items-center justify-between rounded-2xl px-4 transition-transform sm:px-5",
-          scrolled && "translate-y-0"
+          "mx-auto flex h-[5.25rem] max-w-[97rem] items-center justify-between rounded-full border border-white/90 bg-white px-5 shadow-[0_16px_48px_rgba(15,17,21,0.08)] transition-all sm:px-7",
+          scrolled && "shadow-[0_20px_60px_rgba(15,17,21,0.12)]"
         )}
       >
-        <FolioTreeLogo href="/" />
+        <FolioTreeLogo
+          href="/"
+          className="text-neutral-900"
+          wordmarkClassName="text-[1.95rem] font-[800] tracking-[-0.05em]"
+          markClassName="h-7 w-7"
+        />
 
-        <nav
-          className="hidden items-center gap-6 md:flex"
-          aria-label="Navegação pública"
-        >
+        <nav className="hidden items-center gap-6 md:flex" aria-label="Navegacao publica">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-semibold text-neutral-700 transition-colors hover:text-neutral-950"
+              className="text-[1.05rem] font-semibold text-neutral-900 transition-colors hover:text-neutral-700"
             >
               {link.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           <Link
             href="/login"
-            className="rounded-full border border-white/70 bg-white/58 px-4 py-2 text-sm font-semibold text-neutral-900 backdrop-blur transition-colors hover:bg-white"
+            className="rounded-2xl bg-neutral-100 px-6 py-4 text-[1.05rem] font-semibold text-neutral-900 transition-colors hover:bg-neutral-200"
           >
             Entrar
           </Link>
           <Link
             href="/register"
-            className="liquid-button rounded-full px-4 py-2 text-sm font-bold text-lime-900 transition-transform hover:-translate-y-0.5"
+            className="rounded-full bg-neutral-900 px-7 py-4 text-[1.05rem] font-semibold text-white transition-colors hover:bg-neutral-800"
           >
             Criar conta
           </Link>
@@ -64,7 +66,7 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-neutral-800 transition-colors hover:bg-white/72 md:hidden"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-2xl text-neutral-800 transition-colors hover:bg-neutral-100 md:hidden"
           onClick={() => setMenuOpen((value) => !value)}
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
@@ -74,28 +76,28 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="glass-panel mx-auto mt-2 max-w-7xl rounded-2xl p-3 md:hidden">
-          <nav className="flex flex-col gap-1" aria-label="Navegação móvel">
+        <div className="mx-auto mt-3 max-w-[97rem] rounded-[2rem] border border-white/90 bg-white p-3 shadow-[0_16px_48px_rgba(15,17,21,0.08)] md:hidden">
+          <nav className="flex flex-col gap-1" aria-label="Navegacao movel">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-3 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-white/70"
+                className="rounded-2xl px-4 py-3 text-base font-semibold text-neutral-700 hover:bg-neutral-100"
               >
                 {link.label}
               </Link>
             ))}
-            <div className="mt-3 grid grid-cols-2 gap-2 border-t border-white/70 pt-3">
+            <div className="mt-3 grid grid-cols-2 gap-2 border-t border-neutral-200 pt-3">
               <Link
                 href="/login"
-                className="rounded-full border border-white/80 bg-white/58 px-4 py-2.5 text-center text-sm font-semibold text-neutral-900"
+                className="rounded-2xl bg-neutral-100 px-4 py-3 text-center text-sm font-semibold text-neutral-900"
               >
                 Entrar
               </Link>
               <Link
                 href="/register"
-                className="liquid-button rounded-full px-4 py-2.5 text-center text-sm font-bold text-lime-900"
+                className="rounded-full bg-neutral-900 px-4 py-3 text-center text-sm font-semibold text-white"
               >
                 Criar conta
               </Link>
