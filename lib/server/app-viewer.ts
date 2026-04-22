@@ -110,6 +110,7 @@ export const getDashboardViewer = cache(async () => {
           projects: true,
           links: true,
           achievements: true,
+          highlights: true,
           proofs: true,
         },
       },

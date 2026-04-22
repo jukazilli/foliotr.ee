@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join, normalize } from "node:path";
 
 export interface UploadImageToLocalInput {
@@ -42,4 +42,11 @@ export async function uploadImageToLocal(
     key: input.key,
     url: `/${input.key}`,
   };
+}
+
+export async function deleteImageFromLocal(key: string) {
+  assertSafeLocalUploadKey(key);
+
+  const absolutePath = join(process.cwd(), "public", key);
+  await rm(absolutePath, { force: true });
 }

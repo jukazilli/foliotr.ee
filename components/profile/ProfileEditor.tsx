@@ -693,7 +693,13 @@ function SectionBar({
   );
 }
 
-export function ProfileEditor({ initialProfile }: { initialProfile: EditableProfile }) {
+export function ProfileEditor({
+  initialProfile,
+  initialTab,
+}: {
+  initialProfile: EditableProfile;
+  initialTab?: string;
+}) {
   const router = useRouter();
   const [profile, setProfile] = useState(() => normalizeProfile(initialProfile));
   const [status, setStatus] = useState<SaveStatus>("idle");
@@ -1016,6 +1022,7 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
       ) : null}
 
       <ProfileTabs
+        defaultValue={initialTab}
         tabs={[
           {
             value: "dados",
@@ -1800,153 +1807,157 @@ export function ProfileEditor({ initialProfile }: { initialProfile: EditableProf
           },
           {
             value: "links",
-            label: "Links & provas",
-            count: profile.links.length + profile.proofs.length,
+            label: "Links",
+            count: profile.links.length,
             children: (
-              <div className="space-y-6">
-                <ListPanel
-                  icon={<Link2 className="h-4 w-4" />}
-                  count={profile.links.length}
-                  label="links"
-                  addLabel="Link"
-                  onAdd={() =>
-                    addItem<EditableLink>("links", {
-                      _key: key(),
-                      platform: "website",
-                      label: "",
-                      url: "",
-                    })
-                  }
-                >
-                  {profile.links.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
-                      <CardContent className="grid gap-3 p-4 md:grid-cols-[140px_1fr_1fr_auto]">
+              <ListPanel
+                icon={<Link2 className="h-4 w-4" />}
+                count={profile.links.length}
+                label="links"
+                addLabel="Link"
+                onAdd={() =>
+                  addItem<EditableLink>("links", {
+                    _key: key(),
+                    platform: "website",
+                    label: "",
+                    url: "",
+                  })
+                }
+              >
+                {profile.links.map((item) => (
+                  <Card key={item._key} className="rounded-[20px]">
+                    <CardContent className="grid gap-3 p-4 md:grid-cols-[140px_1fr_1fr_auto]">
+                      <input
+                        className={inputClass()}
+                        placeholder="Tipo"
+                        value={item.platform}
+                        onChange={(event) =>
+                          updateList<EditableLink>("links", item._key, {
+                            platform: event.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        className={inputClass()}
+                        placeholder="Label"
+                        value={item.label}
+                        onChange={(event) =>
+                          updateList<EditableLink>("links", item._key, {
+                            label: event.target.value,
+                          })
+                        }
+                      />
+                      <input
+                        className={inputClass()}
+                        placeholder="URL"
+                        value={item.url}
+                        onChange={(event) =>
+                          updateList<EditableLink>("links", item._key, {
+                            url: event.target.value,
+                          })
+                        }
+                      />
+                      <IconButton
+                        label="Remover link"
+                        onClick={() => removeItem<EditableLink>("links", item._key)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </IconButton>
+                    </CardContent>
+                  </Card>
+                ))}
+              </ListPanel>
+            ),
+          },
+          {
+            value: "provas",
+            label: "Provas",
+            count: profile.proofs.length,
+            children: (
+              <ListPanel
+                icon={<ExternalLink className="h-4 w-4" />}
+                count={profile.proofs.length}
+                label="provas"
+                addLabel="Prova"
+                onAdd={() =>
+                  addItem<EditableProof>("proofs", {
+                    _key: key(),
+                    title: "",
+                    description: "",
+                    metric: "",
+                    url: "",
+                    imageUrl: "",
+                    tagsText: "",
+                  })
+                }
+              >
+                {profile.proofs.map((item) => (
+                  <Card key={item._key} className="rounded-[20px]">
+                    <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
+                      <div className="grid gap-3">
                         <input
                           className={inputClass()}
-                          placeholder="Tipo"
-                          value={item.platform}
+                          placeholder="Titulo da prova"
+                          value={item.title}
                           onChange={(event) =>
-                            updateList<EditableLink>("links", item._key, {
-                              platform: event.target.value,
+                            updateList<EditableProof>("proofs", item._key, {
+                              title: event.target.value,
                             })
                           }
                         />
-                        <input
-                          className={inputClass()}
-                          placeholder="Label"
-                          value={item.label}
+                        <textarea
+                          className={textareaClass()}
+                          placeholder="Contexto"
+                          value={item.description}
                           onChange={(event) =>
-                            updateList<EditableLink>("links", item._key, {
-                              label: event.target.value,
+                            updateList<EditableProof>("proofs", item._key, {
+                              description: event.target.value,
                             })
                           }
                         />
-                        <input
-                          className={inputClass()}
-                          placeholder="URL"
-                          value={item.url}
-                          onChange={(event) =>
-                            updateList<EditableLink>("links", item._key, {
-                              url: event.target.value,
-                            })
-                          }
-                        />
-                        <IconButton
-                          label="Remover link"
-                          onClick={() => removeItem<EditableLink>("links", item._key)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </IconButton>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </ListPanel>
-
-                <ListPanel
-                  icon={<ExternalLink className="h-4 w-4" />}
-                  count={profile.proofs.length}
-                  label="provas"
-                  addLabel="Prova"
-                  onAdd={() =>
-                    addItem<EditableProof>("proofs", {
-                      _key: key(),
-                      title: "",
-                      description: "",
-                      metric: "",
-                      url: "",
-                      imageUrl: "",
-                      tagsText: "",
-                    })
-                  }
-                >
-                  {profile.proofs.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
-                      <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
-                        <div className="grid gap-3">
+                        <div className="grid gap-3 sm:grid-cols-3">
                           <input
                             className={inputClass()}
-                            placeholder="Titulo da prova"
-                            value={item.title}
+                            placeholder="Metrica"
+                            value={item.metric}
                             onChange={(event) =>
                               updateList<EditableProof>("proofs", item._key, {
-                                title: event.target.value,
+                                metric: event.target.value,
                               })
                             }
                           />
-                          <textarea
-                            className={textareaClass()}
-                            placeholder="Contexto"
-                            value={item.description}
+                          <input
+                            className={inputClass()}
+                            placeholder="URL"
+                            value={item.url}
                             onChange={(event) =>
                               updateList<EditableProof>("proofs", item._key, {
-                                description: event.target.value,
+                                url: event.target.value,
                               })
                             }
                           />
-                          <div className="grid gap-3 sm:grid-cols-3">
-                            <input
-                              className={inputClass()}
-                              placeholder="Metrica"
-                              value={item.metric}
-                              onChange={(event) =>
-                                updateList<EditableProof>("proofs", item._key, {
-                                  metric: event.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              className={inputClass()}
-                              placeholder="URL"
-                              value={item.url}
-                              onChange={(event) =>
-                                updateList<EditableProof>("proofs", item._key, {
-                                  url: event.target.value,
-                                })
-                              }
-                            />
-                            <input
-                              className={inputClass()}
-                              placeholder="Tags"
-                              value={item.tagsText}
-                              onChange={(event) =>
-                                updateList<EditableProof>("proofs", item._key, {
-                                  tagsText: event.target.value,
-                                })
-                              }
-                            />
-                          </div>
+                          <input
+                            className={inputClass()}
+                            placeholder="Tags"
+                            value={item.tagsText}
+                            onChange={(event) =>
+                              updateList<EditableProof>("proofs", item._key, {
+                                tagsText: event.target.value,
+                              })
+                            }
+                          />
                         </div>
-                        <IconButton
-                          label="Remover prova"
-                          onClick={() => removeItem<EditableProof>("proofs", item._key)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </IconButton>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </ListPanel>
-              </div>
+                      </div>
+                      <IconButton
+                        label="Remover prova"
+                        onClick={() => removeItem<EditableProof>("proofs", item._key)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </IconButton>
+                    </CardContent>
+                  </Card>
+                ))}
+              </ListPanel>
             ),
           },
         ]}

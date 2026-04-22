@@ -1,5 +1,10 @@
 import { Agent } from "node:https";
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 import { NodeHttpHandler } from "@smithy/node-http-handler";
 import { getEnv } from "@/lib/env";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
@@ -126,6 +131,18 @@ export async function getImageFromS3(key: string) {
 
   return client.send(
     new GetObjectCommand({
+      Bucket: config.bucket,
+      Key: key,
+    })
+  );
+}
+
+export async function deleteImageFromS3(key: string) {
+  const config = requireS3Config();
+  const client = getS3Client();
+
+  await client.send(
+    new DeleteObjectCommand({
       Bucket: config.bucket,
       Key: key,
     })

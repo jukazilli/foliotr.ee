@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Badge } from "@/components/ui/badge";
 
 type ProfileTab = {
@@ -19,6 +19,15 @@ export function ProfileTabs({ tabs, defaultValue }: ProfileTabsProps) {
   const initialValue = defaultValue ?? tabs[0]?.value ?? "";
   const [activeTab, setActiveTab] = useState(initialValue);
   const activePanelId = useMemo(() => `profile-tabpanel-${activeTab}`, [activeTab]);
+
+  useEffect(() => {
+    if (tabs.length === 0) return;
+
+    const nextValue = defaultValue ?? tabs[0]?.value ?? "";
+
+    if (!tabs.some((tab) => tab.value === nextValue)) return;
+    setActiveTab(nextValue);
+  }, [defaultValue, tabs]);
 
   if (tabs.length === 0) return null;
 

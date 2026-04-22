@@ -1,5 +1,24 @@
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
+export interface AssetUsageLocation {
+  type:
+    | "avatar"
+    | "project_cover"
+    | "experience_logo"
+    | "achievement"
+    | "highlight"
+    | "proof"
+    | "page_block";
+  label: string;
+  referenceId?: string;
+}
+
+export interface AssetUsageSummary {
+  inUse: boolean;
+  count: number;
+  locations: AssetUsageLocation[];
+}
+
 export interface GalleryImageAsset {
   id: string;
   url: string;
@@ -11,6 +30,8 @@ export interface GalleryImageAsset {
   height?: number | null;
   metadata?: Record<string, unknown>;
   createdAt?: string | Date;
+  usageSummary?: AssetUsageSummary;
+  canDelete?: boolean;
 }
 
 export const IMAGE_FILE_ACCEPT = "image/png,image/jpeg,image/webp,image/gif";
@@ -43,6 +64,26 @@ export function formatApiError(payload: unknown, fallback: string) {
 
 export function readAsset(value: unknown): GalleryImageAsset | null {
   const asset = asRecord(value);
+  const usageSummaryRecord = asRecord(asset.usageSummary);
+  const usageLocations: AssetUsageLocation[] = [];
+
+  if (Array.isArray(usageSummaryRecord.locations)) {
+    usageSummaryRecord.locations.forEach((item) => {
+      const location = asRecord(item);
+
+      if (typeof location.type !== "string" || typeof location.label !== "string") {
+        return;
+      }
+
+      usageLocations.push({
+        type: location.type as AssetUsageLocation["type"],
+        label: location.label,
+        ...(typeof location.referenceId === "string"
+          ? { referenceId: location.referenceId }
+          : {}),
+      });
+    });
+  }
 
   if (typeof asset.id !== "string" || typeof asset.url !== "string") {
     return null;
@@ -62,6 +103,13 @@ export function readAsset(value: unknown): GalleryImageAsset | null {
       typeof asset.createdAt === "string" || asset.createdAt instanceof Date
         ? asset.createdAt
         : undefined,
+    usageSummary: {
+      inUse: Boolean(usageSummaryRecord.inUse),
+      count:
+        typeof usageSummaryRecord.count === "number" ? usageSummaryRecord.count : 0,
+      locations: usageLocations,
+    },
+    canDelete: typeof asset.canDelete === "boolean" ? asset.canDelete : undefined,
   };
 }
 

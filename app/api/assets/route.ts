@@ -11,6 +11,7 @@ const assetListQuerySchema = z.object({
   status: z.enum(["PENDING", "READY", "FAILED"]).optional(),
   limit: z.coerce.number().int().min(1).max(96).optional(),
   cursor: z.string().cuid().optional(),
+  page: z.coerce.number().int().min(1).optional(),
 });
 
 export async function GET(request: NextRequest) {
