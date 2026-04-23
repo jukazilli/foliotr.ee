@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LINKFOLIO | Portifolio online em minutos</title>
+    <meta
+      name="description"
+      content="Crie um portifolio online, gere versoes para vagas e publique seu curriculo em uma pagina viva."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23DFFF00'/%3E%3Cpath d='M9 8h6v10h8v6H9z' fill='%23FF4D00'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="vertical-rail" aria-hidden="true">
+      <span>LINKFOLIO</span>
+      <span>Portfolio vivo</span>
+      <span>Curriculo online</span>
+    </div>
+
+    <header class="topbar">
+      <a class="brand" href="#hero" aria-label="Linkfolio inicio">LINKFOLIO*</a>
+
+      <nav class="nav-links" aria-label="Navegacao principal">
+        <a href="#portfolio">PORTIFOLIO</a>
+        <a href="#versions">VERSOES</a>
+        <a href="#resume">CURRICULOS</a>
+        <a href="#community">COMUNIDADE</a>
+      </nav>
+
+      <div class="top-actions">
+        <a class="button button-light" href="#login">Log in</a>
+        <a class="button button-dark" href="#hero">Sign up free</a>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero block block-lime" id="hero">
+        <div class="block-copy">
+          <p class="eyebrow">Portfolio online em minutos</p>
+          <h1>A pagina que mostra seu trabalho antes da entrevista.</h1>
+          <p class="lead">
+            Crie seu Linkfolio, publique nas redes sociais e entregue para
+            recrutadores uma leitura clara do que voce faz.
+          </p>
+
+          <form class="username-form" id="username-form">
+            <label class="sr-only" for="username-input">Seu username</label>
+            <div class="username-input">
+              <span>linkfolio.co/@</span>
+              <input
+                id="username-input"
+                name="username"
+                type="text"
+                value="ana"
+                autocomplete="off"
+                spellcheck="false"
+                aria-label="Seu username"
+              />
+            </div>
+            <button class="button button-submit" type="submit">
+              Criar meu Linkfolio
+            </button>
+          </form>
+        </div>
+
+        <div class="hero-media" aria-label="Preview do Linkfolio">
+          <div class="browser-card">
+            <div class="profile-preview">
+              <div class="ana-photo-card" aria-label="Foto de Ana, designer">
+                <img
+                  class="ana-portrait"
+                  src="./img/ufo.gif"
+                  alt="Ana, designer"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature block block-blue" id="portfolio">
+        <div class="feature-art">
+          <div class="iphone-mockup" aria-label="Mockup de celular com perfil do Julio">
+            <div class="iphone-screen">
+              <div class="iphone-status">
+                <span>9:41</span>
+                <strong>linkfolio</strong>
+              </div>
+              <div class="social-cover"></div>
+              <div class="social-body">
+                <div class="social-avatar"></div>
+                <strong>@julio.elc</strong>
+                <p>Eletricista</p>
+                <span>Linkfolio online</span>
+                <span>Servicos eletricos</span>
+                <span>Curriculo rapido</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <p class="eyebrow">Portfolio publicado</p>
+          <h2>Crie um portifolio online em minutos.</h2>
+          <p>
+            Divulgue nas suas redes sociais uma pagina clara com seu trabalho,
+            seus links e as provas que fazem alguem querer conversar com voce.
+          </p>
+          <a class="button button-accent" href="#hero">Criar agora</a>
+        </div>
+      </section>
+
+      <section class="feature block block-rose" id="versions">
+        <div class="feature-copy">
+          <p class="eyebrow">Versoes para vagas</p>
+          <h2>Aumente suas chances de contrato e salarios melhores.</h2>
+          <p>
+            Monte versoes especificas para cada vaga e mostre primeiro o que
+            aquela oportunidade precisa enxergar.
+          </p>
+          <a class="button button-soft" href="#hero">Gerar uma versao</a>
+        </div>
+
+        <div class="version-stack" aria-label="Versoes especificas">
+          <article>
+            <span>Vaga 01</span>
+            <strong>Product Designer</strong>
+          </article>
+          <article>
+            <span>Vaga 02</span>
+            <strong>UX Research</strong>
+          </article>
+          <article>
+            <span>Vaga 03</span>
+            <strong>AI Designer</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="feature block block-cream" id="resume">
+        <div class="resume-grid">
+          <div class="resume-panel resume-main">
+            <span>Template ativo</span>
+            <strong>Curriculo editorial</strong>
+          </div>
+          <div class="resume-panel resume-small">
+            <strong>Experiencias</strong>
+            <span>4 blocos</span>
+          </div>
+          <div class="resume-panel resume-small resume-blue">
+            <strong>Projetos</strong>
+            <span>8 provas</span>
+          </div>
+          <div class="resume-panel resume-wide">
+            <strong>Pronto para recruiter</strong>
+            <span>PDF + pagina publica</span>
+          </div>
+        </div>
+
+        <div class="feature-copy">
+          <p class="eyebrow">Curriculo com template</p>
+          <h2>Faca seu curriculo ficar atrativo.</h2>
+          <p>
+            Em poucos minutos voce preenche seus dados, seleciona um template e
+            publica uma versao bonita para cliente ou recrutador.
+          </p>
+          <a class="button button-accent" href="#hero">Escolher template</a>
+        </div>
+      </section>
+
+      <section class="feature block block-green" id="reading">
+        <div class="feature-copy">
+          <p class="eyebrow">Leitura rapida ou completa</p>
+          <h2>De opcoes para quem esta com pressa.</h2>
+          <p>
+            Deixe as pessoas decidirem se querem ler seu portifolio completo ou
+            abrir um curriculo mais resumido.
+          </p>
+          <a class="button button-soft" href="#hero">Publicar os dois</a>
+        </div>
+      </section>
+
+      <section class="community block block-white" id="community">
+        <div class="community-intro">
+          <div class="community-gif-card">
+            <img src="./img/giphy.gif" alt="Comunidade Linkfolio em movimento" />
+          </div>
+
+          <div class="community-heading">
+            <p class="eyebrow">Nossa comunidade</p>
+            <h2>Conheca os membros com portifolios mais visitados nos ultimos 3 dias.</h2>
+          </div>
+        </div>
+
+        <div class="member-strip">
+          <div class="member-row" aria-label="Portifolios mais visitados">
+            <article class="member-card member-cyan">
+              <span>1.8k visitas</span>
+              <strong>@marina.design</strong>
+            </article>
+            <article class="member-card member-photo">
+              <span>1.4k visitas</span>
+              <strong>@joao.dev</strong>
+            </article>
+            <article class="member-card member-lime">
+              <span>920 visitas</span>
+              <strong>@bia.motion</strong>
+            </article>
+            <article class="member-card member-orange">
+              <span>810 visitas</span>
+              <strong>@caio.copy</strong>
+            </article>
+            <article class="member-card member-rose">
+              <span>760 visitas</span>
+              <strong>@lara.ux</strong>
+            </article>
+            <article class="member-card member-blank">
+              <span>690 visitas</span>
+              <strong>@nina.data</strong>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" id="login">
+      <div class="footer-panel">
+        <div>
+          <strong class="footer-logo">Linkfolio*</strong>
+          <p>Uma pagina viva para mostrar trabalho, curriculo e versoes.</p>
+        </div>
+
+        <nav aria-label="Footer">
+          <a href="#portfolio">Portfolio</a>
+          <a href="#versions">Versoes</a>
+          <a href="#resume">Templates</a>
+          <a href="#community">Comunidade</a>
+          <a href="#hero">Criar agora</a>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

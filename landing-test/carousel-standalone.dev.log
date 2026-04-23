@@ -1,0 +1,19 @@
+
+> carousel-standalone@0.1.0 dev
+> next dev --hostname 127.0.0.1 --port 3000
+
+▲ Next.js 16.2.4 (Turbopack)
+- Local:         http://127.0.0.1:3000
+- Network:       http://127.0.0.1:3000
+✓ Ready in 5.1s
+Creating turbopack project {
+  dir: 'C:\\projetos\\foliotree\\landing-test\\material\\carousel-standalone',
+  testMode: true
+}
+
+○ Compiling / ...
+ GET / 200 in 9.0s (next.js: 8.4s, application-code: 584ms)
+ GET / 200 in 531ms (next.js: 97ms, application-code: 434ms)
+ GET / 200 in 834ms (next.js: 304ms, application-code: 530ms)
+ GET / 200 in 730ms (next.js: 166ms, application-code: 564ms)
+ GET / 200 in 124ms (next.js: 13ms, application-code: 111ms)

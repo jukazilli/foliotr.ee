@@ -1,20 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "#como-funciona", label: "Como funciona" },
-  { href: "#provas", label: "Provas" },
   { href: "/templates", label: "Templates" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [desktopVisible, setDesktopVisible] = useState(false);
+
+  const isDesktopMenuVisible = useMemo(
+    () => desktopVisible || menuOpen,
+    [desktopVisible, menuOpen],
+  );
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -22,12 +26,47 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+
+    function revealDesktopMenu(event: MouseEvent) {
+      if (window.innerWidth < 768) {
+        return;
+      }
+
+      if (event.clientY > 200) {
+        return;
+      }
+
+      setDesktopVisible(true);
+
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+      }
+
+      hideTimer = setTimeout(() => {
+        setDesktopVisible(false);
+      }, 1400);
+    }
+
+    window.addEventListener("mousemove", revealDesktopMenu, { passive: true });
+
+    return () => {
+      window.removeEventListener("mousemove", revealDesktopMenu);
+      if (hideTimer) {
+        clearTimeout(hideTimer);
+      }
+    };
+  }, []);
+
   return (
-    <header className="sticky top-4 z-50 px-4 sm:px-6">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-6 sm:pt-5 lg:px-8 lg:pt-6">
       <div
         className={cn(
-          "mx-auto flex h-[5.25rem] max-w-[97rem] items-center justify-between rounded-full border border-white/90 bg-white px-5 shadow-[0_16px_48px_rgba(15,17,21,0.08)] transition-all sm:px-7",
-          scrolled && "shadow-[0_20px_60px_rgba(15,17,21,0.12)]"
+          "pointer-events-auto mx-auto flex h-[4.65rem] max-w-[97rem] items-center justify-between rounded-full border border-white/85 bg-white/88 px-5 shadow-[0_16px_48px_rgba(15,17,21,0.08)] backdrop-blur-xl transition-all duration-300 sm:h-[5rem] sm:px-7",
+          scrolled && "shadow-[0_20px_60px_rgba(15,17,21,0.12)]",
+          "md:translate-y-0 md:opacity-100",
+          !isDesktopMenuVisible && "md:pointer-events-none md:-translate-y-5 md:opacity-0"
         )}
       >
         <FolioTreeLogo
@@ -76,7 +115,7 @@ export default function Navbar() {
       </div>
 
       {menuOpen && (
-        <div className="mx-auto mt-3 max-w-[97rem] rounded-[2rem] border border-white/90 bg-white p-3 shadow-[0_16px_48px_rgba(15,17,21,0.08)] md:hidden">
+        <div className="pointer-events-auto mx-auto mt-3 max-w-[97rem] rounded-[2rem] border border-white/90 bg-white p-3 shadow-[0_16px_48px_rgba(15,17,21,0.08)] md:hidden">
           <nav className="flex flex-col gap-1" aria-label="Navegacao movel">
             {links.map((link) => (
               <Link
