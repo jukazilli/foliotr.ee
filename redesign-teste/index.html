@@ -15,14 +15,18 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="vertical-rail" aria-hidden="true">
-      <span>LINKFOLIO</span>
-      <span>Portfolio vivo</span>
-      <span>Curriculo online</span>
-    </div>
-
-    <header class="topbar">
+    <header class="topbar" data-topbar>
       <a class="brand" href="#hero" aria-label="Linkfolio inicio">LINKFOLIO*</a>
+
+      <button
+        class="button theme-toggle"
+        id="theme-toggle"
+        type="button"
+        aria-pressed="false"
+        aria-label="Ativar tema monocromatico"
+      >
+        APAGAR A LUZ
+      </button>
 
       <nav class="nav-links" aria-label="Navegacao principal">
         <a href="#portfolio">PORTIFOLIO</a>
@@ -41,7 +45,7 @@
       <section class="hero block block-lime" id="hero">
         <div class="block-copy">
           <p class="eyebrow">Portfolio online em minutos</p>
-          <h1>A pagina que mostra seu trabalho antes da entrevista.</h1>
+          <h1>CAPTURE ATENCAO E MOSTRE SEU TRABALHO ANTES DA ENTREVISTA.</h1>
           <p class="lead">
             Crie seu Linkfolio, publique nas redes sociais e entregue para
             recrutadores uma leitura clara do que voce faz.
@@ -55,7 +59,7 @@
                 id="username-input"
                 name="username"
                 type="text"
-                value="ana"
+                placeholder="ana"
                 autocomplete="off"
                 spellcheck="false"
                 aria-label="Seu username"
@@ -73,8 +77,8 @@
               <div class="ana-photo-card" aria-label="Foto de Ana, designer">
                 <img
                   class="ana-portrait"
-                  src="./img/ufo.gif"
-                  alt="Ana, designer"
+                  src="./img/ufo copy.gif"
+                  alt="capture a atenção de recrutadores com um portifolio online"
                 />
               </div>
             </div>
@@ -84,22 +88,8 @@
 
       <section class="feature block block-blue" id="portfolio">
         <div class="feature-art">
-          <div class="iphone-mockup" aria-label="Mockup de celular com perfil do Julio">
-            <div class="iphone-screen">
-              <div class="iphone-status">
-                <span>9:41</span>
-                <strong>linkfolio</strong>
-              </div>
-              <div class="social-cover"></div>
-              <div class="social-body">
-                <div class="social-avatar"></div>
-                <strong>@julio.elc</strong>
-                <p>Eletricista</p>
-                <span>Linkfolio online</span>
-                <span>Servicos eletricos</span>
-                <span>Curriculo rapido</span>
-              </div>
-            </div>
+          <div class="gif-card" aria-label="Preview com gif de gato">
+            <img class="feature-gif" src="./img/cat.gif" alt="Gif de gato" />
           </div>
         </div>
 
@@ -110,7 +100,7 @@
             Divulgue nas suas redes sociais uma pagina clara com seu trabalho,
             seus links e as provas que fazem alguem querer conversar com voce.
           </p>
-          <a class="button button-accent" href="#hero">Criar agora</a>
+          <a class="button button-dark" href="#hero">Criar agora</a>
         </div>
       </section>
 
@@ -126,15 +116,15 @@
         </div>
 
         <div class="version-stack" aria-label="Versoes especificas">
-          <article>
+          <article style="--i: 1">
             <span>Vaga 01</span>
             <strong>Product Designer</strong>
           </article>
-          <article>
+          <article style="--i: 2">
             <span>Vaga 02</span>
             <strong>UX Research</strong>
           </article>
-          <article>
+          <article style="--i: 3">
             <span>Vaga 03</span>
             <strong>AI Designer</strong>
           </article>
@@ -142,7 +132,7 @@
       </section>
 
       <section class="feature block block-cream" id="resume">
-        <div class="resume-grid">
+        <div class="resume-grid resume-stack" data-auto-activate aria-label="Templates de curriculo">
           <div class="resume-panel resume-main">
             <span>Template ativo</span>
             <strong>Curriculo editorial</strong>
@@ -181,6 +171,16 @@
             abrir um curriculo mais resumido.
           </p>
           <a class="button button-soft" href="#hero">Publicar os dois</a>
+        </div>
+
+        <div class="feature-art reading-art">
+          <div class="reading-gif-card">
+            <img
+              class="reading-gif"
+              src="./img/croco.gif"
+              alt="Preview animado da opcao de leitura rapida ou completa"
+            />
+          </div>
         </div>
       </section>
 
