@@ -3,56 +3,93 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LINKFOLIO | Portifolio online em minutos</title>
+    <title>LINKFOLIO | Portfólio online em minutos</title>
     <meta
       name="description"
-      content="Crie um portifolio online, gere versoes para vagas e publique seu curriculo em uma pagina viva."
+      content="Crie um portfólio online, gere versões para vagas e publique seu currículo em uma página viva."
     />
     <link
       rel="icon"
       href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23DFFF00'/%3E%3Cpath d='M9 8h6v10h8v6H9z' fill='%23FF4D00'/%3E%3C/svg%3E"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
     <header class="topbar" data-topbar>
-      <a class="brand" href="#hero" aria-label="Linkfolio inicio">LINKFOLIO*</a>
+      <a class="brand" href="#hero" aria-label="Linkfolio início">
+        <span>LINKFOLIO</span>
+      </a>
 
-      <button
-        class="button theme-toggle"
-        id="theme-toggle"
-        type="button"
-        aria-pressed="false"
-        aria-label="Ativar tema monocromatico"
-      >
-        APAGAR A LUZ
-      </button>
-
-      <nav class="nav-links" aria-label="Navegacao principal">
-        <a href="#portfolio">PORTIFOLIO</a>
-        <a href="#versions">VERSOES</a>
-        <a href="#resume">CURRICULOS</a>
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="#portfolio">PORTFÓLIO</a>
+        <a href="#versions">VERSÕES</a>
+        <a href="#resume">CURRÍCULOS</a>
         <a href="#community">COMUNIDADE</a>
       </nav>
 
       <div class="top-actions">
-        <a class="button button-light" href="#login">Log in</a>
-        <a class="button button-dark" href="#hero">Sign up free</a>
+        <a class="button button-light" href="/login">Entrar</a>
+        <a class="button button-dark" href="#hero">Criar grátis</a>
+        <button
+          class="button theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Apagar a luz"
+          title="Apagar a luz"
+        >
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-moon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M21 12.8A8.5 8.5 0 0 1 11.2 3a7 7 0 1 0 9.8 9.8Z"
+            />
+          </svg>
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-sun"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+        </button>
       </div>
     </header>
 
     <main>
       <section class="hero block block-lime" id="hero">
         <div class="block-copy">
-          <p class="eyebrow">Portfolio online em minutos</p>
-          <h1>CAPTURE ATENCAO E MOSTRE SEU TRABALHO ANTES DA ENTREVISTA.</h1>
+          <p class="eyebrow">Portfólio online em minutos</p>
+          <h1 class="hero-title">
+            <span>Transforme visitas</span>
+            <span>em interesse real.</span>
+
+          </h1>
           <p class="lead">
             Crie seu Linkfolio, publique nas redes sociais e entregue para
-            recrutadores uma leitura clara do que voce faz.
+            recrutadores uma leitura clara do que você faz.
           </p>
 
           <form class="username-form" id="username-form">
-            <label class="sr-only" for="username-input">Seu username</label>
+            <label class="sr-only" for="username-input">Seu nome de usuário</label>
             <div class="username-input">
               <span>linkfolio.co/@</span>
               <input
@@ -62,7 +99,7 @@
                 placeholder="ana"
                 autocomplete="off"
                 spellcheck="false"
-                aria-label="Seu username"
+                aria-label="Seu nome de usuário"
               />
             </div>
             <button class="button button-submit" type="submit">
@@ -78,7 +115,7 @@
                 <img
                   class="ana-portrait"
                   src="./img/ufo copy.gif"
-                  alt="capture a atenção de recrutadores com um portifolio online"
+                  alt="Capture a atenção de recrutadores com um portfólio online"
                 />
               </div>
             </div>
@@ -94,28 +131,28 @@
         </div>
 
         <div class="feature-copy">
-          <p class="eyebrow">Portfolio publicado</p>
-          <h2>Crie um portifolio online em minutos.</h2>
+          <p class="eyebrow">Portfólio publicado</p>
+          <h2>Crie um portfólio online em minutos.</h2>
           <p>
-            Divulgue nas suas redes sociais uma pagina clara com seu trabalho,
-            seus links e as provas que fazem alguem querer conversar com voce.
+            Divulgue nas suas redes sociais uma página clara com seu trabalho,
+            seus links e as provas que fazem alguém querer conversar com você.
           </p>
-          <a class="button button-dark" href="#hero">Criar agora</a>
+          <a class="button button-rest" href="#hero">Criar agora</a>
         </div>
       </section>
 
       <section class="feature block block-rose" id="versions">
         <div class="feature-copy">
-          <p class="eyebrow">Versoes para vagas</p>
-          <h2>Aumente suas chances de contrato e salarios melhores.</h2>
+          <p class="eyebrow">Versões para vagas</p>
+          <h2>Aumente suas chances de contrato e salários melhores.</h2>
           <p>
-            Monte versoes especificas para cada vaga e mostre primeiro o que
+            Monte versões específicas para cada vaga e mostre primeiro o que
             aquela oportunidade precisa enxergar.
           </p>
-          <a class="button button-soft" href="#hero">Gerar uma versao</a>
+          <a class="button button-soft" href="#hero">Gerar uma versão</a>
         </div>
 
-        <div class="version-stack" aria-label="Versoes especificas">
+        <div class="version-stack" aria-label="Versões específicas">
           <article style="--i: 1">
             <span>Vaga 01</span>
             <strong>Product Designer</strong>
@@ -132,13 +169,13 @@
       </section>
 
       <section class="feature block block-cream" id="resume">
-        <div class="resume-grid resume-stack" data-auto-activate aria-label="Templates de curriculo">
+        <div class="resume-grid resume-stack" data-auto-activate aria-label="Templates de currículo">
           <div class="resume-panel resume-main">
             <span>Template ativo</span>
-            <strong>Curriculo editorial</strong>
+            <strong>Currículo editorial</strong>
           </div>
           <div class="resume-panel resume-small">
-            <strong>Experiencias</strong>
+            <strong>Experiências</strong>
             <span>4 blocos</span>
           </div>
           <div class="resume-panel resume-small resume-blue">
@@ -146,17 +183,17 @@
             <span>8 provas</span>
           </div>
           <div class="resume-panel resume-wide">
-            <strong>Pronto para recruiter</strong>
-            <span>PDF + pagina publica</span>
+            <strong>Pronto para recrutador</strong>
+            <span>PDF + página pública</span>
           </div>
         </div>
 
         <div class="feature-copy">
-          <p class="eyebrow">Curriculo com template</p>
-          <h2>Faca seu curriculo ficar atrativo.</h2>
+          <p class="eyebrow">Currículo com template</p>
+          <h2>Faça seu currículo ficar atrativo.</h2>
           <p>
-            Em poucos minutos voce preenche seus dados, seleciona um template e
-            publica uma versao bonita para cliente ou recrutador.
+            Em poucos minutos você preenche seus dados, seleciona um template e
+            publica uma versão bonita para cliente ou recrutador.
           </p>
           <a class="button button-accent" href="#hero">Escolher template</a>
         </div>
@@ -164,11 +201,11 @@
 
       <section class="feature block block-green" id="reading">
         <div class="feature-copy">
-          <p class="eyebrow">Leitura rapida ou completa</p>
-          <h2>De opcoes para quem esta com pressa.</h2>
+          <p class="eyebrow">Leitura rápida ou completa</p>
+          <h2>Dê opções para quem está com pressa.</h2>
           <p>
-            Deixe as pessoas decidirem se querem ler seu portifolio completo ou
-            abrir um curriculo mais resumido.
+            Deixe as pessoas decidirem se querem ler seu portfólio completo ou
+            abrir um currículo mais resumido.
           </p>
           <a class="button button-soft" href="#hero">Publicar os dois</a>
         </div>
@@ -178,7 +215,7 @@
             <img
               class="reading-gif"
               src="./img/croco.gif"
-              alt="Preview animado da opcao de leitura rapida ou completa"
+              alt="Preview animado da opção de leitura rápida ou completa"
             />
           </div>
         </div>
@@ -191,13 +228,13 @@
           </div>
 
           <div class="community-heading">
-            <p class="eyebrow">Nossa comunidade</p>
-            <h2>Conheca os membros com portifolios mais visitados nos ultimos 3 dias.</h2>
+            <p class="eyebrow">NOSSA COMUNIDADE</p>
+            <h2>Explore portfólios de sucesso e faça parte da nossa comunidade.</h2>
           </div>
         </div>
 
         <div class="member-strip">
-          <div class="member-row" aria-label="Portifolios mais visitados">
+          <div class="member-row" aria-label="Portfólios mais visitados">
             <article class="member-card member-cyan">
               <span>1.8k visitas</span>
               <strong>@marina.design</strong>
@@ -225,21 +262,81 @@
           </div>
         </div>
       </section>
+
+
     </main>
 
-    <footer class="footer" id="login">
+    <footer class="footer">
       <div class="footer-panel">
-        <div>
-          <strong class="footer-logo">Linkfolio*</strong>
-          <p>Uma pagina viva para mostrar trabalho, curriculo e versoes.</p>
+        <div class="footer-brand">
+          <svg
+            class="footer-logo"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M9.4 14.6 8 16a3.6 3.6 0 0 1-5.1-5.1l3-3A3.6 3.6 0 0 1 11 7.9"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="M14.6 9.4 16 8a3.6 3.6 0 0 1 5.1 5.1l-3 3a3.6 3.6 0 0 1-5.1 0"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="m8.8 15.2 6.4-6.4"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="3"
+            />
+          </svg>
+          <strong class="footer-brand-name">LINKFOLIO</strong>
+          <p>Uma página viva para mostrar trabalho, currículo e versões.</p>
         </div>
 
-        <nav aria-label="Footer">
-          <a href="#portfolio">Portfolio</a>
-          <a href="#versions">Versoes</a>
-          <a href="#resume">Templates</a>
-          <a href="#community">Comunidade</a>
-          <a href="#hero">Criar agora</a>
+        <nav class="footer-links" aria-label="Rodapé">
+          <section class="footer-link-group" aria-labelledby="footer-community">
+            <h3 id="footer-community">Community</h3>
+            <ul>
+              <li><a href="#community">Nosso blog</a></li>
+              <li><a href="#resume">Teste de vocação</a></li>
+              <li><a href="#resume">Explore templates</a></li>
+              <li><a href="#community">Nossos usuários</a></li>
+              <li><a href="#versions">Versões</a></li>
+              <li><a href="#portfolio">Portfólio</a></li>
+              <li><a href="#hero">Criar agora</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-support">
+            <h3 id="footer-support">Suporte</h3>
+            <ul>
+              <li><a href="/login">Ajuda</a></li>
+              <li><a href="#hero">Como começar</a></li>
+              <li><a href="#hero">Linkfolio Pro</a></li>
+              <li><a href="/login">Perguntas frequentes</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-company">
+            <h3 id="footer-company">Company</h3>
+            <ul>
+              <li><a href="/login">Meet Tesseria Seed</a></li>
+              <li><a href="/login">About</a></li>
+              <li><a href="/login">Carreiras</a></li>
+              <li><a href="/login">Aprenda</a></li>
+              <li><a href="/login">Contact</a></li>
+            </ul>
+          </section>
         </nav>
       </div>
     </footer>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recuperar senha | LINKFOLIO</title>
+    <meta
+      name="description"
+      content="Recupere o acesso à sua conta Linkfolio recebendo um link seguro por email."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23DFFF00'/%3E%3Cpath d='M9 8h6v10h8v6H9z' fill='%23FF4D00'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="topbar" data-topbar>
+      <a class="brand" href="/" aria-label="Voltar para o início">
+        <span>LINKFOLIO</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="/#portfolio">PORTFÓLIO</a>
+        <a href="/#versions">VERSÕES</a>
+        <a href="/#resume">CURRÍCULOS</a>
+        <a href="/#community">COMUNIDADE</a>
+      </nav>
+
+      <div class="top-actions">
+        <a class="button button-light" href="/login">Entrar</a>
+        <a class="button button-dark" href="/#hero">Criar grátis</a>
+        <button
+          class="button theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Apagar a luz"
+          title="Apagar a luz"
+        >
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-moon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M21 12.8A8.5 8.5 0 0 1 11.2 3a7 7 0 1 0 9.8 9.8Z"
+            />
+          </svg>
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-sun"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section
+        class="login-screen forgot-screen"
+        id="forgot-password"
+        aria-labelledby="forgot-title"
+      >
+        <div class="login-panel">
+          <div class="login-copy">
+            <p class="eyebrow">Recuperar acesso</p>
+            <h1 id="forgot-title">Esqueceu sua senha?</h1>
+            <p>
+              Informe o email cadastrado e enviaremos um link seguro para você
+              criar uma nova senha.
+            </p>
+          </div>
+
+          <!-- TODO backend: enviar este email via API do Resend.
+               Quando migrar para React/TypeScript, mover a chamada para uma rota/API segura
+               para não expor RESEND_API_KEY no frontend. -->
+          <form class="login-form password-recovery-form">
+            <label class="sr-only" for="recovery-email">Email cadastrado</label>
+            <input
+              id="recovery-email"
+              name="email"
+              type="email"
+              placeholder="Email cadastrado"
+              autocomplete="email"
+              required
+            />
+
+            <button class="button login-submit" type="submit">
+              Enviar link de recuperação
+            </button>
+          </form>
+
+          <a class="back-to-login" href="/login">Voltar para o login</a>
+        </div>
+
+        <div
+          class="login-art forgot-art"
+          aria-label="Ilustração animada para recuperação de senha"
+        >
+          <img src="../forgotaJoe.gif" alt="" aria-hidden="true" />
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-panel">
+        <div class="footer-brand">
+          <svg
+            class="footer-logo"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M9.4 14.6 8 16a3.6 3.6 0 0 1-5.1-5.1l3-3A3.6 3.6 0 0 1 11 7.9"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="M14.6 9.4 16 8a3.6 3.6 0 0 1 5.1 5.1l-3 3a3.6 3.6 0 0 1-5.1 0"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="m8.8 15.2 6.4-6.4"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="3"
+            />
+          </svg>
+          <strong class="footer-brand-name">LINKFOLIO</strong>
+          <p>Uma página viva para mostrar trabalho, currículo e versões.</p>
+        </div>
+
+        <nav class="footer-links" aria-label="Rodapé">
+          <section class="footer-link-group" aria-labelledby="footer-community">
+            <h3 id="footer-community">Community</h3>
+            <ul>
+              <li><a href="/#community">Nosso blog</a></li>
+              <li><a href="/#resume">Teste de vocação</a></li>
+              <li><a href="/#resume">Explore templates</a></li>
+              <li><a href="/#community">Nossos usuários</a></li>
+              <li><a href="/#versions">Versões</a></li>
+              <li><a href="/#portfolio">Portfólio</a></li>
+              <li><a href="/#hero">Criar agora</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-support">
+            <h3 id="footer-support">Suporte</h3>
+            <ul>
+              <li><a href="/login">Ajuda</a></li>
+              <li><a href="/#hero">Como começar</a></li>
+              <li><a href="/#hero">Linkfolio Pro</a></li>
+              <li><a href="/login">Perguntas frequentes</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-company">
+            <h3 id="footer-company">Company</h3>
+            <ul>
+              <li><a href="/login">Meet Tesseria Seed</a></li>
+              <li><a href="/login">About</a></li>
+              <li><a href="/login">Carreiras</a></li>
+              <li><a href="/login">Aprenda</a></li>
+              <li><a href="/login">Contact</a></li>
+            </ul>
+          </section>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="../app.js"></script>
+  </body>
+</html>

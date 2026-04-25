@@ -5,6 +5,8 @@ const previewName = document.querySelector("#preview-name");
 const autoActivateBlocks = document.querySelectorAll("[data-auto-activate]");
 const topbar = document.querySelector("[data-topbar]");
 const themeToggle = document.querySelector("#theme-toggle");
+const loginForm = document.querySelector(".login-form");
+const passwordRecoveryForm = document.querySelector(".password-recovery-form");
 const THEME_STORAGE_KEY = "foliotree-theme";
 
 function normalizeUsername(value) {
@@ -128,11 +130,9 @@ function applyTheme(theme) {
     const isNoir = nextTheme === "noir";
 
     themeToggle.setAttribute("aria-pressed", String(isNoir));
-    themeToggle.textContent = isNoir ? "ACENDER A LUZ" : "APAGAR A LUZ";
-    themeToggle.setAttribute(
-      "aria-label",
-      isNoir ? "Voltar para o tema colorido" : "Ativar tema monocromatico"
-    );
+    const lightLabel = isNoir ? "Acender a luz" : "Apagar a luz";
+    themeToggle.setAttribute("aria-label", lightLabel);
+    themeToggle.setAttribute("title", lightLabel);
   }
 
   storeTheme(nextTheme);
@@ -159,6 +159,18 @@ if (usernameForm) {
     event.preventDefault();
     syncPreview();
     usernameForm.classList.add("is-submitted");
+  });
+}
+
+if (loginForm) {
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+  });
+}
+
+if (passwordRecoveryForm) {
+  passwordRecoveryForm.addEventListener("submit", (event) => {
+    event.preventDefault();
   });
 }
 
