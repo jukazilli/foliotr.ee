@@ -5,7 +5,7 @@ Version: v0.0.1
 Last updated: 2026-04-17
 
 Implementation update: 2026-04-18  
-The public UI implementation must use `doc/Design System/Brand Core.html`, `doc/Design System/Tonal System.html`, and `doc/Design System/Typography System.html` as design references. For the current cut, the prompt-level typography rule is Sora for display, Inter for UI, and IBM Plex Mono for data/meta.
+The public UI implementation must use the LINKFOLIO redesign as the current visual source of truth. The old `doc/Design System/*.html` references are replaced for implementation decisions. For the current cut, typography is Poppins across display, UI, and data/meta.
 
 ## Document Purpose
 
@@ -410,9 +410,9 @@ Avoid:
 
 Approved direction:
 
-- tonal families from `doc/Design System/Tonal System.html`
-- light neutral product/public base with expressive landing sections
-- Blue 500 as cold structural landing color
+- tonal families from `docs/tonal system.md`
+- light `paper` base with expressive `orange`, `pink`, `cream`, `green`, `cyan`, and `peach`
+- hard black borders and shadows as a recognizable LINKFOLIO visual device
 - Lime 500 as signature energetic CTA/headline accent
 - Green, Cyan, Violet, Coral, and Brown as semantic support colors
 - high contrast with same-family dark typography when used over expressive sections

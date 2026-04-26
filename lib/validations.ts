@@ -88,8 +88,15 @@ export const loginSchema = z.object({
 
 export const registerSchema = z
   .object({
+    username: usernameSchema.optional().or(z.literal("")),
     name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres"),
     email: emailSchema,
+    birthDate: z.string().optional().or(z.literal("")),
+    country: z.string().trim().max(80, "Pais muito longo").optional().or(z.literal("")),
+    city: z.string().trim().max(80, "Cidade muito longa").optional().or(z.literal("")),
+    state: z.string().trim().max(80, "Estado muito longo").optional().or(z.literal("")),
+    profession: z.string().trim().max(120, "Profissao muito longa").optional().or(z.literal("")),
+    education: z.string().trim().max(80, "Escolaridade muito longa").optional().or(z.literal("")),
     password: passwordSchema,
     confirmPassword: z.string().min(1, "Confirme sua senha"),
   })

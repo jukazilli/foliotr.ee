@@ -5,16 +5,18 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const viewer = await getAppShellViewer();
 
   return (
-    <div className="soft-grid-bg min-h-screen bg-neutral-100">
-      <div className="flex min-h-screen w-full flex-col gap-2 pb-3">
-        <Header
-          userName={viewer.user.name ?? viewer.profile.displayName ?? undefined}
-          userImage={viewer.profile.avatarUrl ?? undefined}
-          userUsername={viewer.user.username}
-        />
+    <div className="min-h-screen bg-cream text-ink">
+      <Header
+        userName={viewer.user.name ?? viewer.profile.displayName ?? undefined}
+        userImage={viewer.profile.avatarUrl ?? undefined}
+        userUsername={viewer.user.username}
+      />
 
-        <main className="mx-2 min-w-0 flex-1 rounded-2xl border border-white/70 bg-white/82 px-4 py-4 shadow-sm backdrop-blur sm:mx-3 sm:px-4 lg:px-5 xl:mx-4 2xl:mx-5">
+      <div className="min-h-screen w-full lg:pl-[292px]">
+        <main className="min-w-0 px-4 pb-8 pt-24 sm:px-6 lg:px-8 lg:pt-8">
+          <div className="mx-auto w-full max-w-[1560px]">
           {children}
+          </div>
         </main>
       </div>
     </div>

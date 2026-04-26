@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Layers3,
   Library,
+  Sparkles,
   Settings,
   UserRound,
 } from "lucide-react";
@@ -67,6 +68,14 @@ export const appNavigation: AppNavItem[] = [
     icon: FileText,
     section: "principal",
     description: "Veja uma versao mais facil de ler.",
+  },
+  {
+    href: "/teste-vocacional/app",
+    label: "Teste vocacional",
+    shortLabel: "Teste",
+    icon: Sparkles,
+    section: "principal",
+    description: "Entenda forças e caminhos.",
   },
   {
     href: "/templates",

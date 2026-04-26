@@ -34,6 +34,7 @@ dev-*.log
 server-*.log
 server-*.pid
 perf-prod-*.log
+output/redesign-next*.log
 
 # Local env files
 .env

@@ -5,21 +5,24 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg text-[13px] font-medium transition-colors disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-lime-500 focus-visible:ring-offset-1",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-0 text-sm font-extrabold uppercase transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-green-500 text-green-900 hover:bg-green-400 active:bg-green-500",
-        primary: "liquid-button text-lime-900 hover:bg-lime-400 active:bg-lime-500",
+        default: "bg-orange text-white hover:bg-orange/90",
+        primary: "bg-orange text-white hover:bg-orange/90",
         outline:
-          "border border-white/78 bg-white/62 text-neutral-900 backdrop-blur hover:bg-white active:bg-white",
-        ghost: "bg-transparent text-neutral-700 hover:bg-white/62 active:bg-white/78",
-        destructive: "bg-coral-500 text-white hover:bg-coral-600 active:bg-coral-700",
+          "border-2 border-line bg-white text-ink shadow-hard-sm hover:bg-cream",
+        ghost: "bg-transparent text-ink hover:bg-cream",
+        destructive: "bg-rose text-white hover:bg-rose/90",
+        soft: "bg-pink text-ink hover:bg-pink/80",
+        rest: "bg-cream text-ink hover:bg-cream/80",
+        accent: "bg-lime text-ink hover:bg-lime/80",
       },
       size: {
-        sm: "h-[32px] px-3 text-[13px]",
-        default: "h-[40px] px-4 text-[13px]",
-        lg: "h-[48px] px-6 text-sm",
+        sm: "h-10 px-4 text-xs",
+        default: "h-12 px-6 text-sm",
+        lg: "h-14 px-8 text-base",
       },
     },
     defaultVariants: {

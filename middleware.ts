@@ -8,7 +8,7 @@ export const PROTECTED_PREFIXES = [
   "/resumes",
   "/templates",
   "/settings",
-  "/onboarding",
+  "/teste-vocacional/app",
 ];
 const SESSION_COOKIE_NAMES = [
   "authjs.session-token",

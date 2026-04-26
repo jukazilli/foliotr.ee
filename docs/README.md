@@ -1,8 +1,8 @@
 # FolioTree Documentation Index
 
 Status: active working documentation  
-Version: v0.0.1  
-Last updated: 2026-04-17
+Version: v0.1.0  
+Last updated: 2026-04-26
 
 ## Purpose
 
@@ -61,21 +61,21 @@ Recommended use:
 - design direction
 - product/brand coherence checks
 
-### 3. `Design System/*.html`
+### 3. Redesign LINKFOLIO
 
-Use these files as the current source of truth for visual design and public UI implementation:
+Use the current React implementation and the redesign notes as the source of truth for visual design:
 
-- `Design System/Brand Core.html`
-- `Design System/Tonal System.html`
-- `Design System/Typography System.html`
+- `tonal system.md`
+- `tipografia-system.md`
+- `redesign-teste` as historical visual reference only
 
 Current implementation rule:
 
-- color values and semantic color behavior come from `Tonal System.html`
-- brand interpretation, guardrails, and approved message hierarchy come from `Brand Core.html`
-- public typography uses Sora for display, Inter for UI, and IBM Plex Mono for data/meta
-- `Typography System.html` remains the typography reference, but the current product prompt explicitly requires Sora as the display font for this cut
-- public screens should feel like a social/professional platform: expressive, clear, light, and memorable, not a cold SaaS dashboard
+- color values and semantic color behavior come from `tonal system.md`
+- typography uses Poppins across the whole app
+- the public name in UI is `LINKFOLIO`
+- the repository and technical project may still use `FolioTree`
+- public and authenticated screens should follow the new bold, high-contrast, playful layout system
 
 ### 4. `runtime-architecture-decision.md`
 
@@ -92,9 +92,9 @@ It records the current approved runtime model:
 
 1. Read `brand-core.md`
 2. Read `brand-deck.md`
-3. Read `Design System/Brand Core.html`
-4. Read `Design System/Tonal System.html`
-5. Read `Design System/Typography System.html`
+3. Read `tonal system.md`
+4. Read `tipografia-system.md`
+5. Treat `Design System/*.html` as replaced by the current redesign unless a later decision restores it
 6. Read `runtime-architecture-decision.md` before changing API/deployment architecture
 7. Treat unresolved topics as unresolved
 8. Do not invent product features, visual assets, or business decisions that are not explicitly documented

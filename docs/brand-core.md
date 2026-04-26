@@ -11,7 +11,9 @@ Design/UI source of truth for the current public flows:
 - `doc/Design System/Tonal System.html`
 - `doc/Design System/Typography System.html`
 
-For this cut, Sora is the primary display font, Inter is the UI font, and IBM Plex Mono is reserved for data/meta labels. The current product prompt explicitly requires Sora for display, so implementation must not switch public flows to Bricolage without a later documented decision.
+For this redesign cut, Poppins is the single official font across display, UI, and data/meta labels. The previous Sora/Inter/IBM Plex rule is obsolete.
+
+The public product wordmark in UI is `LINKFOLIO`. The repository and technical project name may continue as `FolioTree` until a separate technical rename decision exists.
 
 ## Document Purpose
 

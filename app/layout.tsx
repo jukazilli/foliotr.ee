@@ -1,26 +1,17 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Inter, Sora } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+import "./linkfolio-redesign.css";
 
-const sora = Sora({
+const poppins = Poppins({
   subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-ui",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-data",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-primary",
 });
 
 export const metadata: Metadata = {
-  title: "FolioTree",
-  description: "Sua trajetoria profissional, clara em segundos.",
+  title: "LINKFOLIO",
+  description: "Crie uma pagina viva para mostrar trabalho, curriculo e versoes.",
   icons: {
     icon: "/favicon.svg",
   },
@@ -34,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${sora.variable} ${inter.variable} ${ibmPlexMono.variable} bg-neutral-100 font-sans text-neutral-900 antialiased`}
+        className={`${poppins.variable} bg-paper font-sans text-ink antialiased`}
       >
         {children}
       </body>

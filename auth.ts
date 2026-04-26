@@ -1,14 +1,21 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getEnv } from "@/lib/env";
-import { loginSchema } from "@/lib/validations";
+import { passwordSchema } from "@/lib/validations";
 import {
   AUTH_LOGIN_RATE_LIMIT,
   checkRateLimit,
   getRateLimitKey,
 } from "@/lib/security/rate-limit";
+import { normalizeUsernameInput } from "@/lib/usernames";
 import bcrypt from "bcryptjs";
+
+const loginCredentialsSchema = z.object({
+  email: z.string().trim().min(1),
+  password: passwordSchema,
+});
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: getEnv().AUTH_SECRET,
@@ -21,19 +28,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Senha", type: "password" },
       },
       async authorize(credentials, request) {
-        const parsed = loginSchema.safeParse(credentials);
+        const parsed = loginCredentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const email = parsed.data.email.toLowerCase();
+        const identifier = parsed.data.email.toLowerCase();
         const rateLimit = checkRateLimit(
-          getRateLimitKey(request, "auth:login", email),
+          getRateLimitKey(request, "auth:login", identifier),
           AUTH_LOGIN_RATE_LIMIT
         );
 
         if (!rateLimit.allowed) return null;
 
+        const where = identifier.includes("@")
+          ? { email: identifier }
+          : { username: normalizeUsernameInput(identifier) };
+
         const user = await prisma.user.findUnique({
-          where: { email },
+          where,
         });
         if (!user || !user.passwordHash) return null;
         const valid = await bcrypt.compare(parsed.data.password, user.passwordHash);
