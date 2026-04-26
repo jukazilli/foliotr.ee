@@ -11,6 +11,7 @@ import {
 import type { TemplateRendererProps } from "@/components/templates/types";
 import type { RenderablePageBlock } from "@/components/templates/types";
 import WorkWheelCarousel from "./WorkWheelCarousel";
+import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
 const FALLBACK_SOURCE_PACKAGE: PortfolioCommunitySourcePackage = {
   variant: "template1",
@@ -91,12 +92,11 @@ function SlashMarks({ className = "" }: { className?: string }) {
 
 function PlusCluster({ className = "" }: { className?: string }) {
   return (
-    <div aria-hidden="true" className={`relative h-16 w-16 text-[#474306] ${className}`}>
-      {[
-        "left-1 top-5",
-        "left-8 top-1",
-        "left-8 top-9",
-      ].map((position) => (
+    <div
+      aria-hidden="true"
+      className={`relative h-16 w-16 text-[#474306] ${className}`}
+    >
+      {["left-1 top-5", "left-8 top-1", "left-8 top-9"].map((position) => (
         <span key={position} className={`absolute ${position} block h-6 w-6`}>
           <span className="absolute left-1/2 top-0 h-6 w-1.5 -translate-x-1/2 rounded-full bg-current" />
           <span className="absolute left-0 top-1/2 h-1.5 w-6 -translate-y-1/2 rounded-full bg-current" />
@@ -407,15 +407,22 @@ function HeroSection({
               ) : null}
             </div>
 
-          <div className="relative z-10 -mb-16 sm:-mb-20 lg:-mb-24">
-              <HeroPortrait semantics={semantics} sourcePackage={sourcePackage} block={block} />
+            <div className="relative z-10 -mb-16 sm:-mb-20 lg:-mb-24">
+              <HeroPortrait
+                semantics={semantics}
+                sourcePackage={sourcePackage}
+                block={block}
+              />
             </div>
           </div>
         </SectionShell>
       </div>
 
       <div style={{ background: iceBackgroundColor }}>
-        <SectionShell id="hero-action" className="pb-16 pt-24 sm:pt-28 lg:pb-24 lg:pt-32">
+        <SectionShell
+          id="hero-action"
+          className="pb-16 pt-24 sm:pt-28 lg:pb-24 lg:pt-32"
+        >
           <div className="min-w-0">
             <HeroCta href={semantics.hero.ctaHref} label={semantics.hero.ctaLabel} />
           </div>
@@ -472,7 +479,11 @@ function ExperienceSection({
   block: RenderablePageBlock | null;
   renderHidden: boolean;
 }) {
-  if ((!renderHidden && !semantics.experience.visible) || semantics.experience.items.length === 0) return null;
+  if (
+    (!renderHidden && !semantics.experience.visible) ||
+    semantics.experience.items.length === 0
+  )
+    return null;
 
   return (
     <SectionShell
@@ -524,7 +535,11 @@ function EducationSection({
   block: RenderablePageBlock | null;
   renderHidden: boolean;
 }) {
-  if ((!renderHidden && !semantics.education.visible) || semantics.education.items.length === 0) return null;
+  if (
+    (!renderHidden && !semantics.education.visible) ||
+    semantics.education.items.length === 0
+  )
+    return null;
 
   return (
     <SectionShell
@@ -644,7 +659,8 @@ function WorkProjectCard({
   index: number;
 }) {
   const imageConfigPath =
-    item.imageConfigPath ?? (item.projectId ? `projectCovers.${item.projectId}.image` : undefined);
+    item.imageConfigPath ??
+    (item.projectId ? `projectCovers.${item.projectId}.image` : undefined);
 
   const content = (
     <article
@@ -738,7 +754,9 @@ function ContactSection({
               src={semantics.contact.supportImage.src}
               style={{
                 objectFit:
-                  semantics.contact.supportImage.fitMode === "fit" ? "contain" : "cover",
+                  semantics.contact.supportImage.fitMode === "fit"
+                    ? "contain"
+                    : "cover",
                 objectPosition: `${semantics.contact.supportImage.positionX}% ${semantics.contact.supportImage.positionY}%`,
               }}
             />
@@ -765,7 +783,9 @@ function ContactSection({
               </a>
             ))}
             {!semantics.contact.links.length && semantics.contact.publicEmail ? (
-              <span className="max-w-full break-all">{semantics.contact.publicEmail}</span>
+              <span className="max-w-full break-all">
+                {semantics.contact.publicEmail}
+              </span>
             ) : null}
           </div>
         </div>
@@ -789,11 +809,15 @@ function CustomSections({
         if (!renderHidden && !block.visible) return null;
 
         const config =
-          typeof block.config === "object" && block.config !== null && !Array.isArray(block.config)
+          typeof block.config === "object" &&
+          block.config !== null &&
+          !Array.isArray(block.config)
             ? (block.config as Record<string, unknown>)
             : {};
         const image =
-          typeof config.image === "object" && config.image !== null && !Array.isArray(config.image)
+          typeof config.image === "object" &&
+          config.image !== null &&
+          !Array.isArray(config.image)
             ? (config.image as Record<string, unknown>)
             : null;
         const listItems = Array.isArray(config.listItems)
@@ -804,20 +828,27 @@ function CustomSections({
                   : {}
               )
               .flatMap((item) =>
-                typeof item.text === "string" && item.text.trim() ? [item.text.trim()] : []
+                typeof item.text === "string" && item.text.trim()
+                  ? [item.text.trim()]
+                  : []
               )
           : [];
         const imageAlign =
-          config.imageAlign === "left" || config.imageAlign === "right" || config.imageAlign === "center"
+          config.imageAlign === "left" ||
+          config.imageAlign === "right" ||
+          config.imageAlign === "center"
             ? config.imageAlign
             : "center";
         const sectionTitle =
-          typeof config.title === "string" && config.title.trim() ? config.title.trim() : "nova secao";
+          typeof config.title === "string" && config.title.trim()
+            ? config.title.trim()
+            : "nova secao";
         const body = typeof config.body === "string" ? config.body : "";
         const imageSrc = typeof image?.src === "string" ? image.src : "";
         const imageAlt = typeof image?.alt === "string" ? image.alt : "";
         const imageStyle = {
-          objectFit: image?.fitMode === "fit" ? ("contain" as const) : ("cover" as const),
+          objectFit:
+            image?.fitMode === "fit" ? ("contain" as const) : ("cover" as const),
           objectPosition: `${typeof image?.positionX === "number" ? image.positionX : 50}% ${
             typeof image?.positionY === "number" ? image.positionY : 50
           }%`,
@@ -853,7 +884,13 @@ function CustomSections({
                   data-ft-kind="image"
                   data-ft-editable="true"
                 >
-                  <img key={imageSrc} alt={imageAlt} className="h-full w-full" src={imageSrc} style={imageStyle} />
+                  <img
+                    key={imageSrc}
+                    alt={imageAlt}
+                    className="h-full w-full"
+                    src={imageSrc}
+                    style={imageStyle}
+                  />
                 </div>
               ) : null}
               <div className="min-w-0">
@@ -898,10 +935,20 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
   const heroBlock = getRenderableBlockByType(props.blocks, "portfolio.hero");
   const aboutBlock = getRenderableBlockByType(props.blocks, "portfolio.about");
   const educationBlock = getRenderableBlockByType(props.blocks, "portfolio.education");
-  const experienceBlock = getRenderableBlockByType(props.blocks, "portfolio.experience");
+  const experienceBlock = getRenderableBlockByType(
+    props.blocks,
+    "portfolio.experience"
+  );
+  const behavioralAnalysisBlock = getRenderableBlockByType(
+    props.blocks,
+    "portfolio.behavioral-analysis"
+  );
   const workBlock = getRenderableBlockByType(props.blocks, "portfolio.work");
   const contactBlock = getRenderableBlockByType(props.blocks, "portfolio.contact");
-  const customBlocks = getRenderableBlocksByType(props.blocks, "portfolio.custom-section");
+  const customBlocks = getRenderableBlocksByType(
+    props.blocks,
+    "portfolio.custom-section"
+  );
   const semantics = derivePortfolioCommunitySemantics({
     profile: props.profile,
     version: props.version,
@@ -925,12 +972,47 @@ export default function PortfolioCommunityRenderer(props: TemplateRendererProps)
         block={heroBlock}
         renderHidden={Boolean(props.renderHiddenBlocks)}
       />
-      <AboutSection semantics={semantics} block={aboutBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
-      <EducationSection semantics={semantics} block={educationBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
-      <ExperienceSection semantics={semantics} block={experienceBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
-      <WorkSection semantics={semantics} block={workBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
-      <CustomSections blocks={customBlocks} renderHidden={Boolean(props.renderHiddenBlocks)} />
-      <ContactSection semantics={semantics} block={contactBlock} renderHidden={Boolean(props.renderHiddenBlocks)} />
+      <AboutSection
+        semantics={semantics}
+        block={aboutBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      <EducationSection
+        semantics={semantics}
+        block={educationBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      <ExperienceSection
+        semantics={semantics}
+        block={experienceBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      {props.behavioralAnalysis &&
+      (props.renderHiddenBlocks || behavioralAnalysisBlock?.visible !== false) ? (
+        <SectionShell
+          id="behavioral-analysis"
+          className={`py-16 lg:py-24 ${
+            behavioralAnalysisBlock?.visible === false ? "grayscale opacity-45" : ""
+          }`}
+          editorBlockId={behavioralAnalysisBlock?.id}
+        >
+          <BehavioralAnalysisSection analysis={props.behavioralAnalysis} />
+        </SectionShell>
+      ) : null}
+      <WorkSection
+        semantics={semantics}
+        block={workBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      <CustomSections
+        blocks={customBlocks}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
+      <ContactSection
+        semantics={semantics}
+        block={contactBlock}
+        renderHidden={Boolean(props.renderHiddenBlocks)}
+      />
     </main>
   );
 }

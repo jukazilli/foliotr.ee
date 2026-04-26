@@ -4,6 +4,8 @@ import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/typ
 import type { RenderablePageBlock } from "@/components/templates/types";
 import type { ResumeProjectionSection } from "@/lib/templates/resume/types";
 import { resolveTemplateResumeProjection } from "@/lib/templates/resume/resolver";
+import type { BehavioralAnalysisSnapshot } from "@/lib/vocational-test/public-analysis";
+import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
 function getLinkKindLabel(kind: string) {
   switch (kind) {
@@ -31,6 +33,7 @@ interface ResumeViewProps {
   profile: ProfileForBlocks;
   version?: VersionForBlocks | null;
   config?: ResumeConfig | null;
+  behavioralAnalysis?: BehavioralAnalysisSnapshot | null;
 }
 
 export default function ResumeView({
@@ -39,6 +42,7 @@ export default function ResumeView({
   profile,
   version,
   config,
+  behavioralAnalysis,
 }: ResumeViewProps) {
   const projection = resolveTemplateResumeProjection({
     templateSlug,
@@ -46,6 +50,7 @@ export default function ResumeView({
     profile,
     version,
     config,
+    behavioralAnalysis,
   });
   const summarySection = getSection(projection.sections, "summary");
   const experienceSection = getSection(projection.sections, "experience");
@@ -54,6 +59,10 @@ export default function ResumeView({
   const skillsSection = getSection(projection.sections, "skills");
   const educationSection = getSection(projection.sections, "education");
   const linksSection = getSection(projection.sections, "links");
+  const behavioralAnalysisSection = getSection(
+    projection.sections,
+    "behavioral-analysis"
+  );
   const contactItems = [
     projection.header.location,
     projection.header.publicEmail,
@@ -193,6 +202,18 @@ export default function ResumeView({
                   </article>
                 ))}
               </div>
+            </SectionShell>
+          ) : null}
+
+          {behavioralAnalysisSection?.key === "behavioral-analysis" ? (
+            <SectionShell
+              title={behavioralAnalysisSection.title}
+              accent={projection.theme.accent}
+            >
+              <BehavioralAnalysisSection
+                analysis={behavioralAnalysisSection.analysis}
+                compact
+              />
             </SectionShell>
           ) : null}
 

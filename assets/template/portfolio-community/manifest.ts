@@ -24,7 +24,8 @@ export const portfolioCommunityManifest = {
     tags: ["canonico", "disponivel", "editor-ready"],
     status: "available",
     origin: "Pacote local",
-    summary: "Portfolio editorial com hero autoral, secoes amplas e leitura visual leve.",
+    summary:
+      "Portfolio editorial com hero autoral, secoes amplas e leitura visual leve.",
     detail:
       "Pensado para apresentar identidade profissional com imagem forte, narrativa curta, experiencia, projetos selecionados e contato direto sem descaracterizar o template.",
     sortOrder: 0,
@@ -40,7 +41,15 @@ export const portfolioCommunityManifest = {
     minLinkOrProofItems: 0,
   },
   resumeDefaults: {
-    sections: ["summary", "education", "experience", "projects", "skills", "links"],
+    sections: [
+      "summary",
+      "behavioral-analysis",
+      "education",
+      "experience",
+      "projects",
+      "skills",
+      "links",
+    ],
     layout: "classic",
     accentColor: "#474306",
     showPhoto: false,
@@ -76,15 +85,37 @@ export const portfolioCommunityManifest = {
       editableFields: [
         { key: "eyebrow", label: "Saudacao", element: "text", kind: "text" },
         { key: "headline", label: "Titulo principal", element: "h1", kind: "text" },
-        { key: "locationLine", label: "Linha de localizacao", element: "text", kind: "text" },
+        {
+          key: "locationLine",
+          label: "Linha de localizacao",
+          element: "text",
+          kind: "text",
+        },
         { key: "ctaLabel", label: "CTA", element: "button", kind: "text" },
         { key: "ctaHref", label: "Link do CTA", element: "link", kind: "url" },
         { key: "portrait", label: "Retrato", element: "image", kind: "image" },
-        { key: "showSocialIcons", label: "Icones sociais", element: "icon", kind: "boolean" },
-        { key: "showPlusCluster", label: "Ornamento cruzes", element: "icon", kind: "boolean" },
-        { key: "showSlashMarks", label: "Ornamento barras", element: "icon", kind: "boolean" },
+        {
+          key: "showSocialIcons",
+          label: "Icones sociais",
+          element: "icon",
+          kind: "boolean",
+        },
+        {
+          key: "showPlusCluster",
+          label: "Ornamento cruzes",
+          element: "icon",
+          kind: "boolean",
+        },
+        {
+          key: "showSlashMarks",
+          label: "Ornamento barras",
+          element: "icon",
+          kind: "boolean",
+        },
       ],
-      assetFields: [{ key: "portrait", label: "Retrato", element: "image", kind: "image" }],
+      assetFields: [
+        { key: "portrait", label: "Retrato", element: "image", kind: "image" },
+      ],
       allowedChildren: [],
       semanticSlots: [
         {
@@ -150,9 +181,7 @@ export const portfolioCommunityManifest = {
       defaultConfig: {
         title: "formacao",
       },
-      editableFields: [
-        { key: "title", label: "Titulo", element: "h2", kind: "text" },
-      ],
+      editableFields: [{ key: "title", label: "Titulo", element: "h2", kind: "text" }],
       assetFields: [],
       allowedChildren: [],
       semanticSlots: [
@@ -213,7 +242,12 @@ export const portfolioCommunityManifest = {
       editableFields: [
         { key: "title", label: "Titulo", element: "h2", kind: "text" },
         { key: "intro", label: "Introducao", element: "text", kind: "longText" },
-        { key: "fallbackProjects", label: "Projetos de apoio", element: "repeater", kind: "list" },
+        {
+          key: "fallbackProjects",
+          label: "Projetos de apoio",
+          element: "repeater",
+          kind: "list",
+        },
       ],
       assetFields: [
         {
@@ -235,12 +269,38 @@ export const portfolioCommunityManifest = {
       ],
     },
     {
+      key: "portfolio-behavioral-analysis",
+      blockType: "portfolio.behavioral-analysis",
+      label: "Análise comportamental",
+      category: "section",
+      version: 1,
+      defaultOrder: 5,
+      required: false,
+      repeatable: false,
+      defaultConfig: {
+        title: "analise comportamental",
+      },
+      editableFields: [{ key: "title", label: "Titulo", element: "h2", kind: "text" }],
+      assetFields: [],
+      allowedChildren: [],
+      semanticSlots: [
+        {
+          slot: "vocational.behavioralAnalysis",
+          target: "result",
+          source: "derived",
+          required: false,
+          description:
+            "Resultado publico do teste vocacional com Big Five, RIASEC e arquetipo.",
+        },
+      ],
+    },
+    {
       key: "portfolio-contact",
       blockType: "portfolio.contact",
       label: "Contato",
       category: "section",
       version: 1,
-      defaultOrder: 5,
+      defaultOrder: 6,
       required: false,
       repeatable: false,
       defaultConfig: {
@@ -277,7 +337,7 @@ export const portfolioCommunityManifest = {
       label: "Secao livre",
       category: "section",
       version: 1,
-      defaultOrder: 6,
+      defaultOrder: 7,
       required: false,
       repeatable: true,
       defaultConfig: {
@@ -290,7 +350,12 @@ export const portfolioCommunityManifest = {
         { key: "title", label: "Titulo", element: "h2", kind: "text" },
         { key: "body", label: "Paragrafo", element: "text", kind: "longText" },
         { key: "image", label: "Imagem", element: "image", kind: "image" },
-        { key: "imageAlign", label: "Alinhamento da imagem", element: "group", kind: "list" },
+        {
+          key: "imageAlign",
+          label: "Alinhamento da imagem",
+          element: "group",
+          kind: "list",
+        },
         { key: "listItems", label: "Lista", element: "repeater", kind: "list" },
       ],
       assetFields: [{ key: "image", label: "Imagem", element: "image", kind: "image" }],

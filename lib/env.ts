@@ -47,6 +47,8 @@ export const serverEnvSchema = z
     STORAGE_PUBLIC_BASE_URL: optionalUrlSchema,
     NEXT_PUBLIC_SUPABASE_URL: optionalUrlSchema,
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().trim().optional(),
+    GEMINI_API_KEY: z.string().trim().optional(),
+    GEMINI_MODEL: z.string().trim().optional(),
   })
   .superRefine((env, ctx) => {
     if (env.STORAGE_PROVIDER !== "s3") return;

@@ -18,6 +18,24 @@ const publicPageInclude = Prisma.validator<Prisma.PageInclude>()({
           publishedSnapshot: true,
         },
       },
+      profile: {
+        select: {
+          user: {
+            select: {
+              vocationalTests: {
+                where: {
+                  status: "completed",
+                  OR: [{ publicInPortfolio: true }, { publicInResume: true }],
+                },
+                orderBy: {
+                  completedAt: "desc",
+                },
+                take: 5,
+              },
+            },
+          },
+        },
+      },
       isDefault: true,
       name: true,
     },
@@ -67,7 +85,10 @@ export async function getPrimaryPublishedPage(username: string) {
   return orderPublishedPages(pages)[0] ?? null;
 }
 
-export async function getPublishedPageByUsernameAndSlug(username: string, slug: string) {
+export async function getPublishedPageByUsernameAndSlug(
+  username: string,
+  slug: string
+) {
   return prisma.page.findFirst({
     where: {
       slug,
@@ -93,7 +114,9 @@ export function requirePublishedResume(page: PublicPageRecord) {
     notFound();
   }
 
-  const snapshot = readPublishedResumeSnapshot(page.version.resumeConfig.publishedSnapshot);
+  const snapshot = readPublishedResumeSnapshot(
+    page.version.resumeConfig.publishedSnapshot
+  );
   if (!snapshot) {
     notFound();
   }

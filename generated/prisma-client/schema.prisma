@@ -42,6 +42,7 @@ model User {
   accounts            Account[]
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
+  vocationalTests     VocationalTestSession[]
 }
 
 model Account {
@@ -89,6 +90,30 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model VocationalTestSession {
+  id                   String    @id @default(cuid())
+  userId               String
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  methodVersion        String    @default("vocational-v1")
+  status               String    @default("draft")
+  currentQuestionIndex Int       @default(0)
+  profile              Json      @default("{}")
+  answers              Json      @default("{}")
+  result               Json?
+  aiReport             String?   @db.Text
+  reportProvider       String?
+  reportModel          String?
+  reportGeneratedAt    DateTime?
+  publicInPortfolio    Boolean   @default(false)
+  publicInResume       Boolean   @default(false)
+  completedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  @@index([userId, updatedAt])
+  @@index([userId, status])
 }
 
 model Profile {

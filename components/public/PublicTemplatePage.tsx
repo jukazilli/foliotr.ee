@@ -9,6 +9,7 @@ import {
   getPublicTemplateHref,
   toPublicVersionSelection,
 } from "@/lib/server/domain/public-pages";
+import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 
 interface PublicTemplatePageProps {
   page: PublicPageRecord;
@@ -28,6 +29,10 @@ export default function PublicTemplatePage({
     page.version.resumeConfig?.publishState === "PUBLISHED"
       ? getPublicResumeHref(username, pageSlug)
       : null;
+  const behavioralAnalysis = selectBehavioralAnalysis(
+    page.version.profile.user.vocationalTests,
+    "portfolio"
+  );
 
   return (
     <div className="min-h-screen">
@@ -43,10 +48,14 @@ export default function PublicTemplatePage({
         profile={profile}
         version={version}
         templateSourcePackage={page.template.sourcePackage}
+        behavioralAnalysis={behavioralAnalysis}
       />
 
       <div className="border-t border-black/5 py-6 text-center print:hidden">
-        <Link href="/" className="text-xs text-neutral-500 transition-colors hover:text-neutral-800">
+        <Link
+          href="/"
+          className="text-xs text-neutral-500 transition-colors hover:text-neutral-800"
+        >
           Criado com <span className="font-semibold">FolioTree</span>
         </Link>
       </div>

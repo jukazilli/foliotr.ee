@@ -49,21 +49,21 @@ export default function VocationStart() {
               ×
             </button>
             <p className="brand-eyebrow">Antes de começar</p>
-            <h2 id="vocation-modal-title" className="mt-4 text-4xl font-extrabold tracking-[-0.05em]">
+            <h2
+              id="vocation-modal-title"
+              className="mt-4 text-4xl font-extrabold tracking-[-0.05em]"
+            >
               Você já tem uma conta?
             </h2>
             <p className="brand-copy mt-4">
               O teste será salvo no seu perfil para continuar depois e comparar
               resultados com seu Linkfolio.
             </p>
-            {/* TODO React/TypeScript + backend:
-              1. Verificar sessão antes de abrir a rota autenticada.
-              2. Se houver sessão ativa, enviar direto para /teste-vocacional/app.
-              3. Se criar conta, preservar callbackUrl e entrar no teste após o cadastro.
-              4. Persistir respostas, resultado, histórico e versão do método aplicado.
-            */}
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              <Link className="brand-button text-center" href="/login?callbackUrl=/teste-vocacional/app">
+              <Link
+                className="brand-button text-center"
+                href="/login?callbackUrl=/teste-vocacional/app"
+              >
                 Já tenho conta
               </Link>
               <Link

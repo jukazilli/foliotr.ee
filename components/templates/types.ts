@@ -1,5 +1,6 @@
 import type { PageBlock, Profile } from "@/generated/prisma-client";
 import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/types";
+import type { BehavioralAnalysisSnapshot } from "@/lib/vocational-test/public-analysis";
 
 export type RenderablePageBlock = PageBlock & {
   children?: RenderablePageBlock[];
@@ -21,4 +22,5 @@ export interface TemplateRendererProps {
   version?: VersionForBlocks | null;
   templateSourcePackage?: unknown;
   renderHiddenBlocks?: boolean;
+  behavioralAnalysis?: BehavioralAnalysisSnapshot | null;
 }

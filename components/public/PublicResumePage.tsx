@@ -7,6 +7,7 @@ import {
   getPublicTemplateHref,
 } from "@/lib/server/domain/public-pages";
 import type { PublishedResumeSnapshot } from "@/lib/server/domain/page-snapshots";
+import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 
 interface PublicResumePageProps {
   page: PublicPageRecord;
@@ -23,6 +24,10 @@ export default function PublicResumePage({
 }: PublicResumePageProps) {
   const templateHref = getPublicTemplateHref(username, pageSlug);
   const resumeHref = getPublicResumeHref(username, pageSlug);
+  const behavioralAnalysis = selectBehavioralAnalysis(
+    page.version.profile.user.vocationalTests,
+    "resume"
+  );
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-neutral-100 print:overflow-visible print:bg-white">
@@ -40,12 +45,16 @@ export default function PublicResumePage({
             profile={snapshot.profile}
             version={snapshot.version}
             config={snapshot.config as never}
+            behavioralAnalysis={behavioralAnalysis}
           />
         </div>
       </main>
 
       <div className="border-t border-neutral-200 py-6 text-center print:hidden">
-        <Link href="/" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600">
+        <Link
+          href="/"
+          className="text-xs text-neutral-400 transition-colors hover:text-neutral-600"
+        >
           Criado com <span className="font-semibold">FolioTree</span>
         </Link>
       </div>

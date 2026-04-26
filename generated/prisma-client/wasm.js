@@ -169,6 +169,26 @@ exports.Prisma.PasswordResetTokenScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.VocationalTestSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  methodVersion: 'methodVersion',
+  status: 'status',
+  currentQuestionIndex: 'currentQuestionIndex',
+  profile: 'profile',
+  answers: 'answers',
+  result: 'result',
+  aiReport: 'aiReport',
+  reportProvider: 'reportProvider',
+  reportModel: 'reportModel',
+  reportGeneratedAt: 'reportGeneratedAt',
+  publicInPortfolio: 'publicInPortfolio',
+  publicInResume: 'publicInResume',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProfileScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -484,6 +504,11 @@ exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -525,6 +550,7 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   VerificationToken: 'VerificationToken',
   PasswordResetToken: 'PasswordResetToken',
+  VocationalTestSession: 'VocationalTestSession',
   Profile: 'Profile',
   Experience: 'Experience',
   Education: 'Education',

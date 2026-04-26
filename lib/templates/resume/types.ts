@@ -1,6 +1,7 @@
 import type { ResumeConfig } from "@/generated/prisma-client";
 import type { ProfileForBlocks, VersionForBlocks } from "@/components/blocks/types";
 import type { RenderablePageBlock } from "@/components/templates/types";
+import type { BehavioralAnalysisSnapshot } from "@/lib/vocational-test/public-analysis";
 
 export interface ResumeProjectionInput {
   templateSlug: string;
@@ -8,6 +9,7 @@ export interface ResumeProjectionInput {
   profile: ProfileForBlocks;
   version?: VersionForBlocks | null;
   config?: ResumeConfig | null;
+  behavioralAnalysis?: BehavioralAnalysisSnapshot | null;
 }
 
 export interface ResumeProjectionLink {
@@ -104,6 +106,12 @@ export interface ResumeProjectionLinksSection {
   items: ResumeProjectionLink[];
 }
 
+export interface ResumeProjectionBehavioralAnalysisSection {
+  key: "behavioral-analysis";
+  title: string;
+  analysis: BehavioralAnalysisSnapshot;
+}
+
 export type ResumeProjectionSection =
   | ResumeProjectionSummarySection
   | ResumeProjectionExperienceSection
@@ -111,7 +119,8 @@ export type ResumeProjectionSection =
   | ResumeProjectionProjectSection
   | ResumeProjectionHighlightSection
   | ResumeProjectionSkillsSection
-  | ResumeProjectionLinksSection;
+  | ResumeProjectionLinksSection
+  | ResumeProjectionBehavioralAnalysisSection;
 
 export interface ResumeProjectionTheme {
   background: string;

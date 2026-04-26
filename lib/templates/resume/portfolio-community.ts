@@ -1,4 +1,7 @@
-import { derivePortfolioCommunitySemantics, buildPortfolioCommunityBlockStateFromBlocks } from "@/lib/templates/portfolio-community-semantics";
+import {
+  derivePortfolioCommunitySemantics,
+  buildPortfolioCommunityBlockStateFromBlocks,
+} from "@/lib/templates/portfolio-community-semantics";
 import type {
   ResumeProjection,
   ResumeProjectionInput,
@@ -18,9 +21,31 @@ export function projectPortfolioCommunityResume(
   const showPhoto = input.config?.showPhoto ?? false;
   const showLinks = input.config?.showLinks ?? true;
   const accent = input.config?.accentColor || "#474306";
-  const visibleSectionOrder = (input.config?.sections?.length
-    ? input.config.sections
-    : ["summary", "education", "experience", "projects", "highlights", "skills", "links"]) as string[];
+  const visibleSectionOrder = (
+    input.config?.sections?.length
+      ? input.config.sections
+      : [
+          "summary",
+          "behavioral-analysis",
+          "education",
+          "experience",
+          "projects",
+          "highlights",
+          "skills",
+          "links",
+        ]
+  ) as string[];
+  if (
+    input.behavioralAnalysis &&
+    !visibleSectionOrder.includes("behavioral-analysis")
+  ) {
+    const summaryIndex = visibleSectionOrder.indexOf("summary");
+    visibleSectionOrder.splice(
+      summaryIndex >= 0 ? summaryIndex + 1 : 0,
+      0,
+      "behavioral-analysis"
+    );
+  }
 
   const sectionMap = new Map<string, ResumeProjectionSection>();
 
@@ -99,12 +124,15 @@ export function projectPortfolioCommunityResume(
   }
 
   if (semantics.selections.skills.length > 0) {
-    const groups = semantics.selections.skills.reduce<Record<string, string[]>>((acc, skill) => {
-      const category = skill.category || "Principal";
-      if (!acc[category]) acc[category] = [];
-      acc[category].push(skill.name);
-      return acc;
-    }, {});
+    const groups = semantics.selections.skills.reduce<Record<string, string[]>>(
+      (acc, skill) => {
+        const category = skill.category || "Principal";
+        if (!acc[category]) acc[category] = [];
+        acc[category].push(skill.name);
+        return acc;
+      },
+      {}
+    );
 
     sectionMap.set("skills", {
       key: "skills",
@@ -130,6 +158,14 @@ export function projectPortfolioCommunityResume(
     });
   }
 
+  if (input.behavioralAnalysis) {
+    sectionMap.set("behavioral-analysis", {
+      key: "behavioral-analysis",
+      title: "Análise comportamental",
+      analysis: input.behavioralAnalysis,
+    });
+  }
+
   const sections = visibleSectionOrder
     .map((key) => sectionMap.get(key))
     .filter((section): section is ResumeProjectionSection => Boolean(section));
@@ -144,7 +180,8 @@ export function projectPortfolioCommunityResume(
       accent,
       accentSoft: "#F5EE84",
       border: "rgba(3,4,94,0.12)",
-      fontFamily: "var(--font-template-portfolio), Poppins, ui-sans-serif, system-ui, sans-serif",
+      fontFamily:
+        "var(--font-template-portfolio), Poppins, ui-sans-serif, system-ui, sans-serif",
     },
     header: {
       displayName: semantics.header.displayName,

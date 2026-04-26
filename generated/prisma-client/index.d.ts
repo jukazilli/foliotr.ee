@@ -39,6 +39,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  */
 export type PasswordResetToken = $Result.DefaultSelection<Prisma.$PasswordResetTokenPayload>
 /**
+ * Model VocationalTestSession
+ * 
+ */
+export type VocationalTestSession = $Result.DefaultSelection<Prisma.$VocationalTestSessionPayload>
+/**
  * Model Profile
  * 
  */
@@ -377,6 +382,16 @@ export class PrismaClient<
     * ```
     */
   get passwordResetToken(): Prisma.PasswordResetTokenDelegate<ExtArgs>;
+
+  /**
+   * `prisma.vocationalTestSession`: Exposes CRUD operations for the **VocationalTestSession** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more VocationalTestSessions
+    * const vocationalTestSessions = await prisma.vocationalTestSession.findMany()
+    * ```
+    */
+  get vocationalTestSession(): Prisma.VocationalTestSessionDelegate<ExtArgs>;
 
   /**
    * `prisma.profile`: Exposes CRUD operations for the **Profile** model.
@@ -1063,6 +1078,7 @@ export namespace Prisma {
     Session: 'Session',
     VerificationToken: 'VerificationToken',
     PasswordResetToken: 'PasswordResetToken',
+    VocationalTestSession: 'VocationalTestSession',
     Profile: 'Profile',
     Experience: 'Experience',
     Education: 'Education',
@@ -1102,7 +1118,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "profile" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "vocationalTestSession" | "profile" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1453,6 +1469,76 @@ export namespace Prisma {
           count: {
             args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
             result: $Utils.Optional<PasswordResetTokenCountAggregateOutputType> | number
+          }
+        }
+      }
+      VocationalTestSession: {
+        payload: Prisma.$VocationalTestSessionPayload<ExtArgs>
+        fields: Prisma.VocationalTestSessionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.VocationalTestSessionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.VocationalTestSessionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          findFirst: {
+            args: Prisma.VocationalTestSessionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.VocationalTestSessionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          findMany: {
+            args: Prisma.VocationalTestSessionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>[]
+          }
+          create: {
+            args: Prisma.VocationalTestSessionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          createMany: {
+            args: Prisma.VocationalTestSessionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.VocationalTestSessionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>[]
+          }
+          delete: {
+            args: Prisma.VocationalTestSessionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          update: {
+            args: Prisma.VocationalTestSessionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          deleteMany: {
+            args: Prisma.VocationalTestSessionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.VocationalTestSessionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.VocationalTestSessionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$VocationalTestSessionPayload>
+          }
+          aggregate: {
+            args: Prisma.VocationalTestSessionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateVocationalTestSession>
+          }
+          groupBy: {
+            args: Prisma.VocationalTestSessionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<VocationalTestSessionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.VocationalTestSessionCountArgs<ExtArgs>
+            result: $Utils.Optional<VocationalTestSessionCountAggregateOutputType> | number
           }
         }
       }
@@ -3300,12 +3386,14 @@ export namespace Prisma {
     accounts: number
     sessions: number
     passwordResetTokens: number
+    vocationalTests: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
+    vocationalTests?: boolean | UserCountOutputTypeCountVocationalTestsArgs
   }
 
   // Custom InputTypes
@@ -3338,6 +3426,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PasswordResetTokenWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVocationalTestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VocationalTestSessionWhereInput
   }
 
 
@@ -4192,6 +4287,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
+    vocationalTests?: boolean | User$vocationalTestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4220,6 +4316,7 @@ export namespace Prisma {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
+    vocationalTests?: boolean | User$vocationalTestsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4231,6 +4328,7 @@ export namespace Prisma {
       accounts: Prisma.$AccountPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
+      vocationalTests: Prisma.$VocationalTestSessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4608,6 +4706,7 @@ export namespace Prisma {
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany"> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany"> | Null>
     passwordResetTokens<T extends User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany"> | Null>
+    vocationalTests<T extends User$vocationalTestsArgs<ExtArgs> = {}>(args?: Subset<T, User$vocationalTestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5030,6 +5129,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: PasswordResetTokenScalarFieldEnum | PasswordResetTokenScalarFieldEnum[]
+  }
+
+  /**
+   * User.vocationalTests
+   */
+  export type User$vocationalTestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    where?: VocationalTestSessionWhereInput
+    orderBy?: VocationalTestSessionOrderByWithRelationInput | VocationalTestSessionOrderByWithRelationInput[]
+    cursor?: VocationalTestSessionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VocationalTestSessionScalarFieldEnum | VocationalTestSessionScalarFieldEnum[]
   }
 
   /**
@@ -8815,6 +8934,1105 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetTokenInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model VocationalTestSession
+   */
+
+  export type AggregateVocationalTestSession = {
+    _count: VocationalTestSessionCountAggregateOutputType | null
+    _avg: VocationalTestSessionAvgAggregateOutputType | null
+    _sum: VocationalTestSessionSumAggregateOutputType | null
+    _min: VocationalTestSessionMinAggregateOutputType | null
+    _max: VocationalTestSessionMaxAggregateOutputType | null
+  }
+
+  export type VocationalTestSessionAvgAggregateOutputType = {
+    currentQuestionIndex: number | null
+  }
+
+  export type VocationalTestSessionSumAggregateOutputType = {
+    currentQuestionIndex: number | null
+  }
+
+  export type VocationalTestSessionMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    methodVersion: string | null
+    status: string | null
+    currentQuestionIndex: number | null
+    aiReport: string | null
+    reportProvider: string | null
+    reportModel: string | null
+    reportGeneratedAt: Date | null
+    publicInPortfolio: boolean | null
+    publicInResume: boolean | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VocationalTestSessionMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    methodVersion: string | null
+    status: string | null
+    currentQuestionIndex: number | null
+    aiReport: string | null
+    reportProvider: string | null
+    reportModel: string | null
+    reportGeneratedAt: Date | null
+    publicInPortfolio: boolean | null
+    publicInResume: boolean | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type VocationalTestSessionCountAggregateOutputType = {
+    id: number
+    userId: number
+    methodVersion: number
+    status: number
+    currentQuestionIndex: number
+    profile: number
+    answers: number
+    result: number
+    aiReport: number
+    reportProvider: number
+    reportModel: number
+    reportGeneratedAt: number
+    publicInPortfolio: number
+    publicInResume: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type VocationalTestSessionAvgAggregateInputType = {
+    currentQuestionIndex?: true
+  }
+
+  export type VocationalTestSessionSumAggregateInputType = {
+    currentQuestionIndex?: true
+  }
+
+  export type VocationalTestSessionMinAggregateInputType = {
+    id?: true
+    userId?: true
+    methodVersion?: true
+    status?: true
+    currentQuestionIndex?: true
+    aiReport?: true
+    reportProvider?: true
+    reportModel?: true
+    reportGeneratedAt?: true
+    publicInPortfolio?: true
+    publicInResume?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VocationalTestSessionMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    methodVersion?: true
+    status?: true
+    currentQuestionIndex?: true
+    aiReport?: true
+    reportProvider?: true
+    reportModel?: true
+    reportGeneratedAt?: true
+    publicInPortfolio?: true
+    publicInResume?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type VocationalTestSessionCountAggregateInputType = {
+    id?: true
+    userId?: true
+    methodVersion?: true
+    status?: true
+    currentQuestionIndex?: true
+    profile?: true
+    answers?: true
+    result?: true
+    aiReport?: true
+    reportProvider?: true
+    reportModel?: true
+    reportGeneratedAt?: true
+    publicInPortfolio?: true
+    publicInResume?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type VocationalTestSessionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VocationalTestSession to aggregate.
+     */
+    where?: VocationalTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VocationalTestSessions to fetch.
+     */
+    orderBy?: VocationalTestSessionOrderByWithRelationInput | VocationalTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: VocationalTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VocationalTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VocationalTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned VocationalTestSessions
+    **/
+    _count?: true | VocationalTestSessionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: VocationalTestSessionAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: VocationalTestSessionSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: VocationalTestSessionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: VocationalTestSessionMaxAggregateInputType
+  }
+
+  export type GetVocationalTestSessionAggregateType<T extends VocationalTestSessionAggregateArgs> = {
+        [P in keyof T & keyof AggregateVocationalTestSession]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateVocationalTestSession[P]>
+      : GetScalarType<T[P], AggregateVocationalTestSession[P]>
+  }
+
+
+
+
+  export type VocationalTestSessionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VocationalTestSessionWhereInput
+    orderBy?: VocationalTestSessionOrderByWithAggregationInput | VocationalTestSessionOrderByWithAggregationInput[]
+    by: VocationalTestSessionScalarFieldEnum[] | VocationalTestSessionScalarFieldEnum
+    having?: VocationalTestSessionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: VocationalTestSessionCountAggregateInputType | true
+    _avg?: VocationalTestSessionAvgAggregateInputType
+    _sum?: VocationalTestSessionSumAggregateInputType
+    _min?: VocationalTestSessionMinAggregateInputType
+    _max?: VocationalTestSessionMaxAggregateInputType
+  }
+
+  export type VocationalTestSessionGroupByOutputType = {
+    id: string
+    userId: string
+    methodVersion: string
+    status: string
+    currentQuestionIndex: number
+    profile: JsonValue
+    answers: JsonValue
+    result: JsonValue | null
+    aiReport: string | null
+    reportProvider: string | null
+    reportModel: string | null
+    reportGeneratedAt: Date | null
+    publicInPortfolio: boolean
+    publicInResume: boolean
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: VocationalTestSessionCountAggregateOutputType | null
+    _avg: VocationalTestSessionAvgAggregateOutputType | null
+    _sum: VocationalTestSessionSumAggregateOutputType | null
+    _min: VocationalTestSessionMinAggregateOutputType | null
+    _max: VocationalTestSessionMaxAggregateOutputType | null
+  }
+
+  type GetVocationalTestSessionGroupByPayload<T extends VocationalTestSessionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<VocationalTestSessionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof VocationalTestSessionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], VocationalTestSessionGroupByOutputType[P]>
+            : GetScalarType<T[P], VocationalTestSessionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type VocationalTestSessionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    methodVersion?: boolean
+    status?: boolean
+    currentQuestionIndex?: boolean
+    profile?: boolean
+    answers?: boolean
+    result?: boolean
+    aiReport?: boolean
+    reportProvider?: boolean
+    reportModel?: boolean
+    reportGeneratedAt?: boolean
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["vocationalTestSession"]>
+
+  export type VocationalTestSessionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    methodVersion?: boolean
+    status?: boolean
+    currentQuestionIndex?: boolean
+    profile?: boolean
+    answers?: boolean
+    result?: boolean
+    aiReport?: boolean
+    reportProvider?: boolean
+    reportModel?: boolean
+    reportGeneratedAt?: boolean
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["vocationalTestSession"]>
+
+  export type VocationalTestSessionSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    methodVersion?: boolean
+    status?: boolean
+    currentQuestionIndex?: boolean
+    profile?: boolean
+    answers?: boolean
+    result?: boolean
+    aiReport?: boolean
+    reportProvider?: boolean
+    reportModel?: boolean
+    reportGeneratedAt?: boolean
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type VocationalTestSessionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type VocationalTestSessionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $VocationalTestSessionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "VocationalTestSession"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      methodVersion: string
+      status: string
+      currentQuestionIndex: number
+      profile: Prisma.JsonValue
+      answers: Prisma.JsonValue
+      result: Prisma.JsonValue | null
+      aiReport: string | null
+      reportProvider: string | null
+      reportModel: string | null
+      reportGeneratedAt: Date | null
+      publicInPortfolio: boolean
+      publicInResume: boolean
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["vocationalTestSession"]>
+    composites: {}
+  }
+
+  type VocationalTestSessionGetPayload<S extends boolean | null | undefined | VocationalTestSessionDefaultArgs> = $Result.GetResult<Prisma.$VocationalTestSessionPayload, S>
+
+  type VocationalTestSessionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<VocationalTestSessionFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: VocationalTestSessionCountAggregateInputType | true
+    }
+
+  export interface VocationalTestSessionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['VocationalTestSession'], meta: { name: 'VocationalTestSession' } }
+    /**
+     * Find zero or one VocationalTestSession that matches the filter.
+     * @param {VocationalTestSessionFindUniqueArgs} args - Arguments to find a VocationalTestSession
+     * @example
+     * // Get one VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends VocationalTestSessionFindUniqueArgs>(args: SelectSubset<T, VocationalTestSessionFindUniqueArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one VocationalTestSession that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {VocationalTestSessionFindUniqueOrThrowArgs} args - Arguments to find a VocationalTestSession
+     * @example
+     * // Get one VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends VocationalTestSessionFindUniqueOrThrowArgs>(args: SelectSubset<T, VocationalTestSessionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first VocationalTestSession that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionFindFirstArgs} args - Arguments to find a VocationalTestSession
+     * @example
+     * // Get one VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends VocationalTestSessionFindFirstArgs>(args?: SelectSubset<T, VocationalTestSessionFindFirstArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first VocationalTestSession that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionFindFirstOrThrowArgs} args - Arguments to find a VocationalTestSession
+     * @example
+     * // Get one VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends VocationalTestSessionFindFirstOrThrowArgs>(args?: SelectSubset<T, VocationalTestSessionFindFirstOrThrowArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more VocationalTestSessions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all VocationalTestSessions
+     * const vocationalTestSessions = await prisma.vocationalTestSession.findMany()
+     * 
+     * // Get first 10 VocationalTestSessions
+     * const vocationalTestSessions = await prisma.vocationalTestSession.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const vocationalTestSessionWithIdOnly = await prisma.vocationalTestSession.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends VocationalTestSessionFindManyArgs>(args?: SelectSubset<T, VocationalTestSessionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a VocationalTestSession.
+     * @param {VocationalTestSessionCreateArgs} args - Arguments to create a VocationalTestSession.
+     * @example
+     * // Create one VocationalTestSession
+     * const VocationalTestSession = await prisma.vocationalTestSession.create({
+     *   data: {
+     *     // ... data to create a VocationalTestSession
+     *   }
+     * })
+     * 
+     */
+    create<T extends VocationalTestSessionCreateArgs>(args: SelectSubset<T, VocationalTestSessionCreateArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many VocationalTestSessions.
+     * @param {VocationalTestSessionCreateManyArgs} args - Arguments to create many VocationalTestSessions.
+     * @example
+     * // Create many VocationalTestSessions
+     * const vocationalTestSession = await prisma.vocationalTestSession.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends VocationalTestSessionCreateManyArgs>(args?: SelectSubset<T, VocationalTestSessionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many VocationalTestSessions and returns the data saved in the database.
+     * @param {VocationalTestSessionCreateManyAndReturnArgs} args - Arguments to create many VocationalTestSessions.
+     * @example
+     * // Create many VocationalTestSessions
+     * const vocationalTestSession = await prisma.vocationalTestSession.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many VocationalTestSessions and only return the `id`
+     * const vocationalTestSessionWithIdOnly = await prisma.vocationalTestSession.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends VocationalTestSessionCreateManyAndReturnArgs>(args?: SelectSubset<T, VocationalTestSessionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a VocationalTestSession.
+     * @param {VocationalTestSessionDeleteArgs} args - Arguments to delete one VocationalTestSession.
+     * @example
+     * // Delete one VocationalTestSession
+     * const VocationalTestSession = await prisma.vocationalTestSession.delete({
+     *   where: {
+     *     // ... filter to delete one VocationalTestSession
+     *   }
+     * })
+     * 
+     */
+    delete<T extends VocationalTestSessionDeleteArgs>(args: SelectSubset<T, VocationalTestSessionDeleteArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one VocationalTestSession.
+     * @param {VocationalTestSessionUpdateArgs} args - Arguments to update one VocationalTestSession.
+     * @example
+     * // Update one VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends VocationalTestSessionUpdateArgs>(args: SelectSubset<T, VocationalTestSessionUpdateArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more VocationalTestSessions.
+     * @param {VocationalTestSessionDeleteManyArgs} args - Arguments to filter VocationalTestSessions to delete.
+     * @example
+     * // Delete a few VocationalTestSessions
+     * const { count } = await prisma.vocationalTestSession.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends VocationalTestSessionDeleteManyArgs>(args?: SelectSubset<T, VocationalTestSessionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more VocationalTestSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many VocationalTestSessions
+     * const vocationalTestSession = await prisma.vocationalTestSession.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends VocationalTestSessionUpdateManyArgs>(args: SelectSubset<T, VocationalTestSessionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one VocationalTestSession.
+     * @param {VocationalTestSessionUpsertArgs} args - Arguments to update or create a VocationalTestSession.
+     * @example
+     * // Update or create a VocationalTestSession
+     * const vocationalTestSession = await prisma.vocationalTestSession.upsert({
+     *   create: {
+     *     // ... data to create a VocationalTestSession
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the VocationalTestSession we want to update
+     *   }
+     * })
+     */
+    upsert<T extends VocationalTestSessionUpsertArgs>(args: SelectSubset<T, VocationalTestSessionUpsertArgs<ExtArgs>>): Prisma__VocationalTestSessionClient<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of VocationalTestSessions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionCountArgs} args - Arguments to filter VocationalTestSessions to count.
+     * @example
+     * // Count the number of VocationalTestSessions
+     * const count = await prisma.vocationalTestSession.count({
+     *   where: {
+     *     // ... the filter for the VocationalTestSessions we want to count
+     *   }
+     * })
+    **/
+    count<T extends VocationalTestSessionCountArgs>(
+      args?: Subset<T, VocationalTestSessionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], VocationalTestSessionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a VocationalTestSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends VocationalTestSessionAggregateArgs>(args: Subset<T, VocationalTestSessionAggregateArgs>): Prisma.PrismaPromise<GetVocationalTestSessionAggregateType<T>>
+
+    /**
+     * Group by VocationalTestSession.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {VocationalTestSessionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends VocationalTestSessionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: VocationalTestSessionGroupByArgs['orderBy'] }
+        : { orderBy?: VocationalTestSessionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, VocationalTestSessionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetVocationalTestSessionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the VocationalTestSession model
+   */
+  readonly fields: VocationalTestSessionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for VocationalTestSession.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__VocationalTestSessionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the VocationalTestSession model
+   */ 
+  interface VocationalTestSessionFieldRefs {
+    readonly id: FieldRef<"VocationalTestSession", 'String'>
+    readonly userId: FieldRef<"VocationalTestSession", 'String'>
+    readonly methodVersion: FieldRef<"VocationalTestSession", 'String'>
+    readonly status: FieldRef<"VocationalTestSession", 'String'>
+    readonly currentQuestionIndex: FieldRef<"VocationalTestSession", 'Int'>
+    readonly profile: FieldRef<"VocationalTestSession", 'Json'>
+    readonly answers: FieldRef<"VocationalTestSession", 'Json'>
+    readonly result: FieldRef<"VocationalTestSession", 'Json'>
+    readonly aiReport: FieldRef<"VocationalTestSession", 'String'>
+    readonly reportProvider: FieldRef<"VocationalTestSession", 'String'>
+    readonly reportModel: FieldRef<"VocationalTestSession", 'String'>
+    readonly reportGeneratedAt: FieldRef<"VocationalTestSession", 'DateTime'>
+    readonly publicInPortfolio: FieldRef<"VocationalTestSession", 'Boolean'>
+    readonly publicInResume: FieldRef<"VocationalTestSession", 'Boolean'>
+    readonly completedAt: FieldRef<"VocationalTestSession", 'DateTime'>
+    readonly createdAt: FieldRef<"VocationalTestSession", 'DateTime'>
+    readonly updatedAt: FieldRef<"VocationalTestSession", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * VocationalTestSession findUnique
+   */
+  export type VocationalTestSessionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which VocationalTestSession to fetch.
+     */
+    where: VocationalTestSessionWhereUniqueInput
+  }
+
+  /**
+   * VocationalTestSession findUniqueOrThrow
+   */
+  export type VocationalTestSessionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which VocationalTestSession to fetch.
+     */
+    where: VocationalTestSessionWhereUniqueInput
+  }
+
+  /**
+   * VocationalTestSession findFirst
+   */
+  export type VocationalTestSessionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which VocationalTestSession to fetch.
+     */
+    where?: VocationalTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VocationalTestSessions to fetch.
+     */
+    orderBy?: VocationalTestSessionOrderByWithRelationInput | VocationalTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VocationalTestSessions.
+     */
+    cursor?: VocationalTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VocationalTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VocationalTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VocationalTestSessions.
+     */
+    distinct?: VocationalTestSessionScalarFieldEnum | VocationalTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * VocationalTestSession findFirstOrThrow
+   */
+  export type VocationalTestSessionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which VocationalTestSession to fetch.
+     */
+    where?: VocationalTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VocationalTestSessions to fetch.
+     */
+    orderBy?: VocationalTestSessionOrderByWithRelationInput | VocationalTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for VocationalTestSessions.
+     */
+    cursor?: VocationalTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VocationalTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VocationalTestSessions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of VocationalTestSessions.
+     */
+    distinct?: VocationalTestSessionScalarFieldEnum | VocationalTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * VocationalTestSession findMany
+   */
+  export type VocationalTestSessionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter, which VocationalTestSessions to fetch.
+     */
+    where?: VocationalTestSessionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of VocationalTestSessions to fetch.
+     */
+    orderBy?: VocationalTestSessionOrderByWithRelationInput | VocationalTestSessionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing VocationalTestSessions.
+     */
+    cursor?: VocationalTestSessionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` VocationalTestSessions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` VocationalTestSessions.
+     */
+    skip?: number
+    distinct?: VocationalTestSessionScalarFieldEnum | VocationalTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * VocationalTestSession create
+   */
+  export type VocationalTestSessionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a VocationalTestSession.
+     */
+    data: XOR<VocationalTestSessionCreateInput, VocationalTestSessionUncheckedCreateInput>
+  }
+
+  /**
+   * VocationalTestSession createMany
+   */
+  export type VocationalTestSessionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many VocationalTestSessions.
+     */
+    data: VocationalTestSessionCreateManyInput | VocationalTestSessionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * VocationalTestSession createManyAndReturn
+   */
+  export type VocationalTestSessionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many VocationalTestSessions.
+     */
+    data: VocationalTestSessionCreateManyInput | VocationalTestSessionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * VocationalTestSession update
+   */
+  export type VocationalTestSessionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a VocationalTestSession.
+     */
+    data: XOR<VocationalTestSessionUpdateInput, VocationalTestSessionUncheckedUpdateInput>
+    /**
+     * Choose, which VocationalTestSession to update.
+     */
+    where: VocationalTestSessionWhereUniqueInput
+  }
+
+  /**
+   * VocationalTestSession updateMany
+   */
+  export type VocationalTestSessionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update VocationalTestSessions.
+     */
+    data: XOR<VocationalTestSessionUpdateManyMutationInput, VocationalTestSessionUncheckedUpdateManyInput>
+    /**
+     * Filter which VocationalTestSessions to update
+     */
+    where?: VocationalTestSessionWhereInput
+  }
+
+  /**
+   * VocationalTestSession upsert
+   */
+  export type VocationalTestSessionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the VocationalTestSession to update in case it exists.
+     */
+    where: VocationalTestSessionWhereUniqueInput
+    /**
+     * In case the VocationalTestSession found by the `where` argument doesn't exist, create a new VocationalTestSession with this data.
+     */
+    create: XOR<VocationalTestSessionCreateInput, VocationalTestSessionUncheckedCreateInput>
+    /**
+     * In case the VocationalTestSession was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<VocationalTestSessionUpdateInput, VocationalTestSessionUncheckedUpdateInput>
+  }
+
+  /**
+   * VocationalTestSession delete
+   */
+  export type VocationalTestSessionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
+    /**
+     * Filter which VocationalTestSession to delete.
+     */
+    where: VocationalTestSessionWhereUniqueInput
+  }
+
+  /**
+   * VocationalTestSession deleteMany
+   */
+  export type VocationalTestSessionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which VocationalTestSessions to delete
+     */
+    where?: VocationalTestSessionWhereInput
+  }
+
+  /**
+   * VocationalTestSession without action
+   */
+  export type VocationalTestSessionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VocationalTestSession
+     */
+    select?: VocationalTestSessionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VocationalTestSessionInclude<ExtArgs> | null
   }
 
 
@@ -34401,6 +35619,29 @@ export namespace Prisma {
   export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
+  export const VocationalTestSessionScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    methodVersion: 'methodVersion',
+    status: 'status',
+    currentQuestionIndex: 'currentQuestionIndex',
+    profile: 'profile',
+    answers: 'answers',
+    result: 'result',
+    aiReport: 'aiReport',
+    reportProvider: 'reportProvider',
+    reportModel: 'reportModel',
+    reportGeneratedAt: 'reportGeneratedAt',
+    publicInPortfolio: 'publicInPortfolio',
+    publicInResume: 'publicInResume',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type VocationalTestSessionScalarFieldEnum = (typeof VocationalTestSessionScalarFieldEnum)[keyof typeof VocationalTestSessionScalarFieldEnum]
+
+
   export const ProfileScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -34794,6 +36035,14 @@ export namespace Prisma {
   export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
+  export const NullableJsonNullValueInput: {
+    DbNull: typeof DbNull,
+    JsonNull: typeof JsonNull
+  };
+
+  export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
   export const QueryMode: {
     default: 'default',
     insensitive: 'insensitive'
@@ -34867,6 +36116,13 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'Json'
+   */
+  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+  /**
    * Reference to a field of type 'Boolean'
    */
   export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -34898,13 +36154,6 @@ export namespace Prisma {
    * Reference to a field of type 'AssetStatus[]'
    */
   export type ListEnumAssetStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AssetStatus[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Json'
-   */
-  export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
@@ -34954,6 +36203,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
+    vocationalTests?: VocationalTestSessionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -34968,6 +36218,7 @@ export namespace Prisma {
     accounts?: AccountOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
     passwordResetTokens?: PasswordResetTokenOrderByRelationAggregateInput
+    vocationalTests?: VocationalTestSessionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -34985,6 +36236,7 @@ export namespace Prisma {
     accounts?: AccountListRelationFilter
     sessions?: SessionListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
+    vocationalTests?: VocationalTestSessionListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -35257,6 +36509,123 @@ export namespace Prisma {
     expiresAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
     usedAt?: DateTimeNullableWithAggregatesFilter<"PasswordResetToken"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
+  }
+
+  export type VocationalTestSessionWhereInput = {
+    AND?: VocationalTestSessionWhereInput | VocationalTestSessionWhereInput[]
+    OR?: VocationalTestSessionWhereInput[]
+    NOT?: VocationalTestSessionWhereInput | VocationalTestSessionWhereInput[]
+    id?: StringFilter<"VocationalTestSession"> | string
+    userId?: StringFilter<"VocationalTestSession"> | string
+    methodVersion?: StringFilter<"VocationalTestSession"> | string
+    status?: StringFilter<"VocationalTestSession"> | string
+    currentQuestionIndex?: IntFilter<"VocationalTestSession"> | number
+    profile?: JsonFilter<"VocationalTestSession">
+    answers?: JsonFilter<"VocationalTestSession">
+    result?: JsonNullableFilter<"VocationalTestSession">
+    aiReport?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportProvider?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportModel?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportGeneratedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    publicInPortfolio?: BoolFilter<"VocationalTestSession"> | boolean
+    publicInResume?: BoolFilter<"VocationalTestSession"> | boolean
+    completedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+    updatedAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }
+
+  export type VocationalTestSessionOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    methodVersion?: SortOrder
+    status?: SortOrder
+    currentQuestionIndex?: SortOrder
+    profile?: SortOrder
+    answers?: SortOrder
+    result?: SortOrderInput | SortOrder
+    aiReport?: SortOrderInput | SortOrder
+    reportProvider?: SortOrderInput | SortOrder
+    reportModel?: SortOrderInput | SortOrder
+    reportGeneratedAt?: SortOrderInput | SortOrder
+    publicInPortfolio?: SortOrder
+    publicInResume?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type VocationalTestSessionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: VocationalTestSessionWhereInput | VocationalTestSessionWhereInput[]
+    OR?: VocationalTestSessionWhereInput[]
+    NOT?: VocationalTestSessionWhereInput | VocationalTestSessionWhereInput[]
+    userId?: StringFilter<"VocationalTestSession"> | string
+    methodVersion?: StringFilter<"VocationalTestSession"> | string
+    status?: StringFilter<"VocationalTestSession"> | string
+    currentQuestionIndex?: IntFilter<"VocationalTestSession"> | number
+    profile?: JsonFilter<"VocationalTestSession">
+    answers?: JsonFilter<"VocationalTestSession">
+    result?: JsonNullableFilter<"VocationalTestSession">
+    aiReport?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportProvider?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportModel?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportGeneratedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    publicInPortfolio?: BoolFilter<"VocationalTestSession"> | boolean
+    publicInResume?: BoolFilter<"VocationalTestSession"> | boolean
+    completedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+    updatedAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type VocationalTestSessionOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    methodVersion?: SortOrder
+    status?: SortOrder
+    currentQuestionIndex?: SortOrder
+    profile?: SortOrder
+    answers?: SortOrder
+    result?: SortOrderInput | SortOrder
+    aiReport?: SortOrderInput | SortOrder
+    reportProvider?: SortOrderInput | SortOrder
+    reportModel?: SortOrderInput | SortOrder
+    reportGeneratedAt?: SortOrderInput | SortOrder
+    publicInPortfolio?: SortOrder
+    publicInResume?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: VocationalTestSessionCountOrderByAggregateInput
+    _avg?: VocationalTestSessionAvgOrderByAggregateInput
+    _max?: VocationalTestSessionMaxOrderByAggregateInput
+    _min?: VocationalTestSessionMinOrderByAggregateInput
+    _sum?: VocationalTestSessionSumOrderByAggregateInput
+  }
+
+  export type VocationalTestSessionScalarWhereWithAggregatesInput = {
+    AND?: VocationalTestSessionScalarWhereWithAggregatesInput | VocationalTestSessionScalarWhereWithAggregatesInput[]
+    OR?: VocationalTestSessionScalarWhereWithAggregatesInput[]
+    NOT?: VocationalTestSessionScalarWhereWithAggregatesInput | VocationalTestSessionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"VocationalTestSession"> | string
+    userId?: StringWithAggregatesFilter<"VocationalTestSession"> | string
+    methodVersion?: StringWithAggregatesFilter<"VocationalTestSession"> | string
+    status?: StringWithAggregatesFilter<"VocationalTestSession"> | string
+    currentQuestionIndex?: IntWithAggregatesFilter<"VocationalTestSession"> | number
+    profile?: JsonWithAggregatesFilter<"VocationalTestSession">
+    answers?: JsonWithAggregatesFilter<"VocationalTestSession">
+    result?: JsonNullableWithAggregatesFilter<"VocationalTestSession">
+    aiReport?: StringNullableWithAggregatesFilter<"VocationalTestSession"> | string | null
+    reportProvider?: StringNullableWithAggregatesFilter<"VocationalTestSession"> | string | null
+    reportModel?: StringNullableWithAggregatesFilter<"VocationalTestSession"> | string | null
+    reportGeneratedAt?: DateTimeNullableWithAggregatesFilter<"VocationalTestSession"> | Date | string | null
+    publicInPortfolio?: BoolWithAggregatesFilter<"VocationalTestSession"> | boolean
+    publicInResume?: BoolWithAggregatesFilter<"VocationalTestSession"> | boolean
+    completedAt?: DateTimeNullableWithAggregatesFilter<"VocationalTestSession"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"VocationalTestSession"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"VocationalTestSession"> | Date | string
   }
 
   export type ProfileWhereInput = {
@@ -37370,6 +38739,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -37384,6 +38754,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -37398,6 +38769,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -37412,6 +38784,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -37698,6 +39071,145 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionCreateInput = {
+    id?: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutVocationalTestsInput
+  }
+
+  export type VocationalTestSessionUncheckedCreateInput = {
+    id?: string
+    userId: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VocationalTestSessionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutVocationalTestsNestedInput
+  }
+
+  export type VocationalTestSessionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionCreateManyInput = {
+    id?: string
+    userId: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VocationalTestSessionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProfileCreateInput = {
@@ -40019,6 +41531,12 @@ export namespace Prisma {
     none?: PasswordResetTokenWhereInput
   }
 
+  export type VocationalTestSessionListRelationFilter = {
+    every?: VocationalTestSessionWhereInput
+    some?: VocationalTestSessionWhereInput
+    none?: VocationalTestSessionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -40033,6 +41551,10 @@ export namespace Prisma {
   }
 
   export type PasswordResetTokenOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VocationalTestSessionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -40302,9 +41824,200 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+  export type JsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type JsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type BoolFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type VocationalTestSessionCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    methodVersion?: SortOrder
+    status?: SortOrder
+    currentQuestionIndex?: SortOrder
+    profile?: SortOrder
+    answers?: SortOrder
+    result?: SortOrder
+    aiReport?: SortOrder
+    reportProvider?: SortOrder
+    reportModel?: SortOrder
+    reportGeneratedAt?: SortOrder
+    publicInPortfolio?: SortOrder
+    publicInResume?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VocationalTestSessionAvgOrderByAggregateInput = {
+    currentQuestionIndex?: SortOrder
+  }
+
+  export type VocationalTestSessionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    methodVersion?: SortOrder
+    status?: SortOrder
+    currentQuestionIndex?: SortOrder
+    aiReport?: SortOrder
+    reportProvider?: SortOrder
+    reportModel?: SortOrder
+    reportGeneratedAt?: SortOrder
+    publicInPortfolio?: SortOrder
+    publicInResume?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VocationalTestSessionMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    methodVersion?: SortOrder
+    status?: SortOrder
+    currentQuestionIndex?: SortOrder
+    aiReport?: SortOrder
+    reportProvider?: SortOrder
+    reportModel?: SortOrder
+    reportGeneratedAt?: SortOrder
+    publicInPortfolio?: SortOrder
+    publicInResume?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type VocationalTestSessionSumOrderByAggregateInput = {
+    currentQuestionIndex?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type ExperienceListRelationFilter = {
@@ -40464,25 +42177,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
-  }
-
   export type ProfileRelationFilter = {
     is?: ProfileWhereInput
     isNot?: ProfileWhereInput
@@ -40560,22 +42254,6 @@ export namespace Prisma {
 
   export type ExperienceSumOrderByAggregateInput = {
     order?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type VersionEducationListRelationFilter = {
@@ -41013,28 +42691,6 @@ export namespace Prisma {
     notIn?: $Enums.AssetStatus[] | ListEnumAssetStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumAssetStatusFilter<$PrismaModel> | $Enums.AssetStatus
   }
-  export type JsonFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
 
   export type AssetCountOrderByAggregateInput = {
     id?: SortOrder
@@ -41118,31 +42774,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAssetStatusFilter<$PrismaModel>
     _max?: NestedEnumAssetStatusFilter<$PrismaModel>
-  }
-  export type JsonWithAggregatesFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedJsonFilter<$PrismaModel>
-    _max?: NestedJsonFilter<$PrismaModel>
   }
 
   export type PageListRelationFilter = {
@@ -41863,6 +43494,13 @@ export namespace Prisma {
     connect?: PasswordResetTokenWhereUniqueInput | PasswordResetTokenWhereUniqueInput[]
   }
 
+  export type VocationalTestSessionCreateNestedManyWithoutUserInput = {
+    create?: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput> | VocationalTestSessionCreateWithoutUserInput[] | VocationalTestSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VocationalTestSessionCreateOrConnectWithoutUserInput | VocationalTestSessionCreateOrConnectWithoutUserInput[]
+    createMany?: VocationalTestSessionCreateManyUserInputEnvelope
+    connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+  }
+
   export type ProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
@@ -41888,6 +43526,13 @@ export namespace Prisma {
     connectOrCreate?: PasswordResetTokenCreateOrConnectWithoutUserInput | PasswordResetTokenCreateOrConnectWithoutUserInput[]
     createMany?: PasswordResetTokenCreateManyUserInputEnvelope
     connect?: PasswordResetTokenWhereUniqueInput | PasswordResetTokenWhereUniqueInput[]
+  }
+
+  export type VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput> | VocationalTestSessionCreateWithoutUserInput[] | VocationalTestSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VocationalTestSessionCreateOrConnectWithoutUserInput | VocationalTestSessionCreateOrConnectWithoutUserInput[]
+    createMany?: VocationalTestSessionCreateManyUserInputEnvelope
+    connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -41954,6 +43599,20 @@ export namespace Prisma {
     deleteMany?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
   }
 
+  export type VocationalTestSessionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput> | VocationalTestSessionCreateWithoutUserInput[] | VocationalTestSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VocationalTestSessionCreateOrConnectWithoutUserInput | VocationalTestSessionCreateOrConnectWithoutUserInput[]
+    upsert?: VocationalTestSessionUpsertWithWhereUniqueWithoutUserInput | VocationalTestSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: VocationalTestSessionCreateManyUserInputEnvelope
+    set?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    disconnect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    delete?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    update?: VocationalTestSessionUpdateWithWhereUniqueWithoutUserInput | VocationalTestSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: VocationalTestSessionUpdateManyWithWhereWithoutUserInput | VocationalTestSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
+  }
+
   export type ProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
@@ -42004,6 +43663,20 @@ export namespace Prisma {
     update?: PasswordResetTokenUpdateWithWhereUniqueWithoutUserInput | PasswordResetTokenUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: PasswordResetTokenUpdateManyWithWhereWithoutUserInput | PasswordResetTokenUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: PasswordResetTokenScalarWhereInput | PasswordResetTokenScalarWhereInput[]
+  }
+
+  export type VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput> | VocationalTestSessionCreateWithoutUserInput[] | VocationalTestSessionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VocationalTestSessionCreateOrConnectWithoutUserInput | VocationalTestSessionCreateOrConnectWithoutUserInput[]
+    upsert?: VocationalTestSessionUpsertWithWhereUniqueWithoutUserInput | VocationalTestSessionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: VocationalTestSessionCreateManyUserInputEnvelope
+    set?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    disconnect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    delete?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
+    update?: VocationalTestSessionUpdateWithWhereUniqueWithoutUserInput | VocationalTestSessionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: VocationalTestSessionUpdateManyWithWhereWithoutUserInput | VocationalTestSessionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -42058,6 +43731,32 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutPasswordResetTokensInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, UserUpdateWithoutPasswordResetTokensInput>, UserUncheckedUpdateWithoutPasswordResetTokensInput>
+  }
+
+  export type UserCreateNestedOneWithoutVocationalTestsInput = {
+    create?: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVocationalTestsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
+  export type UserUpdateOneRequiredWithoutVocationalTestsNestedInput = {
+    create?: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVocationalTestsInput
+    upsert?: UserUpsertWithoutVocationalTestsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVocationalTestsInput, UserUpdateWithoutVocationalTestsInput>, UserUncheckedUpdateWithoutVocationalTestsInput>
   }
 
   export type UserCreateNestedOneWithoutProfileInput = {
@@ -42204,10 +43903,6 @@ export namespace Prisma {
     connectOrCreate?: AssetCreateOrConnectWithoutProfileInput | AssetCreateOrConnectWithoutProfileInput[]
     createMany?: AssetCreateManyProfileInputEnvelope
     connect?: AssetWhereUniqueInput | AssetWhereUniqueInput[]
-  }
-
-  export type BoolFieldUpdateOperationsInput = {
-    set?: boolean
   }
 
   export type UserUpdateOneRequiredWithoutProfileNestedInput = {
@@ -42522,14 +44217,6 @@ export namespace Prisma {
     connectOrCreate?: VersionExperienceCreateOrConnectWithoutExperienceInput | VersionExperienceCreateOrConnectWithoutExperienceInput[]
     createMany?: VersionExperienceCreateManyExperienceInputEnvelope
     connect?: VersionExperienceWhereUniqueInput | VersionExperienceWhereUniqueInput[]
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ProfileUpdateOneRequiredWithoutExperiencesNestedInput = {
@@ -44432,14 +46119,6 @@ export namespace Prisma {
     not?: NestedBoolFilter<$PrismaModel> | boolean
   }
 
-  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedBoolFilter<$PrismaModel>
-    _max?: NestedBoolFilter<$PrismaModel>
-  }
-
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -44465,6 +46144,58 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+  export type NestedJsonFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+  export type NestedJsonNullableFilter<$PrismaModel = never> = 
+    | PatchUndefined<
+        Either<Required<NestedJsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
   }
 
   export type NestedEnumAssetKindFilter<$PrismaModel = never> = {
@@ -44499,28 +46230,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAssetStatusFilter<$PrismaModel>
     _max?: NestedEnumAssetStatusFilter<$PrismaModel>
-  }
-  export type NestedJsonFilter<$PrismaModel = never> = 
-    | PatchUndefined<
-        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
-        Required<NestedJsonFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
-
-  export type NestedJsonFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type NestedEnumPublishStateFilter<$PrismaModel = never> = {
@@ -44687,6 +46396,54 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type VocationalTestSessionCreateWithoutUserInput = {
+    id?: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VocationalTestSessionUncheckedCreateWithoutUserInput = {
+    id?: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VocationalTestSessionCreateOrConnectWithoutUserInput = {
+    where: VocationalTestSessionWhereUniqueInput
+    create: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type VocationalTestSessionCreateManyUserInputEnvelope = {
+    data: VocationalTestSessionCreateManyUserInput | VocationalTestSessionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProfileUpsertWithoutUserInput = {
     update: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
     create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
@@ -44842,6 +46599,45 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"PasswordResetToken"> | Date | string
   }
 
+  export type VocationalTestSessionUpsertWithWhereUniqueWithoutUserInput = {
+    where: VocationalTestSessionWhereUniqueInput
+    update: XOR<VocationalTestSessionUpdateWithoutUserInput, VocationalTestSessionUncheckedUpdateWithoutUserInput>
+    create: XOR<VocationalTestSessionCreateWithoutUserInput, VocationalTestSessionUncheckedCreateWithoutUserInput>
+  }
+
+  export type VocationalTestSessionUpdateWithWhereUniqueWithoutUserInput = {
+    where: VocationalTestSessionWhereUniqueInput
+    data: XOR<VocationalTestSessionUpdateWithoutUserInput, VocationalTestSessionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type VocationalTestSessionUpdateManyWithWhereWithoutUserInput = {
+    where: VocationalTestSessionScalarWhereInput
+    data: XOR<VocationalTestSessionUpdateManyMutationInput, VocationalTestSessionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type VocationalTestSessionScalarWhereInput = {
+    AND?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
+    OR?: VocationalTestSessionScalarWhereInput[]
+    NOT?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
+    id?: StringFilter<"VocationalTestSession"> | string
+    userId?: StringFilter<"VocationalTestSession"> | string
+    methodVersion?: StringFilter<"VocationalTestSession"> | string
+    status?: StringFilter<"VocationalTestSession"> | string
+    currentQuestionIndex?: IntFilter<"VocationalTestSession"> | number
+    profile?: JsonFilter<"VocationalTestSession">
+    answers?: JsonFilter<"VocationalTestSession">
+    result?: JsonNullableFilter<"VocationalTestSession">
+    aiReport?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportProvider?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportModel?: StringNullableFilter<"VocationalTestSession"> | string | null
+    reportGeneratedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    publicInPortfolio?: BoolFilter<"VocationalTestSession"> | boolean
+    publicInResume?: BoolFilter<"VocationalTestSession"> | boolean
+    completedAt?: DateTimeNullableFilter<"VocationalTestSession"> | Date | string | null
+    createdAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+    updatedAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     email: string
@@ -44853,6 +46649,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -44866,6 +46663,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -44895,6 +46693,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -44908,6 +46707,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -44921,6 +46721,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -44934,6 +46735,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -44963,6 +46765,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -44976,6 +46779,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutPasswordResetTokensInput = {
@@ -44989,6 +46793,7 @@ export namespace Prisma {
     profile?: ProfileCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -45002,6 +46807,7 @@ export namespace Prisma {
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -45031,6 +46837,7 @@ export namespace Prisma {
     profile?: ProfileUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -45044,6 +46851,79 @@ export namespace Prisma {
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserCreateWithoutVocationalTestsInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    username?: string | null
+    name?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: ProfileCreateNestedOneWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutVocationalTestsInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    username?: string | null
+    name?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutVocationalTestsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
+  }
+
+  export type UserUpsertWithoutVocationalTestsInput = {
+    update: XOR<UserUpdateWithoutVocationalTestsInput, UserUncheckedUpdateWithoutVocationalTestsInput>
+    create: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVocationalTestsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVocationalTestsInput, UserUncheckedUpdateWithoutVocationalTestsInput>
+  }
+
+  export type UserUpdateWithoutVocationalTestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVocationalTestsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutProfileInput = {
@@ -45057,6 +46937,7 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProfileInput = {
@@ -45070,6 +46951,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProfileInput = {
@@ -45515,6 +47397,7 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProfileInput = {
@@ -45528,6 +47411,7 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ExperienceUpsertWithWhereUniqueWithoutProfileInput = {
@@ -51288,6 +53172,25 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
+  export type VocationalTestSessionCreateManyUserInput = {
+    id?: string
+    methodVersion?: string
+    status?: string
+    currentQuestionIndex?: number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: string | null
+    reportProvider?: string | null
+    reportModel?: string | null
+    reportGeneratedAt?: Date | string | null
+    publicInPortfolio?: boolean
+    publicInResume?: boolean
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -51370,6 +53273,63 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VocationalTestSessionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    methodVersion?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    currentQuestionIndex?: IntFieldUpdateOperationsInput | number
+    profile?: JsonNullValueInput | InputJsonValue
+    answers?: JsonNullValueInput | InputJsonValue
+    result?: NullableJsonNullValueInput | InputJsonValue
+    aiReport?: NullableStringFieldUpdateOperationsInput | string | null
+    reportProvider?: NullableStringFieldUpdateOperationsInput | string | null
+    reportModel?: NullableStringFieldUpdateOperationsInput | string | null
+    reportGeneratedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
+    publicInResume?: BoolFieldUpdateOperationsInput | boolean
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ExperienceCreateManyProfileInput = {
@@ -53053,6 +55013,10 @@ export namespace Prisma {
      * @deprecated Use PasswordResetTokenDefaultArgs instead
      */
     export type PasswordResetTokenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasswordResetTokenDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use VocationalTestSessionDefaultArgs instead
+     */
+    export type VocationalTestSessionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = VocationalTestSessionDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ProfileDefaultArgs instead
      */

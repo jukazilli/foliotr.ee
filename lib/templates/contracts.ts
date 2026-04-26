@@ -16,6 +16,7 @@ export const TEMPLATE_BLOCK_TYPES = [
   "portfolio.education",
   "portfolio.experience",
   "portfolio.work",
+  "portfolio.behavioral-analysis",
   "portfolio.contact",
   "portfolio.custom-section",
 ] as const;
@@ -25,9 +26,12 @@ export type TemplateBlockType = (typeof TEMPLATE_BLOCK_TYPES)[number];
 export const templateBlockTypeSchema = z.enum(TEMPLATE_BLOCK_TYPES);
 
 function safeText(max: number) {
-  return z.string().max(max).refine((value) => !/<\/?[a-z][\s\S]*>/i.test(value), {
-    message: "HTML nao e permitido em campos de bloco",
-  });
+  return z
+    .string()
+    .max(max)
+    .refine((value) => !/<\/?[a-z][\s\S]*>/i.test(value), {
+      message: "HTML nao e permitido em campos de bloco",
+    });
 }
 
 const safeTextSchema = safeText(4000);
@@ -53,7 +57,8 @@ const safeHrefSchema = z
   .refine(
     (value) =>
       value.startsWith("/") ||
-      (value.startsWith("http://") || value.startsWith("https://")),
+      value.startsWith("http://") ||
+      value.startsWith("https://"),
     { message: "Link deve ser relativo ou usar HTTP/HTTPS" }
   );
 
@@ -155,12 +160,15 @@ const portfolioContactConfigSchema = z.object({
   title: safeShortTextSchema.default("contato."),
   body: safeTextSchema.optional(),
   image: imageSchema.optional(),
-  links: z.array(
-    z.object({
-      label: safeShortTextSchema,
-      href: safeContactUrlSchema,
-    })
-  ).max(6).default([]),
+  links: z
+    .array(
+      z.object({
+        label: safeShortTextSchema,
+        href: safeContactUrlSchema,
+      })
+    )
+    .max(6)
+    .default([]),
 });
 
 const portfolioCustomSectionConfigSchema = z.object({
@@ -199,6 +207,7 @@ const blockConfigSchemas = {
   "portfolio.education": genericKnownConfigSchema,
   "portfolio.experience": portfolioExperienceConfigSchema,
   "portfolio.work": portfolioWorkConfigSchema,
+  "portfolio.behavioral-analysis": genericKnownConfigSchema,
   "portfolio.contact": portfolioContactConfigSchema,
   "portfolio.custom-section": portfolioCustomSectionConfigSchema,
   hero: genericKnownConfigSchema,
