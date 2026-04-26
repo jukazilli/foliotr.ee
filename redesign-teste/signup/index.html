@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Criar conta grátis | LINKFOLIO</title>
+    <meta
+      name="description"
+      content="Crie sua conta gratuita no Linkfolio e comece a montar seu portfólio online."
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23DFFF00'/%3E%3Cpath d='M9 8h6v10h8v6H9z' fill='%23FF4D00'/%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <header class="topbar" data-topbar>
+      <a class="brand" href="/" aria-label="Voltar para o início">
+        <span>LINKFOLIO</span>
+      </a>
+
+      <nav class="nav-links" aria-label="Navegação principal">
+        <a href="/#portfolio">PORTFÓLIO</a>
+        <a href="/#versions">VERSÕES</a>
+        <a href="/#resume">CURRÍCULOS</a>
+        <a href="/#community">COMUNIDADE</a>
+      </nav>
+
+      <div class="top-actions">
+        <a class="button button-light" href="/login">Entrar</a>
+        <a class="button button-dark" href="/signup">Criar grátis</a>
+        <button
+          class="button theme-toggle"
+          id="theme-toggle"
+          type="button"
+          aria-pressed="false"
+          aria-label="Apagar a luz"
+          title="Apagar a luz"
+        >
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-moon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M21 12.8A8.5 8.5 0 0 1 11.2 3a7 7 0 1 0 9.8 9.8Z"
+            />
+          </svg>
+          <svg
+            class="theme-toggle-icon theme-toggle-icon-sun"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2" />
+            <path d="M12 20v2" />
+            <path d="m4.93 4.93 1.41 1.41" />
+            <path d="m17.66 17.66 1.41 1.41" />
+            <path d="M2 12h2" />
+            <path d="M20 12h2" />
+            <path d="m6.34 17.66-1.41 1.41" />
+            <path d="m19.07 4.93-1.41 1.41" />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="signup-screen" id="signup" aria-labelledby="signup-title">
+        <div class="signup-panel">
+          <div class="login-copy signup-copy">
+            <p class="eyebrow">Criar conta grátis</p>
+            <h1 id="signup-title">Vamos montar seu Linkfolio</h1>
+            <p>Preencha os dados básicos para reservar seu usuário e abrir seu editor.</p>
+          </div>
+
+          <form class="signup-form" id="signup-form">
+            <div class="signup-progress" aria-label="Progresso do cadastro">
+              <span class="is-active" data-step-dot="1">1</span>
+              <span data-step-dot="2">2</span>
+              <span data-step-dot="3">3</span>
+            </div>
+
+            <fieldset class="signup-step is-active" data-signup-step="1">
+              <legend>Dados principais</legend>
+
+              <label for="signup-username">Usuário</label>
+              <div class="signup-username-field">
+                <span>linkfolio.co/@</span>
+                <input
+                  id="signup-username"
+                  name="username"
+                  type="text"
+                  placeholder="ana"
+                  autocomplete="username"
+                  required
+                />
+              </div>
+
+              <label for="signup-name">Nome</label>
+              <input
+                id="signup-name"
+                name="name"
+                type="text"
+                placeholder="Seu nome"
+                autocomplete="name"
+                required
+              />
+
+              <label for="signup-email">Email</label>
+              <input
+                id="signup-email"
+                name="email"
+                type="email"
+                placeholder="voce@email.com"
+                autocomplete="email"
+                required
+              />
+
+              <label for="signup-birthdate">Data de nascimento</label>
+              <input id="signup-birthdate" name="birthdate" type="date" required />
+            </fieldset>
+
+            <fieldset class="signup-step" data-signup-step="2">
+              <legend>Localização</legend>
+
+              <label for="signup-country">País</label>
+              <input
+                id="signup-country"
+                name="country"
+                type="text"
+                placeholder="Brasil"
+                autocomplete="country-name"
+                required
+              />
+
+              <label for="signup-city">Cidade</label>
+              <input
+                id="signup-city"
+                name="city"
+                type="text"
+                placeholder="São Paulo"
+                autocomplete="address-level2"
+                required
+              />
+
+              <label for="signup-state">Estado</label>
+              <input
+                id="signup-state"
+                name="state"
+                type="text"
+                placeholder="SP"
+                autocomplete="address-level1"
+                required
+              />
+            </fieldset>
+
+            <fieldset class="signup-step" data-signup-step="3">
+              <legend>Perfil profissional</legend>
+
+              <label for="signup-profession">Profissão</label>
+              <input
+                id="signup-profession"
+                name="profession"
+                type="text"
+                placeholder="Product Designer"
+                required
+              />
+
+              <label for="signup-education">Grau de escolaridade</label>
+              <select id="signup-education" name="education" required>
+                <option value="">Selecione</option>
+                <option>Ensino médio</option>
+                <option>Técnico</option>
+                <option>Graduação</option>
+                <option>Pós-graduação</option>
+                <option>Mestrado</option>
+                <option>Doutorado</option>
+                <option>Outro</option>
+              </select>
+            </fieldset>
+
+            <p class="signup-success" role="status" aria-live="polite" hidden>
+              Conta criada. Seu Linkfolio já está reservado.
+            </p>
+
+            <div class="signup-actions">
+              <button class="button signup-back" type="button" data-signup-back disabled>
+                Voltar
+              </button>
+              <button class="button signup-next" type="submit" data-signup-next>
+                Avançar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div class="signup-art" aria-label="Ilustrações animadas para criar conta">
+          <div class="signup-carousel" aria-hidden="true">
+            <div class="signup-carousel-track">
+              <figure class="signup-carousel-slide">
+                <img src="../nicetomeet.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../calmdog.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../joinus1.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../handcomputador.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../nicetomeet.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../calmdog.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../joinus1.gif" alt="" />
+              </figure>
+              <figure class="signup-carousel-slide">
+                <img src="../handcomputador.gif" alt="" />
+              </figure>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-panel">
+        <div class="footer-brand">
+          <svg
+            class="footer-logo"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M9.4 14.6 8 16a3.6 3.6 0 0 1-5.1-5.1l3-3A3.6 3.6 0 0 1 11 7.9"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="M14.6 9.4 16 8a3.6 3.6 0 0 1 5.1 5.1l-3 3a3.6 3.6 0 0 1-5.1 0"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="3"
+            />
+            <path
+              d="m8.8 15.2 6.4-6.4"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-width="3"
+            />
+          </svg>
+          <strong class="footer-brand-name">LINKFOLIO</strong>
+          <p>Uma página viva para mostrar trabalho, currículo e versões.</p>
+        </div>
+
+        <nav class="footer-links" aria-label="Rodapé">
+          <section class="footer-link-group" aria-labelledby="footer-community">
+            <h3 id="footer-community">Community</h3>
+            <ul>
+              <li><a href="/blog">Nosso blog</a></li>
+              <li><a href="/teste-vocacional">Teste vocacional</a></li>
+              <li><a href="/#resume">Explore templates</a></li>
+              <li><a href="/#community">Nossos usuários</a></li>
+              <li><a href="/#versions">Versões</a></li>
+              <li><a href="/#portfolio">Portfólio</a></li>
+              <li><a href="/signup">Criar agora</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-support">
+            <h3 id="footer-support">Suporte</h3>
+            <ul>
+              <li><a href="/login">Ajuda</a></li>
+              <li><a href="/#hero">Como começar</a></li>
+              <li><a href="/#hero">Linkfolio Pro</a></li>
+              <li><a href="/login">Perguntas frequentes</a></li>
+            </ul>
+          </section>
+
+          <section class="footer-link-group" aria-labelledby="footer-company">
+            <h3 id="footer-company">Company</h3>
+            <ul>
+              <li><a href="/login">Meet Tesseria Seed</a></li>
+              <li><a href="/login">About</a></li>
+              <li><a href="/login">Carreiras</a></li>
+              <li><a href="/login">Aprenda</a></li>
+              <li><a href="/login">Contact</a></li>
+            </ul>
+          </section>
+        </nav>
+      </div>
+    </footer>
+
+    <script src="../app.js?v=20260426"></script>
+  </body>
+</html>

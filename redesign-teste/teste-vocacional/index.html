@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Recuperar senha | LINKFOLIO</title>
+    <title>Teste vocacional | LINKFOLIO</title>
     <meta
       name="description"
-      content="Recupere o acesso à sua conta Linkfolio recebendo um link seguro por email."
+      content="Descubra suas forças, fraquezas, comportamento e caminhos profissionais com uma análise profunda baseada em métodos comprovados."
     />
     <link
       rel="icon"
@@ -75,51 +75,81 @@
     </header>
 
     <main>
-      <section
-        class="login-screen forgot-screen"
-        id="forgot-password"
-        aria-labelledby="forgot-title"
-      >
-        <div class="login-panel">
-          <div class="login-copy">
-            <p class="eyebrow">Recuperar acesso</p>
-            <h1 id="forgot-title">Esqueceu sua senha?</h1>
-            <p>
-              Informe o email cadastrado e enviaremos um link seguro para você
-              criar uma nova senha.
-            </p>
-          </div>
-
-          <!-- TODO backend: enviar este email via API do Resend.
-               Quando migrar para React/TypeScript, mover a chamada para uma rota/API segura
-               para não expor RESEND_API_KEY no frontend. -->
-          <form class="login-form password-recovery-form">
-            <label class="sr-only" for="recovery-email">Email cadastrado</label>
-            <input
-              id="recovery-email"
-              name="email"
-              type="email"
-              placeholder="Email cadastrado"
-              autocomplete="email"
-              required
-            />
-
-            <button class="button login-submit" type="submit">
-              Enviar link de recuperação
-            </button>
-          </form>
-
-          <a class="back-to-login" href="/login">Voltar para o login</a>
+      <section class="vocation-hero" aria-labelledby="vocation-title">
+        <div class="vocation-copy">
+          <p class="eyebrow">Teste vocacional</p>
+          <h1 id="vocation-title">Entenda seu perfil antes de escolher o próximo passo.</h1>
+          <p>
+            Descubra suas forças e fraquezas, comportamento e quem é você
+            através de uma análise profunda usando métodos comprovados.
+          </p>
+          <button class="button vocation-cta" type="button" data-vocation-open>
+            Iniciar agora
+          </button>
         </div>
 
-        <div
-          class="login-art forgot-art"
-          aria-label="Ilustração animada para recuperação de senha"
-        >
-          <img src="../forgotaJoe.gif" alt="" aria-hidden="true" />
+        <div class="vocation-panel" aria-label="Prévia da análise vocacional">
+          <div class="vocation-panel-header">
+            <span>Mapa pessoal</span>
+            <strong>Forças, sinais e caminhos</strong>
+          </div>
+          <div class="vocation-meter-grid" aria-hidden="true">
+            <span style="--value: 84%">Comunicação</span>
+            <span style="--value: 72%">Estratégia</span>
+            <span style="--value: 64%">Criatividade</span>
+            <span style="--value: 58%">Execução</span>
+          </div>
+          <p>
+            O teste vai cruzar respostas comportamentais, interesses e padrões
+            de decisão para sugerir áreas, formatos de trabalho e próximos
+            movimentos de carreira.
+          </p>
         </div>
       </section>
     </main>
+
+    <div
+      class="vocation-modal"
+      data-vocation-modal
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="vocation-modal-title"
+    >
+      <div class="vocation-modal-backdrop" data-vocation-close></div>
+      <section class="vocation-modal-card">
+        <button
+          class="vocation-modal-close"
+          type="button"
+          aria-label="Fechar"
+          data-vocation-close
+        >
+          ×
+        </button>
+        <p class="eyebrow">Antes de começar</p>
+        <h2 id="vocation-modal-title">Você já tem uma conta?</h2>
+        <p>
+          O teste será salvo no seu perfil para continuar depois e comparar
+          resultados com seu Linkfolio.
+        </p>
+
+        <!-- TODO React/TypeScript + backend:
+          1. Trocar estes redirecionamentos estáticos por uma checagem real de sessão.
+          2. Se o usuário já estiver autenticado, abrir diretamente a rota protegida do teste.
+          3. Se criar conta, salvar o redirect pós-cadastro e enviar para /teste-vocacional/app
+             com token/sessão válida.
+          4. Implementar backend para persistir respostas, cálculo do perfil e histórico do teste.
+        -->
+        <div class="vocation-modal-actions">
+          <a class="button vocation-modal-primary" href="/login?redirect=/teste-vocacional/app">
+            Já tenho conta
+          </a>
+          <a class="button vocation-modal-secondary" href="/signup?redirect=/teste-vocacional/app">
+            Criar conta
+          </a>
+        </div>
+      </section>
+    </div>
 
     <footer class="footer">
       <div class="footer-panel">
@@ -168,7 +198,7 @@
               <li><a href="/#community">Nossos usuários</a></li>
               <li><a href="/#versions">Versões</a></li>
               <li><a href="/#portfolio">Portfólio</a></li>
-              <li><a href="/#hero">Criar agora</a></li>
+              <li><a href="/signup">Criar agora</a></li>
             </ul>
           </section>
 
