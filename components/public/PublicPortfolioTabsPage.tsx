@@ -421,6 +421,12 @@ export default function PublicPortfolioTabsPage({
             >
               <input type="hidden" name="username" value={username} />
               <input type="hidden" name="returnPath" value={returnPath} />
+              <div className="hidden" aria-hidden="true">
+                <label>
+                  Site
+                  <input name="website" tabIndex={-1} autoComplete="off" />
+                </label>
+              </div>
               <h2 className="text-2xl font-extrabold tracking-[-0.04em]">
                 Deixe uma review
               </h2>

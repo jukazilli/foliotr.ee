@@ -1,7 +1,7 @@
 # FolioTree Local Setup
 
 Status: foundation note
-Last updated: 2026-04-18
+Last updated: 2026-04-27
 
 ## Stack
 
@@ -11,6 +11,7 @@ Last updated: 2026-04-18
 - PostgreSQL on Neon
 - NextAuth credentials auth for the MVP
 - Vercel-oriented frontend deployment
+- S3-compatible or local file storage
 
 ## Environment
 
@@ -35,12 +36,10 @@ Optional storage variables:
 - `STORAGE_S3_ACCESS_KEY_ID`
 - `STORAGE_S3_SECRET_ACCESS_KEY`
 - `STORAGE_PUBLIC_BASE_URL`
-- `NEXT_PUBLIC_SUPABASE_URL`
-- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 Use `STORAGE_PROVIDER=local` for local development when an external object store is not reachable. Local uploads are written to `public/uploads/` and served by Next.js as static files.
 
-When `STORAGE_PROVIDER=s3`, all `STORAGE_S3_*` values are required. Supabase Storage can be used through its S3-compatible endpoint.
+When `STORAGE_PROVIDER=s3`, all `STORAGE_S3_*` values are required. Supabase Storage can be used only through its S3-compatible endpoint; the app does not use Supabase Auth or Supabase client helpers.
 
 Validate configuration:
 

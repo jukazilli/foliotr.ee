@@ -1,8 +1,10 @@
 # FolioTree MVP Executable Technical Plan
 
-Status: executable planning audit  
+Status: historical planning audit, superseded by `docs/current-architecture.md` and `docs/architecture-optimization-slices.md`  
 Date: 2026-04-18  
 Scope: current repository state + `/doc` source of truth
+
+> Historical note: this document remains useful as planning context, but it is not the active architecture or execution contract. Use `docs/current-architecture.md` for the current runtime map and `docs/architecture-optimization-slices.md` for the active optimization plan.
 
 ## 0. Sources And Precedence
 

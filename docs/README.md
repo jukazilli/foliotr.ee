@@ -88,6 +88,21 @@ It records the current approved runtime model:
 - Render is not the active API dependency for the current MVP
 - Render should be reconsidered only at the documented cut points, such as mobile clients, public API needs, workers, queues, WebSockets, or measurable serverless limits
 
+### 5. `current-architecture.md`
+
+Use this file when you need the current code-level architecture map.
+
+It records the active implementation model:
+
+- root-level fullstack Next.js app
+- `app/api/*` as the active API surface
+- NextAuth authentication
+- Prisma persistence
+- public profile, portfolio and curriculo routes
+- authenticated product and technical routes
+
+The old `mvp-*` documents are historical context and should not override this file.
+
 ## Reading order for AI systems
 
 1. Read `brand-core.md`
@@ -96,8 +111,9 @@ It records the current approved runtime model:
 4. Read `tipografia-system.md`
 5. Treat `Design System/*.html` as replaced by the current redesign unless a later decision restores it
 6. Read `runtime-architecture-decision.md` before changing API/deployment architecture
-7. Treat unresolved topics as unresolved
-8. Do not invent product features, visual assets, or business decisions that are not explicitly documented
+7. Read `current-architecture.md` before changing route ownership, auth, app shell or API contracts
+8. Treat unresolved topics as unresolved
+9. Do not invent product features, visual assets, or business decisions that are not explicitly documented
 
 ## AI Operating Rules
 

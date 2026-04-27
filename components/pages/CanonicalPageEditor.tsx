@@ -41,11 +41,25 @@ import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 type JsonRecord = Record<string, unknown>;
 type CanvasDimensionKey = "width" | "height";
 type PreviewMode = "portfolio" | "resume";
+type PublicPreviewTabKey =
+  | "presentation"
+  | "personality"
+  | "portfolio"
+  | "resume"
+  | "reviews";
 
 const FALLBACK_PREVIEW_CANVAS_WIDTH = 1440;
 const FALLBACK_PREVIEW_CANVAS_HEIGHT = 4037;
 const MIN_PREVIEW_SCALE = 0.24;
 const MAX_PREVIEW_SCALE = 1;
+
+const PUBLIC_PREVIEW_TABS: Array<{ key: PublicPreviewTabKey; label: string }> = [
+  { key: "presentation", label: "Apresentacao" },
+  { key: "personality", label: "Personalidade" },
+  { key: "portfolio", label: "Portfolio" },
+  { key: "resume", label: "Curriculo rapido" },
+  { key: "reviews", label: "Reviews" },
+];
 
 interface TemplateBlockDefLike {
   id: string;
@@ -205,6 +219,36 @@ function sameSlotFrames(left: EditableSlotFrame[], right: EditableSlotFrame[]) {
       frame.height === next?.height
     );
   });
+}
+
+function EditorPublicTabsPreview({ activeMode }: { activeMode: PreviewMode }) {
+  const activePublicTab: PublicPreviewTabKey =
+    activeMode === "resume" ? "resume" : "presentation";
+
+  return (
+    <nav
+      className="flex min-w-0 flex-wrap items-center gap-1.5"
+      aria-label="Abas publicas do portfolio"
+    >
+      {PUBLIC_PREVIEW_TABS.map((tab) => {
+        const isActive = tab.key === activePublicTab;
+
+        return (
+          <span
+            key={tab.key}
+            className={`inline-flex h-7 max-w-full items-center rounded-full border px-2.5 text-[0.72rem] font-semibold ${
+              isActive
+                ? "border-neutral-950 bg-neutral-950 text-white"
+                : "border-neutral-200 bg-white text-neutral-500"
+            }`}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {tab.label}
+          </span>
+        );
+      })}
+    </nav>
+  );
 }
 
 function asRecord(value: unknown): JsonRecord {
@@ -3221,7 +3265,9 @@ export default function CanonicalPageEditor({
           <div className="flex flex-wrap items-center justify-between gap-2 border-b border-neutral-300/80 bg-white/90 px-3 py-2.5 sm:px-4 sm:py-3">
             <div className="min-w-0">
               <h2 className="text-sm font-semibold text-neutral-950">
-                {previewMode === "portfolio" ? "Portfolio" : "Curriculo"}
+                {previewMode === "portfolio"
+                  ? "Preview do portfolio publicado"
+                  : "Curriculo rapido"}
               </h2>
               <p className="mt-0.5 truncate text-xs text-neutral-500">
                 {pageTitle} em {templateName}
@@ -3231,7 +3277,7 @@ export default function CanonicalPageEditor({
               <div className="grid grid-cols-2 rounded-full border border-neutral-200 bg-neutral-100 p-1">
                 {[
                   { key: "portfolio", label: "Portfolio" },
-                  { key: "resume", label: "Curriculo" },
+                  { key: "resume", label: "Curriculo rapido" },
                 ].map((item) => {
                   const isActive = previewMode === item.key;
 
@@ -3338,6 +3384,9 @@ export default function CanonicalPageEditor({
                 <UploadCloud className="h-4 w-4" aria-hidden="true" />
                 Publicar
               </Button>
+            </div>
+            <div className="basis-full">
+              <EditorPublicTabsPreview activeMode={previewMode} />
             </div>
           </div>
           <div

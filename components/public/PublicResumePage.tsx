@@ -39,7 +39,11 @@ export default function PublicResumePage({
       />
 
       <main className="w-full px-3 pb-10 pt-24 print:max-w-none print:p-0 sm:px-6 lg:px-8">
-        <div className="mx-auto w-full max-w-4xl">
+        <div className="mx-auto grid w-full max-w-4xl gap-4">
+          <div className="rounded-lg border border-neutral-200 bg-white px-4 py-3 text-sm font-semibold leading-6 text-neutral-600 print:hidden">
+            Curriculo rapido associado ao portfolio publico. Use esta versao para
+            leitura objetiva, compartilhamento direto ou impressao.
+          </div>
           <ResumeView
             templateSlug={page.template.slug}
             blocks={snapshot.blocks}

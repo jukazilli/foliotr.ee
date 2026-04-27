@@ -8,9 +8,14 @@ node_modules/
 # Testing
 /coverage
 /public/uploads/
+/output/
 
 # Local design references
 /assets/curriculo-code/
+/landing-test/
+/redesign-teste/
+/editor-otimizacao/
+/orientacao-profissional-app/
 
 # Next.js
 /.next/

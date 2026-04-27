@@ -15,3 +15,45 @@ Iniciando FolioTree em http://127.0.0.1:3000 (dev)
  ✓ Compiled / in 7.2s (610 modules)
  GET / 200 in 8188ms
  GET / 200 in 161ms
+ ✓ Compiled in 1920ms (244 modules)
+ ✓ Compiled in 866ms (244 modules)
+ ✓ Compiled in 597ms (244 modules)
+ ✓ Compiled in 602ms (244 modules)
+ ○ Compiling /[username]/[pageSlug] ...
+ ✓ Compiled /[username]/[pageSlug] in 3s (661 modules)
+ GET /juliano-zilli/v1 200 in 11711ms
+prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
+prisma:error Error in PostgreSQL connection: Error { kind: Closed, cause: None }
+ ✓ Compiled in 2.1s (114 modules)
+ ✓ Compiled in 484ms (114 modules)
+ ✓ Compiled in 1016ms (245 modules)
+ ✓ Compiled in 936ms (245 modules)
+ ✓ Compiled in 719ms (245 modules)
+ ✓ Compiled in 636ms (245 modules)
+ ✓ Compiled in 818ms (245 modules)
+ ✓ Compiled in 861ms (245 modules)
+ ✓ Compiled in 933ms (245 modules)
+ ✓ Compiled in 968ms (245 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 2.5s (782 modules)
+ GET /login 200 in 3854ms
+ ✓ Compiled in 7.6s (252 modules)
+ ✓ Compiled in 886ms (252 modules)
+ ✓ Compiled in 848ms (252 modules)
+ ✓ Compiled in 851ms (252 modules)
+ ✓ Compiled in 694ms (252 modules)
+ ✓ Compiled in 642ms (252 modules)
+ ✓ Compiled in 48ms
+ ✓ Compiled in 535ms (252 modules)
+ ✓ Compiled in 603ms (252 modules)
+ ✓ Compiled in 1950ms (252 modules)
+ ✓ Compiled in 1328ms (252 modules)
+ ✓ Compiled in 633ms (252 modules)
+ ✓ Compiled in 588ms (252 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 762ms (530 modules)
+ GET /login 200 in 2060ms
+ ✓ Compiled in 34ms
+ ✓ Compiled in 657ms (352 modules)
+ ✓ Compiled in 199ms (238 modules)
+ ✓ Compiled in 1293ms (352 modules)

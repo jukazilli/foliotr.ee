@@ -1,5 +1,12 @@
 import Link from "next/link";
-import { ExternalLink, Layers3 } from "lucide-react";
+import {
+  CheckCircle2,
+  ExternalLink,
+  FileText,
+  Layers3,
+  Pencil,
+  Plus,
+} from "lucide-react";
 import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +32,21 @@ function publicPath(username: string | null | undefined, slug: string) {
   return `/${username ?? "seu-usuario"}/${slug}`;
 }
 
+function countSelectedItems(
+  version: Awaited<ReturnType<typeof getOwnedVersions>>[number]
+) {
+  return (
+    version.experiences.length +
+    version.educations.length +
+    version.projects.length +
+    version.achievements.length +
+    version.skills.length +
+    version.proofs.length +
+    version.highlights.length +
+    version.links.length
+  );
+}
+
 export default async function PortfoliosPage() {
   const { user } = await getAppViewer();
   const versions = await getOwnedVersions(user.id);
@@ -34,37 +56,93 @@ export default async function PortfoliosPage() {
       page: getPrimaryVersionPage(version),
     }))
     .filter((item) => item.page);
+  const versionsWithoutPage = versions.filter(
+    (version) => !getPrimaryVersionPage(version)
+  );
 
   const activeCount = rows.filter(
     (item) => item.page?.publishState === "PUBLISHED"
   ).length;
+  const draftCount = rows.length - activeCount;
+  const activeResumeCount = versions.filter(
+    (version) => version.resumeConfig?.publishState === "PUBLISHED"
+  ).length;
+  const withPresentationCount = versions.filter(
+    (version) => version.presentation
+  ).length;
+  const cockpitStats = [
+    {
+      label: "Portfolios",
+      value: rows.length,
+      detail: `${activeCount} ativo${activeCount === 1 ? "" : "s"} / ${draftCount} rascunho${draftCount === 1 ? "" : "s"}`,
+    },
+    {
+      label: "Curriculos rapidos",
+      value: activeResumeCount,
+      detail: "Modos de leitura objetiva publicados.",
+    },
+    {
+      label: "Apresentacoes",
+      value: withPresentationCount,
+      detail: "Portfolios com apresentacao selecionada.",
+    },
+    {
+      label: "Sem pagina",
+      value: versionsWithoutPage.length,
+      detail: "Variacoes aguardando modelo.",
+    },
+  ];
 
   return (
     <div className="space-y-6">
       <PageIntro
         eyebrow="Portfolios"
         title="Portfolios"
-        description="Versoes publicas para objetivos diferentes."
+        description="Cockpit para criar, editar, publicar e acompanhar suas paginas publicas e curriculos rapidos."
         meta={
           <>
-            <Badge variant="version">{rows.length} versoes</Badge>
+            <Badge variant="version">{rows.length} portfolios</Badge>
             <Badge variant="success">{activeCount} ativas</Badge>
           </>
         }
         actions={
-          <Button asChild variant="outline">
-            <Link href="/templates">Novo portfolio</Link>
+          <Button asChild variant="primary">
+            <Link href="/templates">
+              <Plus className="h-4 w-4" aria-hidden="true" />
+              Novo portfolio
+            </Link>
           </Button>
         }
       />
+
+      <section
+        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4"
+        aria-label="Resumo de portfolios"
+      >
+        {cockpitStats.map((item) => (
+          <Card key={item.label} className="rounded-[18px]">
+            <CardContent className="p-4">
+              <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.16em] text-muted">
+                {item.label}
+              </p>
+              <strong className="mt-3 block text-3xl font-extrabold leading-none tracking-[-0.04em] text-ink">
+                {item.value}
+              </strong>
+              <p className="mt-2 text-xs font-bold leading-5 text-muted">
+                {item.detail}
+              </p>
+            </CardContent>
+          </Card>
+        ))}
+      </section>
 
       {rows.length === 0 ? (
         <EmptyWorkspaceState
           accent="neutral"
           label="Sem portfolios"
-          title="Escolha um modelo"
-          description="Um portfolio nasce a partir de um template aplicado ao seu perfil."
-          primaryAction={{ href: "/templates", label: "Ver templates" }}
+          title="Crie seu primeiro portfolio"
+          description="Um portfolio nasce a partir de um modelo aplicado ao seu perfil base."
+          primaryAction={{ href: "/templates", label: "Escolher modelo" }}
           secondaryAction={{ href: "/profile", label: "Editar perfil" }}
         />
       ) : (
@@ -86,6 +164,7 @@ export default async function PortfoliosPage() {
                 const href = publicPath(user.username, page.slug);
                 const portfolioActive = page.publishState === "PUBLISHED";
                 const resumeActive = version.resumeConfig?.publishState === "PUBLISHED";
+                const selectedCount = countSelectedItems(version);
                 const togglePortfolioAction = setPortfolioPublishStateAction.bind(
                   null,
                   page.id,
@@ -126,7 +205,7 @@ export default async function PortfoliosPage() {
                               {page.title ?? version.name}
                             </p>
                             <p className="truncate text-xs font-semibold text-muted">
-                              {version.name}
+                              {version.name} / {page.template.name}
                             </p>
                           </div>
                         </div>
@@ -150,6 +229,9 @@ export default async function PortfoliosPage() {
                           </p>
                           <p className="mt-1 truncate rounded-full border-2 border-line bg-white px-3 py-2 font-mono text-xs font-bold text-ink 2xl:mt-0">
                             {href}
+                          </p>
+                          <p className="mt-2 text-xs font-bold text-muted 2xl:hidden">
+                            {selectedCount} itens selecionados
                           </p>
                         </div>
                       </div>
@@ -180,17 +262,28 @@ export default async function PortfoliosPage() {
                               Curriculo
                             </button>
                           </form>
+                          {version.presentation ? (
+                            <span className="inline-flex h-9 items-center rounded-full border-2 border-line bg-cream px-3 text-xs font-extrabold uppercase text-ink">
+                              Apresentacao
+                            </span>
+                          ) : null}
                         </div>
 
                         <div className="flex flex-wrap items-center gap-2 xl:justify-end 2xl:justify-end">
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/pages/${page.id}/editor`}>
+                              <Pencil className="h-4 w-4" aria-hidden="true" />
+                              Editar
+                            </Link>
+                          </Button>
                           <form action={versionAction}>
                             <Button type="submit" variant="outline" size="sm">
-                              Versionar
+                              Criar variacao
                             </Button>
                           </form>
                           <Button asChild variant="primary" size="sm">
                             <Link href={href} target="_blank" rel="noopener noreferrer">
-                              Ver pagina
+                              Ver publico
                               <ExternalLink className="h-4 w-4" aria-hidden="true" />
                             </Link>
                           </Button>
@@ -204,6 +297,57 @@ export default async function PortfoliosPage() {
           </CardContent>
         </Card>
       )}
+
+      {versionsWithoutPage.length > 0 ? (
+        <Card className="rounded-[18px]">
+          <CardContent className="space-y-4 p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.16em] text-muted">
+                  Aguardando modelo
+                </p>
+                <h2 className="mt-1 text-xl font-extrabold tracking-[-0.03em] text-ink">
+                  Variacoes sem portfolio publicado
+                </h2>
+              </div>
+              <Button asChild variant="outline" size="sm">
+                <Link href="/templates">Escolher modelo</Link>
+              </Button>
+            </div>
+            <div className="grid gap-3">
+              {versionsWithoutPage.map((version) => (
+                <div
+                  key={version.id}
+                  className="flex flex-col gap-3 rounded-[14px] border-2 border-line/10 bg-cream px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-extrabold text-ink">
+                      {version.name}
+                    </p>
+                    <p className="mt-1 text-xs font-bold leading-5 text-muted">
+                      {countSelectedItems(version)} itens selecionados
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {version.resumeConfig ? (
+                      <Badge variant="success">
+                        <FileText className="mr-1 h-3 w-3" aria-hidden="true" />
+                        curriculo configurado
+                      </Badge>
+                    ) : null}
+                    {version.presentation ? (
+                      <Badge variant="version">
+                        <CheckCircle2 className="mr-1 h-3 w-3" aria-hidden="true" />
+                        apresentacao
+                      </Badge>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      ) : null}
     </div>
   );
 }

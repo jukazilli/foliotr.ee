@@ -18,14 +18,14 @@ export async function generateMetadata({
   const page = await getPublishedPageByUsernameAndSlug(username, pageSlug);
 
   if (!page || page.version.resumeConfig?.publishState !== "PUBLISHED") {
-    return { title: "Curriculo nao encontrado - FolioTree" };
+    return { title: "Curriculo rapido nao encontrado - FolioTree" };
   }
 
   const displayName = getPublicProfile(page).displayName ?? username;
 
   return {
-    title: `Curriculo - ${displayName} | FolioTree`,
-    description: `Curriculo profissional de ${displayName}.`,
+    title: `Curriculo rapido - ${displayName} | FolioTree`,
+    description: `Leitura objetiva do portfolio profissional de ${displayName}.`,
   };
 }
 

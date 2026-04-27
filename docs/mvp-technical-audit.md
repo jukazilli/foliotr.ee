@@ -1,8 +1,10 @@
 # FolioTree MVP Technical Audit
 
-Status: working audit
+Status: historical audit, superseded by `docs/current-architecture.md` and `docs/architecture-checkup-2026-04-27.md`
 Date: 2026-04-18
 Branch: codex/foliotree-transplante-design-system
+
+> Historical note: this audit records an earlier implementation stage. Treat it as background only. Current architecture and active risks are tracked in `docs/current-architecture.md` and `docs/architecture-checkup-2026-04-27.md`.
 
 ## 1. Scope and Source of Truth
 

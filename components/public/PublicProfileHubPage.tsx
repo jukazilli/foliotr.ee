@@ -223,7 +223,7 @@ export default function PublicProfileHubPage({
                     className="mt-3 inline-flex items-center gap-2 rounded-xl border-2 border-neutral-200 bg-neutral-50 px-3 py-2 text-sm font-extrabold text-neutral-800 transition hover:border-neutral-950 hover:bg-white"
                   >
                     <FileText className="h-4 w-4" aria-hidden />
-                    Ver currículo desta experiência
+                    Ver curriculo rapido deste portfolio
                   </Link>
                 ) : null}
               </article>
