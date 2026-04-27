@@ -15,7 +15,14 @@ export default function AboutBlock({ profile, config, version }: BlockProps) {
     showLinks = true,
   } = config as AboutConfig;
 
-  const bio = version?.customBio ?? profile?.bio;
+  const defaultPresentation = profile.presentations?.find(
+    (item) => item.id === profile.defaultPresentationId
+  );
+  const bio =
+    version?.presentation?.body ??
+    version?.customBio ??
+    defaultPresentation?.body ??
+    profile?.bio;
   const location = profile?.location;
   const links = profile.links;
 

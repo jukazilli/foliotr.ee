@@ -4,6 +4,7 @@ import type {
   Experience,
   Profile,
   ProfileLink,
+  ProfilePresentation,
   Project,
   Proof,
   Skill,
@@ -34,11 +35,20 @@ export type ProfileForBlocks = Profile & {
   achievements: Achievement[];
   links: ProfileLink[];
   proofs?: Proof[];
+  presentations?: ProfilePresentation[];
+  defaultPresentationId?: string | null;
 };
 
 export interface VersionForBlocks {
   customHeadline?: string | null;
   customBio?: string | null;
+  presentationId?: string | null;
+  presentation?: {
+    id: string;
+    title: string;
+    body: string;
+    context?: string | null;
+  } | null;
   selectedExperienceIds: string[];
   selectedEducationIds?: string[];
   selectedProjectIds: string[];

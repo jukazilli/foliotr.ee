@@ -207,6 +207,19 @@ exports.Prisma.ProfileScalarFieldEnum = {
   opportunityMotivation: 'opportunityMotivation',
   showOpportunityMotivation: 'showOpportunityMotivation',
   onboardingDone: 'onboardingDone',
+  defaultPresentationId: 'defaultPresentationId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProfilePresentationScalarFieldEnum = {
+  id: 'id',
+  profileId: 'profileId',
+  title: 'title',
+  body: 'body',
+  context: 'context',
+  isArchived: 'isArchived',
+  order: 'order',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -357,6 +370,7 @@ exports.Prisma.VersionScalarFieldEnum = {
   emoji: 'emoji',
   customHeadline: 'customHeadline',
   customBio: 'customBio',
+  presentationId: 'presentationId',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -561,6 +575,7 @@ exports.Prisma.ModelName = {
   PasswordResetToken: 'PasswordResetToken',
   VocationalTestSession: 'VocationalTestSession',
   Profile: 'Profile',
+  ProfilePresentation: 'ProfilePresentation',
   Experience: 'Experience',
   Education: 'Education',
   Skill: 'Skill',

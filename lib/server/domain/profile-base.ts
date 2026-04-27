@@ -17,6 +17,7 @@ export type ProfileCollectionKey =
   | "projects"
   | "achievements"
   | "proofs"
+  | "presentations"
   | "links";
 
 const profileBaseSelect = {
@@ -31,6 +32,7 @@ const profileBaseSelect = {
   publicEmail: true,
   phone: true,
   birthDate: true,
+  defaultPresentationId: true,
   openToOpportunities: true,
   opportunityMotivation: true,
   showOpportunityMotivation: true,
@@ -209,6 +211,20 @@ export async function updateOwnedProfileFields(
 ) {
   return db.$transaction(async (tx) => {
     const profile = await getOwnedProfileRecordOrThrow(tx, userId);
+    const defaultPresentationId = input.defaultPresentationId;
+
+    if (defaultPresentationId) {
+      await assertOwnedIds(
+        profile.id,
+        [defaultPresentationId],
+        async (ids) =>
+          tx.profilePresentation.findMany({
+            where: { profileId: profile.id, id: { in: ids } },
+            select: { id: true },
+          }),
+        "Apresentacoes"
+      );
+    }
 
     return tx.profile.update({
       where: { id: profile.id },
@@ -222,6 +238,7 @@ export async function updateOwnedProfileFields(
         websiteUrl: sanitizeNullable(input.websiteUrl),
         publicEmail: sanitizeNullable(input.publicEmail),
         phone: sanitizeNullable(input.phone),
+        ...(defaultPresentationId !== undefined ? { defaultPresentationId } : {}),
         openToOpportunities: input.openToOpportunities,
         opportunityMotivation: sanitizeNullable(input.opportunityMotivation),
         showOpportunityMotivation: input.showOpportunityMotivation,
@@ -793,6 +810,80 @@ export async function updateOwnedProfileCollection(
       });
     }
 
+    if (collection === "presentations") {
+      const typedItems = items as NonNullable<ProfileBaseInput["presentations"]>;
+
+      await syncCollection({
+        tx,
+        profileId: profile.id,
+        items: typedItems,
+        label: "Apresentacoes",
+        findExistingIds: () =>
+          tx.profilePresentation.findMany({
+            where: { profileId: profile.id },
+            select: { id: true },
+          }),
+        deleteMissing: (keepIds) =>
+          tx.profilePresentation.deleteMany({
+            where: {
+              profileId: profile.id,
+              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+            },
+          }),
+        updateItem: (id, item, index) =>
+          tx.profilePresentation.update({
+            where: { id },
+            data: {
+              title: item.title,
+              body: item.body,
+              context: sanitizeNullable(item.context),
+              isArchived: item.isArchived,
+              order: index,
+            },
+          }),
+        createItem: (item, index) =>
+          tx.profilePresentation.create({
+            data: {
+              profileId: profile.id,
+              title: item.title,
+              body: item.body,
+              context: sanitizeNullable(item.context),
+              isArchived: item.isArchived,
+              order: index,
+            },
+          }),
+      });
+
+      const existingDefault = await tx.profile.findUnique({
+        where: { id: profile.id },
+        select: { defaultPresentationId: true },
+      });
+
+      if (
+        existingDefault?.defaultPresentationId &&
+        !typedItems.some((item) => item.id === existingDefault.defaultPresentationId)
+      ) {
+        await tx.profile.update({
+          where: { id: profile.id },
+          data: {
+            defaultPresentationId: typedItems.find((item) => item.id)?.id ?? null,
+          },
+        });
+      }
+
+      return tx.profilePresentation.findMany({
+        where: { profileId: profile.id },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          body: true,
+          context: true,
+          isArchived: true,
+        },
+      });
+    }
+
     const typedItems = items as NonNullable<ProfileBaseInput["links"]>;
     await syncCollection({
       tx,
@@ -854,6 +945,20 @@ export async function updateOwnedProfileBase(
   return db.$transaction(
     async (tx) => {
       const profile = await getOwnedProfileRecordOrThrow(tx, userId);
+      const defaultPresentationId = input.defaultPresentationId;
+
+      if (defaultPresentationId) {
+        await assertOwnedIds(
+          profile.id,
+          [defaultPresentationId],
+          async (ids) =>
+            tx.profilePresentation.findMany({
+              where: { profileId: profile.id, id: { in: ids } },
+              select: { id: true },
+            }),
+          "Apresentacoes"
+        );
+      }
 
       if (input.assets) {
         await upsertAssets(tx, profile.id, input.assets);
@@ -884,6 +989,7 @@ export async function updateOwnedProfileBase(
           websiteUrl: sanitizeNullable(input.websiteUrl),
           publicEmail: sanitizeNullable(input.publicEmail),
           phone: sanitizeNullable(input.phone),
+          ...(defaultPresentationId !== undefined ? { defaultPresentationId } : {}),
           openToOpportunities: input.openToOpportunities,
           opportunityMotivation: sanitizeNullable(input.opportunityMotivation),
           showOpportunityMotivation: input.showOpportunityMotivation,

@@ -4,14 +4,8 @@ import type {
   TemplateProfile,
 } from "@/components/templates/types";
 import type { VersionForBlocks } from "@/components/blocks/types";
-import type {
-  ProfileAggregate,
-  VersionAggregate,
-} from "@/lib/server/domain/includes";
-import {
-  getPlatformLabel,
-  getPlatformUrl,
-} from "@/lib/utils";
+import type { ProfileAggregate, VersionAggregate } from "@/lib/server/domain/includes";
+import { getPlatformLabel, getPlatformUrl } from "@/lib/utils";
 import type { PortfolioCommunitySourcePackage } from "@/lib/templates/source-package";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
 
@@ -190,7 +184,8 @@ function readNumber(value: unknown, fallback: number) {
 }
 
 function clampPercentage(value: unknown, fallback: number) {
-  const resolved = typeof value === "number" && Number.isFinite(value) ? value : fallback;
+  const resolved =
+    typeof value === "number" && Number.isFinite(value) ? value : fallback;
   return Math.min(100, Math.max(0, resolved));
 }
 
@@ -222,7 +217,10 @@ function readImageAlign(value: unknown): "left" | "center" | "right" {
   return value === "left" || value === "right" || value === "center" ? value : "center";
 }
 
-function createDefaultImageValue(src: string, alt: string): PortfolioCommunityImageValue {
+function createDefaultImageValue(
+  src: string,
+  alt: string
+): PortfolioCommunityImageValue {
   return {
     src,
     alt,
@@ -455,12 +453,23 @@ export function derivePortfolioCommunitySemantics(args: {
     readString(profile.user?.name) ||
     readString(profile.user?.username);
   const headline =
-    readString(version && "customHeadline" in version ? version.customHeadline : undefined) ||
+    readString(
+      version && "customHeadline" in version ? version.customHeadline : undefined
+    ) ||
     profile.headline ||
     readString(heroConfig.headline) ||
     "Designer de Produto";
   const body =
+    readString(
+      version && "presentation" in version
+        ? (version.presentation as { body?: unknown } | null | undefined)?.body
+        : undefined
+    ) ||
     readString(version && "customBio" in version ? version.customBio : undefined) ||
+    readString(
+      profile.presentations?.find((item) => item.id === profile.defaultPresentationId)
+        ?.body
+    ) ||
     profile.bio ||
     readString(aboutConfig.body);
   const portrait =
@@ -538,7 +547,9 @@ export function derivePortfolioCommunitySemantics(args: {
     field: education.field ?? "",
     description:
       education.description?.trim() ||
-      [education.degree, education.field, education.institution].filter(Boolean).join(" - "),
+      [education.degree, education.field, education.institution]
+        .filter(Boolean)
+        .join(" - "),
     current: education.current,
     period: formatPeriod(education.startDate, education.endDate, education.current),
     startDate: education.startDate,
@@ -565,7 +576,8 @@ export function derivePortfolioCommunitySemantics(args: {
     .slice(0, configuredWorkMaxItems)
     .map((project, index): PortfolioCommunityWorkItem => {
       const projectImage =
-        readProjectCoverOverride(workConfig, project.id) ?? readProjectCoverImage(project);
+        readProjectCoverOverride(workConfig, project.id) ??
+        readProjectCoverImage(project);
       const fallbackImage = workFallbackImages[index] ?? "";
       const imageValue =
         projectImage ??
@@ -595,23 +607,28 @@ export function derivePortfolioCommunitySemantics(args: {
         title: readString(fallback.title, "Projeto em destaque"),
         description: readString(
           fallback.description,
-        "Resumo do projeto com contexto, abordagem e impacto gerado."
-      ),
-      date: readString(fallback.date, "24 de novembro de 2019"),
-      image: fallbackImage?.src ?? workFallbackImages[index] ?? "",
-      href: readString(fallback.href),
-      imageValue: fallbackImage,
+          "Resumo do projeto com contexto, abordagem e impacto gerado."
+        ),
+        date: readString(fallback.date, "24 de novembro de 2019"),
+        image: fallbackImage?.src ?? workFallbackImages[index] ?? "",
+        href: readString(fallback.href),
+        imageValue: fallbackImage,
         imageConfigPath: `fallbackProjects.${index}.image`,
       };
     })
     .filter((item): item is PortfolioCommunityWorkItem => Boolean(item));
   const workItems = projectWorkItems.length > 0 ? projectWorkItems : fallbackItems;
 
-  const selectedProofImageUrl = selectedProofs.find((proof) => proof.imageUrl)?.imageUrl;
+  const selectedProofImageUrl = selectedProofs.find(
+    (proof) => proof.imageUrl
+  )?.imageUrl;
   const supportImage =
     readImage(contactConfig.image) ??
     (selectedProofImageUrl
-      ? createDefaultImageValue(normalizeStoragePublicUrl(selectedProofImageUrl), "Imagem de apoio")
+      ? createDefaultImageValue(
+          normalizeStoragePublicUrl(selectedProofImageUrl),
+          "Imagem de apoio"
+        )
       : undefined) ??
     (args.sourcePackage?.imports.default.imgUnsplash2Xht5D22Y0I
       ? createDefaultImageValue(
@@ -622,9 +639,7 @@ export function derivePortfolioCommunitySemantics(args: {
 
   return {
     hero: {
-      visible:
-        readBoolean(args.visibility?.["portfolio.hero"]) ??
-        hasText(headline),
+      visible: readBoolean(args.visibility?.["portfolio.hero"]) ?? hasText(headline),
       displayName,
       firstName: displayName.split(" ")[0] ?? "",
       eyebrow: readString(heroConfig.eyebrow, "Ola, eu sou"),
@@ -670,39 +685,41 @@ export function derivePortfolioCommunitySemantics(args: {
       items: educationItems,
     },
     work: {
-      visible:
-        readBoolean(args.visibility?.["portfolio.work"]) ??
-        workItems.length > 0,
+      visible: readBoolean(args.visibility?.["portfolio.work"]) ?? workItems.length > 0,
       title: readString(workConfig.title, "projetos."),
       intro: readString(workConfig.intro),
-      maxItems: Math.max(1, Math.min(workItems.length || configuredWorkMaxItems, configuredWorkMaxItems)),
+      maxItems: Math.max(
+        1,
+        Math.min(workItems.length || configuredWorkMaxItems, configuredWorkMaxItems)
+      ),
       items: workItems,
-      fallbackProjects: visibleSelectedProjects.slice(0, configuredWorkMaxItems).map((project) => {
-        const projectImage =
-          readProjectCoverOverride(workConfig, project.id) ?? readProjectCoverImage(project);
+      fallbackProjects: visibleSelectedProjects
+        .slice(0, configuredWorkMaxItems)
+        .map((project) => {
+          const projectImage =
+            readProjectCoverOverride(workConfig, project.id) ??
+            readProjectCoverImage(project);
 
-        return {
-          title: project.title,
-          description: project.description ?? "",
-          date: formatProjectDate(project.startDate, "Projeto em destaque"),
-          href: project.url ?? project.repoUrl ?? undefined,
-          image: projectImage
-            ? {
-                src: projectImage.src,
-                alt: projectImage.alt || project.title,
-              }
-            : undefined,
-        };
-      }),
+          return {
+            title: project.title,
+            description: project.description ?? "",
+            date: formatProjectDate(project.startDate, "Projeto em destaque"),
+            href: project.url ?? project.repoUrl ?? undefined,
+            image: projectImage
+              ? {
+                  src: projectImage.src,
+                  alt: projectImage.alt || project.title,
+                }
+              : undefined,
+          };
+        }),
     },
     contact: {
       visible:
         readBoolean(args.visibility?.["portfolio.contact"]) ??
         Boolean(profile.publicEmail || contactLinks.length > 0),
       title: readString(contactConfig.title, "contato."),
-      body:
-        readString(contactConfig.body) ||
-        body,
+      body: readString(contactConfig.body) || body,
       publicEmail: profile.publicEmail ?? "",
       supportImage,
       links: contactLinks,

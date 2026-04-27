@@ -49,6 +49,11 @@ export type VocationalTestSession = $Result.DefaultSelection<Prisma.$VocationalT
  */
 export type Profile = $Result.DefaultSelection<Prisma.$ProfilePayload>
 /**
+ * Model ProfilePresentation
+ * 
+ */
+export type ProfilePresentation = $Result.DefaultSelection<Prisma.$ProfilePresentationPayload>
+/**
  * Model Experience
  * 
  */
@@ -402,6 +407,16 @@ export class PrismaClient<
     * ```
     */
   get profile(): Prisma.ProfileDelegate<ExtArgs>;
+
+  /**
+   * `prisma.profilePresentation`: Exposes CRUD operations for the **ProfilePresentation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProfilePresentations
+    * const profilePresentations = await prisma.profilePresentation.findMany()
+    * ```
+    */
+  get profilePresentation(): Prisma.ProfilePresentationDelegate<ExtArgs>;
 
   /**
    * `prisma.experience`: Exposes CRUD operations for the **Experience** model.
@@ -1080,6 +1095,7 @@ export namespace Prisma {
     PasswordResetToken: 'PasswordResetToken',
     VocationalTestSession: 'VocationalTestSession',
     Profile: 'Profile',
+    ProfilePresentation: 'ProfilePresentation',
     Experience: 'Experience',
     Education: 'Education',
     Skill: 'Skill',
@@ -1118,7 +1134,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "vocationalTestSession" | "profile" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "vocationalTestSession" | "profile" | "profilePresentation" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1609,6 +1625,76 @@ export namespace Prisma {
           count: {
             args: Prisma.ProfileCountArgs<ExtArgs>
             result: $Utils.Optional<ProfileCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProfilePresentation: {
+        payload: Prisma.$ProfilePresentationPayload<ExtArgs>
+        fields: Prisma.ProfilePresentationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProfilePresentationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProfilePresentationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          findFirst: {
+            args: Prisma.ProfilePresentationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProfilePresentationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          findMany: {
+            args: Prisma.ProfilePresentationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>[]
+          }
+          create: {
+            args: Prisma.ProfilePresentationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          createMany: {
+            args: Prisma.ProfilePresentationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProfilePresentationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>[]
+          }
+          delete: {
+            args: Prisma.ProfilePresentationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          update: {
+            args: Prisma.ProfilePresentationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProfilePresentationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProfilePresentationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.ProfilePresentationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProfilePresentationPayload>
+          }
+          aggregate: {
+            args: Prisma.ProfilePresentationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProfilePresentation>
+          }
+          groupBy: {
+            args: Prisma.ProfilePresentationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProfilePresentationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProfilePresentationCountArgs<ExtArgs>
+            result: $Utils.Optional<ProfilePresentationCountAggregateOutputType> | number
           }
         }
       }
@@ -3449,6 +3535,7 @@ export namespace Prisma {
     highlights: number
     links: number
     proofs: number
+    presentations: number
     versions: number
     assets: number
   }
@@ -3462,6 +3549,7 @@ export namespace Prisma {
     highlights?: boolean | ProfileCountOutputTypeCountHighlightsArgs
     links?: boolean | ProfileCountOutputTypeCountLinksArgs
     proofs?: boolean | ProfileCountOutputTypeCountProofsArgs
+    presentations?: boolean | ProfileCountOutputTypeCountPresentationsArgs
     versions?: boolean | ProfileCountOutputTypeCountVersionsArgs
     assets?: boolean | ProfileCountOutputTypeCountAssetsArgs
   }
@@ -3536,6 +3624,13 @@ export namespace Prisma {
   /**
    * ProfileCountOutputType without action
    */
+  export type ProfileCountOutputTypeCountPresentationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfilePresentationWhereInput
+  }
+
+  /**
+   * ProfileCountOutputType without action
+   */
   export type ProfileCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VersionWhereInput
   }
@@ -3545,6 +3640,46 @@ export namespace Prisma {
    */
   export type ProfileCountOutputTypeCountAssetsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: AssetWhereInput
+  }
+
+
+  /**
+   * Count Type ProfilePresentationCountOutputType
+   */
+
+  export type ProfilePresentationCountOutputType = {
+    defaultForProfiles: number
+    versions: number
+  }
+
+  export type ProfilePresentationCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    defaultForProfiles?: boolean | ProfilePresentationCountOutputTypeCountDefaultForProfilesArgs
+    versions?: boolean | ProfilePresentationCountOutputTypeCountVersionsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProfilePresentationCountOutputType without action
+   */
+  export type ProfilePresentationCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentationCountOutputType
+     */
+    select?: ProfilePresentationCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProfilePresentationCountOutputType without action
+   */
+  export type ProfilePresentationCountOutputTypeCountDefaultForProfilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfileWhereInput
+  }
+
+  /**
+   * ProfilePresentationCountOutputType without action
+   */
+  export type ProfilePresentationCountOutputTypeCountVersionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VersionWhereInput
   }
 
 
@@ -10064,6 +10199,7 @@ export namespace Prisma {
     opportunityMotivation: string | null
     showOpportunityMotivation: boolean | null
     onboardingDone: boolean | null
+    defaultPresentationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10086,6 +10222,7 @@ export namespace Prisma {
     opportunityMotivation: string | null
     showOpportunityMotivation: boolean | null
     onboardingDone: boolean | null
+    defaultPresentationId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -10108,6 +10245,7 @@ export namespace Prisma {
     opportunityMotivation: number
     showOpportunityMotivation: number
     onboardingDone: number
+    defaultPresentationId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -10132,6 +10270,7 @@ export namespace Prisma {
     opportunityMotivation?: true
     showOpportunityMotivation?: true
     onboardingDone?: true
+    defaultPresentationId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10154,6 +10293,7 @@ export namespace Prisma {
     opportunityMotivation?: true
     showOpportunityMotivation?: true
     onboardingDone?: true
+    defaultPresentationId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -10176,6 +10316,7 @@ export namespace Prisma {
     opportunityMotivation?: true
     showOpportunityMotivation?: true
     onboardingDone?: true
+    defaultPresentationId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -10271,6 +10412,7 @@ export namespace Prisma {
     opportunityMotivation: string | null
     showOpportunityMotivation: boolean
     onboardingDone: boolean
+    defaultPresentationId: string | null
     createdAt: Date
     updatedAt: Date
     _count: ProfileCountAggregateOutputType | null
@@ -10310,6 +10452,7 @@ export namespace Prisma {
     opportunityMotivation?: boolean
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -10321,6 +10464,8 @@ export namespace Prisma {
     highlights?: boolean | Profile$highlightsArgs<ExtArgs>
     links?: boolean | Profile$linksArgs<ExtArgs>
     proofs?: boolean | Profile$proofsArgs<ExtArgs>
+    presentations?: boolean | Profile$presentationsArgs<ExtArgs>
+    defaultPresentation?: boolean | Profile$defaultPresentationArgs<ExtArgs>
     versions?: boolean | Profile$versionsArgs<ExtArgs>
     assets?: boolean | Profile$assetsArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
@@ -10344,9 +10489,11 @@ export namespace Prisma {
     opportunityMotivation?: boolean
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
+    defaultPresentation?: boolean | Profile$defaultPresentationArgs<ExtArgs>
   }, ExtArgs["result"]["profile"]>
 
   export type ProfileSelectScalar = {
@@ -10367,6 +10514,7 @@ export namespace Prisma {
     opportunityMotivation?: boolean
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -10381,12 +10529,15 @@ export namespace Prisma {
     highlights?: boolean | Profile$highlightsArgs<ExtArgs>
     links?: boolean | Profile$linksArgs<ExtArgs>
     proofs?: boolean | Profile$proofsArgs<ExtArgs>
+    presentations?: boolean | Profile$presentationsArgs<ExtArgs>
+    defaultPresentation?: boolean | Profile$defaultPresentationArgs<ExtArgs>
     versions?: boolean | Profile$versionsArgs<ExtArgs>
     assets?: boolean | Profile$assetsArgs<ExtArgs>
     _count?: boolean | ProfileCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProfileIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
+    defaultPresentation?: boolean | Profile$defaultPresentationArgs<ExtArgs>
   }
 
   export type $ProfilePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10401,6 +10552,8 @@ export namespace Prisma {
       highlights: Prisma.$HighlightPayload<ExtArgs>[]
       links: Prisma.$ProfileLinkPayload<ExtArgs>[]
       proofs: Prisma.$ProofPayload<ExtArgs>[]
+      presentations: Prisma.$ProfilePresentationPayload<ExtArgs>[]
+      defaultPresentation: Prisma.$ProfilePresentationPayload<ExtArgs> | null
       versions: Prisma.$VersionPayload<ExtArgs>[]
       assets: Prisma.$AssetPayload<ExtArgs>[]
     }
@@ -10422,6 +10575,7 @@ export namespace Prisma {
       opportunityMotivation: string | null
       showOpportunityMotivation: boolean
       onboardingDone: boolean
+      defaultPresentationId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["profile"]>
@@ -10797,6 +10951,8 @@ export namespace Prisma {
     highlights<T extends Profile$highlightsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$highlightsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$HighlightPayload<ExtArgs>, T, "findMany"> | Null>
     links<T extends Profile$linksArgs<ExtArgs> = {}>(args?: Subset<T, Profile$linksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfileLinkPayload<ExtArgs>, T, "findMany"> | Null>
     proofs<T extends Profile$proofsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$proofsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProofPayload<ExtArgs>, T, "findMany"> | Null>
+    presentations<T extends Profile$presentationsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$presentationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findMany"> | Null>
+    defaultPresentation<T extends Profile$defaultPresentationArgs<ExtArgs> = {}>(args?: Subset<T, Profile$defaultPresentationArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     versions<T extends Profile$versionsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionPayload<ExtArgs>, T, "findMany"> | Null>
     assets<T extends Profile$assetsArgs<ExtArgs> = {}>(args?: Subset<T, Profile$assetsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findMany"> | Null>
     /**
@@ -10845,6 +11001,7 @@ export namespace Prisma {
     readonly opportunityMotivation: FieldRef<"Profile", 'String'>
     readonly showOpportunityMotivation: FieldRef<"Profile", 'Boolean'>
     readonly onboardingDone: FieldRef<"Profile", 'Boolean'>
+    readonly defaultPresentationId: FieldRef<"Profile", 'String'>
     readonly createdAt: FieldRef<"Profile", 'DateTime'>
     readonly updatedAt: FieldRef<"Profile", 'DateTime'>
   }
@@ -11325,6 +11482,41 @@ export namespace Prisma {
   }
 
   /**
+   * Profile.presentations
+   */
+  export type Profile$presentationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    where?: ProfilePresentationWhereInput
+    orderBy?: ProfilePresentationOrderByWithRelationInput | ProfilePresentationOrderByWithRelationInput[]
+    cursor?: ProfilePresentationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfilePresentationScalarFieldEnum | ProfilePresentationScalarFieldEnum[]
+  }
+
+  /**
+   * Profile.defaultPresentation
+   */
+  export type Profile$defaultPresentationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    where?: ProfilePresentationWhereInput
+  }
+
+  /**
    * Profile.versions
    */
   export type Profile$versionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11376,6 +11568,1071 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProfileInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProfilePresentation
+   */
+
+  export type AggregateProfilePresentation = {
+    _count: ProfilePresentationCountAggregateOutputType | null
+    _avg: ProfilePresentationAvgAggregateOutputType | null
+    _sum: ProfilePresentationSumAggregateOutputType | null
+    _min: ProfilePresentationMinAggregateOutputType | null
+    _max: ProfilePresentationMaxAggregateOutputType | null
+  }
+
+  export type ProfilePresentationAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type ProfilePresentationSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type ProfilePresentationMinAggregateOutputType = {
+    id: string | null
+    profileId: string | null
+    title: string | null
+    body: string | null
+    context: string | null
+    isArchived: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProfilePresentationMaxAggregateOutputType = {
+    id: string | null
+    profileId: string | null
+    title: string | null
+    body: string | null
+    context: string | null
+    isArchived: boolean | null
+    order: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProfilePresentationCountAggregateOutputType = {
+    id: number
+    profileId: number
+    title: number
+    body: number
+    context: number
+    isArchived: number
+    order: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProfilePresentationAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type ProfilePresentationSumAggregateInputType = {
+    order?: true
+  }
+
+  export type ProfilePresentationMinAggregateInputType = {
+    id?: true
+    profileId?: true
+    title?: true
+    body?: true
+    context?: true
+    isArchived?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProfilePresentationMaxAggregateInputType = {
+    id?: true
+    profileId?: true
+    title?: true
+    body?: true
+    context?: true
+    isArchived?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProfilePresentationCountAggregateInputType = {
+    id?: true
+    profileId?: true
+    title?: true
+    body?: true
+    context?: true
+    isArchived?: true
+    order?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProfilePresentationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfilePresentation to aggregate.
+     */
+    where?: ProfilePresentationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfilePresentations to fetch.
+     */
+    orderBy?: ProfilePresentationOrderByWithRelationInput | ProfilePresentationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProfilePresentationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfilePresentations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfilePresentations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProfilePresentations
+    **/
+    _count?: true | ProfilePresentationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProfilePresentationAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProfilePresentationSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProfilePresentationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProfilePresentationMaxAggregateInputType
+  }
+
+  export type GetProfilePresentationAggregateType<T extends ProfilePresentationAggregateArgs> = {
+        [P in keyof T & keyof AggregateProfilePresentation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProfilePresentation[P]>
+      : GetScalarType<T[P], AggregateProfilePresentation[P]>
+  }
+
+
+
+
+  export type ProfilePresentationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProfilePresentationWhereInput
+    orderBy?: ProfilePresentationOrderByWithAggregationInput | ProfilePresentationOrderByWithAggregationInput[]
+    by: ProfilePresentationScalarFieldEnum[] | ProfilePresentationScalarFieldEnum
+    having?: ProfilePresentationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProfilePresentationCountAggregateInputType | true
+    _avg?: ProfilePresentationAvgAggregateInputType
+    _sum?: ProfilePresentationSumAggregateInputType
+    _min?: ProfilePresentationMinAggregateInputType
+    _max?: ProfilePresentationMaxAggregateInputType
+  }
+
+  export type ProfilePresentationGroupByOutputType = {
+    id: string
+    profileId: string
+    title: string
+    body: string
+    context: string | null
+    isArchived: boolean
+    order: number
+    createdAt: Date
+    updatedAt: Date
+    _count: ProfilePresentationCountAggregateOutputType | null
+    _avg: ProfilePresentationAvgAggregateOutputType | null
+    _sum: ProfilePresentationSumAggregateOutputType | null
+    _min: ProfilePresentationMinAggregateOutputType | null
+    _max: ProfilePresentationMaxAggregateOutputType | null
+  }
+
+  type GetProfilePresentationGroupByPayload<T extends ProfilePresentationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProfilePresentationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProfilePresentationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProfilePresentationGroupByOutputType[P]>
+            : GetScalarType<T[P], ProfilePresentationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProfilePresentationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    profileId?: boolean
+    title?: boolean
+    body?: boolean
+    context?: boolean
+    isArchived?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    defaultForProfiles?: boolean | ProfilePresentation$defaultForProfilesArgs<ExtArgs>
+    versions?: boolean | ProfilePresentation$versionsArgs<ExtArgs>
+    _count?: boolean | ProfilePresentationCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profilePresentation"]>
+
+  export type ProfilePresentationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    profileId?: boolean
+    title?: boolean
+    body?: boolean
+    context?: boolean
+    isArchived?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["profilePresentation"]>
+
+  export type ProfilePresentationSelectScalar = {
+    id?: boolean
+    profileId?: boolean
+    title?: boolean
+    body?: boolean
+    context?: boolean
+    isArchived?: boolean
+    order?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProfilePresentationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    defaultForProfiles?: boolean | ProfilePresentation$defaultForProfilesArgs<ExtArgs>
+    versions?: boolean | ProfilePresentation$versionsArgs<ExtArgs>
+    _count?: boolean | ProfilePresentationCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ProfilePresentationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    profile?: boolean | ProfileDefaultArgs<ExtArgs>
+  }
+
+  export type $ProfilePresentationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProfilePresentation"
+    objects: {
+      profile: Prisma.$ProfilePayload<ExtArgs>
+      defaultForProfiles: Prisma.$ProfilePayload<ExtArgs>[]
+      versions: Prisma.$VersionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      profileId: string
+      title: string
+      body: string
+      context: string | null
+      isArchived: boolean
+      order: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["profilePresentation"]>
+    composites: {}
+  }
+
+  type ProfilePresentationGetPayload<S extends boolean | null | undefined | ProfilePresentationDefaultArgs> = $Result.GetResult<Prisma.$ProfilePresentationPayload, S>
+
+  type ProfilePresentationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<ProfilePresentationFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: ProfilePresentationCountAggregateInputType | true
+    }
+
+  export interface ProfilePresentationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProfilePresentation'], meta: { name: 'ProfilePresentation' } }
+    /**
+     * Find zero or one ProfilePresentation that matches the filter.
+     * @param {ProfilePresentationFindUniqueArgs} args - Arguments to find a ProfilePresentation
+     * @example
+     * // Get one ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProfilePresentationFindUniqueArgs>(args: SelectSubset<T, ProfilePresentationFindUniqueArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one ProfilePresentation that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {ProfilePresentationFindUniqueOrThrowArgs} args - Arguments to find a ProfilePresentation
+     * @example
+     * // Get one ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProfilePresentationFindUniqueOrThrowArgs>(args: SelectSubset<T, ProfilePresentationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first ProfilePresentation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationFindFirstArgs} args - Arguments to find a ProfilePresentation
+     * @example
+     * // Get one ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProfilePresentationFindFirstArgs>(args?: SelectSubset<T, ProfilePresentationFindFirstArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first ProfilePresentation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationFindFirstOrThrowArgs} args - Arguments to find a ProfilePresentation
+     * @example
+     * // Get one ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProfilePresentationFindFirstOrThrowArgs>(args?: SelectSubset<T, ProfilePresentationFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more ProfilePresentations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProfilePresentations
+     * const profilePresentations = await prisma.profilePresentation.findMany()
+     * 
+     * // Get first 10 ProfilePresentations
+     * const profilePresentations = await prisma.profilePresentation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const profilePresentationWithIdOnly = await prisma.profilePresentation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProfilePresentationFindManyArgs>(args?: SelectSubset<T, ProfilePresentationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a ProfilePresentation.
+     * @param {ProfilePresentationCreateArgs} args - Arguments to create a ProfilePresentation.
+     * @example
+     * // Create one ProfilePresentation
+     * const ProfilePresentation = await prisma.profilePresentation.create({
+     *   data: {
+     *     // ... data to create a ProfilePresentation
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProfilePresentationCreateArgs>(args: SelectSubset<T, ProfilePresentationCreateArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many ProfilePresentations.
+     * @param {ProfilePresentationCreateManyArgs} args - Arguments to create many ProfilePresentations.
+     * @example
+     * // Create many ProfilePresentations
+     * const profilePresentation = await prisma.profilePresentation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProfilePresentationCreateManyArgs>(args?: SelectSubset<T, ProfilePresentationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProfilePresentations and returns the data saved in the database.
+     * @param {ProfilePresentationCreateManyAndReturnArgs} args - Arguments to create many ProfilePresentations.
+     * @example
+     * // Create many ProfilePresentations
+     * const profilePresentation = await prisma.profilePresentation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProfilePresentations and only return the `id`
+     * const profilePresentationWithIdOnly = await prisma.profilePresentation.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProfilePresentationCreateManyAndReturnArgs>(args?: SelectSubset<T, ProfilePresentationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a ProfilePresentation.
+     * @param {ProfilePresentationDeleteArgs} args - Arguments to delete one ProfilePresentation.
+     * @example
+     * // Delete one ProfilePresentation
+     * const ProfilePresentation = await prisma.profilePresentation.delete({
+     *   where: {
+     *     // ... filter to delete one ProfilePresentation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProfilePresentationDeleteArgs>(args: SelectSubset<T, ProfilePresentationDeleteArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one ProfilePresentation.
+     * @param {ProfilePresentationUpdateArgs} args - Arguments to update one ProfilePresentation.
+     * @example
+     * // Update one ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProfilePresentationUpdateArgs>(args: SelectSubset<T, ProfilePresentationUpdateArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more ProfilePresentations.
+     * @param {ProfilePresentationDeleteManyArgs} args - Arguments to filter ProfilePresentations to delete.
+     * @example
+     * // Delete a few ProfilePresentations
+     * const { count } = await prisma.profilePresentation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProfilePresentationDeleteManyArgs>(args?: SelectSubset<T, ProfilePresentationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProfilePresentations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProfilePresentations
+     * const profilePresentation = await prisma.profilePresentation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProfilePresentationUpdateManyArgs>(args: SelectSubset<T, ProfilePresentationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one ProfilePresentation.
+     * @param {ProfilePresentationUpsertArgs} args - Arguments to update or create a ProfilePresentation.
+     * @example
+     * // Update or create a ProfilePresentation
+     * const profilePresentation = await prisma.profilePresentation.upsert({
+     *   create: {
+     *     // ... data to create a ProfilePresentation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProfilePresentation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProfilePresentationUpsertArgs>(args: SelectSubset<T, ProfilePresentationUpsertArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of ProfilePresentations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationCountArgs} args - Arguments to filter ProfilePresentations to count.
+     * @example
+     * // Count the number of ProfilePresentations
+     * const count = await prisma.profilePresentation.count({
+     *   where: {
+     *     // ... the filter for the ProfilePresentations we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProfilePresentationCountArgs>(
+      args?: Subset<T, ProfilePresentationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProfilePresentationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProfilePresentation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProfilePresentationAggregateArgs>(args: Subset<T, ProfilePresentationAggregateArgs>): Prisma.PrismaPromise<GetProfilePresentationAggregateType<T>>
+
+    /**
+     * Group by ProfilePresentation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProfilePresentationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProfilePresentationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProfilePresentationGroupByArgs['orderBy'] }
+        : { orderBy?: ProfilePresentationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProfilePresentationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProfilePresentationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProfilePresentation model
+   */
+  readonly fields: ProfilePresentationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProfilePresentation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProfilePresentationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    defaultForProfiles<T extends ProfilePresentation$defaultForProfilesArgs<ExtArgs> = {}>(args?: Subset<T, ProfilePresentation$defaultForProfilesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findMany"> | Null>
+    versions<T extends ProfilePresentation$versionsArgs<ExtArgs> = {}>(args?: Subset<T, ProfilePresentation$versionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionPayload<ExtArgs>, T, "findMany"> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProfilePresentation model
+   */ 
+  interface ProfilePresentationFieldRefs {
+    readonly id: FieldRef<"ProfilePresentation", 'String'>
+    readonly profileId: FieldRef<"ProfilePresentation", 'String'>
+    readonly title: FieldRef<"ProfilePresentation", 'String'>
+    readonly body: FieldRef<"ProfilePresentation", 'String'>
+    readonly context: FieldRef<"ProfilePresentation", 'String'>
+    readonly isArchived: FieldRef<"ProfilePresentation", 'Boolean'>
+    readonly order: FieldRef<"ProfilePresentation", 'Int'>
+    readonly createdAt: FieldRef<"ProfilePresentation", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProfilePresentation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProfilePresentation findUnique
+   */
+  export type ProfilePresentationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfilePresentation to fetch.
+     */
+    where: ProfilePresentationWhereUniqueInput
+  }
+
+  /**
+   * ProfilePresentation findUniqueOrThrow
+   */
+  export type ProfilePresentationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfilePresentation to fetch.
+     */
+    where: ProfilePresentationWhereUniqueInput
+  }
+
+  /**
+   * ProfilePresentation findFirst
+   */
+  export type ProfilePresentationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfilePresentation to fetch.
+     */
+    where?: ProfilePresentationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfilePresentations to fetch.
+     */
+    orderBy?: ProfilePresentationOrderByWithRelationInput | ProfilePresentationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfilePresentations.
+     */
+    cursor?: ProfilePresentationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfilePresentations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfilePresentations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfilePresentations.
+     */
+    distinct?: ProfilePresentationScalarFieldEnum | ProfilePresentationScalarFieldEnum[]
+  }
+
+  /**
+   * ProfilePresentation findFirstOrThrow
+   */
+  export type ProfilePresentationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfilePresentation to fetch.
+     */
+    where?: ProfilePresentationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfilePresentations to fetch.
+     */
+    orderBy?: ProfilePresentationOrderByWithRelationInput | ProfilePresentationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProfilePresentations.
+     */
+    cursor?: ProfilePresentationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfilePresentations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfilePresentations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProfilePresentations.
+     */
+    distinct?: ProfilePresentationScalarFieldEnum | ProfilePresentationScalarFieldEnum[]
+  }
+
+  /**
+   * ProfilePresentation findMany
+   */
+  export type ProfilePresentationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter, which ProfilePresentations to fetch.
+     */
+    where?: ProfilePresentationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProfilePresentations to fetch.
+     */
+    orderBy?: ProfilePresentationOrderByWithRelationInput | ProfilePresentationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProfilePresentations.
+     */
+    cursor?: ProfilePresentationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProfilePresentations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProfilePresentations.
+     */
+    skip?: number
+    distinct?: ProfilePresentationScalarFieldEnum | ProfilePresentationScalarFieldEnum[]
+  }
+
+  /**
+   * ProfilePresentation create
+   */
+  export type ProfilePresentationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProfilePresentation.
+     */
+    data: XOR<ProfilePresentationCreateInput, ProfilePresentationUncheckedCreateInput>
+  }
+
+  /**
+   * ProfilePresentation createMany
+   */
+  export type ProfilePresentationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProfilePresentations.
+     */
+    data: ProfilePresentationCreateManyInput | ProfilePresentationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProfilePresentation createManyAndReturn
+   */
+  export type ProfilePresentationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many ProfilePresentations.
+     */
+    data: ProfilePresentationCreateManyInput | ProfilePresentationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProfilePresentation update
+   */
+  export type ProfilePresentationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProfilePresentation.
+     */
+    data: XOR<ProfilePresentationUpdateInput, ProfilePresentationUncheckedUpdateInput>
+    /**
+     * Choose, which ProfilePresentation to update.
+     */
+    where: ProfilePresentationWhereUniqueInput
+  }
+
+  /**
+   * ProfilePresentation updateMany
+   */
+  export type ProfilePresentationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProfilePresentations.
+     */
+    data: XOR<ProfilePresentationUpdateManyMutationInput, ProfilePresentationUncheckedUpdateManyInput>
+    /**
+     * Filter which ProfilePresentations to update
+     */
+    where?: ProfilePresentationWhereInput
+  }
+
+  /**
+   * ProfilePresentation upsert
+   */
+  export type ProfilePresentationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProfilePresentation to update in case it exists.
+     */
+    where: ProfilePresentationWhereUniqueInput
+    /**
+     * In case the ProfilePresentation found by the `where` argument doesn't exist, create a new ProfilePresentation with this data.
+     */
+    create: XOR<ProfilePresentationCreateInput, ProfilePresentationUncheckedCreateInput>
+    /**
+     * In case the ProfilePresentation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProfilePresentationUpdateInput, ProfilePresentationUncheckedUpdateInput>
+  }
+
+  /**
+   * ProfilePresentation delete
+   */
+  export type ProfilePresentationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    /**
+     * Filter which ProfilePresentation to delete.
+     */
+    where: ProfilePresentationWhereUniqueInput
+  }
+
+  /**
+   * ProfilePresentation deleteMany
+   */
+  export type ProfilePresentationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProfilePresentations to delete
+     */
+    where?: ProfilePresentationWhereInput
+  }
+
+  /**
+   * ProfilePresentation.defaultForProfiles
+   */
+  export type ProfilePresentation$defaultForProfilesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Profile
+     */
+    select?: ProfileSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfileInclude<ExtArgs> | null
+    where?: ProfileWhereInput
+    orderBy?: ProfileOrderByWithRelationInput | ProfileOrderByWithRelationInput[]
+    cursor?: ProfileWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProfileScalarFieldEnum | ProfileScalarFieldEnum[]
+  }
+
+  /**
+   * ProfilePresentation.versions
+   */
+  export type ProfilePresentation$versionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Version
+     */
+    select?: VersionSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VersionInclude<ExtArgs> | null
+    where?: VersionWhereInput
+    orderBy?: VersionOrderByWithRelationInput | VersionOrderByWithRelationInput[]
+    cursor?: VersionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VersionScalarFieldEnum | VersionScalarFieldEnum[]
+  }
+
+  /**
+   * ProfilePresentation without action
+   */
+  export type ProfilePresentationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
   }
 
 
@@ -21324,6 +22581,7 @@ export namespace Prisma {
     emoji: string | null
     customHeadline: string | null
     customBio: string | null
+    presentationId: string | null
     isDefault: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -21338,6 +22596,7 @@ export namespace Prisma {
     emoji: string | null
     customHeadline: string | null
     customBio: string | null
+    presentationId: string | null
     isDefault: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -21352,6 +22611,7 @@ export namespace Prisma {
     emoji: number
     customHeadline: number
     customBio: number
+    presentationId: number
     isDefault: number
     createdAt: number
     updatedAt: number
@@ -21368,6 +22628,7 @@ export namespace Prisma {
     emoji?: true
     customHeadline?: true
     customBio?: true
+    presentationId?: true
     isDefault?: true
     createdAt?: true
     updatedAt?: true
@@ -21382,6 +22643,7 @@ export namespace Prisma {
     emoji?: true
     customHeadline?: true
     customBio?: true
+    presentationId?: true
     isDefault?: true
     createdAt?: true
     updatedAt?: true
@@ -21396,6 +22658,7 @@ export namespace Prisma {
     emoji?: true
     customHeadline?: true
     customBio?: true
+    presentationId?: true
     isDefault?: true
     createdAt?: true
     updatedAt?: true
@@ -21483,6 +22746,7 @@ export namespace Prisma {
     emoji: string | null
     customHeadline: string | null
     customBio: string | null
+    presentationId: string | null
     isDefault: boolean
     createdAt: Date
     updatedAt: Date
@@ -21514,10 +22778,12 @@ export namespace Prisma {
     emoji?: boolean
     customHeadline?: boolean
     customBio?: boolean
+    presentationId?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    presentation?: boolean | Version$presentationArgs<ExtArgs>
     pages?: boolean | Version$pagesArgs<ExtArgs>
     resumeConfig?: boolean | Version$resumeConfigArgs<ExtArgs>
     experiences?: boolean | Version$experiencesArgs<ExtArgs>
@@ -21540,10 +22806,12 @@ export namespace Prisma {
     emoji?: boolean
     customHeadline?: boolean
     customBio?: boolean
+    presentationId?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    presentation?: boolean | Version$presentationArgs<ExtArgs>
   }, ExtArgs["result"]["version"]>
 
   export type VersionSelectScalar = {
@@ -21555,6 +22823,7 @@ export namespace Prisma {
     emoji?: boolean
     customHeadline?: boolean
     customBio?: boolean
+    presentationId?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -21562,6 +22831,7 @@ export namespace Prisma {
 
   export type VersionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    presentation?: boolean | Version$presentationArgs<ExtArgs>
     pages?: boolean | Version$pagesArgs<ExtArgs>
     resumeConfig?: boolean | Version$resumeConfigArgs<ExtArgs>
     experiences?: boolean | Version$experiencesArgs<ExtArgs>
@@ -21576,12 +22846,14 @@ export namespace Prisma {
   }
   export type VersionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     profile?: boolean | ProfileDefaultArgs<ExtArgs>
+    presentation?: boolean | Version$presentationArgs<ExtArgs>
   }
 
   export type $VersionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Version"
     objects: {
       profile: Prisma.$ProfilePayload<ExtArgs>
+      presentation: Prisma.$ProfilePresentationPayload<ExtArgs> | null
       pages: Prisma.$PagePayload<ExtArgs>[]
       resumeConfig: Prisma.$ResumeConfigPayload<ExtArgs> | null
       experiences: Prisma.$VersionExperiencePayload<ExtArgs>[]
@@ -21602,6 +22874,7 @@ export namespace Prisma {
       emoji: string | null
       customHeadline: string | null
       customBio: string | null
+      presentationId: string | null
       isDefault: boolean
       createdAt: Date
       updatedAt: Date
@@ -21970,6 +23243,7 @@ export namespace Prisma {
   export interface Prisma__VersionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     profile<T extends ProfileDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProfileDefaultArgs<ExtArgs>>): Prisma__ProfileClient<$Result.GetResult<Prisma.$ProfilePayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
+    presentation<T extends Version$presentationArgs<ExtArgs> = {}>(args?: Subset<T, Version$presentationArgs<ExtArgs>>): Prisma__ProfilePresentationClient<$Result.GetResult<Prisma.$ProfilePresentationPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     pages<T extends Version$pagesArgs<ExtArgs> = {}>(args?: Subset<T, Version$pagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PagePayload<ExtArgs>, T, "findMany"> | Null>
     resumeConfig<T extends Version$resumeConfigArgs<ExtArgs> = {}>(args?: Subset<T, Version$resumeConfigArgs<ExtArgs>>): Prisma__ResumeConfigClient<$Result.GetResult<Prisma.$ResumeConfigPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
     experiences<T extends Version$experiencesArgs<ExtArgs> = {}>(args?: Subset<T, Version$experiencesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VersionExperiencePayload<ExtArgs>, T, "findMany"> | Null>
@@ -22017,6 +23291,7 @@ export namespace Prisma {
     readonly emoji: FieldRef<"Version", 'String'>
     readonly customHeadline: FieldRef<"Version", 'String'>
     readonly customBio: FieldRef<"Version", 'String'>
+    readonly presentationId: FieldRef<"Version", 'String'>
     readonly isDefault: FieldRef<"Version", 'Boolean'>
     readonly createdAt: FieldRef<"Version", 'DateTime'>
     readonly updatedAt: FieldRef<"Version", 'DateTime'>
@@ -22335,6 +23610,21 @@ export namespace Prisma {
      * Filter which Versions to delete
      */
     where?: VersionWhereInput
+  }
+
+  /**
+   * Version.presentation
+   */
+  export type Version$presentationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProfilePresentation
+     */
+    select?: ProfilePresentationSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProfilePresentationInclude<ExtArgs> | null
+    where?: ProfilePresentationWhereInput
   }
 
   /**
@@ -35772,11 +37062,27 @@ export namespace Prisma {
     opportunityMotivation: 'opportunityMotivation',
     showOpportunityMotivation: 'showOpportunityMotivation',
     onboardingDone: 'onboardingDone',
+    defaultPresentationId: 'defaultPresentationId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type ProfileScalarFieldEnum = (typeof ProfileScalarFieldEnum)[keyof typeof ProfileScalarFieldEnum]
+
+
+  export const ProfilePresentationScalarFieldEnum: {
+    id: 'id',
+    profileId: 'profileId',
+    title: 'title',
+    body: 'body',
+    context: 'context',
+    isArchived: 'isArchived',
+    order: 'order',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProfilePresentationScalarFieldEnum = (typeof ProfilePresentationScalarFieldEnum)[keyof typeof ProfilePresentationScalarFieldEnum]
 
 
   export const ExperienceScalarFieldEnum: {
@@ -35952,6 +37258,7 @@ export namespace Prisma {
     emoji: 'emoji',
     customHeadline: 'customHeadline',
     customBio: 'customBio',
+    presentationId: 'presentationId',
     isDefault: 'isDefault',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -36770,6 +38077,7 @@ export namespace Prisma {
     opportunityMotivation?: StringNullableFilter<"Profile"> | string | null
     showOpportunityMotivation?: BoolFilter<"Profile"> | boolean
     onboardingDone?: BoolFilter<"Profile"> | boolean
+    defaultPresentationId?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -36781,6 +38089,8 @@ export namespace Prisma {
     highlights?: HighlightListRelationFilter
     links?: ProfileLinkListRelationFilter
     proofs?: ProofListRelationFilter
+    presentations?: ProfilePresentationListRelationFilter
+    defaultPresentation?: XOR<ProfilePresentationNullableRelationFilter, ProfilePresentationWhereInput> | null
     versions?: VersionListRelationFilter
     assets?: AssetListRelationFilter
   }
@@ -36803,6 +38113,7 @@ export namespace Prisma {
     opportunityMotivation?: SortOrderInput | SortOrder
     showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
+    defaultPresentationId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -36814,6 +38125,8 @@ export namespace Prisma {
     highlights?: HighlightOrderByRelationAggregateInput
     links?: ProfileLinkOrderByRelationAggregateInput
     proofs?: ProofOrderByRelationAggregateInput
+    presentations?: ProfilePresentationOrderByRelationAggregateInput
+    defaultPresentation?: ProfilePresentationOrderByWithRelationInput
     versions?: VersionOrderByRelationAggregateInput
     assets?: AssetOrderByRelationAggregateInput
   }
@@ -36839,6 +38152,7 @@ export namespace Prisma {
     opportunityMotivation?: StringNullableFilter<"Profile"> | string | null
     showOpportunityMotivation?: BoolFilter<"Profile"> | boolean
     onboardingDone?: BoolFilter<"Profile"> | boolean
+    defaultPresentationId?: StringNullableFilter<"Profile"> | string | null
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
     user?: XOR<UserRelationFilter, UserWhereInput>
@@ -36850,6 +38164,8 @@ export namespace Prisma {
     highlights?: HighlightListRelationFilter
     links?: ProfileLinkListRelationFilter
     proofs?: ProofListRelationFilter
+    presentations?: ProfilePresentationListRelationFilter
+    defaultPresentation?: XOR<ProfilePresentationNullableRelationFilter, ProfilePresentationWhereInput> | null
     versions?: VersionListRelationFilter
     assets?: AssetListRelationFilter
   }, "id" | "userId">
@@ -36872,6 +38188,7 @@ export namespace Prisma {
     opportunityMotivation?: SortOrderInput | SortOrder
     showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
+    defaultPresentationId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ProfileCountOrderByAggregateInput
@@ -36900,8 +38217,92 @@ export namespace Prisma {
     opportunityMotivation?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     showOpportunityMotivation?: BoolWithAggregatesFilter<"Profile"> | boolean
     onboardingDone?: BoolWithAggregatesFilter<"Profile"> | boolean
+    defaultPresentationId?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
+  }
+
+  export type ProfilePresentationWhereInput = {
+    AND?: ProfilePresentationWhereInput | ProfilePresentationWhereInput[]
+    OR?: ProfilePresentationWhereInput[]
+    NOT?: ProfilePresentationWhereInput | ProfilePresentationWhereInput[]
+    id?: StringFilter<"ProfilePresentation"> | string
+    profileId?: StringFilter<"ProfilePresentation"> | string
+    title?: StringFilter<"ProfilePresentation"> | string
+    body?: StringFilter<"ProfilePresentation"> | string
+    context?: StringNullableFilter<"ProfilePresentation"> | string | null
+    isArchived?: BoolFilter<"ProfilePresentation"> | boolean
+    order?: IntFilter<"ProfilePresentation"> | number
+    createdAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+    profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    defaultForProfiles?: ProfileListRelationFilter
+    versions?: VersionListRelationFilter
+  }
+
+  export type ProfilePresentationOrderByWithRelationInput = {
+    id?: SortOrder
+    profileId?: SortOrder
+    title?: SortOrder
+    body?: SortOrder
+    context?: SortOrderInput | SortOrder
+    isArchived?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    profile?: ProfileOrderByWithRelationInput
+    defaultForProfiles?: ProfileOrderByRelationAggregateInput
+    versions?: VersionOrderByRelationAggregateInput
+  }
+
+  export type ProfilePresentationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProfilePresentationWhereInput | ProfilePresentationWhereInput[]
+    OR?: ProfilePresentationWhereInput[]
+    NOT?: ProfilePresentationWhereInput | ProfilePresentationWhereInput[]
+    profileId?: StringFilter<"ProfilePresentation"> | string
+    title?: StringFilter<"ProfilePresentation"> | string
+    body?: StringFilter<"ProfilePresentation"> | string
+    context?: StringNullableFilter<"ProfilePresentation"> | string | null
+    isArchived?: BoolFilter<"ProfilePresentation"> | boolean
+    order?: IntFilter<"ProfilePresentation"> | number
+    createdAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+    profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    defaultForProfiles?: ProfileListRelationFilter
+    versions?: VersionListRelationFilter
+  }, "id">
+
+  export type ProfilePresentationOrderByWithAggregationInput = {
+    id?: SortOrder
+    profileId?: SortOrder
+    title?: SortOrder
+    body?: SortOrder
+    context?: SortOrderInput | SortOrder
+    isArchived?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProfilePresentationCountOrderByAggregateInput
+    _avg?: ProfilePresentationAvgOrderByAggregateInput
+    _max?: ProfilePresentationMaxOrderByAggregateInput
+    _min?: ProfilePresentationMinOrderByAggregateInput
+    _sum?: ProfilePresentationSumOrderByAggregateInput
+  }
+
+  export type ProfilePresentationScalarWhereWithAggregatesInput = {
+    AND?: ProfilePresentationScalarWhereWithAggregatesInput | ProfilePresentationScalarWhereWithAggregatesInput[]
+    OR?: ProfilePresentationScalarWhereWithAggregatesInput[]
+    NOT?: ProfilePresentationScalarWhereWithAggregatesInput | ProfilePresentationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProfilePresentation"> | string
+    profileId?: StringWithAggregatesFilter<"ProfilePresentation"> | string
+    title?: StringWithAggregatesFilter<"ProfilePresentation"> | string
+    body?: StringWithAggregatesFilter<"ProfilePresentation"> | string
+    context?: StringNullableWithAggregatesFilter<"ProfilePresentation"> | string | null
+    isArchived?: BoolWithAggregatesFilter<"ProfilePresentation"> | boolean
+    order?: IntWithAggregatesFilter<"ProfilePresentation"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ProfilePresentation"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProfilePresentation"> | Date | string
   }
 
   export type ExperienceWhereInput = {
@@ -37808,10 +39209,12 @@ export namespace Prisma {
     emoji?: StringNullableFilter<"Version"> | string | null
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
+    presentationId?: StringNullableFilter<"Version"> | string | null
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
     profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    presentation?: XOR<ProfilePresentationNullableRelationFilter, ProfilePresentationWhereInput> | null
     pages?: PageListRelationFilter
     resumeConfig?: XOR<ResumeConfigNullableRelationFilter, ResumeConfigWhereInput> | null
     experiences?: VersionExperienceListRelationFilter
@@ -37833,10 +39236,12 @@ export namespace Prisma {
     emoji?: SortOrderInput | SortOrder
     customHeadline?: SortOrderInput | SortOrder
     customBio?: SortOrderInput | SortOrder
+    presentationId?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     profile?: ProfileOrderByWithRelationInput
+    presentation?: ProfilePresentationOrderByWithRelationInput
     pages?: PageOrderByRelationAggregateInput
     resumeConfig?: ResumeConfigOrderByWithRelationInput
     experiences?: VersionExperienceOrderByRelationAggregateInput
@@ -37861,10 +39266,12 @@ export namespace Prisma {
     emoji?: StringNullableFilter<"Version"> | string | null
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
+    presentationId?: StringNullableFilter<"Version"> | string | null
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
     profile?: XOR<ProfileRelationFilter, ProfileWhereInput>
+    presentation?: XOR<ProfilePresentationNullableRelationFilter, ProfilePresentationWhereInput> | null
     pages?: PageListRelationFilter
     resumeConfig?: XOR<ResumeConfigNullableRelationFilter, ResumeConfigWhereInput> | null
     experiences?: VersionExperienceListRelationFilter
@@ -37886,6 +39293,7 @@ export namespace Prisma {
     emoji?: SortOrderInput | SortOrder
     customHeadline?: SortOrderInput | SortOrder
     customBio?: SortOrderInput | SortOrder
+    presentationId?: SortOrderInput | SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37906,6 +39314,7 @@ export namespace Prisma {
     emoji?: StringNullableWithAggregatesFilter<"Version"> | string | null
     customHeadline?: StringNullableWithAggregatesFilter<"Version"> | string | null
     customBio?: StringNullableWithAggregatesFilter<"Version"> | string | null
+    presentationId?: StringNullableWithAggregatesFilter<"Version"> | string | null
     isDefault?: BoolWithAggregatesFilter<"Version"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Version"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Version"> | Date | string
@@ -39406,6 +40815,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -39428,6 +40839,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -39438,6 +40850,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -39470,6 +40883,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -39492,6 +40907,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -39502,6 +40918,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -39524,6 +40941,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -39567,6 +40985,98 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfilePresentationCreateInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutPresentationsInput
+    defaultForProfiles?: ProfileCreateNestedManyWithoutDefaultPresentationInput
+    versions?: VersionCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationUncheckedCreateInput = {
+    id?: string
+    profileId: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    defaultForProfiles?: ProfileUncheckedCreateNestedManyWithoutDefaultPresentationInput
+    versions?: VersionUncheckedCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutPresentationsNestedInput
+    defaultForProfiles?: ProfileUpdateManyWithoutDefaultPresentationNestedInput
+    versions?: VersionUpdateManyWithoutPresentationNestedInput
+  }
+
+  export type ProfilePresentationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultForProfiles?: ProfileUncheckedUpdateManyWithoutDefaultPresentationNestedInput
+    versions?: VersionUncheckedUpdateManyWithoutPresentationNestedInput
+  }
+
+  export type ProfilePresentationCreateManyInput = {
+    id?: string
+    profileId: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfilePresentationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfilePresentationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40580,6 +42090,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -40601,6 +42112,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40628,6 +42140,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -40649,6 +42162,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40673,6 +42187,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40700,6 +42215,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42297,6 +43813,17 @@ export namespace Prisma {
     none?: ProofWhereInput
   }
 
+  export type ProfilePresentationListRelationFilter = {
+    every?: ProfilePresentationWhereInput
+    some?: ProfilePresentationWhereInput
+    none?: ProfilePresentationWhereInput
+  }
+
+  export type ProfilePresentationNullableRelationFilter = {
+    is?: ProfilePresentationWhereInput | null
+    isNot?: ProfilePresentationWhereInput | null
+  }
+
   export type VersionListRelationFilter = {
     every?: VersionWhereInput
     some?: VersionWhereInput
@@ -42341,6 +43868,10 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type ProfilePresentationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type VersionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -42367,6 +43898,7 @@ export namespace Prisma {
     opportunityMotivation?: SortOrder
     showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
+    defaultPresentationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -42389,6 +43921,7 @@ export namespace Prisma {
     opportunityMotivation?: SortOrder
     showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
+    defaultPresentationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -42411,6 +43944,7 @@ export namespace Prisma {
     opportunityMotivation?: SortOrder
     showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
+    defaultPresentationId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -42418,6 +43952,60 @@ export namespace Prisma {
   export type ProfileRelationFilter = {
     is?: ProfileWhereInput
     isNot?: ProfileWhereInput
+  }
+
+  export type ProfileListRelationFilter = {
+    every?: ProfileWhereInput
+    some?: ProfileWhereInput
+    none?: ProfileWhereInput
+  }
+
+  export type ProfileOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProfilePresentationCountOrderByAggregateInput = {
+    id?: SortOrder
+    profileId?: SortOrder
+    title?: SortOrder
+    body?: SortOrder
+    context?: SortOrder
+    isArchived?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProfilePresentationAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type ProfilePresentationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    profileId?: SortOrder
+    title?: SortOrder
+    body?: SortOrder
+    context?: SortOrder
+    isArchived?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProfilePresentationMinOrderByAggregateInput = {
+    id?: SortOrder
+    profileId?: SortOrder
+    title?: SortOrder
+    body?: SortOrder
+    context?: SortOrder
+    isArchived?: SortOrder
+    order?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProfilePresentationSumOrderByAggregateInput = {
+    order?: SortOrder
   }
 
   export type AssetNullableRelationFilter = {
@@ -43058,6 +44646,7 @@ export namespace Prisma {
     emoji?: SortOrder
     customHeadline?: SortOrder
     customBio?: SortOrder
+    presentationId?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -43072,6 +44661,7 @@ export namespace Prisma {
     emoji?: SortOrder
     customHeadline?: SortOrder
     customBio?: SortOrder
+    presentationId?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -43086,6 +44676,7 @@ export namespace Prisma {
     emoji?: SortOrder
     customHeadline?: SortOrder
     customBio?: SortOrder
+    presentationId?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -44079,6 +45670,19 @@ export namespace Prisma {
     connect?: ProofWhereUniqueInput | ProofWhereUniqueInput[]
   }
 
+  export type ProfilePresentationCreateNestedManyWithoutProfileInput = {
+    create?: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput> | ProfilePresentationCreateWithoutProfileInput[] | ProfilePresentationUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutProfileInput | ProfilePresentationCreateOrConnectWithoutProfileInput[]
+    createMany?: ProfilePresentationCreateManyProfileInputEnvelope
+    connect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+  }
+
+  export type ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput = {
+    create?: XOR<ProfilePresentationCreateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedCreateWithoutDefaultForProfilesInput>
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutDefaultForProfilesInput
+    connect?: ProfilePresentationWhereUniqueInput
+  }
+
   export type VersionCreateNestedManyWithoutProfileInput = {
     create?: XOR<VersionCreateWithoutProfileInput, VersionUncheckedCreateWithoutProfileInput> | VersionCreateWithoutProfileInput[] | VersionUncheckedCreateWithoutProfileInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutProfileInput | VersionCreateOrConnectWithoutProfileInput[]
@@ -44147,6 +45751,13 @@ export namespace Prisma {
     connectOrCreate?: ProofCreateOrConnectWithoutProfileInput | ProofCreateOrConnectWithoutProfileInput[]
     createMany?: ProofCreateManyProfileInputEnvelope
     connect?: ProofWhereUniqueInput | ProofWhereUniqueInput[]
+  }
+
+  export type ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput = {
+    create?: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput> | ProfilePresentationCreateWithoutProfileInput[] | ProfilePresentationUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutProfileInput | ProfilePresentationCreateOrConnectWithoutProfileInput[]
+    createMany?: ProfilePresentationCreateManyProfileInputEnvelope
+    connect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
   }
 
   export type VersionUncheckedCreateNestedManyWithoutProfileInput = {
@@ -44281,6 +45892,30 @@ export namespace Prisma {
     update?: ProofUpdateWithWhereUniqueWithoutProfileInput | ProofUpdateWithWhereUniqueWithoutProfileInput[]
     updateMany?: ProofUpdateManyWithWhereWithoutProfileInput | ProofUpdateManyWithWhereWithoutProfileInput[]
     deleteMany?: ProofScalarWhereInput | ProofScalarWhereInput[]
+  }
+
+  export type ProfilePresentationUpdateManyWithoutProfileNestedInput = {
+    create?: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput> | ProfilePresentationCreateWithoutProfileInput[] | ProfilePresentationUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutProfileInput | ProfilePresentationCreateOrConnectWithoutProfileInput[]
+    upsert?: ProfilePresentationUpsertWithWhereUniqueWithoutProfileInput | ProfilePresentationUpsertWithWhereUniqueWithoutProfileInput[]
+    createMany?: ProfilePresentationCreateManyProfileInputEnvelope
+    set?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    disconnect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    delete?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    connect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    update?: ProfilePresentationUpdateWithWhereUniqueWithoutProfileInput | ProfilePresentationUpdateWithWhereUniqueWithoutProfileInput[]
+    updateMany?: ProfilePresentationUpdateManyWithWhereWithoutProfileInput | ProfilePresentationUpdateManyWithWhereWithoutProfileInput[]
+    deleteMany?: ProfilePresentationScalarWhereInput | ProfilePresentationScalarWhereInput[]
+  }
+
+  export type ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput = {
+    create?: XOR<ProfilePresentationCreateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedCreateWithoutDefaultForProfilesInput>
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutDefaultForProfilesInput
+    upsert?: ProfilePresentationUpsertWithoutDefaultForProfilesInput
+    disconnect?: ProfilePresentationWhereInput | boolean
+    delete?: ProfilePresentationWhereInput | boolean
+    connect?: ProfilePresentationWhereUniqueInput
+    update?: XOR<XOR<ProfilePresentationUpdateToOneWithWhereWithoutDefaultForProfilesInput, ProfilePresentationUpdateWithoutDefaultForProfilesInput>, ProfilePresentationUncheckedUpdateWithoutDefaultForProfilesInput>
   }
 
   export type VersionUpdateManyWithoutProfileNestedInput = {
@@ -44423,6 +46058,20 @@ export namespace Prisma {
     deleteMany?: ProofScalarWhereInput | ProofScalarWhereInput[]
   }
 
+  export type ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput = {
+    create?: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput> | ProfilePresentationCreateWithoutProfileInput[] | ProfilePresentationUncheckedCreateWithoutProfileInput[]
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutProfileInput | ProfilePresentationCreateOrConnectWithoutProfileInput[]
+    upsert?: ProfilePresentationUpsertWithWhereUniqueWithoutProfileInput | ProfilePresentationUpsertWithWhereUniqueWithoutProfileInput[]
+    createMany?: ProfilePresentationCreateManyProfileInputEnvelope
+    set?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    disconnect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    delete?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    connect?: ProfilePresentationWhereUniqueInput | ProfilePresentationWhereUniqueInput[]
+    update?: ProfilePresentationUpdateWithWhereUniqueWithoutProfileInput | ProfilePresentationUpdateWithWhereUniqueWithoutProfileInput[]
+    updateMany?: ProfilePresentationUpdateManyWithWhereWithoutProfileInput | ProfilePresentationUpdateManyWithWhereWithoutProfileInput[]
+    deleteMany?: ProfilePresentationScalarWhereInput | ProfilePresentationScalarWhereInput[]
+  }
+
   export type VersionUncheckedUpdateManyWithoutProfileNestedInput = {
     create?: XOR<VersionCreateWithoutProfileInput, VersionUncheckedCreateWithoutProfileInput> | VersionCreateWithoutProfileInput[] | VersionUncheckedCreateWithoutProfileInput[]
     connectOrCreate?: VersionCreateOrConnectWithoutProfileInput | VersionCreateOrConnectWithoutProfileInput[]
@@ -44449,6 +46098,104 @@ export namespace Prisma {
     update?: AssetUpdateWithWhereUniqueWithoutProfileInput | AssetUpdateWithWhereUniqueWithoutProfileInput[]
     updateMany?: AssetUpdateManyWithWhereWithoutProfileInput | AssetUpdateManyWithWhereWithoutProfileInput[]
     deleteMany?: AssetScalarWhereInput | AssetScalarWhereInput[]
+  }
+
+  export type ProfileCreateNestedOneWithoutPresentationsInput = {
+    create?: XOR<ProfileCreateWithoutPresentationsInput, ProfileUncheckedCreateWithoutPresentationsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutPresentationsInput
+    connect?: ProfileWhereUniqueInput
+  }
+
+  export type ProfileCreateNestedManyWithoutDefaultPresentationInput = {
+    create?: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput> | ProfileCreateWithoutDefaultPresentationInput[] | ProfileUncheckedCreateWithoutDefaultPresentationInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutDefaultPresentationInput | ProfileCreateOrConnectWithoutDefaultPresentationInput[]
+    createMany?: ProfileCreateManyDefaultPresentationInputEnvelope
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+  }
+
+  export type VersionCreateNestedManyWithoutPresentationInput = {
+    create?: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput> | VersionCreateWithoutPresentationInput[] | VersionUncheckedCreateWithoutPresentationInput[]
+    connectOrCreate?: VersionCreateOrConnectWithoutPresentationInput | VersionCreateOrConnectWithoutPresentationInput[]
+    createMany?: VersionCreateManyPresentationInputEnvelope
+    connect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+  }
+
+  export type ProfileUncheckedCreateNestedManyWithoutDefaultPresentationInput = {
+    create?: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput> | ProfileCreateWithoutDefaultPresentationInput[] | ProfileUncheckedCreateWithoutDefaultPresentationInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutDefaultPresentationInput | ProfileCreateOrConnectWithoutDefaultPresentationInput[]
+    createMany?: ProfileCreateManyDefaultPresentationInputEnvelope
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+  }
+
+  export type VersionUncheckedCreateNestedManyWithoutPresentationInput = {
+    create?: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput> | VersionCreateWithoutPresentationInput[] | VersionUncheckedCreateWithoutPresentationInput[]
+    connectOrCreate?: VersionCreateOrConnectWithoutPresentationInput | VersionCreateOrConnectWithoutPresentationInput[]
+    createMany?: VersionCreateManyPresentationInputEnvelope
+    connect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+  }
+
+  export type ProfileUpdateOneRequiredWithoutPresentationsNestedInput = {
+    create?: XOR<ProfileCreateWithoutPresentationsInput, ProfileUncheckedCreateWithoutPresentationsInput>
+    connectOrCreate?: ProfileCreateOrConnectWithoutPresentationsInput
+    upsert?: ProfileUpsertWithoutPresentationsInput
+    connect?: ProfileWhereUniqueInput
+    update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutPresentationsInput, ProfileUpdateWithoutPresentationsInput>, ProfileUncheckedUpdateWithoutPresentationsInput>
+  }
+
+  export type ProfileUpdateManyWithoutDefaultPresentationNestedInput = {
+    create?: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput> | ProfileCreateWithoutDefaultPresentationInput[] | ProfileUncheckedCreateWithoutDefaultPresentationInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutDefaultPresentationInput | ProfileCreateOrConnectWithoutDefaultPresentationInput[]
+    upsert?: ProfileUpsertWithWhereUniqueWithoutDefaultPresentationInput | ProfileUpsertWithWhereUniqueWithoutDefaultPresentationInput[]
+    createMany?: ProfileCreateManyDefaultPresentationInputEnvelope
+    set?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    disconnect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    delete?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    update?: ProfileUpdateWithWhereUniqueWithoutDefaultPresentationInput | ProfileUpdateWithWhereUniqueWithoutDefaultPresentationInput[]
+    updateMany?: ProfileUpdateManyWithWhereWithoutDefaultPresentationInput | ProfileUpdateManyWithWhereWithoutDefaultPresentationInput[]
+    deleteMany?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+  }
+
+  export type VersionUpdateManyWithoutPresentationNestedInput = {
+    create?: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput> | VersionCreateWithoutPresentationInput[] | VersionUncheckedCreateWithoutPresentationInput[]
+    connectOrCreate?: VersionCreateOrConnectWithoutPresentationInput | VersionCreateOrConnectWithoutPresentationInput[]
+    upsert?: VersionUpsertWithWhereUniqueWithoutPresentationInput | VersionUpsertWithWhereUniqueWithoutPresentationInput[]
+    createMany?: VersionCreateManyPresentationInputEnvelope
+    set?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    disconnect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    delete?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    connect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    update?: VersionUpdateWithWhereUniqueWithoutPresentationInput | VersionUpdateWithWhereUniqueWithoutPresentationInput[]
+    updateMany?: VersionUpdateManyWithWhereWithoutPresentationInput | VersionUpdateManyWithWhereWithoutPresentationInput[]
+    deleteMany?: VersionScalarWhereInput | VersionScalarWhereInput[]
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutDefaultPresentationNestedInput = {
+    create?: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput> | ProfileCreateWithoutDefaultPresentationInput[] | ProfileUncheckedCreateWithoutDefaultPresentationInput[]
+    connectOrCreate?: ProfileCreateOrConnectWithoutDefaultPresentationInput | ProfileCreateOrConnectWithoutDefaultPresentationInput[]
+    upsert?: ProfileUpsertWithWhereUniqueWithoutDefaultPresentationInput | ProfileUpsertWithWhereUniqueWithoutDefaultPresentationInput[]
+    createMany?: ProfileCreateManyDefaultPresentationInputEnvelope
+    set?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    disconnect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    delete?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    connect?: ProfileWhereUniqueInput | ProfileWhereUniqueInput[]
+    update?: ProfileUpdateWithWhereUniqueWithoutDefaultPresentationInput | ProfileUpdateWithWhereUniqueWithoutDefaultPresentationInput[]
+    updateMany?: ProfileUpdateManyWithWhereWithoutDefaultPresentationInput | ProfileUpdateManyWithWhereWithoutDefaultPresentationInput[]
+    deleteMany?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+  }
+
+  export type VersionUncheckedUpdateManyWithoutPresentationNestedInput = {
+    create?: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput> | VersionCreateWithoutPresentationInput[] | VersionUncheckedCreateWithoutPresentationInput[]
+    connectOrCreate?: VersionCreateOrConnectWithoutPresentationInput | VersionCreateOrConnectWithoutPresentationInput[]
+    upsert?: VersionUpsertWithWhereUniqueWithoutPresentationInput | VersionUpsertWithWhereUniqueWithoutPresentationInput[]
+    createMany?: VersionCreateManyPresentationInputEnvelope
+    set?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    disconnect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    delete?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    connect?: VersionWhereUniqueInput | VersionWhereUniqueInput[]
+    update?: VersionUpdateWithWhereUniqueWithoutPresentationInput | VersionUpdateWithWhereUniqueWithoutPresentationInput[]
+    updateMany?: VersionUpdateManyWithWhereWithoutPresentationInput | VersionUpdateManyWithWhereWithoutPresentationInput[]
+    deleteMany?: VersionScalarWhereInput | VersionScalarWhereInput[]
   }
 
   export type ProfileCreateNestedOneWithoutExperiencesInput = {
@@ -45235,6 +46982,12 @@ export namespace Prisma {
     connect?: ProfileWhereUniqueInput
   }
 
+  export type ProfilePresentationCreateNestedOneWithoutVersionsInput = {
+    create?: XOR<ProfilePresentationCreateWithoutVersionsInput, ProfilePresentationUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutVersionsInput
+    connect?: ProfilePresentationWhereUniqueInput
+  }
+
   export type PageCreateNestedManyWithoutVersionInput = {
     create?: XOR<PageCreateWithoutVersionInput, PageUncheckedCreateWithoutVersionInput> | PageCreateWithoutVersionInput[] | PageUncheckedCreateWithoutVersionInput[]
     connectOrCreate?: PageCreateOrConnectWithoutVersionInput | PageCreateOrConnectWithoutVersionInput[]
@@ -45379,6 +47132,16 @@ export namespace Prisma {
     upsert?: ProfileUpsertWithoutVersionsInput
     connect?: ProfileWhereUniqueInput
     update?: XOR<XOR<ProfileUpdateToOneWithWhereWithoutVersionsInput, ProfileUpdateWithoutVersionsInput>, ProfileUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type ProfilePresentationUpdateOneWithoutVersionsNestedInput = {
+    create?: XOR<ProfilePresentationCreateWithoutVersionsInput, ProfilePresentationUncheckedCreateWithoutVersionsInput>
+    connectOrCreate?: ProfilePresentationCreateOrConnectWithoutVersionsInput
+    upsert?: ProfilePresentationUpsertWithoutVersionsInput
+    disconnect?: ProfilePresentationWhereInput | boolean
+    delete?: ProfilePresentationWhereInput | boolean
+    connect?: ProfilePresentationWhereUniqueInput
+    update?: XOR<XOR<ProfilePresentationUpdateToOneWithWhereWithoutVersionsInput, ProfilePresentationUpdateWithoutVersionsInput>, ProfilePresentationUncheckedUpdateWithoutVersionsInput>
   }
 
   export type PageUpdateManyWithoutVersionNestedInput = {
@@ -46534,6 +48297,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -46555,6 +48320,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -46565,6 +48331,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -46746,6 +48513,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -46767,6 +48536,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -46777,6 +48547,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -47547,6 +49318,73 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProfilePresentationCreateWithoutProfileInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    defaultForProfiles?: ProfileCreateNestedManyWithoutDefaultPresentationInput
+    versions?: VersionCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationUncheckedCreateWithoutProfileInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    defaultForProfiles?: ProfileUncheckedCreateNestedManyWithoutDefaultPresentationInput
+    versions?: VersionUncheckedCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationCreateOrConnectWithoutProfileInput = {
+    where: ProfilePresentationWhereUniqueInput
+    create: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput>
+  }
+
+  export type ProfilePresentationCreateManyProfileInputEnvelope = {
+    data: ProfilePresentationCreateManyProfileInput | ProfilePresentationCreateManyProfileInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProfilePresentationCreateWithoutDefaultForProfilesInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutPresentationsInput
+    versions?: VersionCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationUncheckedCreateWithoutDefaultForProfilesInput = {
+    id?: string
+    profileId: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    versions?: VersionUncheckedCreateNestedManyWithoutPresentationInput
+  }
+
+  export type ProfilePresentationCreateOrConnectWithoutDefaultForProfilesInput = {
+    where: ProfilePresentationWhereUniqueInput
+    create: XOR<ProfilePresentationCreateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedCreateWithoutDefaultForProfilesInput>
+  }
+
   export type VersionCreateWithoutProfileInput = {
     id?: string
     name: string
@@ -47558,6 +49396,7 @@ export namespace Prisma {
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -47578,6 +49417,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47967,6 +49807,74 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Proof"> | Date | string
   }
 
+  export type ProfilePresentationUpsertWithWhereUniqueWithoutProfileInput = {
+    where: ProfilePresentationWhereUniqueInput
+    update: XOR<ProfilePresentationUpdateWithoutProfileInput, ProfilePresentationUncheckedUpdateWithoutProfileInput>
+    create: XOR<ProfilePresentationCreateWithoutProfileInput, ProfilePresentationUncheckedCreateWithoutProfileInput>
+  }
+
+  export type ProfilePresentationUpdateWithWhereUniqueWithoutProfileInput = {
+    where: ProfilePresentationWhereUniqueInput
+    data: XOR<ProfilePresentationUpdateWithoutProfileInput, ProfilePresentationUncheckedUpdateWithoutProfileInput>
+  }
+
+  export type ProfilePresentationUpdateManyWithWhereWithoutProfileInput = {
+    where: ProfilePresentationScalarWhereInput
+    data: XOR<ProfilePresentationUpdateManyMutationInput, ProfilePresentationUncheckedUpdateManyWithoutProfileInput>
+  }
+
+  export type ProfilePresentationScalarWhereInput = {
+    AND?: ProfilePresentationScalarWhereInput | ProfilePresentationScalarWhereInput[]
+    OR?: ProfilePresentationScalarWhereInput[]
+    NOT?: ProfilePresentationScalarWhereInput | ProfilePresentationScalarWhereInput[]
+    id?: StringFilter<"ProfilePresentation"> | string
+    profileId?: StringFilter<"ProfilePresentation"> | string
+    title?: StringFilter<"ProfilePresentation"> | string
+    body?: StringFilter<"ProfilePresentation"> | string
+    context?: StringNullableFilter<"ProfilePresentation"> | string | null
+    isArchived?: BoolFilter<"ProfilePresentation"> | boolean
+    order?: IntFilter<"ProfilePresentation"> | number
+    createdAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+    updatedAt?: DateTimeFilter<"ProfilePresentation"> | Date | string
+  }
+
+  export type ProfilePresentationUpsertWithoutDefaultForProfilesInput = {
+    update: XOR<ProfilePresentationUpdateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedUpdateWithoutDefaultForProfilesInput>
+    create: XOR<ProfilePresentationCreateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedCreateWithoutDefaultForProfilesInput>
+    where?: ProfilePresentationWhereInput
+  }
+
+  export type ProfilePresentationUpdateToOneWithWhereWithoutDefaultForProfilesInput = {
+    where?: ProfilePresentationWhereInput
+    data: XOR<ProfilePresentationUpdateWithoutDefaultForProfilesInput, ProfilePresentationUncheckedUpdateWithoutDefaultForProfilesInput>
+  }
+
+  export type ProfilePresentationUpdateWithoutDefaultForProfilesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutPresentationsNestedInput
+    versions?: VersionUpdateManyWithoutPresentationNestedInput
+  }
+
+  export type ProfilePresentationUncheckedUpdateWithoutDefaultForProfilesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    versions?: VersionUncheckedUpdateManyWithoutPresentationNestedInput
+  }
+
   export type VersionUpsertWithWhereUniqueWithoutProfileInput = {
     where: VersionWhereUniqueInput
     update: XOR<VersionUpdateWithoutProfileInput, VersionUncheckedUpdateWithoutProfileInput>
@@ -47995,6 +49903,7 @@ export namespace Prisma {
     emoji?: StringNullableFilter<"Version"> | string | null
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
+    presentationId?: StringNullableFilter<"Version"> | string | null
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
@@ -48037,6 +49946,346 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Asset"> | Date | string
   }
 
+  export type ProfileCreateWithoutPresentationsInput = {
+    id?: string
+    displayName?: string | null
+    headline?: string | null
+    bio?: string | null
+    avatarUrl?: string | null
+    bannerUrl?: string | null
+    location?: string | null
+    pronouns?: string | null
+    websiteUrl?: string | null
+    publicEmail?: string | null
+    phone?: string | null
+    birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
+    onboardingDone?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutProfileInput
+    experiences?: ExperienceCreateNestedManyWithoutProfileInput
+    educations?: EducationCreateNestedManyWithoutProfileInput
+    skills?: SkillCreateNestedManyWithoutProfileInput
+    projects?: ProjectCreateNestedManyWithoutProfileInput
+    achievements?: AchievementCreateNestedManyWithoutProfileInput
+    highlights?: HighlightCreateNestedManyWithoutProfileInput
+    links?: ProfileLinkCreateNestedManyWithoutProfileInput
+    proofs?: ProofCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
+    versions?: VersionCreateNestedManyWithoutProfileInput
+    assets?: AssetCreateNestedManyWithoutProfileInput
+  }
+
+  export type ProfileUncheckedCreateWithoutPresentationsInput = {
+    id?: string
+    userId: string
+    displayName?: string | null
+    headline?: string | null
+    bio?: string | null
+    avatarUrl?: string | null
+    bannerUrl?: string | null
+    location?: string | null
+    pronouns?: string | null
+    websiteUrl?: string | null
+    publicEmail?: string | null
+    phone?: string | null
+    birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
+    onboardingDone?: boolean
+    defaultPresentationId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
+    educations?: EducationUncheckedCreateNestedManyWithoutProfileInput
+    skills?: SkillUncheckedCreateNestedManyWithoutProfileInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutProfileInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutProfileInput
+    highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
+    links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
+    proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
+    assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
+  }
+
+  export type ProfileCreateOrConnectWithoutPresentationsInput = {
+    where: ProfileWhereUniqueInput
+    create: XOR<ProfileCreateWithoutPresentationsInput, ProfileUncheckedCreateWithoutPresentationsInput>
+  }
+
+  export type ProfileCreateWithoutDefaultPresentationInput = {
+    id?: string
+    displayName?: string | null
+    headline?: string | null
+    bio?: string | null
+    avatarUrl?: string | null
+    bannerUrl?: string | null
+    location?: string | null
+    pronouns?: string | null
+    websiteUrl?: string | null
+    publicEmail?: string | null
+    phone?: string | null
+    birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
+    onboardingDone?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutProfileInput
+    experiences?: ExperienceCreateNestedManyWithoutProfileInput
+    educations?: EducationCreateNestedManyWithoutProfileInput
+    skills?: SkillCreateNestedManyWithoutProfileInput
+    projects?: ProjectCreateNestedManyWithoutProfileInput
+    achievements?: AchievementCreateNestedManyWithoutProfileInput
+    highlights?: HighlightCreateNestedManyWithoutProfileInput
+    links?: ProfileLinkCreateNestedManyWithoutProfileInput
+    proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    versions?: VersionCreateNestedManyWithoutProfileInput
+    assets?: AssetCreateNestedManyWithoutProfileInput
+  }
+
+  export type ProfileUncheckedCreateWithoutDefaultPresentationInput = {
+    id?: string
+    userId: string
+    displayName?: string | null
+    headline?: string | null
+    bio?: string | null
+    avatarUrl?: string | null
+    bannerUrl?: string | null
+    location?: string | null
+    pronouns?: string | null
+    websiteUrl?: string | null
+    publicEmail?: string | null
+    phone?: string | null
+    birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
+    onboardingDone?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
+    educations?: EducationUncheckedCreateNestedManyWithoutProfileInput
+    skills?: SkillUncheckedCreateNestedManyWithoutProfileInput
+    projects?: ProjectUncheckedCreateNestedManyWithoutProfileInput
+    achievements?: AchievementUncheckedCreateNestedManyWithoutProfileInput
+    highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
+    links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
+    proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
+    versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
+    assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
+  }
+
+  export type ProfileCreateOrConnectWithoutDefaultPresentationInput = {
+    where: ProfileWhereUniqueInput
+    create: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput>
+  }
+
+  export type ProfileCreateManyDefaultPresentationInputEnvelope = {
+    data: ProfileCreateManyDefaultPresentationInput | ProfileCreateManyDefaultPresentationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type VersionCreateWithoutPresentationInput = {
+    id?: string
+    name: string
+    description?: string | null
+    context?: string | null
+    emoji?: string | null
+    customHeadline?: string | null
+    customBio?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutVersionsInput
+    pages?: PageCreateNestedManyWithoutVersionInput
+    resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
+    experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationCreateNestedManyWithoutVersionInput
+    projects?: VersionProjectCreateNestedManyWithoutVersionInput
+    skills?: VersionSkillCreateNestedManyWithoutVersionInput
+    achievements?: VersionAchievementCreateNestedManyWithoutVersionInput
+    proofs?: VersionProofCreateNestedManyWithoutVersionInput
+    highlights?: VersionHighlightCreateNestedManyWithoutVersionInput
+    links?: VersionLinkCreateNestedManyWithoutVersionInput
+  }
+
+  export type VersionUncheckedCreateWithoutPresentationInput = {
+    id?: string
+    profileId: string
+    name: string
+    description?: string | null
+    context?: string | null
+    emoji?: string | null
+    customHeadline?: string | null
+    customBio?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    pages?: PageUncheckedCreateNestedManyWithoutVersionInput
+    resumeConfig?: ResumeConfigUncheckedCreateNestedOneWithoutVersionInput
+    experiences?: VersionExperienceUncheckedCreateNestedManyWithoutVersionInput
+    educations?: VersionEducationUncheckedCreateNestedManyWithoutVersionInput
+    projects?: VersionProjectUncheckedCreateNestedManyWithoutVersionInput
+    skills?: VersionSkillUncheckedCreateNestedManyWithoutVersionInput
+    achievements?: VersionAchievementUncheckedCreateNestedManyWithoutVersionInput
+    proofs?: VersionProofUncheckedCreateNestedManyWithoutVersionInput
+    highlights?: VersionHighlightUncheckedCreateNestedManyWithoutVersionInput
+    links?: VersionLinkUncheckedCreateNestedManyWithoutVersionInput
+  }
+
+  export type VersionCreateOrConnectWithoutPresentationInput = {
+    where: VersionWhereUniqueInput
+    create: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput>
+  }
+
+  export type VersionCreateManyPresentationInputEnvelope = {
+    data: VersionCreateManyPresentationInput | VersionCreateManyPresentationInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProfileUpsertWithoutPresentationsInput = {
+    update: XOR<ProfileUpdateWithoutPresentationsInput, ProfileUncheckedUpdateWithoutPresentationsInput>
+    create: XOR<ProfileCreateWithoutPresentationsInput, ProfileUncheckedCreateWithoutPresentationsInput>
+    where?: ProfileWhereInput
+  }
+
+  export type ProfileUpdateToOneWithWhereWithoutPresentationsInput = {
+    where?: ProfileWhereInput
+    data: XOR<ProfileUpdateWithoutPresentationsInput, ProfileUncheckedUpdateWithoutPresentationsInput>
+  }
+
+  export type ProfileUpdateWithoutPresentationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    pronouns?: NullableStringFieldUpdateOperationsInput | string | null
+    websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
+    onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
+    experiences?: ExperienceUpdateManyWithoutProfileNestedInput
+    educations?: EducationUpdateManyWithoutProfileNestedInput
+    skills?: SkillUpdateManyWithoutProfileNestedInput
+    projects?: ProjectUpdateManyWithoutProfileNestedInput
+    achievements?: AchievementUpdateManyWithoutProfileNestedInput
+    highlights?: HighlightUpdateManyWithoutProfileNestedInput
+    links?: ProfileLinkUpdateManyWithoutProfileNestedInput
+    proofs?: ProofUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
+    versions?: VersionUpdateManyWithoutProfileNestedInput
+    assets?: AssetUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateWithoutPresentationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    pronouns?: NullableStringFieldUpdateOperationsInput | string | null
+    websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
+    onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
+    educations?: EducationUncheckedUpdateManyWithoutProfileNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutProfileNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutProfileNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutProfileNestedInput
+    highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
+    links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
+    proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUpsertWithWhereUniqueWithoutDefaultPresentationInput = {
+    where: ProfileWhereUniqueInput
+    update: XOR<ProfileUpdateWithoutDefaultPresentationInput, ProfileUncheckedUpdateWithoutDefaultPresentationInput>
+    create: XOR<ProfileCreateWithoutDefaultPresentationInput, ProfileUncheckedCreateWithoutDefaultPresentationInput>
+  }
+
+  export type ProfileUpdateWithWhereUniqueWithoutDefaultPresentationInput = {
+    where: ProfileWhereUniqueInput
+    data: XOR<ProfileUpdateWithoutDefaultPresentationInput, ProfileUncheckedUpdateWithoutDefaultPresentationInput>
+  }
+
+  export type ProfileUpdateManyWithWhereWithoutDefaultPresentationInput = {
+    where: ProfileScalarWhereInput
+    data: XOR<ProfileUpdateManyMutationInput, ProfileUncheckedUpdateManyWithoutDefaultPresentationInput>
+  }
+
+  export type ProfileScalarWhereInput = {
+    AND?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+    OR?: ProfileScalarWhereInput[]
+    NOT?: ProfileScalarWhereInput | ProfileScalarWhereInput[]
+    id?: StringFilter<"Profile"> | string
+    userId?: StringFilter<"Profile"> | string
+    displayName?: StringNullableFilter<"Profile"> | string | null
+    headline?: StringNullableFilter<"Profile"> | string | null
+    bio?: StringNullableFilter<"Profile"> | string | null
+    avatarUrl?: StringNullableFilter<"Profile"> | string | null
+    bannerUrl?: StringNullableFilter<"Profile"> | string | null
+    location?: StringNullableFilter<"Profile"> | string | null
+    pronouns?: StringNullableFilter<"Profile"> | string | null
+    websiteUrl?: StringNullableFilter<"Profile"> | string | null
+    publicEmail?: StringNullableFilter<"Profile"> | string | null
+    phone?: StringNullableFilter<"Profile"> | string | null
+    birthDate?: DateTimeNullableFilter<"Profile"> | Date | string | null
+    openToOpportunities?: BoolFilter<"Profile"> | boolean
+    opportunityMotivation?: StringNullableFilter<"Profile"> | string | null
+    showOpportunityMotivation?: BoolFilter<"Profile"> | boolean
+    onboardingDone?: BoolFilter<"Profile"> | boolean
+    defaultPresentationId?: StringNullableFilter<"Profile"> | string | null
+    createdAt?: DateTimeFilter<"Profile"> | Date | string
+    updatedAt?: DateTimeFilter<"Profile"> | Date | string
+  }
+
+  export type VersionUpsertWithWhereUniqueWithoutPresentationInput = {
+    where: VersionWhereUniqueInput
+    update: XOR<VersionUpdateWithoutPresentationInput, VersionUncheckedUpdateWithoutPresentationInput>
+    create: XOR<VersionCreateWithoutPresentationInput, VersionUncheckedCreateWithoutPresentationInput>
+  }
+
+  export type VersionUpdateWithWhereUniqueWithoutPresentationInput = {
+    where: VersionWhereUniqueInput
+    data: XOR<VersionUpdateWithoutPresentationInput, VersionUncheckedUpdateWithoutPresentationInput>
+  }
+
+  export type VersionUpdateManyWithWhereWithoutPresentationInput = {
+    where: VersionScalarWhereInput
+    data: XOR<VersionUpdateManyMutationInput, VersionUncheckedUpdateManyWithoutPresentationInput>
+  }
+
   export type ProfileCreateWithoutExperiencesInput = {
     id?: string
     displayName?: string | null
@@ -48064,6 +50313,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -48086,6 +50337,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     educations?: EducationUncheckedCreateNestedManyWithoutProfileInput
@@ -48095,6 +50347,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -48211,6 +50464,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -48233,6 +50488,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     educations?: EducationUncheckedUpdateManyWithoutProfileNestedInput
@@ -48242,6 +50498,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -48353,6 +50610,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -48375,6 +50634,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -48384,6 +50644,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -48451,6 +50712,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -48473,6 +50736,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -48482,6 +50746,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -48538,6 +50803,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -48560,6 +50827,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -48569,6 +50837,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -48636,6 +50905,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -48658,6 +50929,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -48667,6 +50939,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -48723,6 +50996,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -48745,6 +51020,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -48754,6 +51030,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -48870,6 +51147,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -48892,6 +51171,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -48901,6 +51181,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -49012,6 +51293,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -49034,6 +51317,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -49043,6 +51327,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -49159,6 +51444,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -49181,6 +51468,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -49190,6 +51478,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -49301,6 +51590,8 @@ export namespace Prisma {
     achievements?: AchievementCreateNestedManyWithoutProfileInput
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -49323,6 +51614,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -49332,6 +51624,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedCreateNestedManyWithoutProfileInput
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -49399,6 +51692,8 @@ export namespace Prisma {
     achievements?: AchievementUpdateManyWithoutProfileNestedInput
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -49421,6 +51716,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -49430,6 +51726,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedUpdateManyWithoutProfileNestedInput
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -49486,6 +51783,8 @@ export namespace Prisma {
     achievements?: AchievementCreateNestedManyWithoutProfileInput
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -49508,6 +51807,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -49517,6 +51817,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedCreateNestedManyWithoutProfileInput
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -49633,6 +51934,8 @@ export namespace Prisma {
     achievements?: AchievementUpdateManyWithoutProfileNestedInput
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -49655,6 +51958,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -49664,6 +51968,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedUpdateManyWithoutProfileNestedInput
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -49775,6 +52080,8 @@ export namespace Prisma {
     achievements?: AchievementCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
@@ -49797,6 +52104,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -49806,6 +52114,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
@@ -49922,6 +52231,8 @@ export namespace Prisma {
     achievements?: AchievementUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
@@ -49944,6 +52255,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -49953,6 +52265,7 @@ export namespace Prisma {
     achievements?: AchievementUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
   }
@@ -50065,6 +52378,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     versions?: VersionCreateNestedManyWithoutProfileInput
   }
 
@@ -50086,6 +52401,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -50096,6 +52412,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     versions?: VersionUncheckedCreateNestedManyWithoutProfileInput
   }
 
@@ -50363,6 +52680,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     versions?: VersionUpdateManyWithoutProfileNestedInput
   }
 
@@ -50384,6 +52703,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -50394,6 +52714,7 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
   }
 
@@ -50505,6 +52826,8 @@ export namespace Prisma {
     highlights?: HighlightCreateNestedManyWithoutProfileInput
     links?: ProfileLinkCreateNestedManyWithoutProfileInput
     proofs?: ProofCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationCreateNestedManyWithoutProfileInput
+    defaultPresentation?: ProfilePresentationCreateNestedOneWithoutDefaultForProfilesInput
     assets?: AssetCreateNestedManyWithoutProfileInput
   }
 
@@ -50526,6 +52849,7 @@ export namespace Prisma {
     opportunityMotivation?: string | null
     showOpportunityMotivation?: boolean
     onboardingDone?: boolean
+    defaultPresentationId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     experiences?: ExperienceUncheckedCreateNestedManyWithoutProfileInput
@@ -50536,12 +52860,44 @@ export namespace Prisma {
     highlights?: HighlightUncheckedCreateNestedManyWithoutProfileInput
     links?: ProfileLinkUncheckedCreateNestedManyWithoutProfileInput
     proofs?: ProofUncheckedCreateNestedManyWithoutProfileInput
+    presentations?: ProfilePresentationUncheckedCreateNestedManyWithoutProfileInput
     assets?: AssetUncheckedCreateNestedManyWithoutProfileInput
   }
 
   export type ProfileCreateOrConnectWithoutVersionsInput = {
     where: ProfileWhereUniqueInput
     create: XOR<ProfileCreateWithoutVersionsInput, ProfileUncheckedCreateWithoutVersionsInput>
+  }
+
+  export type ProfilePresentationCreateWithoutVersionsInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile: ProfileCreateNestedOneWithoutPresentationsInput
+    defaultForProfiles?: ProfileCreateNestedManyWithoutDefaultPresentationInput
+  }
+
+  export type ProfilePresentationUncheckedCreateWithoutVersionsInput = {
+    id?: string
+    profileId: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    defaultForProfiles?: ProfileUncheckedCreateNestedManyWithoutDefaultPresentationInput
+  }
+
+  export type ProfilePresentationCreateOrConnectWithoutVersionsInput = {
+    where: ProfilePresentationWhereUniqueInput
+    create: XOR<ProfilePresentationCreateWithoutVersionsInput, ProfilePresentationUncheckedCreateWithoutVersionsInput>
   }
 
   export type PageCreateWithoutVersionInput = {
@@ -50820,6 +53176,8 @@ export namespace Prisma {
     highlights?: HighlightUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUpdateManyWithoutProfileNestedInput
     proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    defaultPresentation?: ProfilePresentationUpdateOneWithoutDefaultForProfilesNestedInput
     assets?: AssetUpdateManyWithoutProfileNestedInput
   }
 
@@ -50841,6 +53199,7 @@ export namespace Prisma {
     opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
     showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    defaultPresentationId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
@@ -50851,7 +53210,45 @@ export namespace Prisma {
     highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
     links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
     proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
     assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfilePresentationUpsertWithoutVersionsInput = {
+    update: XOR<ProfilePresentationUpdateWithoutVersionsInput, ProfilePresentationUncheckedUpdateWithoutVersionsInput>
+    create: XOR<ProfilePresentationCreateWithoutVersionsInput, ProfilePresentationUncheckedCreateWithoutVersionsInput>
+    where?: ProfilePresentationWhereInput
+  }
+
+  export type ProfilePresentationUpdateToOneWithWhereWithoutVersionsInput = {
+    where?: ProfilePresentationWhereInput
+    data: XOR<ProfilePresentationUpdateWithoutVersionsInput, ProfilePresentationUncheckedUpdateWithoutVersionsInput>
+  }
+
+  export type ProfilePresentationUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutPresentationsNestedInput
+    defaultForProfiles?: ProfileUpdateManyWithoutDefaultPresentationNestedInput
+  }
+
+  export type ProfilePresentationUncheckedUpdateWithoutVersionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultForProfiles?: ProfileUncheckedUpdateManyWithoutDefaultPresentationNestedInput
   }
 
   export type PageUpsertWithWhereUniqueWithoutVersionInput = {
@@ -51420,6 +53817,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
     educations?: VersionEducationCreateNestedManyWithoutVersionInput
@@ -51440,6 +53838,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -51587,6 +53986,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
     educations?: VersionEducationUpdateManyWithoutVersionNestedInput
@@ -51607,6 +54007,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52024,6 +54425,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
     educations?: VersionEducationCreateNestedManyWithoutVersionInput
@@ -52044,6 +54446,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52086,6 +54489,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
     educations?: VersionEducationUpdateManyWithoutVersionNestedInput
@@ -52106,6 +54510,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52132,6 +54537,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     educations?: VersionEducationCreateNestedManyWithoutVersionInput
@@ -52152,6 +54558,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52233,6 +54640,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     educations?: VersionEducationUpdateManyWithoutVersionNestedInput
@@ -52253,6 +54661,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52324,6 +54733,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -52344,6 +54754,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52423,6 +54834,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -52443,6 +54855,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52512,6 +54925,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -52532,6 +54946,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52621,6 +55036,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -52641,6 +55057,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52720,6 +55137,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -52740,6 +55158,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52805,6 +55224,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -52825,6 +55245,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52880,6 +55301,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -52900,6 +55322,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52975,6 +55398,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -52995,6 +55419,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53060,6 +55485,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -53080,6 +55506,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -53169,6 +55596,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -53189,6 +55617,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53268,6 +55697,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -53288,6 +55718,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -53359,6 +55790,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -53379,6 +55811,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53440,6 +55873,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     profile: ProfileCreateNestedOneWithoutVersionsInput
+    presentation?: ProfilePresentationCreateNestedOneWithoutVersionsInput
     pages?: PageCreateNestedManyWithoutVersionInput
     resumeConfig?: ResumeConfigCreateNestedOneWithoutVersionInput
     experiences?: VersionExperienceCreateNestedManyWithoutVersionInput
@@ -53460,6 +55894,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -53525,6 +55960,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -53545,6 +55981,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53887,6 +56324,17 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ProfilePresentationCreateManyProfileInput = {
+    id?: string
+    title: string
+    body: string
+    context?: string | null
+    isArchived?: boolean
+    order?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type VersionCreateManyProfileInput = {
     id?: string
     name: string
@@ -53895,6 +56343,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    presentationId?: string | null
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54266,6 +56715,43 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProfilePresentationUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultForProfiles?: ProfileUpdateManyWithoutDefaultPresentationNestedInput
+    versions?: VersionUpdateManyWithoutPresentationNestedInput
+  }
+
+  export type ProfilePresentationUncheckedUpdateWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    defaultForProfiles?: ProfileUncheckedUpdateManyWithoutDefaultPresentationNestedInput
+    versions?: VersionUncheckedUpdateManyWithoutPresentationNestedInput
+  }
+
+  export type ProfilePresentationUncheckedUpdateManyWithoutProfileInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    body?: StringFieldUpdateOperationsInput | string
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    isArchived?: BoolFieldUpdateOperationsInput | boolean
+    order?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type VersionUpdateWithoutProfileInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
@@ -54277,6 +56763,7 @@ export namespace Prisma {
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    presentation?: ProfilePresentationUpdateOneWithoutVersionsNestedInput
     pages?: PageUpdateManyWithoutVersionNestedInput
     resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
     experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
@@ -54297,6 +56784,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54320,6 +56808,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationId?: NullableStringFieldUpdateOperationsInput | string | null
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54382,6 +56871,192 @@ export namespace Prisma {
     width?: NullableIntFieldUpdateOperationsInput | number | null
     height?: NullableIntFieldUpdateOperationsInput | number | null
     metadata?: JsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProfileCreateManyDefaultPresentationInput = {
+    id?: string
+    userId: string
+    displayName?: string | null
+    headline?: string | null
+    bio?: string | null
+    avatarUrl?: string | null
+    bannerUrl?: string | null
+    location?: string | null
+    pronouns?: string | null
+    websiteUrl?: string | null
+    publicEmail?: string | null
+    phone?: string | null
+    birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
+    onboardingDone?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type VersionCreateManyPresentationInput = {
+    id?: string
+    profileId: string
+    name: string
+    description?: string | null
+    context?: string | null
+    emoji?: string | null
+    customHeadline?: string | null
+    customBio?: string | null
+    isDefault?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProfileUpdateWithoutDefaultPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    pronouns?: NullableStringFieldUpdateOperationsInput | string | null
+    websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
+    onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutProfileNestedInput
+    experiences?: ExperienceUpdateManyWithoutProfileNestedInput
+    educations?: EducationUpdateManyWithoutProfileNestedInput
+    skills?: SkillUpdateManyWithoutProfileNestedInput
+    projects?: ProjectUpdateManyWithoutProfileNestedInput
+    achievements?: AchievementUpdateManyWithoutProfileNestedInput
+    highlights?: HighlightUpdateManyWithoutProfileNestedInput
+    links?: ProfileLinkUpdateManyWithoutProfileNestedInput
+    proofs?: ProofUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUpdateManyWithoutProfileNestedInput
+    versions?: VersionUpdateManyWithoutProfileNestedInput
+    assets?: AssetUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateWithoutDefaultPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    pronouns?: NullableStringFieldUpdateOperationsInput | string | null
+    websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
+    onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    experiences?: ExperienceUncheckedUpdateManyWithoutProfileNestedInput
+    educations?: EducationUncheckedUpdateManyWithoutProfileNestedInput
+    skills?: SkillUncheckedUpdateManyWithoutProfileNestedInput
+    projects?: ProjectUncheckedUpdateManyWithoutProfileNestedInput
+    achievements?: AchievementUncheckedUpdateManyWithoutProfileNestedInput
+    highlights?: HighlightUncheckedUpdateManyWithoutProfileNestedInput
+    links?: ProfileLinkUncheckedUpdateManyWithoutProfileNestedInput
+    proofs?: ProofUncheckedUpdateManyWithoutProfileNestedInput
+    presentations?: ProfilePresentationUncheckedUpdateManyWithoutProfileNestedInput
+    versions?: VersionUncheckedUpdateManyWithoutProfileNestedInput
+    assets?: AssetUncheckedUpdateManyWithoutProfileNestedInput
+  }
+
+  export type ProfileUncheckedUpdateManyWithoutDefaultPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    displayName?: NullableStringFieldUpdateOperationsInput | string | null
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    pronouns?: NullableStringFieldUpdateOperationsInput | string | null
+    websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
+    onboardingDone?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VersionUpdateWithoutPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    emoji?: NullableStringFieldUpdateOperationsInput | string | null
+    customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneRequiredWithoutVersionsNestedInput
+    pages?: PageUpdateManyWithoutVersionNestedInput
+    resumeConfig?: ResumeConfigUpdateOneWithoutVersionNestedInput
+    experiences?: VersionExperienceUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUpdateManyWithoutVersionNestedInput
+    projects?: VersionProjectUpdateManyWithoutVersionNestedInput
+    skills?: VersionSkillUpdateManyWithoutVersionNestedInput
+    achievements?: VersionAchievementUpdateManyWithoutVersionNestedInput
+    proofs?: VersionProofUpdateManyWithoutVersionNestedInput
+    highlights?: VersionHighlightUpdateManyWithoutVersionNestedInput
+    links?: VersionLinkUpdateManyWithoutVersionNestedInput
+  }
+
+  export type VersionUncheckedUpdateWithoutPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    emoji?: NullableStringFieldUpdateOperationsInput | string | null
+    customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    pages?: PageUncheckedUpdateManyWithoutVersionNestedInput
+    resumeConfig?: ResumeConfigUncheckedUpdateOneWithoutVersionNestedInput
+    experiences?: VersionExperienceUncheckedUpdateManyWithoutVersionNestedInput
+    educations?: VersionEducationUncheckedUpdateManyWithoutVersionNestedInput
+    projects?: VersionProjectUncheckedUpdateManyWithoutVersionNestedInput
+    skills?: VersionSkillUncheckedUpdateManyWithoutVersionNestedInput
+    achievements?: VersionAchievementUncheckedUpdateManyWithoutVersionNestedInput
+    proofs?: VersionProofUncheckedUpdateManyWithoutVersionNestedInput
+    highlights?: VersionHighlightUncheckedUpdateManyWithoutVersionNestedInput
+    links?: VersionLinkUncheckedUpdateManyWithoutVersionNestedInput
+  }
+
+  export type VersionUncheckedUpdateManyWithoutPresentationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    profileId?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    context?: NullableStringFieldUpdateOperationsInput | string | null
+    emoji?: NullableStringFieldUpdateOperationsInput | string | null
+    customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
+    customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -55430,6 +58105,10 @@ export namespace Prisma {
      */
     export type ProfileCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ProfileCountOutputTypeDefaultArgs<ExtArgs>
     /**
+     * @deprecated Use ProfilePresentationCountOutputTypeDefaultArgs instead
+     */
+    export type ProfilePresentationCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ProfilePresentationCountOutputTypeDefaultArgs<ExtArgs>
+    /**
      * @deprecated Use ExperienceCountOutputTypeDefaultArgs instead
      */
     export type ExperienceCountOutputTypeArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ExperienceCountOutputTypeDefaultArgs<ExtArgs>
@@ -55513,6 +58192,10 @@ export namespace Prisma {
      * @deprecated Use ProfileDefaultArgs instead
      */
     export type ProfileArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ProfileDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use ProfilePresentationDefaultArgs instead
+     */
+    export type ProfilePresentationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = ProfilePresentationDefaultArgs<ExtArgs>
     /**
      * @deprecated Use ExperienceDefaultArgs instead
      */

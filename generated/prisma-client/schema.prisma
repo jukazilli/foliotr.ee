@@ -137,19 +137,42 @@ model Profile {
   showOpportunityMotivation Boolean   @default(false)
   onboardingDone            Boolean   @default(false)
 
-  experiences  Experience[]
-  educations   Education[]
-  skills       Skill[]
-  projects     Project[]
-  achievements Achievement[]
-  highlights   Highlight[]
-  links        ProfileLink[]
-  proofs       Proof[]
-  versions     Version[]
-  assets       Asset[]
+  experiences           Experience[]
+  educations            Education[]
+  skills                Skill[]
+  projects              Project[]
+  achievements          Achievement[]
+  highlights            Highlight[]
+  links                 ProfileLink[]
+  proofs                Proof[]
+  presentations         ProfilePresentation[] @relation("ProfilePresentations")
+  defaultPresentationId String?
+  defaultPresentation   ProfilePresentation?  @relation("DefaultProfilePresentation", fields: [defaultPresentationId], references: [id], onDelete: SetNull)
+  versions              Version[]
+  assets                Asset[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProfilePresentation {
+  id        String  @id @default(cuid())
+  profileId String
+  profile   Profile @relation("ProfilePresentations", fields: [profileId], references: [id], onDelete: Cascade)
+
+  title      String
+  body       String  @db.Text
+  context    String?
+  isArchived Boolean @default(false)
+  order      Int     @default(0)
+
+  defaultForProfiles Profile[] @relation("DefaultProfilePresentation")
+  versions           Version[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([profileId, order])
 }
 
 model Experience {
@@ -326,7 +349,9 @@ model Version {
   emoji       String?
 
   customHeadline String?
-  customBio      String? @db.Text
+  customBio      String?              @db.Text
+  presentationId String?
+  presentation   ProfilePresentation? @relation(fields: [presentationId], references: [id], onDelete: SetNull)
 
   isDefault Boolean @default(false)
 

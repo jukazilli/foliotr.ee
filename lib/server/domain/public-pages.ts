@@ -38,6 +38,7 @@ const publicPageInclude = Prisma.validator<Prisma.PageInclude>()({
       },
       isDefault: true,
       name: true,
+      presentation: true,
     },
   },
 });
@@ -100,6 +101,7 @@ export async function getPublicProfileHub(username: string) {
       avatarUrl: true,
       headline: true,
       bio: true,
+      defaultPresentationId: true,
       location: true,
       birthDate: true,
       openToOpportunities: true,
@@ -111,6 +113,16 @@ export async function getPublicProfileHub(username: string) {
           role: true,
           company: true,
           current: true,
+        },
+      },
+      presentations: {
+        where: { isArchived: false },
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          body: true,
+          context: true,
         },
       },
       user: {

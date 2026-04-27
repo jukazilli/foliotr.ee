@@ -1,6 +1,7 @@
 import { Prisma } from "@/generated/prisma-client";
 
 export const versionAggregateInclude = Prisma.validator<Prisma.VersionInclude>()({
+  presentation: true,
   pages: {
     orderBy: [{ updatedAt: "desc" }, { createdAt: "desc" }],
     include: {
@@ -122,6 +123,9 @@ export const profileAggregateInclude = Prisma.validator<Prisma.ProfileInclude>()
     include: {
       asset: true,
     },
+  },
+  presentations: {
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
   },
   versions: {
     orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],

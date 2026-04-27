@@ -171,6 +171,7 @@ export async function versionPortfolioAction(pageId: string) {
     emoji: sourcePage.version.emoji ?? undefined,
     customHeadline: sourcePage.version.customHeadline ?? undefined,
     customBio: sourcePage.version.customBio ?? undefined,
+    presentationId: sourcePage.version.presentationId ?? undefined,
     isDefault: false,
     selections: {
       experienceIds: profile.experiences.map((item) => item.id),

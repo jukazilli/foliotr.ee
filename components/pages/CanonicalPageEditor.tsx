@@ -64,8 +64,16 @@ interface ManifestBlockLike {
 }
 
 interface VersionSelectionLike {
+  name?: string | null;
   customHeadline?: string | null;
   customBio?: string | null;
+  presentationId?: string | null;
+  presentation?: {
+    id: string;
+    title: string;
+    body: string;
+    context?: string | null;
+  } | null;
   selectedExperienceIds: string[];
   selectedEducationIds?: string[];
   selectedProjectIds: string[];
@@ -78,6 +86,7 @@ interface VersionSelectionLike {
 
 interface CanonicalPageEditorProps {
   pageId: string;
+  versionId: string;
   templateSlug: string;
   templateName: string;
   pageTitle: string;
@@ -453,6 +462,7 @@ function getEditableFields(blockDef: TemplateBlockDefLike | null): EditableField
 
 export default function CanonicalPageEditor({
   pageId,
+  versionId,
   templateSlug,
   templateName,
   pageTitle,
@@ -468,6 +478,8 @@ export default function CanonicalPageEditor({
   const initialSelectedBlock = initialBlocks[0] ?? null;
   const [blocks, setBlocks] = useState(() => sortBlocks(initialBlocks));
   const [previewProfile, setPreviewProfile] = useState<TemplateProfile>(initialProfile);
+  const [previewVersion, setPreviewVersion] =
+    useState<VersionSelectionLike>(initialVersion);
   const [selectedBlockId, setSelectedBlockId] = useState<string | null>(
     initialSelectedBlock?.id ?? null
   );
@@ -1380,12 +1392,68 @@ export default function CanonicalPageEditor({
     });
   }, [blocks, manifestByKey, templateBlockDefs]);
 
+  const activePresentations = useMemo(
+    () =>
+      (previewProfile.presentations ?? []).filter(
+        (item) => !(item as { isArchived?: boolean }).isArchived
+      ),
+    [previewProfile.presentations]
+  );
+
   async function parseJsonResponse(response: Response) {
     try {
       return await response.json();
     } catch {
       return null;
     }
+  }
+
+  async function updateVersionPresentation(presentationId: string) {
+    const selectedPresentation =
+      activePresentations.find((item) => item.id === presentationId) ?? null;
+
+    setBusyKey("presentation");
+    setErrorMessage("");
+    setSuccessMessage("");
+
+    const response = await fetch(`/api/versions/${versionId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: previewVersion.name ?? pageTitle,
+        customHeadline: previewVersion.customHeadline ?? "",
+        customBio: previewVersion.customBio ?? "",
+        presentationId: presentationId || null,
+      }),
+    });
+
+    if (!response.ok) {
+      const payload = await parseJsonResponse(response);
+      setBusyKey(null);
+      setErrorMessage(
+        formatApiError(
+          payload,
+          response.status,
+          "Nao foi possivel trocar a apresentacao"
+        )
+      );
+      return;
+    }
+
+    setPreviewVersion((current) => ({
+      ...current,
+      presentationId: presentationId || null,
+      presentation: selectedPresentation
+        ? {
+            id: selectedPresentation.id,
+            title: selectedPresentation.title,
+            body: selectedPresentation.body,
+            context: selectedPresentation.context,
+          }
+        : null,
+    }));
+    setBusyKey(null);
+    setSuccessMessage("Apresentação da versão atualizada.");
   }
 
   function replaceBlock(nextBlock: RenderablePageBlock) {
@@ -3229,6 +3297,24 @@ export default function CanonicalPageEditor({
                   ) : null}
                 </div>
               ) : null}
+              {activePresentations.length > 0 ? (
+                <select
+                  className="h-9 max-w-60 rounded-full border border-neutral-200 bg-white px-3 text-sm font-semibold text-neutral-800 outline-none transition focus:ring-4 focus:ring-lime-200"
+                  value={previewVersion.presentationId ?? ""}
+                  disabled={busyKey === "presentation"}
+                  onChange={(event) =>
+                    void updateVersionPresentation(event.target.value)
+                  }
+                  aria-label="Apresentação desta versão"
+                >
+                  <option value="">Apresentação padrão</option>
+                  {activePresentations.map((presentation) => (
+                    <option key={presentation.id} value={presentation.id}>
+                      {presentation.title}
+                    </option>
+                  ))}
+                </select>
+              ) : null}
               <Button
                 type="button"
                 variant="outline"
@@ -3287,7 +3373,7 @@ export default function CanonicalPageEditor({
                         templateSlug={templateSlug}
                         blocks={previewBlocks}
                         profile={previewProfile}
-                        version={initialVersion}
+                        version={previewVersion}
                         templateSourcePackage={initialTemplateSourcePackage}
                         renderHiddenBlocks
                       />
@@ -4019,7 +4105,7 @@ export default function CanonicalPageEditor({
                     templateSlug={templateSlug}
                     blocks={previewBlocks}
                     profile={previewProfile}
-                    version={initialVersion}
+                    version={previewVersion}
                     config={initialResumeConfig}
                   />
                 </div>

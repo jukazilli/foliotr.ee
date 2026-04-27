@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getOwnedProfileBase, updateOwnedProfileFields } from "@/lib/server/domain/profile-base";
+import {
+  getOwnedProfileBase,
+  updateOwnedProfileFields,
+} from "@/lib/server/domain/profile-base";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import { profileBaseSchema, profileSchema } from "@/lib/validations";
 
@@ -14,11 +17,14 @@ const collectionPayloadKeys = [
   "projects",
   "achievements",
   "proofs",
+  "presentations",
   "links",
 ] as const;
 
 function hasCollectionPayload(input: Record<string, unknown>) {
-  return collectionPayloadKeys.some((key) => Object.prototype.hasOwnProperty.call(input, key));
+  return collectionPayloadKeys.some((key) =>
+    Object.prototype.hasOwnProperty.call(input, key)
+  );
 }
 
 export async function GET() {
@@ -67,7 +73,8 @@ export async function PUT(request: NextRequest) {
 
     if (hasCollectionPayload(input)) {
       return jsonError("BAD_REQUEST", 400, {
-        message: "Colecoes grandes devem ser atualizadas por /api/profile/collections/[collection]",
+        message:
+          "Colecoes grandes devem ser atualizadas por /api/profile/collections/[collection]",
       });
     }
 

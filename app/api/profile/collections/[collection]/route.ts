@@ -13,6 +13,7 @@ import {
   experienceSchema,
   highlightSchema,
   profileLinkSchema,
+  profilePresentationSchema,
   projectSchema,
   proofSchema,
   skillSchema,
@@ -26,6 +27,7 @@ const collectionSchemaMap = {
   projects: z.object({ items: z.array(projectSchema) }),
   achievements: z.object({ items: z.array(achievementSchema) }),
   proofs: z.object({ items: z.array(proofSchema) }),
+  presentations: z.object({ items: z.array(profilePresentationSchema) }),
   links: z.object({ items: z.array(profileLinkSchema) }),
 } satisfies Record<ProfileCollectionKey, z.ZodType<{ items: unknown[] }>>;
 

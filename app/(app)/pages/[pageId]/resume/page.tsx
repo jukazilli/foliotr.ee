@@ -23,7 +23,9 @@ export default async function AuthenticatedResumePage({
 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
-    const publicTemplateHref = viewer.user.username ? `/${viewer.user.username}/${page.slug}` : null;
+    const publicTemplateHref = viewer.user.username
+      ? `/${viewer.user.username}/${page.slug}`
+      : null;
     const publicResumeHref = viewer.user.username
       ? `/${viewer.user.username}/${page.slug}/resume`
       : null;
@@ -39,10 +41,14 @@ export default async function AuthenticatedResumePage({
               <Badge variant="info">{page.template.name}</Badge>
               <Badge
                 variant={
-                  page.version.resumeConfig?.publishState === "PUBLISHED" ? "success" : "default"
+                  page.version.resumeConfig?.publishState === "PUBLISHED"
+                    ? "success"
+                    : "default"
                 }
               >
-                {page.version.resumeConfig?.publishState === "PUBLISHED" ? "publicado" : "rascunho"}
+                {page.version.resumeConfig?.publishState === "PUBLISHED"
+                  ? "publicado"
+                  : "rascunho"}
               </Badge>
             </>
           }
@@ -56,7 +62,11 @@ export default async function AuthenticatedResumePage({
               </Button>
               {publicResumeHref ? (
                 <Button asChild variant="ghost">
-                  <Link href={publicResumeHref} target="_blank" rel="noopener noreferrer">
+                  <Link
+                    href={publicResumeHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Abrir
                     <ExternalLink className="h-4 w-4" aria-hidden="true" />
                   </Link>
@@ -80,7 +90,11 @@ export default async function AuthenticatedResumePage({
               </Button>
               {publicTemplateHref ? (
                 <Button asChild variant="ghost" size="sm">
-                  <Link href={publicTemplateHref} target="_blank" rel="noopener noreferrer">
+                  <Link
+                    href={publicTemplateHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Globe className="h-4 w-4" aria-hidden="true" />
                     Abrir pagina
                   </Link>
@@ -98,6 +112,8 @@ export default async function AuthenticatedResumePage({
             version={{
               customHeadline: page.version.customHeadline,
               customBio: page.version.customBio,
+              presentationId: page.version.presentationId,
+              presentation: page.version.presentation,
               ...toLegacyVersionSelection(page.version),
             }}
             config={page.version.resumeConfig}

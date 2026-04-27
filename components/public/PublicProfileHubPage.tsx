@@ -54,6 +54,10 @@ export default function PublicProfileHubPage({
   reviewSummary,
 }: PublicProfileHubPageProps) {
   const displayName = hub.displayName || username;
+  const defaultPresentation =
+    hub.presentations.find((item) => item.id === hub.defaultPresentationId) ??
+    hub.presentations[0] ??
+    null;
   const age = calculateAge(hub.birthDate);
   const isWorking = hub.experiences.some((experience) => experience.current);
   const currentExperience = hub.experiences.find((experience) => experience.current);
@@ -105,9 +109,9 @@ export default function PublicProfileHubPage({
                 {hub.headline}
               </p>
             ) : null}
-            {hub.bio ? (
+            {defaultPresentation?.body || hub.bio ? (
               <p className="mt-4 max-w-xl whitespace-pre-line text-sm font-medium leading-7 text-neutral-600">
-                {hub.bio}
+                {defaultPresentation?.body ?? hub.bio}
               </p>
             ) : null}
 

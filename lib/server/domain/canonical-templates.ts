@@ -37,6 +37,8 @@ type EligibilityProfile = {
   headline?: string | null;
   bio?: string | null;
   avatarUrl?: string | null;
+  defaultPresentationId?: string | null;
+  presentations?: Array<{ id: string; body: string | null }>;
   user?: {
     name?: string | null;
   } | null;
@@ -138,7 +140,19 @@ export function evaluateTemplateEligibility(
 
   const displayName = profile.displayName ?? profile.user?.name ?? null;
   const headline = version?.customHeadline ?? profile.headline ?? null;
-  const bio = version?.customBio ?? profile.bio ?? null;
+  const selectedPresentation =
+    "presentation" in (version ?? {})
+      ? (version as { presentation?: { body?: string | null } | null }).presentation
+      : null;
+  const defaultPresentation = profile.presentations?.find(
+    (item) => item.id === profile.defaultPresentationId
+  );
+  const bio =
+    selectedPresentation?.body ??
+    version?.customBio ??
+    defaultPresentation?.body ??
+    profile.bio ??
+    null;
 
   if (
     eligibility.requiredProfileFields.includes("displayName") &&

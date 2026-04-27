@@ -20,12 +20,17 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
 
   try {
     const page = await getOwnedPageEditorData(prisma, viewer.user.id, pageId);
-    const publishPageAction = setPagePublishStateAction.bind(null, page.id, "PUBLISHED");
+    const publishPageAction = setPagePublishStateAction.bind(
+      null,
+      page.id,
+      "PUBLISHED"
+    );
 
     return (
       <div>
         <CanonicalPageEditor
           pageId={page.id}
+          versionId={page.version.id}
           templateSlug={page.template.slug}
           templateName={page.template.name}
           pageTitle={page.title ?? page.version.name}
@@ -38,7 +43,9 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
               blockType: blockDef.blockType,
               required: blockDef.required,
               defaultConfig: blockDef.defaultConfig,
-              editableFields: Array.isArray(blockDef.editableFields) ? blockDef.editableFields : [],
+              editableFields: Array.isArray(blockDef.editableFields)
+                ? blockDef.editableFields
+                : [],
             }))
           )}
           manifestBlocks={toSerializable(
@@ -50,8 +57,11 @@ export default async function PageEditorRoute({ params }: PageEditorRouteProps) 
           )}
           initialProfile={toSerializable(viewer.profile)}
           initialVersion={toSerializable({
+            name: page.version.name,
             customHeadline: page.version.customHeadline,
             customBio: page.version.customBio,
+            presentationId: page.version.presentationId,
+            presentation: page.version.presentation,
             ...toLegacyVersionSelection(page.version),
           })}
           initialResumeConfig={toSerializable(page.version.resumeConfig)}

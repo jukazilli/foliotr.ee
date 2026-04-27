@@ -154,6 +154,7 @@ export const profileSchema = z.object({
   publicEmail: z.string().email("E-mail publico invalido").optional().or(z.literal("")),
   phone: z.string().max(40, "Telefone muito longo").optional(),
   birthDate: z.coerce.date().optional().nullable(),
+  defaultPresentationId: cuidSchema.optional().nullable(),
   openToOpportunities: z.boolean().optional(),
   opportunityMotivation: z
     .string()
@@ -281,6 +282,22 @@ export const proofSchema = z.object({
   source: z.string().trim().max(40).default("manual"),
 });
 
+export const profilePresentationSchema = z.object({
+  id: cuidSchema.optional(),
+  title: z
+    .string()
+    .trim()
+    .min(1, "Nome da apresentação é obrigatório")
+    .max(120, "Nome da apresentação muito longo"),
+  body: z
+    .string()
+    .trim()
+    .min(20, "Apresentação deve ter pelo menos 20 caracteres")
+    .max(1200, "Apresentação muito longa"),
+  context: z.string().trim().max(160, "Contexto muito longo").optional(),
+  isArchived: z.boolean().default(false),
+});
+
 export const publicReviewSchema = z.object({
   username: usernameSchema,
   reviewerName: z.string().trim().min(2, "Informe seu nome").max(120),
@@ -315,6 +332,7 @@ export const versionSchema = z.object({
   emoji: z.string().max(2, "Emoji deve ter no maximo 2 caracteres").optional(),
   customHeadline: z.string().max(120, "Headline muito longa").optional(),
   customBio: z.string().max(500, "Bio muito longa").optional(),
+  presentationId: cuidSchema.optional().nullable(),
   isDefault: z.boolean().optional(),
   selections: versionSelectionSchema.optional(),
 });
@@ -328,6 +346,7 @@ export const profileBaseSchema = profileSchema.extend({
   projects: z.array(projectSchema).optional(),
   achievements: z.array(achievementSchema).optional(),
   proofs: z.array(proofSchema).optional(),
+  presentations: z.array(profilePresentationSchema).optional(),
   links: z.array(profileLinkSchema).optional(),
 });
 

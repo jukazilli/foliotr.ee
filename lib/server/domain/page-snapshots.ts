@@ -61,6 +61,7 @@ export function buildEditorSnapshot(
       publicEmail: profile.publicEmail,
       phone: profile.phone,
       birthDate: profile.birthDate,
+      defaultPresentationId: profile.defaultPresentationId,
       openToOpportunities: profile.openToOpportunities,
       opportunityMotivation: profile.opportunityMotivation,
       showOpportunityMotivation: profile.showOpportunityMotivation,
@@ -80,10 +81,13 @@ export function buildEditorSnapshot(
       achievements: profile.achievements,
       links: profile.links,
       proofs: profile.proofs,
+      presentations: profile.presentations,
     }) as TemplateProfile,
     version: {
       customHeadline: version.customHeadline,
       customBio: version.customBio,
+      presentationId: version.presentationId,
+      presentation: version.presentation,
       ...getVersionSelectionIds(version),
     },
   };

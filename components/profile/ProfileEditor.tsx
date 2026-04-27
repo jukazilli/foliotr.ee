@@ -45,6 +45,7 @@ type EditableProfile = {
   publicEmail: string | null;
   phone: string | null;
   birthDate: string | null;
+  defaultPresentationId: string | null;
   openToOpportunities: boolean;
   opportunityMotivation: string | null;
   showOpportunityMotivation: boolean;
@@ -59,6 +60,7 @@ type EditableProfile = {
   achievements: EditableAchievement[];
   highlights: EditableHighlight[];
   proofs: EditableProof[];
+  presentations: EditablePresentation[];
   links: EditableLink[];
   skills: EditableSkill[];
   versions: Array<{
@@ -68,6 +70,15 @@ type EditableProfile = {
     pages: unknown[];
     resumeConfig: unknown | null;
   }>;
+};
+
+type EditablePresentation = {
+  _key: string;
+  id?: string;
+  title: string;
+  body: string;
+  context: string;
+  isArchived: boolean;
 };
 
 type EditableExperience = {
@@ -247,6 +258,7 @@ const ERROR_LABELS: Record<string, string> = {
   publicEmail: "Email publico",
   phone: "Telefone",
   birthDate: "Data de nascimento",
+  defaultPresentationId: "Apresentação padrão",
   openToOpportunities: "Aberto a oportunidades",
   opportunityMotivation: "Motivacao de mudanca",
   showOpportunityMotivation: "Mostrar motivacao",
@@ -257,6 +269,7 @@ const ERROR_LABELS: Record<string, string> = {
   projects: "Projetos",
   achievements: "Reconhecimentos",
   proofs: "Reviews",
+  presentations: "Apresentações",
   links: "Links",
   company: "Empresa",
   role: "Cargo",
@@ -290,6 +303,7 @@ const SINGULAR_COLLECTION_LABELS: Record<string, string> = {
   projects: "Projeto",
   achievements: "Reconhecimento",
   proofs: "Review",
+  presentations: "Apresentação",
   links: "Link",
 };
 
@@ -302,6 +316,7 @@ function isCollectionField(field: keyof EditableProfile): field is CollectionFie
     field === "projects" ||
     field === "achievements" ||
     field === "proofs" ||
+    field === "presentations" ||
     field === "links"
   );
 }
@@ -393,6 +408,7 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
     publicEmail: text(profile.publicEmail),
     phone: text(profile.phone),
     birthDate: toDateInput(profile.birthDate),
+    defaultPresentationId: text(profile.defaultPresentationId),
     openToOpportunities: Boolean(profile.openToOpportunities),
     opportunityMotivation: text(profile.opportunityMotivation),
     showOpportunityMotivation: Boolean(profile.showOpportunityMotivation),
@@ -486,6 +502,14 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
       source: text(item.source) || "manual",
       assetId: item.assetId ?? null,
     })),
+    presentations: profile.presentations.map((item) => ({
+      _key: item.id ?? key(),
+      id: item.id,
+      title: text(item.title),
+      body: text(item.body),
+      context: text(item.context),
+      isArchived: Boolean(item.isArchived),
+    })),
     links: profile.links.map((item) => ({
       _key: item.id ?? key(),
       id: item.id,
@@ -511,6 +535,7 @@ type CollectionField =
   | "projects"
   | "achievements"
   | "proofs"
+  | "presentations"
   | "links";
 
 function buildBasePayload(profile: EditableProfile) {
@@ -525,6 +550,7 @@ function buildBasePayload(profile: EditableProfile) {
     publicEmail: profile.publicEmail?.trim() ?? "",
     phone: profile.phone ?? "",
     birthDate: profile.birthDate || null,
+    defaultPresentationId: profile.defaultPresentationId || null,
     openToOpportunities: profile.openToOpportunities,
     opportunityMotivation: profile.opportunityMotivation ?? "",
     showOpportunityMotivation: profile.showOpportunityMotivation,
@@ -641,6 +667,18 @@ function buildCollectionPayload(profile: EditableProfile, collection: Collection
         rating: item.rating,
         isVisible: item.isVisible,
         source: item.source || "manual",
+      }));
+  }
+
+  if (collection === "presentations") {
+    return profile.presentations
+      .filter((item) => item.title.trim() && item.body.trim())
+      .map((item) => ({
+        id: persistedId(item.id),
+        title: item.title,
+        body: item.body,
+        context: item.context,
+        isArchived: item.isArchived,
       }));
   }
 
@@ -1017,6 +1055,7 @@ export function ProfileEditor({
                 profile.highlights.length}{" "}
               reviews e marcos
             </Badge>
+            <Badge variant="info">{profile.presentations.length} apresentações</Badge>
             <Badge variant="warning">{profile.versions.length} versoes</Badge>
           </div>
         </div>
@@ -1399,6 +1438,115 @@ export function ProfileEditor({
                           label="Remover formacao"
                           onClick={() =>
                             removeItem<EditableEducation>("educations", item._key)
+                          }
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </IconButton>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </ListPanel>
+              ),
+            },
+            {
+              value: "apresentacoes",
+              label: "Apresentações",
+              count: profile.presentations.length,
+              children: (
+                <ListPanel
+                  icon={<UserRound className="h-4 w-4" />}
+                  count={profile.presentations.length}
+                  label="apresentações"
+                  addLabel="Apresentação"
+                  onAdd={() =>
+                    addItem<EditablePresentation>("presentations", {
+                      _key: key(),
+                      title: "",
+                      body: "",
+                      context: "",
+                      isArchived: false,
+                    })
+                  }
+                >
+                  <div className="mb-4 rounded-[16px] border border-line bg-cream px-4 py-3 text-sm font-semibold text-muted">
+                    Crie apresentações reutilizáveis para trocar o texto de sobre em
+                    portfólios e currículos sem reescrever tudo.
+                  </div>
+                  {profile.presentations.map((item) => (
+                    <Card key={item._key} className="rounded-[20px]">
+                      <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
+                        <div className="grid gap-3">
+                          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line bg-cream px-4 py-3">
+                            <label className="inline-flex items-center gap-2 text-sm font-bold text-ink">
+                              <input
+                                type="radio"
+                                name="defaultPresentationId"
+                                checked={
+                                  Boolean(item.id) &&
+                                  profile.defaultPresentationId === item.id
+                                }
+                                disabled={!item.id}
+                                onChange={() => {
+                                  if (item.id) {
+                                    setBase("defaultPresentationId", item.id);
+                                  }
+                                }}
+                              />
+                              Apresentação padrão do perfil público
+                            </label>
+                            {!item.id ? (
+                              <span className="text-xs font-bold text-muted">
+                                Salve antes de marcar como padrão.
+                              </span>
+                            ) : null}
+                          </div>
+                          <input
+                            className={inputClass()}
+                            placeholder="Nome interno da apresentação"
+                            value={item.title}
+                            onChange={(event) =>
+                              updateList<EditablePresentation>(
+                                "presentations",
+                                item._key,
+                                {
+                                  title: event.target.value,
+                                }
+                              )
+                            }
+                          />
+                          <input
+                            className={inputClass()}
+                            placeholder="Contexto opcional: vaga, cliente, área..."
+                            value={item.context}
+                            onChange={(event) =>
+                              updateList<EditablePresentation>(
+                                "presentations",
+                                item._key,
+                                {
+                                  context: event.target.value,
+                                }
+                              )
+                            }
+                          />
+                          <textarea
+                            className={textareaClass()}
+                            placeholder="Escreva a apresentação que será usada no bloco sobre/resumo."
+                            value={item.body}
+                            onChange={(event) =>
+                              updateList<EditablePresentation>(
+                                "presentations",
+                                item._key,
+                                {
+                                  body: event.target.value,
+                                }
+                              )
+                            }
+                          />
+                        </div>
+                        <IconButton
+                          label="Remover apresentação"
+                          onClick={() =>
+                            removeItem<EditablePresentation>("presentations", item._key)
                           }
                         >
                           <Trash2 className="h-4 w-4" />

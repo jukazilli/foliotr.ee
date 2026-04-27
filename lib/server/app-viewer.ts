@@ -172,6 +172,10 @@ export const getProfileEditorViewer = cache(async () => {
       publicEmail: true,
       phone: true,
       birthDate: true,
+      defaultPresentationId: true,
+      openToOpportunities: true,
+      opportunityMotivation: true,
+      showOpportunityMotivation: true,
       onboardingDone: true,
       user: {
         select: {
@@ -276,6 +280,16 @@ export const getProfileEditorViewer = cache(async () => {
           rating: true,
           isVisible: true,
           source: true,
+        },
+      },
+      presentations: {
+        orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+        select: {
+          id: true,
+          title: true,
+          body: true,
+          context: true,
+          isArchived: true,
         },
       },
       links: {
