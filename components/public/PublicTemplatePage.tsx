@@ -1,5 +1,6 @@
 import Link from "next/link";
 import TemplateRenderer from "@/components/templates/TemplateRenderer";
+import PublicReviewsSection from "@/components/public/PublicReviewsSection";
 import PublicToolbar from "@/components/public/PublicToolbar";
 import type { PublicPageRecord } from "@/lib/server/domain/public-pages";
 import {
@@ -9,6 +10,7 @@ import {
   getPublicTemplateHref,
   toPublicVersionSelection,
 } from "@/lib/server/domain/public-pages";
+import { getPublicReviewSummary } from "@/lib/server/domain/reviews";
 import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 
 interface PublicTemplatePageProps {
@@ -17,7 +19,7 @@ interface PublicTemplatePageProps {
   pageSlug?: string | null;
 }
 
-export default function PublicTemplatePage({
+export default async function PublicTemplatePage({
   page,
   username,
   pageSlug,
@@ -33,6 +35,7 @@ export default function PublicTemplatePage({
     page.version.profile.user.vocationalTests,
     "portfolio"
   );
+  const reviewSummary = await getPublicReviewSummary(username);
 
   return (
     <div className="min-h-screen">
@@ -40,6 +43,12 @@ export default function PublicTemplatePage({
         templateHref={templateHref}
         resumeHref={resumeHref}
         activeMode="template"
+      />
+
+      <PublicReviewsSection
+        username={username}
+        returnPath={templateHref}
+        summary={reviewSummary}
       />
 
       <TemplateRenderer

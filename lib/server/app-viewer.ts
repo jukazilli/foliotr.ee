@@ -270,6 +270,12 @@ export const getProfileEditorViewer = cache(async () => {
           imageUrl: true,
           tags: true,
           assetId: true,
+          reviewerName: true,
+          reviewerRole: true,
+          reviewerEmail: true,
+          rating: true,
+          isVisible: true,
+          source: true,
         },
       },
       links: {

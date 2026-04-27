@@ -12,7 +12,7 @@ function getLinkKindLabel(kind: string) {
     case "contact":
       return "Contato";
     case "proof":
-      return "Prova";
+      return "Review";
     case "link":
       return "Link";
     default:

@@ -77,7 +77,8 @@ export default function LandingExperience() {
 
     function isBlockInView(block: HTMLElement) {
       const rect = block.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const viewportHeight =
+        window.innerHeight || document.documentElement.clientHeight;
 
       return rect.top <= viewportHeight * 0.78 && rect.bottom >= viewportHeight * 0.22;
     }
@@ -113,7 +114,9 @@ export default function LandingExperience() {
     event.preventDefault();
     const cleanUsername = normalizeUsername(username.replace(/^@/, ""));
     setUsername(cleanUsername);
-    router.push(`/signup${cleanUsername ? `?username=${encodeURIComponent(cleanUsername)}` : ""}`);
+    router.push(
+      `/signup${cleanUsername ? `?username=${encodeURIComponent(cleanUsername)}` : ""}`
+    );
   }
 
   const themeLabel = isNoirTheme ? "Acender a luz" : "Apagar a luz";
@@ -133,8 +136,12 @@ export default function LandingExperience() {
         </nav>
 
         <div className="top-actions">
-          <Link className="button button-light" href="/login">Entrar</Link>
-          <Link className="button button-dark" href="/signup">Criar grátis</Link>
+          <Link className="button button-light" href="/login">
+            Entrar
+          </Link>
+          <Link className="button button-dark" href="/signup">
+            Criar grátis
+          </Link>
           <button
             className="button theme-toggle"
             id="theme-toggle"
@@ -144,10 +151,20 @@ export default function LandingExperience() {
             title={themeLabel}
             onClick={() => setIsNoirTheme((currentTheme) => !currentTheme)}
           >
-            <svg className="theme-toggle-icon theme-toggle-icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <svg
+              className="theme-toggle-icon theme-toggle-icon-moon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
               <path d="M21 12.8A8.5 8.5 0 0 1 11.2 3a7 7 0 1 0 9.8 9.8Z" />
             </svg>
-            <svg className="theme-toggle-icon theme-toggle-icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <svg
+              className="theme-toggle-icon theme-toggle-icon-sun"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+              focusable="false"
+            >
               <circle cx="12" cy="12" r="4" />
               <path d="M12 2v2" />
               <path d="M12 20v2" />
@@ -176,7 +193,9 @@ export default function LandingExperience() {
             </p>
 
             <form className="username-form" id="username-form" onSubmit={handleSubmit}>
-              <label className="sr-only" htmlFor="username-input">Seu nome de usuário</label>
+              <label className="sr-only" htmlFor="username-input">
+                Seu nome de usuário
+              </label>
               <div className="username-input">
                 <span>linkfolio.co/@</span>
                 <input
@@ -188,7 +207,9 @@ export default function LandingExperience() {
                   spellCheck="false"
                   aria-label="Seu nome de usuário"
                   value={username}
-                  onChange={(event) => setUsername(normalizeUsername(event.target.value))}
+                  onChange={(event) =>
+                    setUsername(normalizeUsername(event.target.value))
+                  }
                 />
               </div>
               <button className="button button-submit" type="submit">
@@ -217,7 +238,11 @@ export default function LandingExperience() {
           <div className="feature-art">
             <div className="gif-card" aria-label="Preview com gif de gato">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="feature-gif" src="/redesign/img/cat.gif" alt="Gif de gato" />
+              <img
+                className="feature-gif"
+                src="/redesign/img/cat.gif"
+                alt="Gif de gato"
+              />
             </div>
           </div>
 
@@ -225,10 +250,12 @@ export default function LandingExperience() {
             <p className="eyebrow">Portfólio publicado</p>
             <h2>Crie um portfólio online em minutos.</h2>
             <p>
-              Divulgue nas suas redes sociais uma página clara com seu trabalho,
-              seus links e as provas que fazem alguém querer conversar com você.
+              Divulgue nas suas redes sociais uma página clara com seu trabalho, seus
+              links e as reviews que fazem alguém querer conversar com você.
             </p>
-            <Link className="button button-rest" href="/signup">Criar agora</Link>
+            <Link className="button button-rest" href="/signup">
+              Criar agora
+            </Link>
           </div>
         </section>
 
@@ -237,10 +264,12 @@ export default function LandingExperience() {
             <p className="eyebrow">Versões para vagas</p>
             <h2>Aumente suas chances de contrato e salários melhores.</h2>
             <p>
-              Monte versões específicas para cada vaga e mostre primeiro o que
-              aquela oportunidade precisa enxergar.
+              Monte versões específicas para cada vaga e mostre primeiro o que aquela
+              oportunidade precisa enxergar.
             </p>
-            <Link className="button button-soft" href="/signup">Gerar uma versão</Link>
+            <Link className="button button-soft" href="/signup">
+              Gerar uma versão
+            </Link>
           </div>
 
           <div className="version-stack" aria-label="Versões específicas">
@@ -275,7 +304,7 @@ export default function LandingExperience() {
             </div>
             <div className="resume-panel resume-small resume-blue">
               <strong>Projetos</strong>
-              <span>8 provas</span>
+              <span>8 reviews</span>
             </div>
             <div className="resume-panel resume-wide">
               <strong>Pronto para recrutador</strong>
@@ -290,7 +319,9 @@ export default function LandingExperience() {
               Em poucos minutos você preenche seus dados, seleciona um template e
               publica uma versão bonita para cliente ou recrutador.
             </p>
-            <Link className="button button-accent" href="/signup">Escolher template</Link>
+            <Link className="button button-accent" href="/signup">
+              Escolher template
+            </Link>
           </div>
         </section>
 
@@ -299,10 +330,12 @@ export default function LandingExperience() {
             <p className="eyebrow">Leitura rápida ou completa</p>
             <h2>Dê opções para quem está com pressa.</h2>
             <p>
-              Deixe as pessoas decidirem se querem ler seu portfólio completo ou
-              abrir um currículo mais resumido.
+              Deixe as pessoas decidirem se querem ler seu portfólio completo ou abrir
+              um currículo mais resumido.
             </p>
-            <Link className="button button-soft" href="/signup">Publicar os dois</Link>
+            <Link className="button button-soft" href="/signup">
+              Publicar os dois
+            </Link>
           </div>
 
           <div className="feature-art reading-art">
@@ -321,7 +354,10 @@ export default function LandingExperience() {
           <div className="community-intro">
             <div className="community-gif-card">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/redesign/img/giphy.gif" alt="Comunidade Linkfolio em movimento" />
+              <img
+                src="/redesign/img/giphy.gif"
+                alt="Comunidade Linkfolio em movimento"
+              />
             </div>
 
             <div className="community-heading">
@@ -365,9 +401,29 @@ export default function LandingExperience() {
         <div className="footer-panel">
           <div className="footer-brand">
             <svg className="footer-logo" viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M9.4 14.6 8 16a3.6 3.6 0 0 1-5.1-5.1l3-3A3.6 3.6 0 0 1 11 7.9" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
-              <path d="M14.6 9.4 16 8a3.6 3.6 0 0 1 5.1 5.1l-3 3a3.6 3.6 0 0 1-5.1 0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" />
-              <path d="m8.8 15.2 6.4-6.4" fill="none" stroke="currentColor" strokeLinecap="round" strokeWidth="3" />
+              <path
+                d="M9.4 14.6 8 16a3.6 3.6 0 0 1-5.1-5.1l3-3A3.6 3.6 0 0 1 11 7.9"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+              />
+              <path
+                d="M14.6 9.4 16 8a3.6 3.6 0 0 1 5.1 5.1l-3 3a3.6 3.6 0 0 1-5.1 0"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="3"
+              />
+              <path
+                d="m8.8 15.2 6.4-6.4"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeWidth="3"
+              />
             </svg>
             <strong className="footer-brand-name">LINKFOLIO</strong>
             <p>Uma página viva para mostrar trabalho, currículo e versões.</p>
@@ -377,34 +433,66 @@ export default function LandingExperience() {
             <section className="footer-link-group" aria-labelledby="footer-community">
               <h3 id="footer-community">Community</h3>
               <ul>
-                <li><Link href="/blog">Nosso blog</Link></li>
-                <li><Link href="/teste-vocacional">Teste vocacional</Link></li>
-                <li><a href="#resume">Explore templates</a></li>
-                <li><a href="#community">Nossos usuários</a></li>
-                <li><a href="#versions">Versões</a></li>
-                <li><a href="#portfolio">Portfólio</a></li>
-                <li><a href="#hero">Criar agora</a></li>
+                <li>
+                  <Link href="/blog">Nosso blog</Link>
+                </li>
+                <li>
+                  <Link href="/teste-vocacional">Teste vocacional</Link>
+                </li>
+                <li>
+                  <a href="#resume">Explore templates</a>
+                </li>
+                <li>
+                  <a href="#community">Nossos usuários</a>
+                </li>
+                <li>
+                  <a href="#versions">Versões</a>
+                </li>
+                <li>
+                  <a href="#portfolio">Portfólio</a>
+                </li>
+                <li>
+                  <a href="#hero">Criar agora</a>
+                </li>
               </ul>
             </section>
 
             <section className="footer-link-group" aria-labelledby="footer-support">
               <h3 id="footer-support">Suporte</h3>
               <ul>
-                <li><Link href="/login">Ajuda</Link></li>
-                <li><a href="#hero">Como começar</a></li>
-                <li><a href="#hero">Linkfolio Pro</a></li>
-                <li><Link href="/login">Perguntas frequentes</Link></li>
+                <li>
+                  <Link href="/login">Ajuda</Link>
+                </li>
+                <li>
+                  <a href="#hero">Como começar</a>
+                </li>
+                <li>
+                  <a href="#hero">Linkfolio Pro</a>
+                </li>
+                <li>
+                  <Link href="/login">Perguntas frequentes</Link>
+                </li>
               </ul>
             </section>
 
             <section className="footer-link-group" aria-labelledby="footer-company">
               <h3 id="footer-company">Company</h3>
               <ul>
-                <li><Link href="/login">Meet Tesseria Seed</Link></li>
-                <li><Link href="/login">About</Link></li>
-                <li><Link href="/login">Carreiras</Link></li>
-                <li><Link href="/login">Aprenda</Link></li>
-                <li><Link href="/login">Contact</Link></li>
+                <li>
+                  <Link href="/login">Meet Tesseria Seed</Link>
+                </li>
+                <li>
+                  <Link href="/login">About</Link>
+                </li>
+                <li>
+                  <Link href="/login">Carreiras</Link>
+                </li>
+                <li>
+                  <Link href="/login">Aprenda</Link>
+                </li>
+                <li>
+                  <Link href="/login">Contact</Link>
+                </li>
               </ul>
             </section>
           </nav>

@@ -42,10 +42,7 @@ function createPageSlug(args: {
   return `${prefix.replace(/-+$/g, "")}-${suffix}`.slice(0, 20);
 }
 
-export async function useCanonicalTemplateAction(
-  slug: string,
-  formData: FormData
-) {
+export async function useCanonicalTemplateAction(slug: string, formData: FormData) {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -83,17 +80,22 @@ export async function useCanonicalTemplateAction(
 
   const currentPage = getPrimaryVersionPage(version);
 
-  const versionWithPage = await upsertOwnedPageOutput(prisma, session.user.id, version.id, {
-    title: currentPage?.title ?? `${version.name} page`,
-    slug: createPageSlug({
-      username,
-      versionId: version.id,
-      isDefault: version.isDefault,
-      currentSlug: currentPage?.slug,
-    }),
-    templateId: template.id,
-    publishState: currentPage?.publishState ?? "DRAFT",
-  });
+  const versionWithPage = await upsertOwnedPageOutput(
+    prisma,
+    session.user.id,
+    version.id,
+    {
+      title: currentPage?.title ?? `${version.name} page`,
+      slug: createPageSlug({
+        username,
+        versionId: version.id,
+        isDefault: version.isDefault,
+        currentSlug: currentPage?.slug,
+      }),
+      templateId: template.id,
+      publishState: currentPage?.publishState ?? "DRAFT",
+    }
+  );
   const appliedPage = getPrimaryVersionPage(versionWithPage);
 
   await upsertOwnedResumeOutput(prisma, session.user.id, version.id, {
@@ -111,6 +113,7 @@ export async function useCanonicalTemplateAction(
 
   revalidatePath("/templates");
   revalidatePath(`/templates/${slug}`);
+  revalidatePath("/portfolios");
   revalidatePath("/pages");
   revalidatePath("/resumes");
 

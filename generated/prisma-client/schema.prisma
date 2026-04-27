@@ -121,18 +121,21 @@ model Profile {
   userId String @unique
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  displayName    String?
-  headline       String?
-  bio            String?   @db.Text
-  avatarUrl      String?
-  bannerUrl      String?
-  location       String?
-  pronouns       String?
-  websiteUrl     String?
-  publicEmail    String?
-  phone          String?
-  birthDate      DateTime?
-  onboardingDone Boolean   @default(false)
+  displayName               String?
+  headline                  String?
+  bio                       String?   @db.Text
+  avatarUrl                 String?
+  bannerUrl                 String?
+  location                  String?
+  pronouns                  String?
+  websiteUrl                String?
+  publicEmail               String?
+  phone                     String?
+  birthDate                 DateTime?
+  openToOpportunities       Boolean   @default(false)
+  opportunityMotivation     String?   @db.Text
+  showOpportunityMotivation Boolean   @default(false)
+  onboardingDone            Boolean   @default(false)
 
   experiences  Experience[]
   educations   Education[]
@@ -251,21 +254,27 @@ model ProfileLink {
 }
 
 model Proof {
-  id          String         @id @default(cuid())
-  profileId   String
-  profile     Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
-  title       String
-  description String?        @db.Text
-  metric      String?
-  url         String?
-  imageUrl    String?
-  assetId     String?
-  asset       Asset?         @relation("ProofAsset", fields: [assetId], references: [id], onDelete: SetNull)
-  tags        String[]
-  order       Int            @default(0)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  versions    VersionProof[]
+  id            String         @id @default(cuid())
+  profileId     String
+  profile       Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?        @db.Text
+  metric        String?
+  url           String?
+  imageUrl      String?
+  assetId       String?
+  asset         Asset?         @relation("ProofAsset", fields: [assetId], references: [id], onDelete: SetNull)
+  tags          String[]
+  reviewerName  String?
+  reviewerRole  String?
+  reviewerEmail String?
+  rating        Int            @default(5)
+  isVisible     Boolean        @default(false)
+  source        String         @default("manual")
+  order         Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  versions      VersionProof[]
 }
 
 model Highlight {

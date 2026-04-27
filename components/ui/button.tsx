@@ -5,24 +5,23 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-0 text-sm font-extrabold uppercase transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-2 border-transparent text-sm font-extrabold uppercase transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "bg-orange text-white hover:bg-orange/90",
-        primary: "bg-orange text-white hover:bg-orange/90",
-        outline:
-          "border-2 border-line bg-white text-ink shadow-hard-sm hover:bg-cream",
+        default: "border-line bg-pink text-ink hover:bg-pink/80",
+        primary: "border-line bg-pink text-ink hover:bg-pink/80",
+        outline: "border-line bg-white text-ink shadow-app hover:bg-cream",
         ghost: "bg-transparent text-ink hover:bg-cream",
-        destructive: "bg-rose text-white hover:bg-rose/90",
+        destructive: "border-line bg-pink text-ink hover:bg-pink/80",
         soft: "bg-pink text-ink hover:bg-pink/80",
         rest: "bg-cream text-ink hover:bg-cream/80",
-        accent: "bg-lime text-ink hover:bg-lime/80",
+        accent: "border-line bg-pink text-ink hover:bg-pink/80",
       },
       size: {
-        sm: "h-10 px-4 text-xs",
-        default: "h-12 px-6 text-sm",
-        lg: "h-14 px-8 text-base",
+        sm: "h-9 px-3 text-xs",
+        default: "h-11 px-5 text-sm",
+        lg: "h-12 px-6 text-sm",
       },
     },
     defaultVariants: {

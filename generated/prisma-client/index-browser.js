@@ -203,6 +203,9 @@ exports.Prisma.ProfileScalarFieldEnum = {
   publicEmail: 'publicEmail',
   phone: 'phone',
   birthDate: 'birthDate',
+  openToOpportunities: 'openToOpportunities',
+  opportunityMotivation: 'opportunityMotivation',
+  showOpportunityMotivation: 'showOpportunityMotivation',
   onboardingDone: 'onboardingDone',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -304,6 +307,12 @@ exports.Prisma.ProofScalarFieldEnum = {
   imageUrl: 'imageUrl',
   assetId: 'assetId',
   tags: 'tags',
+  reviewerName: 'reviewerName',
+  reviewerRole: 'reviewerRole',
+  reviewerEmail: 'reviewerEmail',
+  rating: 'rating',
+  isVisible: 'isVisible',
+  source: 'source',
   order: 'order',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

@@ -56,7 +56,7 @@ export const heroCarouselCards: HeroCarouselCardItem[] = [
     id: "foundation",
     eyebrow: "Base central",
     title: "Uma base central.",
-    subtitle: "Perfil, experiencias, projetos, links e provas ficam no mesmo lugar.",
+    subtitle: "Perfil, experiencias, projetos, links e reviews ficam no mesmo lugar.",
     video: "/landing-carousel/videos/video_13.mp4",
     stageBackground: "#98ff7f",
     stageGlow: "#2f66d0",
@@ -71,8 +71,8 @@ export const heroCarouselCards: HeroCarouselCardItem[] = [
   },
   {
     id: "proof",
-    eyebrow: "Prova com contexto",
-    title: "Prova com contexto.",
+    eyebrow: "Review com contexto",
+    title: "Review com contexto.",
     subtitle:
       "Resultados ganham metrica, papel, link e historia suficiente para serem entendidos.",
     video: "/landing-carousel/videos/video_14.mp4",

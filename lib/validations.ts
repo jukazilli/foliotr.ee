@@ -95,8 +95,18 @@ export const registerSchema = z
     country: z.string().trim().max(80, "Pais muito longo").optional().or(z.literal("")),
     city: z.string().trim().max(80, "Cidade muito longa").optional().or(z.literal("")),
     state: z.string().trim().max(80, "Estado muito longo").optional().or(z.literal("")),
-    profession: z.string().trim().max(120, "Profissao muito longa").optional().or(z.literal("")),
-    education: z.string().trim().max(80, "Escolaridade muito longa").optional().or(z.literal("")),
+    profession: z
+      .string()
+      .trim()
+      .max(120, "Profissao muito longa")
+      .optional()
+      .or(z.literal("")),
+    education: z
+      .string()
+      .trim()
+      .max(80, "Escolaridade muito longa")
+      .optional()
+      .or(z.literal("")),
     password: passwordSchema,
     confirmPassword: z.string().min(1, "Confirme sua senha"),
   })
@@ -144,6 +154,12 @@ export const profileSchema = z.object({
   publicEmail: z.string().email("E-mail publico invalido").optional().or(z.literal("")),
   phone: z.string().max(40, "Telefone muito longo").optional(),
   birthDate: z.coerce.date().optional().nullable(),
+  openToOpportunities: z.boolean().optional(),
+  opportunityMotivation: z
+    .string()
+    .max(500, "Resposta deve ter no máximo 500 caracteres")
+    .optional(),
+  showOpportunityMotivation: z.boolean().optional(),
 });
 
 export const assetInputSchema = z.object({
@@ -250,13 +266,28 @@ export const highlightSchema = z.object({
 
 export const proofSchema = z.object({
   id: cuidSchema.optional(),
-  title: z.string().trim().min(1, "Titulo da prova e obrigatorio"),
+  title: z.string().trim().min(1, "Nome da review e obrigatorio"),
   description: z.string().max(500, "Descricao muito longa").optional(),
   metric: z.string().max(140, "Metrica muito longa").optional(),
   url: nullableUrlSchema,
   imageUrl: nullableAssetUrlSchema,
   assetId: cuidSchema.optional().nullable(),
   tags: z.array(z.string().trim().min(1)).default([]),
+  reviewerName: z.string().trim().max(120, "Nome muito longo").optional(),
+  reviewerRole: z.string().trim().max(140, "Cargo muito longo").optional(),
+  reviewerEmail: z.string().trim().email("Email invalido").optional().or(z.literal("")),
+  rating: z.coerce.number().int().min(1).max(5).default(5),
+  isVisible: z.boolean().default(false),
+  source: z.string().trim().max(40).default("manual"),
+});
+
+export const publicReviewSchema = z.object({
+  username: usernameSchema,
+  reviewerName: z.string().trim().min(2, "Informe seu nome").max(120),
+  reviewerRole: z.string().trim().max(140).optional(),
+  reviewerEmail: z.string().trim().email("Email invalido").optional().or(z.literal("")),
+  rating: z.coerce.number().int().min(1).max(5),
+  description: z.string().trim().min(10, "Escreva pelo menos 10 caracteres").max(500),
 });
 
 export const profileLinkSchema = z.object({

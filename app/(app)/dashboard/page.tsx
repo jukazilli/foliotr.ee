@@ -4,14 +4,12 @@ import {
   BriefcaseBusiness,
   CheckCircle2,
   ExternalLink,
-  FileText,
   FolderOpenDot,
   GraduationCap,
   Layers3,
   Link2,
   Medal,
   Sparkles,
-  UserRound,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { getDashboardViewer } from "@/lib/server/app-viewer";
@@ -40,7 +38,8 @@ export default async function DashboardPage() {
   const publishedResumes = profile.versions.filter(
     (version) => version.resumeConfig?.publishState === "PUBLISHED"
   ).length;
-  const defaultVersion = profile.versions.find((version) => version.isDefault) ?? profile.versions[0];
+  const defaultVersion =
+    profile.versions.find((version) => version.isDefault) ?? profile.versions[0];
 
   const quickActions = [
     {
@@ -79,11 +78,11 @@ export default async function DashboardPage() {
       helper: "Redes, sites, publicações e canais externos.",
     },
     {
-      label: "Provas",
-      href: "/profile?tab=provas",
+      label: "Reviews",
+      href: "/profile?tab=reviews",
       count: profile._count.proofs,
       icon: ExternalLink,
-      helper: "Evidências que sustentam seu posicionamento.",
+      helper: "Avaliações recebidas e aprovadas para o perfil público.",
     },
   ];
 
@@ -112,7 +111,9 @@ export default async function DashboardPage() {
 
   const nextSteps = [
     {
-      title: profile.headline ? "Refinar apresentação" : "Adicionar título profissional",
+      title: profile.headline
+        ? "Refinar apresentação"
+        : "Adicionar título profissional",
       href: "/profile",
       done: Boolean(profile.headline),
       description: profile.headline
@@ -120,7 +121,8 @@ export default async function DashboardPage() {
         : "Uma frase clara ajuda recrutadores a entenderem sua área em segundos.",
     },
     {
-      title: profile._count.projects > 0 ? "Revisar projetos" : "Adicionar primeiro projeto",
+      title:
+        profile._count.projects > 0 ? "Revisar projetos" : "Adicionar primeiro projeto",
       href: "/profile?tab=projetos",
       done: profile._count.projects > 0,
       description:
@@ -129,13 +131,13 @@ export default async function DashboardPage() {
           : "Projetos tornam seu Linkfolio mais concreto que um perfil textual.",
     },
     {
-      title: publishedPages > 0 ? "Página pública ativa" : "Publicar uma página",
-      href: "/pages",
+      title: publishedPages > 0 ? "Portfolio ativo" : "Publicar portfolio",
+      href: "/portfolios",
       done: publishedPages > 0,
       description:
         publishedPages > 0
-          ? "Sua página já pode ser compartilhada com clientes e recrutadores."
-          : "Crie uma página pública para transformar sua base em apresentação.",
+          ? "Sua pagina ja pode ser compartilhada com clientes e recrutadores."
+          : "Transforme sua base em uma versao publica.",
     },
   ];
 
@@ -157,23 +159,26 @@ export default async function DashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 lg:col-span-4 lg:grid-cols-1">
             <Link
               href="/profile"
-              className="inline-flex min-h-14 items-center justify-between gap-3 bg-ink px-5 text-sm font-extrabold uppercase text-white transition hover:-translate-y-0.5"
+              className="inline-flex min-h-14 items-center justify-between gap-3 border-2 border-line bg-pink px-5 text-sm font-extrabold uppercase text-ink transition hover:-translate-y-0.5"
             >
               Completar perfil
               <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
             </Link>
             <Link
-              href="/pages"
+              href="/portfolios"
               className="inline-flex min-h-14 items-center justify-between gap-3 border-2 border-line bg-white px-5 text-sm font-extrabold uppercase text-ink transition hover:-translate-y-0.5"
             >
-              Publicar página
+              Portfolios
               <ArrowUpRight className="h-5 w-5" aria-hidden="true" />
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:col-span-12" aria-label="Resumo">
+      <section
+        className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 lg:col-span-12"
+        aria-label="Resumo"
+      >
         {stats.map((item) => (
           <Card key={item.label} className="rounded-[18px]">
             <CardContent className="p-5">
@@ -183,13 +188,18 @@ export default async function DashboardPage() {
               <strong className="mt-4 block text-5xl font-extrabold leading-none tracking-[-0.05em] text-ink">
                 {item.value}
               </strong>
-              <p className="mt-3 text-sm font-bold leading-5 text-muted">{item.detail}</p>
+              <p className="mt-3 text-sm font-bold leading-5 text-muted">
+                {item.detail}
+              </p>
             </CardContent>
           </Card>
         ))}
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 lg:col-span-8" aria-label="Ações rápidas">
+      <section
+        className="grid gap-4 md:grid-cols-2 xl:grid-cols-3 lg:col-span-8"
+        aria-label="Ações rápidas"
+      >
         <div className="md:col-span-2 xl:col-span-3">
           <p className="eyebrow">Base profissional</p>
           <h2 className="mt-2 max-w-3xl text-3xl font-extrabold leading-tight tracking-[-0.04em] text-ink md:text-4xl">
@@ -217,11 +227,15 @@ export default async function DashboardPage() {
                     <h3 className="text-2xl font-extrabold tracking-[-0.04em] text-ink">
                       {item.label}
                     </h3>
-                    <p className="mt-2 text-sm font-semibold leading-5 text-muted">{item.helper}</p>
+                    <p className="mt-2 text-sm font-semibold leading-5 text-muted">
+                      {item.helper}
+                    </p>
                   </div>
 
                   <div className="flex items-center justify-between gap-3 border-t-2 border-line/10 pt-4">
-                    <span className="text-sm font-extrabold uppercase text-ink">{actionLabel}</span>
+                    <span className="text-sm font-extrabold uppercase text-ink">
+                      {actionLabel}
+                    </span>
                     <span className="text-sm font-bold text-orange transition group-hover:translate-x-0.5">
                       Abrir
                     </span>
@@ -234,25 +248,33 @@ export default async function DashboardPage() {
       </section>
 
       <aside className="grid gap-4 lg:col-span-4">
-        <Card className="rounded-[18px] bg-ink text-white">
+        <Card className="rounded-[18px] bg-cream text-ink">
           <CardContent className="p-5">
-            <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.2em] text-white/60">
+            <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.2em] text-muted">
               Próximos passos
             </p>
             <div className="mt-5 grid gap-4">
               {nextSteps.map((step) => (
-                <Link key={step.title} href={step.href} className="group grid gap-2 border-b border-white/15 pb-4 last:border-0 last:pb-0">
+                <Link
+                  key={step.title}
+                  href={step.href}
+                  className="group grid gap-2 border-b-2 border-line/10 pb-4 last:border-0 last:pb-0"
+                >
                   <div className="flex items-center gap-3">
-                    <span className={step.done ? "text-lime" : "text-pink"}>
+                    <span className={step.done ? "text-ink" : "text-muted"}>
                       {step.done ? (
                         <CheckCircle2 className="h-5 w-5" aria-hidden="true" />
                       ) : (
                         <Sparkles className="h-5 w-5" aria-hidden="true" />
                       )}
                     </span>
-                    <strong className="text-base font-extrabold text-white">{step.title}</strong>
+                    <strong className="text-base font-extrabold text-ink">
+                      {step.title}
+                    </strong>
                   </div>
-                  <p className="text-sm font-medium leading-5 text-white/68">{step.description}</p>
+                  <p className="text-sm font-semibold leading-5 text-muted">
+                    {step.description}
+                  </p>
                 </Link>
               ))}
             </div>
@@ -278,10 +300,10 @@ export default async function DashboardPage() {
               </div>
             </div>
             <Link
-              href="/versions"
+              href="/portfolios"
               className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 bg-lime px-4 text-sm font-extrabold uppercase text-ink transition hover:-translate-y-0.5"
             >
-              Gerenciar versões
+              Gerenciar portfolios
               <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </CardContent>
@@ -293,20 +315,20 @@ export default async function DashboardPage() {
               Publicação
             </p>
             <div className="mt-5 grid gap-3">
-              <Link href="/pages" className="flex items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 text-sm font-extrabold">
+              <Link
+                href="/portfolios"
+                className="flex items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 text-sm font-extrabold"
+              >
                 <span className="inline-flex items-center gap-2">
-                  <UserRound className="h-4 w-4" aria-hidden="true" />
-                  Páginas
+                  <Layers3 className="h-4 w-4" aria-hidden="true" />
+                  Portfolios
                 </span>
                 <span>{publishedPages}</span>
               </Link>
-              <Link href="/resumes" className="flex items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 text-sm font-extrabold">
-                <span className="inline-flex items-center gap-2">
-                  <FileText className="h-4 w-4" aria-hidden="true" />
-                  Currículos
-                </span>
+              <div className="flex items-center justify-between gap-3 rounded-[14px] bg-white px-4 py-3 text-sm font-extrabold">
+                <span>Curriculos ativos</span>
                 <span>{publishedResumes}</span>
-              </Link>
+              </div>
             </div>
           </CardContent>
         </Card>

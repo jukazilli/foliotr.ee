@@ -9,6 +9,7 @@ const allowedTabs = new Set([
   "reconhecimentos",
   "links",
   "provas",
+  "reviews",
 ]);
 
 export default async function ProfilePage({
@@ -19,7 +20,8 @@ export default async function ProfilePage({
   const profile = await getProfileEditorViewer();
   const params = await searchParams;
   const initialProfile = JSON.parse(JSON.stringify(profile));
-  const initialTab = allowedTabs.has(params.tab ?? "") ? params.tab : undefined;
+  const tabParam = params.tab === "provas" ? "reviews" : params.tab;
+  const initialTab = allowedTabs.has(tabParam ?? "") ? tabParam : undefined;
 
   return <ProfileEditor initialProfile={initialProfile} initialTab={initialTab} />;
 }

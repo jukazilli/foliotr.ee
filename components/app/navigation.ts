@@ -1,7 +1,5 @@
 import type { LucideIcon } from "lucide-react";
 import {
-  FileText,
-  Globe,
   Images,
   LayoutDashboard,
   Layers3,
@@ -46,28 +44,12 @@ export const appNavigation: AppNavItem[] = [
     description: "Reutilize imagens enviadas.",
   },
   {
-    href: "/versions",
-    label: "Versoes",
-    shortLabel: "Versoes",
+    href: "/portfolios",
+    label: "Portfolios",
+    shortLabel: "Portfolios",
     icon: Layers3,
     section: "principal",
-    description: "Crie versoes para objetivos diferentes.",
-  },
-  {
-    href: "/pages",
-    label: "Paginas",
-    shortLabel: "Paginas",
-    icon: Globe,
-    section: "principal",
-    description: "Edite e publique suas paginas.",
-  },
-  {
-    href: "/resumes",
-    label: "Curriculos",
-    shortLabel: "Curriculos",
-    icon: FileText,
-    section: "principal",
-    description: "Veja uma versao mais facil de ler.",
+    description: "Publique versoes do seu trabalho.",
   },
   {
     href: "/teste-vocacional/app",

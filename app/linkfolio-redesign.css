@@ -140,14 +140,17 @@ main {
   right: clamp(20px, 3vw, 38px);
   z-index: 20;
   min-height: clamp(76px, 9vh, 96px);
-  padding: clamp(10px, 1.2vw, 14px) clamp(18px, 2vw, 28px) clamp(10px, 1.2vw, 14px) clamp(24px, 3vw, 48px);
+  padding: clamp(10px, 1.2vw, 14px) clamp(18px, 2vw, 28px) clamp(10px, 1.2vw, 14px)
+    clamp(24px, 3vw, 48px);
   border-radius: var(--radius-pill);
   background: var(--white);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: clamp(12px, 1.5vw, 20px);
-  transition: transform 220ms ease, opacity 220ms ease;
+  transition:
+    transform 220ms ease,
+    opacity 220ms ease;
 }
 
 .topbar.is-hidden {
@@ -218,7 +221,9 @@ main {
   font-weight: 800;
   text-transform: uppercase;
   cursor: pointer;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .button:hover {
@@ -557,9 +562,9 @@ body[data-theme="noir"] video {
 }
 
 body[data-theme="noir"] .ana-portrait {
-  filter: grayscale(1) contrast(1.02) brightness(0.92) drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
+  filter: grayscale(1) contrast(1.02) brightness(0.92)
+    drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
 }
-
 
 .feature-art {
   position: relative;
@@ -1255,8 +1260,7 @@ body[data-theme="noir"] .ana-portrait {
 .forgot-art {
   background:
     radial-gradient(circle at 18% 18%, var(--orange) 0 14%, transparent 15%),
-    radial-gradient(circle at 84% 82%, var(--pink) 0 20%, transparent 21%),
-    var(--lime);
+    radial-gradient(circle at 84% 82%, var(--pink) 0 20%, transparent 21%), var(--lime);
 }
 
 .forgot-art img {
@@ -1559,7 +1563,11 @@ body[data-theme="noir"] .ana-portrait {
   min-height: min(820px, 100svh);
   padding: clamp(128px, 16vh, 180px) var(--page-pad-x) clamp(60px, 9vh, 96px);
   background:
-    radial-gradient(circle at 78% 22%, rgba(255, 215, 243, 0.95) 0 16%, transparent 17%),
+    radial-gradient(
+      circle at 78% 22%,
+      rgba(255, 215, 243, 0.95) 0 16%,
+      transparent 17%
+    ),
     linear-gradient(135deg, var(--cream) 0 58%, var(--green) 58% 100%);
   color: var(--ink);
   display: grid;
@@ -1641,8 +1649,11 @@ body[data-theme="noir"] .ana-portrait {
   padding: 0 16px;
   border: 2px solid var(--line);
   border-radius: 999px;
-  background:
-    linear-gradient(90deg, var(--pink) 0 var(--value), var(--paper) var(--value) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--pink) 0 var(--value),
+    var(--paper) var(--value) 100%
+  );
   display: flex;
   align-items: center;
   font-weight: 800;
@@ -2050,7 +2061,9 @@ body[data-theme="noir"] .ana-portrait {
     transform: translateY(0);
   }
   to {
-    transform: translateY(calc(-4 * (var(--carousel-slide-height) + var(--carousel-gap))));
+    transform: translateY(
+      calc(-4 * (var(--carousel-slide-height) + var(--carousel-gap)))
+    );
   }
 }
 
@@ -2420,7 +2433,11 @@ body[data-theme="noir"] .ana-portrait {
   .vocation-hero {
     padding: 226px 20px 62px;
     background:
-      radial-gradient(circle at 84% 18%, rgba(255, 215, 243, 0.95) 0 18%, transparent 19%),
+      radial-gradient(
+        circle at 84% 18%,
+        rgba(255, 215, 243, 0.95) 0 18%,
+        transparent 19%
+      ),
       var(--cream);
   }
 
@@ -2538,4 +2555,28 @@ body[data-theme="noir"] .ana-portrait {
   .version-stack {
     min-height: 340px;
   }
+}
+
+/* The marketing stylesheet owns a generic `.block` section class.
+   Logged-in screens also use Tailwind's `.block` utility, so reset the
+   marketing section behavior inside the application shell. */
+.app-shell main {
+  display: block;
+}
+
+.app-shell h1,
+.app-shell h2 {
+  max-width: none;
+}
+
+.app-shell .block {
+  display: block;
+  width: auto;
+  max-width: none;
+  min-height: 0;
+  padding: 0;
+  grid-template-columns: none;
+  column-gap: 0;
+  row-gap: 0;
+  align-items: initial;
 }

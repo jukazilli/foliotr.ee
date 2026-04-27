@@ -214,7 +214,7 @@ export function projectPortfolioCommunityResume(
         "education -> formacao objetiva",
         "experience -> experiencia objetiva",
         "work -> projetos concisos",
-        "contact -> links e provas",
+        "contact -> links e reviews",
       ],
       collapses: [
         "hero image -> avatar opcional",
@@ -231,7 +231,7 @@ export function projectPortfolioCommunityResume(
         "descricoes de experiencia",
         "descricoes de formacao",
         "descricoes de projetos",
-        "rotulos de provas",
+        "rotulos de reviews",
       ],
     },
   };

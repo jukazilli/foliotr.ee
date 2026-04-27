@@ -3,7 +3,13 @@ import { ArrowRight, FileText, Globe, Star } from "lucide-react";
 import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getAppViewer, getOwnedVersions } from "@/lib/server/app-viewer";
 import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { formatDate } from "@/lib/utils";
@@ -42,7 +48,8 @@ export default async function VersionsPage() {
           <>
             <Badge variant="version">{versions.length} versoes</Badge>
             <Badge variant="info">
-              {versions.filter((version) => getPrimaryVersionPage(version)).length} paginas
+              {versions.filter((version) => getPrimaryVersionPage(version)).length}{" "}
+              paginas
             </Badge>
             <Badge variant="success">
               {versions.filter((version) => version.resumeConfig).length} curriculos
@@ -51,8 +58,8 @@ export default async function VersionsPage() {
         }
         actions={
           <Button asChild variant="outline">
-            <Link href="/pages">
-              Ver paginas
+            <Link href="/portfolios">
+              Ver portfolios
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
@@ -98,7 +105,9 @@ export default async function VersionsPage() {
                       </CardDescription>
                     </div>
                   </div>
-                  <Badge variant={page?.publishState === "PUBLISHED" ? "success" : "default"}>
+                  <Badge
+                    variant={page?.publishState === "PUBLISHED" ? "success" : "default"}
+                  >
                     {page?.publishState === "PUBLISHED" ? "publicada" : "rascunho"}
                   </Badge>
                 </div>
@@ -106,10 +115,21 @@ export default async function VersionsPage() {
                 <div className="grid gap-3 sm:grid-cols-3">
                   {[
                     { label: "Itens", value: selectedCount, hint: "selecionados" },
-                    { label: "Pagina", value: page ? 1 : 0, hint: page?.template?.name ?? "sem modelo" },
-                    { label: "Curriculo", value: hasResume ? "ok" : "pendente", hint: hasResume ? "criado" : "sem curriculo" },
+                    {
+                      label: "Pagina",
+                      value: page ? 1 : 0,
+                      hint: page?.template?.name ?? "sem modelo",
+                    },
+                    {
+                      label: "Curriculo",
+                      value: hasResume ? "ok" : "pendente",
+                      hint: hasResume ? "criado" : "sem curriculo",
+                    },
                   ].map((item) => (
-                    <div key={item.label} className="rounded-[22px] border border-neutral-200 bg-neutral-50 p-4">
+                    <div
+                      key={item.label}
+                      className="rounded-[22px] border border-neutral-200 bg-neutral-50 p-4"
+                    >
                       <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
                         {item.label}
                       </p>
@@ -142,10 +162,10 @@ export default async function VersionsPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap gap-2">
                     <Button asChild variant="outline" size="sm">
-                      <Link href="/pages">Ver paginas</Link>
+                      <Link href="/portfolios">Ver portfolios</Link>
                     </Button>
                     <Button asChild variant="ghost" size="sm">
-                      <Link href="/resumes">Ver curriculos</Link>
+                      <Link href="/portfolios">Ver portfolios</Link>
                     </Button>
                   </div>
                   <Link

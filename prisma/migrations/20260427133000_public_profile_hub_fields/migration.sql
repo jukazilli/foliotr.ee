@@ -1,0 +1,4 @@
+ALTER TABLE "Profile"
+ADD COLUMN IF NOT EXISTS "openToOpportunities" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN IF NOT EXISTS "opportunityMotivation" TEXT,
+ADD COLUMN IF NOT EXISTS "showOpportunityMotivation" BOOLEAN NOT NULL DEFAULT false;

@@ -22,7 +22,8 @@ export default function PublicResumePage({
   pageSlug,
   snapshot,
 }: PublicResumePageProps) {
-  const templateHref = getPublicTemplateHref(username, pageSlug);
+  const effectivePageSlug = pageSlug ?? page.slug;
+  const templateHref = getPublicTemplateHref(username, effectivePageSlug);
   const resumeHref = getPublicResumeHref(username, pageSlug);
   const behavioralAnalysis = selectBehavioralAnalysis(
     page.version.profile.user.vocationalTests,

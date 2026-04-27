@@ -25,6 +25,7 @@ async function requireEditorContext(pageId: string) {
 }
 
 function revalidatePublicPaths(username: string | null | undefined, slug: string) {
+  revalidatePath("/portfolios");
   revalidatePath("/pages");
 
   if (!username) return;
@@ -35,7 +36,10 @@ function revalidatePublicPaths(username: string | null | undefined, slug: string
   revalidatePath(`/${username}/${slug}/resume`);
 }
 
-export async function setPagePublishStateAction(pageId: string, nextState: "DRAFT" | "PUBLISHED") {
+export async function setPagePublishStateAction(
+  pageId: string,
+  nextState: "DRAFT" | "PUBLISHED"
+) {
   const { session, page } = await requireEditorContext(pageId);
 
   await upsertOwnedPageOutput(prisma, session.user.id, page.versionId, {
@@ -50,7 +54,8 @@ export async function setPagePublishStateAction(pageId: string, nextState: "DRAF
 
     await upsertOwnedResumeOutput(prisma, session.user.id, page.versionId, {
       sections:
-        page.version.resumeConfig?.sections?.length && page.version.resumeConfig.sections.length > 0
+        page.version.resumeConfig?.sections?.length &&
+        page.version.resumeConfig.sections.length > 0
           ? page.version.resumeConfig.sections
           : resumeDefaults.sections,
       layout: page.version.resumeConfig?.layout ?? resumeDefaults.layout,
@@ -84,7 +89,8 @@ export async function setResumePublishStateAction(
 
   await upsertOwnedResumeOutput(prisma, session.user.id, page.versionId, {
     sections:
-      page.version.resumeConfig?.sections?.length && page.version.resumeConfig.sections.length > 0
+      page.version.resumeConfig?.sections?.length &&
+      page.version.resumeConfig.sections.length > 0
         ? page.version.resumeConfig.sections
         : resumeDefaults.sections,
     layout: page.version.resumeConfig?.layout ?? resumeDefaults.layout,

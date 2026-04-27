@@ -31,6 +31,9 @@ const profileBaseSelect = {
   publicEmail: true,
   phone: true,
   birthDate: true,
+  openToOpportunities: true,
+  opportunityMotivation: true,
+  showOpportunityMotivation: true,
 } satisfies Prisma.ProfileSelect;
 
 async function withProfileBirthDate<TProfile extends { birthDate: Date | null }>(
@@ -85,10 +88,18 @@ async function assertOwnedIds(
 function collectReferencedAssetIds(input: ProfileBaseInput) {
   return dedupeIds(
     [
-      ...(input.highlights ?? []).flatMap((item) => (item.assetId ? [item.assetId] : [])),
-      ...(input.experiences ?? []).flatMap((item) => (item.logoAssetId ? [item.logoAssetId] : [])),
-      ...(input.projects ?? []).flatMap((item) => (item.coverAssetId ? [item.coverAssetId] : [])),
-      ...(input.achievements ?? []).flatMap((item) => (item.assetId ? [item.assetId] : [])),
+      ...(input.highlights ?? []).flatMap((item) =>
+        item.assetId ? [item.assetId] : []
+      ),
+      ...(input.experiences ?? []).flatMap((item) =>
+        item.logoAssetId ? [item.logoAssetId] : []
+      ),
+      ...(input.projects ?? []).flatMap((item) =>
+        item.coverAssetId ? [item.coverAssetId] : []
+      ),
+      ...(input.achievements ?? []).flatMap((item) =>
+        item.assetId ? [item.assetId] : []
+      ),
       ...(input.proofs ?? []).flatMap((item) => (item.assetId ? [item.assetId] : [])),
     ].filter(Boolean)
   );
@@ -211,6 +222,9 @@ export async function updateOwnedProfileFields(
         websiteUrl: sanitizeNullable(input.websiteUrl),
         publicEmail: sanitizeNullable(input.publicEmail),
         phone: sanitizeNullable(input.phone),
+        openToOpportunities: input.openToOpportunities,
+        opportunityMotivation: sanitizeNullable(input.opportunityMotivation),
+        showOpportunityMotivation: input.showOpportunityMotivation,
         birthDate: input.birthDate ?? null,
       },
       select: profileBaseSelect,
@@ -340,7 +354,7 @@ export async function updateOwnedProfileCollection(
               role: item.role,
               description: sanitizeNullable(item.description),
               startDate: item.startDate,
-              endDate: item.current ? null : item.endDate ?? null,
+              endDate: item.current ? null : (item.endDate ?? null),
               current: item.current,
               location: sanitizeNullable(item.location),
               logoUrl: sanitizeNullable(item.logoUrl),
@@ -356,7 +370,7 @@ export async function updateOwnedProfileCollection(
               role: item.role,
               description: sanitizeNullable(item.description),
               startDate: item.startDate,
-              endDate: item.current ? null : item.endDate ?? null,
+              endDate: item.current ? null : (item.endDate ?? null),
               current: item.current,
               location: sanitizeNullable(item.location),
               logoUrl: sanitizeNullable(item.logoUrl),
@@ -413,7 +427,7 @@ export async function updateOwnedProfileCollection(
               field: sanitizeNullable(item.field),
               description: sanitizeNullable(item.description),
               startDate: item.startDate,
-              endDate: item.current ? null : item.endDate ?? null,
+              endDate: item.current ? null : (item.endDate ?? null),
               current: item.current,
               logoUrl: sanitizeNullable(item.logoUrl),
               order: index,
@@ -428,7 +442,7 @@ export async function updateOwnedProfileCollection(
               field: sanitizeNullable(item.field),
               description: sanitizeNullable(item.description),
               startDate: item.startDate,
-              endDate: item.current ? null : item.endDate ?? null,
+              endDate: item.current ? null : (item.endDate ?? null),
               current: item.current,
               logoUrl: sanitizeNullable(item.logoUrl),
               order: index,
@@ -726,6 +740,12 @@ export async function updateOwnedProfileCollection(
               imageUrl: sanitizeNullable(item.imageUrl),
               assetId: item.assetId ?? null,
               tags: item.tags,
+              reviewerName: sanitizeNullable(item.reviewerName) ?? item.title,
+              reviewerRole: sanitizeNullable(item.reviewerRole),
+              reviewerEmail: sanitizeNullable(item.reviewerEmail),
+              rating: item.rating,
+              isVisible: item.isVisible,
+              source: item.source,
               order: index,
             },
           }),
@@ -740,6 +760,12 @@ export async function updateOwnedProfileCollection(
               imageUrl: sanitizeNullable(item.imageUrl),
               assetId: item.assetId ?? null,
               tags: item.tags,
+              reviewerName: sanitizeNullable(item.reviewerName) ?? item.title,
+              reviewerRole: sanitizeNullable(item.reviewerRole),
+              reviewerEmail: sanitizeNullable(item.reviewerEmail),
+              rating: item.rating,
+              isVisible: item.isVisible,
+              source: item.source,
               order: index,
             },
           }),
@@ -757,6 +783,12 @@ export async function updateOwnedProfileCollection(
           imageUrl: true,
           tags: true,
           assetId: true,
+          reviewerName: true,
+          reviewerRole: true,
+          reviewerEmail: true,
+          rating: true,
+          isVisible: true,
+          source: true,
         },
       });
     }
@@ -852,6 +884,9 @@ export async function updateOwnedProfileBase(
           websiteUrl: sanitizeNullable(input.websiteUrl),
           publicEmail: sanitizeNullable(input.publicEmail),
           phone: sanitizeNullable(input.phone),
+          openToOpportunities: input.openToOpportunities,
+          opportunityMotivation: sanitizeNullable(input.opportunityMotivation),
+          showOpportunityMotivation: input.showOpportunityMotivation,
         },
       });
 
@@ -932,7 +967,7 @@ export async function updateOwnedProfileBase(
                 role: item.role,
                 description: sanitizeNullable(item.description),
                 startDate: item.startDate,
-                endDate: item.current ? null : item.endDate ?? null,
+                endDate: item.current ? null : (item.endDate ?? null),
                 current: item.current,
                 location: sanitizeNullable(item.location),
                 logoUrl: sanitizeNullable(item.logoUrl),
@@ -948,7 +983,7 @@ export async function updateOwnedProfileBase(
                 role: item.role,
                 description: sanitizeNullable(item.description),
                 startDate: item.startDate,
-                endDate: item.current ? null : item.endDate ?? null,
+                endDate: item.current ? null : (item.endDate ?? null),
                 current: item.current,
                 location: sanitizeNullable(item.location),
                 logoUrl: sanitizeNullable(item.logoUrl),
@@ -986,7 +1021,7 @@ export async function updateOwnedProfileBase(
                 field: sanitizeNullable(item.field),
                 description: sanitizeNullable(item.description),
                 startDate: item.startDate,
-                endDate: item.current ? null : item.endDate ?? null,
+                endDate: item.current ? null : (item.endDate ?? null),
                 current: item.current,
                 logoUrl: sanitizeNullable(item.logoUrl),
                 order: index,
@@ -1001,7 +1036,7 @@ export async function updateOwnedProfileBase(
                 field: sanitizeNullable(item.field),
                 description: sanitizeNullable(item.description),
                 startDate: item.startDate,
-                endDate: item.current ? null : item.endDate ?? null,
+                endDate: item.current ? null : (item.endDate ?? null),
                 current: item.current,
                 logoUrl: sanitizeNullable(item.logoUrl),
                 order: index,
@@ -1010,244 +1045,256 @@ export async function updateOwnedProfileBase(
         });
       }
 
-    if (input.skills) {
-      await syncCollection({
-        tx,
-        profileId: profile.id,
-        items: input.skills,
-        label: "Skills",
-        findExistingIds: () =>
-          tx.skill.findMany({
-            where: { profileId: profile.id },
-            select: { id: true },
-          }),
-        deleteMissing: (keepIds) =>
-          tx.skill.deleteMany({
-            where: {
-              profileId: profile.id,
-              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
-            },
-          }),
-        updateItem: (id, item, index) =>
-          tx.skill.update({
-            where: { id },
-            data: {
-              name: item.name,
-              category: sanitizeNullable(item.category),
-              level: sanitizeNullable(item.level),
-              order: index,
-            },
-          }),
-        createItem: (item, index) =>
-          tx.skill.create({
-            data: {
-              profileId: profile.id,
-              name: item.name,
-              category: sanitizeNullable(item.category),
-              level: sanitizeNullable(item.level),
-              order: index,
-            },
-          }),
-      });
-    }
+      if (input.skills) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.skills,
+          label: "Skills",
+          findExistingIds: () =>
+            tx.skill.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.skill.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.skill.update({
+              where: { id },
+              data: {
+                name: item.name,
+                category: sanitizeNullable(item.category),
+                level: sanitizeNullable(item.level),
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.skill.create({
+              data: {
+                profileId: profile.id,
+                name: item.name,
+                category: sanitizeNullable(item.category),
+                level: sanitizeNullable(item.level),
+                order: index,
+              },
+            }),
+        });
+      }
 
-    if (input.projects) {
-      await syncCollection({
-        tx,
-        profileId: profile.id,
-        items: input.projects,
-        label: "Projetos",
-        findExistingIds: () =>
-          tx.project.findMany({
-            where: { profileId: profile.id },
-            select: { id: true },
-          }),
-        deleteMissing: (keepIds) =>
-          tx.project.deleteMany({
-            where: {
-              profileId: profile.id,
-              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
-            },
-          }),
-        updateItem: (id, item, index) =>
-          tx.project.update({
-            where: { id },
-            data: {
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              url: sanitizeNullable(item.url),
-              repoUrl: sanitizeNullable(item.repoUrl),
-              tags: item.tags,
-              featured: item.featured,
-              coverAssetId: item.coverAssetId ?? null,
-              coverFitMode: item.coverFitMode,
-              coverPositionX: item.coverPositionX,
-              coverPositionY: item.coverPositionY,
-              startDate: item.startDate ?? null,
-              endDate: item.endDate ?? null,
-              order: index,
-            },
-          }),
-        createItem: (item, index) =>
-          tx.project.create({
-            data: {
-              profileId: profile.id,
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              url: sanitizeNullable(item.url),
-              repoUrl: sanitizeNullable(item.repoUrl),
-              tags: item.tags,
-              featured: item.featured,
-              coverAssetId: item.coverAssetId ?? null,
-              coverFitMode: item.coverFitMode,
-              coverPositionX: item.coverPositionX,
-              coverPositionY: item.coverPositionY,
-              startDate: item.startDate ?? null,
-              endDate: item.endDate ?? null,
-              order: index,
-            },
-          }),
-      });
-    }
+      if (input.projects) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.projects,
+          label: "Projetos",
+          findExistingIds: () =>
+            tx.project.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.project.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.project.update({
+              where: { id },
+              data: {
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                url: sanitizeNullable(item.url),
+                repoUrl: sanitizeNullable(item.repoUrl),
+                tags: item.tags,
+                featured: item.featured,
+                coverAssetId: item.coverAssetId ?? null,
+                coverFitMode: item.coverFitMode,
+                coverPositionX: item.coverPositionX,
+                coverPositionY: item.coverPositionY,
+                startDate: item.startDate ?? null,
+                endDate: item.endDate ?? null,
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.project.create({
+              data: {
+                profileId: profile.id,
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                url: sanitizeNullable(item.url),
+                repoUrl: sanitizeNullable(item.repoUrl),
+                tags: item.tags,
+                featured: item.featured,
+                coverAssetId: item.coverAssetId ?? null,
+                coverFitMode: item.coverFitMode,
+                coverPositionX: item.coverPositionX,
+                coverPositionY: item.coverPositionY,
+                startDate: item.startDate ?? null,
+                endDate: item.endDate ?? null,
+                order: index,
+              },
+            }),
+        });
+      }
 
-    if (input.achievements) {
-      await syncCollection({
-        tx,
-        profileId: profile.id,
-        items: input.achievements,
-        label: "Achievements",
-        findExistingIds: () =>
-          tx.achievement.findMany({
-            where: { profileId: profile.id },
-            select: { id: true },
-          }),
-        deleteMissing: (keepIds) =>
-          tx.achievement.deleteMany({
-            where: {
-              profileId: profile.id,
-              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
-            },
-          }),
-        updateItem: (id, item, index) =>
-          tx.achievement.update({
-            where: { id },
-            data: {
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              date: item.date ?? null,
-              metric: sanitizeNullable(item.metric),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              assetId: item.assetId ?? null,
-              order: index,
-            },
-          }),
-        createItem: (item, index) =>
-          tx.achievement.create({
-            data: {
-              profileId: profile.id,
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              date: item.date ?? null,
-              metric: sanitizeNullable(item.metric),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              assetId: item.assetId ?? null,
-              order: index,
-            },
-          }),
-      });
-    }
+      if (input.achievements) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.achievements,
+          label: "Achievements",
+          findExistingIds: () =>
+            tx.achievement.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.achievement.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.achievement.update({
+              where: { id },
+              data: {
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                date: item.date ?? null,
+                metric: sanitizeNullable(item.metric),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                assetId: item.assetId ?? null,
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.achievement.create({
+              data: {
+                profileId: profile.id,
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                date: item.date ?? null,
+                metric: sanitizeNullable(item.metric),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                assetId: item.assetId ?? null,
+                order: index,
+              },
+            }),
+        });
+      }
 
-    if (input.proofs) {
-      await syncCollection({
-        tx,
-        profileId: profile.id,
-        items: input.proofs,
-        label: "Proofs",
-        findExistingIds: () =>
-          tx.proof.findMany({
-            where: { profileId: profile.id },
-            select: { id: true },
-          }),
-        deleteMissing: (keepIds) =>
-          tx.proof.deleteMany({
-            where: {
-              profileId: profile.id,
-              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
-            },
-          }),
-        updateItem: (id, item, index) =>
-          tx.proof.update({
-            where: { id },
-            data: {
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              metric: sanitizeNullable(item.metric),
-              url: sanitizeNullable(item.url),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              assetId: item.assetId ?? null,
-              tags: item.tags,
-              order: index,
-            },
-          }),
-        createItem: (item, index) =>
-          tx.proof.create({
-            data: {
-              profileId: profile.id,
-              title: item.title,
-              description: sanitizeNullable(item.description),
-              metric: sanitizeNullable(item.metric),
-              url: sanitizeNullable(item.url),
-              imageUrl: sanitizeNullable(item.imageUrl),
-              assetId: item.assetId ?? null,
-              tags: item.tags,
-              order: index,
-            },
-          }),
-      });
-    }
+      if (input.proofs) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.proofs,
+          label: "Proofs",
+          findExistingIds: () =>
+            tx.proof.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.proof.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.proof.update({
+              where: { id },
+              data: {
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                metric: sanitizeNullable(item.metric),
+                url: sanitizeNullable(item.url),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                assetId: item.assetId ?? null,
+                tags: item.tags,
+                reviewerName: sanitizeNullable(item.reviewerName) ?? item.title,
+                reviewerRole: sanitizeNullable(item.reviewerRole),
+                reviewerEmail: sanitizeNullable(item.reviewerEmail),
+                rating: item.rating,
+                isVisible: item.isVisible,
+                source: item.source,
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.proof.create({
+              data: {
+                profileId: profile.id,
+                title: item.title,
+                description: sanitizeNullable(item.description),
+                metric: sanitizeNullable(item.metric),
+                url: sanitizeNullable(item.url),
+                imageUrl: sanitizeNullable(item.imageUrl),
+                assetId: item.assetId ?? null,
+                tags: item.tags,
+                reviewerName: sanitizeNullable(item.reviewerName) ?? item.title,
+                reviewerRole: sanitizeNullable(item.reviewerRole),
+                reviewerEmail: sanitizeNullable(item.reviewerEmail),
+                rating: item.rating,
+                isVisible: item.isVisible,
+                source: item.source,
+                order: index,
+              },
+            }),
+        });
+      }
 
-    if (input.links) {
-      await syncCollection({
-        tx,
-        profileId: profile.id,
-        items: input.links,
-        label: "Links",
-        findExistingIds: () =>
-          tx.profileLink.findMany({
-            where: { profileId: profile.id },
-            select: { id: true },
-          }),
-        deleteMissing: (keepIds) =>
-          tx.profileLink.deleteMany({
-            where: {
-              profileId: profile.id,
-              id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
-            },
-          }),
-        updateItem: (id, item, index) =>
-          tx.profileLink.update({
-            where: { id },
-            data: {
-              platform: item.platform,
-              url: item.url,
-              label: sanitizeNullable(item.label),
-              order: index,
-            },
-          }),
-        createItem: (item, index) =>
-          tx.profileLink.create({
-            data: {
-              profileId: profile.id,
-              platform: item.platform,
-              url: item.url,
-              label: sanitizeNullable(item.label),
-              order: index,
-            },
-          }),
-      });
-    }
+      if (input.links) {
+        await syncCollection({
+          tx,
+          profileId: profile.id,
+          items: input.links,
+          label: "Links",
+          findExistingIds: () =>
+            tx.profileLink.findMany({
+              where: { profileId: profile.id },
+              select: { id: true },
+            }),
+          deleteMissing: (keepIds) =>
+            tx.profileLink.deleteMany({
+              where: {
+                profileId: profile.id,
+                id: keepIds.length > 0 ? { notIn: keepIds } : undefined,
+              },
+            }),
+          updateItem: (id, item, index) =>
+            tx.profileLink.update({
+              where: { id },
+              data: {
+                platform: item.platform,
+                url: item.url,
+                label: sanitizeNullable(item.label),
+                order: index,
+              },
+            }),
+          createItem: (item, index) =>
+            tx.profileLink.create({
+              data: {
+                profileId: profile.id,
+                platform: item.platform,
+                url: item.url,
+                label: sanitizeNullable(item.label),
+                order: index,
+              },
+            }),
+        });
+      }
 
       const updatedProfile = await tx.profile.findUniqueOrThrow({
         where: { id: profile.id },

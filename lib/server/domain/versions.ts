@@ -29,6 +29,22 @@ const LONG_TRANSACTION_OPTIONS = {
   timeout: 20_000,
 } as const;
 
+const versionCreationProfileInclude = Prisma.validator<Prisma.ProfileInclude>()({
+  experiences: { select: { id: true } },
+  educations: { select: { id: true } },
+  projects: { select: { id: true } },
+  skills: { select: { id: true } },
+  achievements: { select: { id: true } },
+  proofs: { select: { id: true } },
+  highlights: { select: { id: true } },
+  links: { select: { id: true } },
+  versions: { select: { id: true } },
+});
+
+type VersionCreationProfile = Prisma.ProfileGetPayload<{
+  include: typeof versionCreationProfileInclude;
+}>;
+
 function sanitizeNullable(value: string | null | undefined) {
   if (value === undefined) return undefined;
   if (value === "") return null;
@@ -77,6 +93,22 @@ async function getOwnedProfileAggregateOrThrow(
   return profile;
 }
 
+async function getOwnedVersionCreationProfileOrThrow(
+  db: ReadClient,
+  userId: string
+): Promise<VersionCreationProfile> {
+  const profile = await db.profile.findUnique({
+    where: { userId },
+    include: versionCreationProfileInclude,
+  });
+
+  if (!profile) {
+    throw new ApiRouteError("NOT_FOUND", 404);
+  }
+
+  return profile;
+}
+
 export async function listOwnedVersions(
   db: DbClient,
   userId: string
@@ -107,7 +139,9 @@ export async function getOwnedVersion(
   return version;
 }
 
-function resolveDefaultSelections(profile: ProfileAggregate): VersionSelectionInput {
+function resolveDefaultSelections(
+  profile: VersionCreationProfile | ProfileAggregate
+): VersionSelectionInput {
   return {
     experienceIds: profile.experiences.map((item) => item.id),
     educationIds: profile.educations.map((item) => item.id),
@@ -122,7 +156,7 @@ function resolveDefaultSelections(profile: ProfileAggregate): VersionSelectionIn
 
 async function assertVersionSelectionsOwned(
   tx: TxClient,
-  profile: ProfileAggregate,
+  profile: { id: string },
   selections: VersionSelectionInput
 ) {
   const checks = [
@@ -310,7 +344,10 @@ async function syncVersionSelections(
   }
 }
 
-function needsDefaultFlag(profile: ProfileAggregate, input: VersionInput) {
+function needsDefaultFlag(
+  profile: VersionCreationProfile | ProfileAggregate,
+  input: VersionInput
+) {
   if (typeof input.isDefault === "boolean") {
     return input.isDefault;
   }
@@ -323,41 +360,44 @@ export async function createOwnedVersion(
   userId: string,
   input: VersionInput
 ): Promise<VersionAggregate> {
-  return db.$transaction(async (tx) => {
-    const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
-    const isDefault = needsDefaultFlag(profile, input);
-    const selections = input.selections ?? resolveDefaultSelections(profile);
+  return db.$transaction(
+    async (tx) => {
+      const profile = await getOwnedVersionCreationProfileOrThrow(tx, userId);
+      const isDefault = needsDefaultFlag(profile, input);
+      const selections = input.selections ?? resolveDefaultSelections(profile);
 
-    await assertVersionSelectionsOwned(tx, profile, selections);
+      await assertVersionSelectionsOwned(tx, profile, selections);
 
-    if (isDefault) {
-      await tx.version.updateMany({
-        where: { profileId: profile.id, isDefault: true },
-        data: { isDefault: false },
+      if (isDefault) {
+        await tx.version.updateMany({
+          where: { profileId: profile.id, isDefault: true },
+          data: { isDefault: false },
+        });
+      }
+
+      const version = await tx.version.create({
+        data: {
+          profileId: profile.id,
+          name: input.name,
+          description: sanitizeNullable(input.description),
+          context: sanitizeNullable(input.context),
+          emoji: sanitizeNullable(input.emoji),
+          customHeadline: sanitizeNullable(input.customHeadline),
+          customBio: sanitizeNullable(input.customBio),
+          isDefault,
+        },
+        select: { id: true },
       });
-    }
 
-    const version = await tx.version.create({
-      data: {
-        profileId: profile.id,
-        name: input.name,
-        description: sanitizeNullable(input.description),
-        context: sanitizeNullable(input.context),
-        emoji: sanitizeNullable(input.emoji),
-        customHeadline: sanitizeNullable(input.customHeadline),
-        customBio: sanitizeNullable(input.customBio),
-        isDefault,
-      },
-      include: versionAggregateInclude,
-    });
+      await syncVersionSelections(tx, version.id, selections);
 
-    await syncVersionSelections(tx, version.id, selections);
-
-    return tx.version.findUniqueOrThrow({
-      where: { id: version.id },
-      include: versionAggregateInclude,
-    });
-  });
+      return tx.version.findUniqueOrThrow({
+        where: { id: version.id },
+        include: versionAggregateInclude,
+      });
+    },
+    LONG_TRANSACTION_OPTIONS
+  );
 }
 
 export async function updateOwnedVersion(
@@ -366,50 +406,53 @@ export async function updateOwnedVersion(
   versionId: string,
   input: VersionInput
 ): Promise<VersionAggregate> {
-  return db.$transaction(async (tx) => {
-    const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
-    const existing = await tx.version.findFirst({
-      where: { id: versionId, profileId: profile.id },
-      include: versionAggregateInclude,
-    });
-
-    if (!existing) {
-      throw new ApiRouteError("NOT_FOUND", 404);
-    }
-
-    const shouldBeDefault =
-      typeof input.isDefault === "boolean" ? input.isDefault : existing.isDefault;
-
-    if (shouldBeDefault) {
-      await tx.version.updateMany({
-        where: { profileId: profile.id, isDefault: true, id: { not: versionId } },
-        data: { isDefault: false },
+  return db.$transaction(
+    async (tx) => {
+      const profile = await getOwnedProfileAggregateOrThrow(tx, userId);
+      const existing = await tx.version.findFirst({
+        where: { id: versionId, profileId: profile.id },
+        include: versionAggregateInclude,
       });
-    }
 
-    await tx.version.update({
-      where: { id: versionId },
-      data: {
-        name: input.name,
-        description: sanitizeNullable(input.description),
-        context: sanitizeNullable(input.context),
-        emoji: sanitizeNullable(input.emoji),
-        customHeadline: sanitizeNullable(input.customHeadline),
-        customBio: sanitizeNullable(input.customBio),
-        isDefault: shouldBeDefault,
-      },
-    });
+      if (!existing) {
+        throw new ApiRouteError("NOT_FOUND", 404);
+      }
 
-    if (input.selections) {
-      await assertVersionSelectionsOwned(tx, profile, input.selections);
-      await syncVersionSelections(tx, versionId, input.selections);
-    }
+      const shouldBeDefault =
+        typeof input.isDefault === "boolean" ? input.isDefault : existing.isDefault;
 
-    return tx.version.findUniqueOrThrow({
-      where: { id: versionId },
-      include: versionAggregateInclude,
-    });
-  });
+      if (shouldBeDefault) {
+        await tx.version.updateMany({
+          where: { profileId: profile.id, isDefault: true, id: { not: versionId } },
+          data: { isDefault: false },
+        });
+      }
+
+      await tx.version.update({
+        where: { id: versionId },
+        data: {
+          name: input.name,
+          description: sanitizeNullable(input.description),
+          context: sanitizeNullable(input.context),
+          emoji: sanitizeNullable(input.emoji),
+          customHeadline: sanitizeNullable(input.customHeadline),
+          customBio: sanitizeNullable(input.customBio),
+          isDefault: shouldBeDefault,
+        },
+      });
+
+      if (input.selections) {
+        await assertVersionSelectionsOwned(tx, profile, input.selections);
+        await syncVersionSelections(tx, versionId, input.selections);
+      }
+
+      return tx.version.findUniqueOrThrow({
+        where: { id: versionId },
+        include: versionAggregateInclude,
+      });
+    },
+    LONG_TRANSACTION_OPTIONS
+  );
 }
 
 async function getOwnedVersionRecordOrThrow(

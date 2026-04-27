@@ -3,15 +3,26 @@ import { ArrowRight, ExternalLink, Globe } from "lucide-react";
 import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { getAppViewer, getOwnedPages, getOwnedVersions } from "@/lib/server/app-viewer";
 import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
 import { formatDate } from "@/lib/utils";
 
 export default async function PagesPage() {
   const { user } = await getAppViewer();
-  const [pages, versions] = await Promise.all([getOwnedPages(user.id), getOwnedVersions(user.id)]);
-  const versionsWithoutPage = versions.filter((version) => !getPrimaryVersionPage(version));
+  const [pages, versions] = await Promise.all([
+    getOwnedPages(user.id),
+    getOwnedVersions(user.id),
+  ]);
+  const versionsWithoutPage = versions.filter(
+    (version) => !getPrimaryVersionPage(version)
+  );
 
   return (
     <div className="space-y-8">
@@ -23,7 +34,8 @@ export default async function PagesPage() {
           <>
             <Badge variant="info">{pages.length} paginas</Badge>
             <Badge variant="success">
-              {pages.filter((page) => page.publishState === "PUBLISHED").length} publicadas
+              {pages.filter((page) => page.publishState === "PUBLISHED").length}{" "}
+              publicadas
             </Badge>
             <Badge variant="version">{versionsWithoutPage.length} sem pagina</Badge>
           </>
@@ -45,7 +57,7 @@ export default async function PagesPage() {
           title="Voce ainda nao tem paginas"
           description="Escolha um modelo para comecar."
           primaryAction={{ href: "/templates", label: "Escolher modelo" }}
-          secondaryAction={{ href: "/versions", label: "Ver versoes" }}
+          secondaryAction={{ href: "/portfolios", label: "Ver portfolios" }}
         />
       ) : (
         <section className="grid gap-4 xl:grid-cols-2">
@@ -58,7 +70,11 @@ export default async function PagesPage() {
                       <CardTitle className="font-display text-2xl font-semibold tracking-tight">
                         {page.title ?? page.version.name}
                       </CardTitle>
-                      <Badge variant={page.publishState === "PUBLISHED" ? "success" : "default"}>
+                      <Badge
+                        variant={
+                          page.publishState === "PUBLISHED" ? "success" : "default"
+                        }
+                      >
                         {page.publishState === "PUBLISHED" ? "ao vivo" : "rascunho"}
                       </Badge>
                     </div>
@@ -131,7 +147,9 @@ export default async function PagesPage() {
                 className="flex flex-col gap-3 rounded-[22px] border border-neutral-200 bg-neutral-50 p-4 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div>
-                  <p className="text-sm font-semibold text-neutral-900">{version.name}</p>
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {version.name}
+                  </p>
                   <p className="mt-1 text-sm leading-6 text-neutral-600">
                     {version.description || version.context || "Sem descricao"}
                   </p>
@@ -140,7 +158,9 @@ export default async function PagesPage() {
               </div>
             ))
           ) : (
-            <p className="text-sm leading-7 text-neutral-600">Todas as versoes ja tem pagina.</p>
+            <p className="text-sm leading-7 text-neutral-600">
+              Todas as versoes ja tem pagina.
+            </p>
           )}
         </CardContent>
       </Card>

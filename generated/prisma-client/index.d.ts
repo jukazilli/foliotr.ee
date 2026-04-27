@@ -10060,6 +10060,9 @@ export namespace Prisma {
     publicEmail: string | null
     phone: string | null
     birthDate: Date | null
+    openToOpportunities: boolean | null
+    opportunityMotivation: string | null
+    showOpportunityMotivation: boolean | null
     onboardingDone: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10079,6 +10082,9 @@ export namespace Prisma {
     publicEmail: string | null
     phone: string | null
     birthDate: Date | null
+    openToOpportunities: boolean | null
+    opportunityMotivation: string | null
+    showOpportunityMotivation: boolean | null
     onboardingDone: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -10098,6 +10104,9 @@ export namespace Prisma {
     publicEmail: number
     phone: number
     birthDate: number
+    openToOpportunities: number
+    opportunityMotivation: number
+    showOpportunityMotivation: number
     onboardingDone: number
     createdAt: number
     updatedAt: number
@@ -10119,6 +10128,9 @@ export namespace Prisma {
     publicEmail?: true
     phone?: true
     birthDate?: true
+    openToOpportunities?: true
+    opportunityMotivation?: true
+    showOpportunityMotivation?: true
     onboardingDone?: true
     createdAt?: true
     updatedAt?: true
@@ -10138,6 +10150,9 @@ export namespace Prisma {
     publicEmail?: true
     phone?: true
     birthDate?: true
+    openToOpportunities?: true
+    opportunityMotivation?: true
+    showOpportunityMotivation?: true
     onboardingDone?: true
     createdAt?: true
     updatedAt?: true
@@ -10157,6 +10172,9 @@ export namespace Prisma {
     publicEmail?: true
     phone?: true
     birthDate?: true
+    openToOpportunities?: true
+    opportunityMotivation?: true
+    showOpportunityMotivation?: true
     onboardingDone?: true
     createdAt?: true
     updatedAt?: true
@@ -10249,6 +10267,9 @@ export namespace Prisma {
     publicEmail: string | null
     phone: string | null
     birthDate: Date | null
+    openToOpportunities: boolean
+    opportunityMotivation: string | null
+    showOpportunityMotivation: boolean
     onboardingDone: boolean
     createdAt: Date
     updatedAt: Date
@@ -10285,6 +10306,9 @@ export namespace Prisma {
     publicEmail?: boolean
     phone?: boolean
     birthDate?: boolean
+    openToOpportunities?: boolean
+    opportunityMotivation?: boolean
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10316,6 +10340,9 @@ export namespace Prisma {
     publicEmail?: boolean
     phone?: boolean
     birthDate?: boolean
+    openToOpportunities?: boolean
+    opportunityMotivation?: boolean
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10336,6 +10363,9 @@ export namespace Prisma {
     publicEmail?: boolean
     phone?: boolean
     birthDate?: boolean
+    openToOpportunities?: boolean
+    opportunityMotivation?: boolean
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -10388,6 +10418,9 @@ export namespace Prisma {
       publicEmail: string | null
       phone: string | null
       birthDate: Date | null
+      openToOpportunities: boolean
+      opportunityMotivation: string | null
+      showOpportunityMotivation: boolean
       onboardingDone: boolean
       createdAt: Date
       updatedAt: Date
@@ -10808,6 +10841,9 @@ export namespace Prisma {
     readonly publicEmail: FieldRef<"Profile", 'String'>
     readonly phone: FieldRef<"Profile", 'String'>
     readonly birthDate: FieldRef<"Profile", 'DateTime'>
+    readonly openToOpportunities: FieldRef<"Profile", 'Boolean'>
+    readonly opportunityMotivation: FieldRef<"Profile", 'String'>
+    readonly showOpportunityMotivation: FieldRef<"Profile", 'Boolean'>
     readonly onboardingDone: FieldRef<"Profile", 'Boolean'>
     readonly createdAt: FieldRef<"Profile", 'DateTime'>
     readonly updatedAt: FieldRef<"Profile", 'DateTime'>
@@ -17837,10 +17873,12 @@ export namespace Prisma {
   }
 
   export type ProofAvgAggregateOutputType = {
+    rating: number | null
     order: number | null
   }
 
   export type ProofSumAggregateOutputType = {
+    rating: number | null
     order: number | null
   }
 
@@ -17853,6 +17891,12 @@ export namespace Prisma {
     url: string | null
     imageUrl: string | null
     assetId: string | null
+    reviewerName: string | null
+    reviewerRole: string | null
+    reviewerEmail: string | null
+    rating: number | null
+    isVisible: boolean | null
+    source: string | null
     order: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -17867,6 +17911,12 @@ export namespace Prisma {
     url: string | null
     imageUrl: string | null
     assetId: string | null
+    reviewerName: string | null
+    reviewerRole: string | null
+    reviewerEmail: string | null
+    rating: number | null
+    isVisible: boolean | null
+    source: string | null
     order: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -17882,6 +17932,12 @@ export namespace Prisma {
     imageUrl: number
     assetId: number
     tags: number
+    reviewerName: number
+    reviewerRole: number
+    reviewerEmail: number
+    rating: number
+    isVisible: number
+    source: number
     order: number
     createdAt: number
     updatedAt: number
@@ -17890,10 +17946,12 @@ export namespace Prisma {
 
 
   export type ProofAvgAggregateInputType = {
+    rating?: true
     order?: true
   }
 
   export type ProofSumAggregateInputType = {
+    rating?: true
     order?: true
   }
 
@@ -17906,6 +17964,12 @@ export namespace Prisma {
     url?: true
     imageUrl?: true
     assetId?: true
+    reviewerName?: true
+    reviewerRole?: true
+    reviewerEmail?: true
+    rating?: true
+    isVisible?: true
+    source?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -17920,6 +17984,12 @@ export namespace Prisma {
     url?: true
     imageUrl?: true
     assetId?: true
+    reviewerName?: true
+    reviewerRole?: true
+    reviewerEmail?: true
+    rating?: true
+    isVisible?: true
+    source?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -17935,6 +18005,12 @@ export namespace Prisma {
     imageUrl?: true
     assetId?: true
     tags?: true
+    reviewerName?: true
+    reviewerRole?: true
+    reviewerEmail?: true
+    rating?: true
+    isVisible?: true
+    source?: true
     order?: true
     createdAt?: true
     updatedAt?: true
@@ -18037,6 +18113,12 @@ export namespace Prisma {
     imageUrl: string | null
     assetId: string | null
     tags: string[]
+    reviewerName: string | null
+    reviewerRole: string | null
+    reviewerEmail: string | null
+    rating: number
+    isVisible: boolean
+    source: string
     order: number
     createdAt: Date
     updatedAt: Date
@@ -18071,6 +18153,12 @@ export namespace Prisma {
     imageUrl?: boolean
     assetId?: boolean
     tags?: boolean
+    reviewerName?: boolean
+    reviewerRole?: boolean
+    reviewerEmail?: boolean
+    rating?: boolean
+    isVisible?: boolean
+    source?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18090,6 +18178,12 @@ export namespace Prisma {
     imageUrl?: boolean
     assetId?: boolean
     tags?: boolean
+    reviewerName?: boolean
+    reviewerRole?: boolean
+    reviewerEmail?: boolean
+    rating?: boolean
+    isVisible?: boolean
+    source?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18107,6 +18201,12 @@ export namespace Prisma {
     imageUrl?: boolean
     assetId?: boolean
     tags?: boolean
+    reviewerName?: boolean
+    reviewerRole?: boolean
+    reviewerEmail?: boolean
+    rating?: boolean
+    isVisible?: boolean
+    source?: boolean
     order?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18140,6 +18240,12 @@ export namespace Prisma {
       imageUrl: string | null
       assetId: string | null
       tags: string[]
+      reviewerName: string | null
+      reviewerRole: string | null
+      reviewerEmail: string | null
+      rating: number
+      isVisible: boolean
+      source: string
       order: number
       createdAt: Date
       updatedAt: Date
@@ -18548,6 +18654,12 @@ export namespace Prisma {
     readonly imageUrl: FieldRef<"Proof", 'String'>
     readonly assetId: FieldRef<"Proof", 'String'>
     readonly tags: FieldRef<"Proof", 'String[]'>
+    readonly reviewerName: FieldRef<"Proof", 'String'>
+    readonly reviewerRole: FieldRef<"Proof", 'String'>
+    readonly reviewerEmail: FieldRef<"Proof", 'String'>
+    readonly rating: FieldRef<"Proof", 'Int'>
+    readonly isVisible: FieldRef<"Proof", 'Boolean'>
+    readonly source: FieldRef<"Proof", 'String'>
     readonly order: FieldRef<"Proof", 'Int'>
     readonly createdAt: FieldRef<"Proof", 'DateTime'>
     readonly updatedAt: FieldRef<"Proof", 'DateTime'>
@@ -35656,6 +35768,9 @@ export namespace Prisma {
     publicEmail: 'publicEmail',
     phone: 'phone',
     birthDate: 'birthDate',
+    openToOpportunities: 'openToOpportunities',
+    opportunityMotivation: 'opportunityMotivation',
+    showOpportunityMotivation: 'showOpportunityMotivation',
     onboardingDone: 'onboardingDone',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -35778,6 +35893,12 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     assetId: 'assetId',
     tags: 'tags',
+    reviewerName: 'reviewerName',
+    reviewerRole: 'reviewerRole',
+    reviewerEmail: 'reviewerEmail',
+    rating: 'rating',
+    isVisible: 'isVisible',
+    source: 'source',
     order: 'order',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -36645,6 +36766,9 @@ export namespace Prisma {
     publicEmail?: StringNullableFilter<"Profile"> | string | null
     phone?: StringNullableFilter<"Profile"> | string | null
     birthDate?: DateTimeNullableFilter<"Profile"> | Date | string | null
+    openToOpportunities?: BoolFilter<"Profile"> | boolean
+    opportunityMotivation?: StringNullableFilter<"Profile"> | string | null
+    showOpportunityMotivation?: BoolFilter<"Profile"> | boolean
     onboardingDone?: BoolFilter<"Profile"> | boolean
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
@@ -36675,6 +36799,9 @@ export namespace Prisma {
     publicEmail?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     birthDate?: SortOrderInput | SortOrder
+    openToOpportunities?: SortOrder
+    opportunityMotivation?: SortOrderInput | SortOrder
+    showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36708,6 +36835,9 @@ export namespace Prisma {
     publicEmail?: StringNullableFilter<"Profile"> | string | null
     phone?: StringNullableFilter<"Profile"> | string | null
     birthDate?: DateTimeNullableFilter<"Profile"> | Date | string | null
+    openToOpportunities?: BoolFilter<"Profile"> | boolean
+    opportunityMotivation?: StringNullableFilter<"Profile"> | string | null
+    showOpportunityMotivation?: BoolFilter<"Profile"> | boolean
     onboardingDone?: BoolFilter<"Profile"> | boolean
     createdAt?: DateTimeFilter<"Profile"> | Date | string
     updatedAt?: DateTimeFilter<"Profile"> | Date | string
@@ -36738,6 +36868,9 @@ export namespace Prisma {
     publicEmail?: SortOrderInput | SortOrder
     phone?: SortOrderInput | SortOrder
     birthDate?: SortOrderInput | SortOrder
+    openToOpportunities?: SortOrder
+    opportunityMotivation?: SortOrderInput | SortOrder
+    showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -36763,6 +36896,9 @@ export namespace Prisma {
     publicEmail?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     phone?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     birthDate?: DateTimeNullableWithAggregatesFilter<"Profile"> | Date | string | null
+    openToOpportunities?: BoolWithAggregatesFilter<"Profile"> | boolean
+    opportunityMotivation?: StringNullableWithAggregatesFilter<"Profile"> | string | null
+    showOpportunityMotivation?: BoolWithAggregatesFilter<"Profile"> | boolean
     onboardingDone?: BoolWithAggregatesFilter<"Profile"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Profile"> | Date | string
@@ -37340,6 +37476,12 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"Proof"> | string | null
     assetId?: StringNullableFilter<"Proof"> | string | null
     tags?: StringNullableListFilter<"Proof">
+    reviewerName?: StringNullableFilter<"Proof"> | string | null
+    reviewerRole?: StringNullableFilter<"Proof"> | string | null
+    reviewerEmail?: StringNullableFilter<"Proof"> | string | null
+    rating?: IntFilter<"Proof"> | number
+    isVisible?: BoolFilter<"Proof"> | boolean
+    source?: StringFilter<"Proof"> | string
     order?: IntFilter<"Proof"> | number
     createdAt?: DateTimeFilter<"Proof"> | Date | string
     updatedAt?: DateTimeFilter<"Proof"> | Date | string
@@ -37358,6 +37500,12 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     assetId?: SortOrderInput | SortOrder
     tags?: SortOrder
+    reviewerName?: SortOrderInput | SortOrder
+    reviewerRole?: SortOrderInput | SortOrder
+    reviewerEmail?: SortOrderInput | SortOrder
+    rating?: SortOrder
+    isVisible?: SortOrder
+    source?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37379,6 +37527,12 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"Proof"> | string | null
     assetId?: StringNullableFilter<"Proof"> | string | null
     tags?: StringNullableListFilter<"Proof">
+    reviewerName?: StringNullableFilter<"Proof"> | string | null
+    reviewerRole?: StringNullableFilter<"Proof"> | string | null
+    reviewerEmail?: StringNullableFilter<"Proof"> | string | null
+    rating?: IntFilter<"Proof"> | number
+    isVisible?: BoolFilter<"Proof"> | boolean
+    source?: StringFilter<"Proof"> | string
     order?: IntFilter<"Proof"> | number
     createdAt?: DateTimeFilter<"Proof"> | Date | string
     updatedAt?: DateTimeFilter<"Proof"> | Date | string
@@ -37397,6 +37551,12 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     assetId?: SortOrderInput | SortOrder
     tags?: SortOrder
+    reviewerName?: SortOrderInput | SortOrder
+    reviewerRole?: SortOrderInput | SortOrder
+    reviewerEmail?: SortOrderInput | SortOrder
+    rating?: SortOrder
+    isVisible?: SortOrder
+    source?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37420,6 +37580,12 @@ export namespace Prisma {
     imageUrl?: StringNullableWithAggregatesFilter<"Proof"> | string | null
     assetId?: StringNullableWithAggregatesFilter<"Proof"> | string | null
     tags?: StringNullableListFilter<"Proof">
+    reviewerName?: StringNullableWithAggregatesFilter<"Proof"> | string | null
+    reviewerRole?: StringNullableWithAggregatesFilter<"Proof"> | string | null
+    reviewerEmail?: StringNullableWithAggregatesFilter<"Proof"> | string | null
+    rating?: IntWithAggregatesFilter<"Proof"> | number
+    isVisible?: BoolWithAggregatesFilter<"Proof"> | boolean
+    source?: StringWithAggregatesFilter<"Proof"> | string
     order?: IntWithAggregatesFilter<"Proof"> | number
     createdAt?: DateTimeWithAggregatesFilter<"Proof"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Proof"> | Date | string
@@ -39225,6 +39391,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -39255,6 +39424,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -39283,6 +39455,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39313,6 +39488,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39342,6 +39520,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -39360,6 +39541,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -39379,6 +39563,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40009,6 +40196,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40027,6 +40220,12 @@ export namespace Prisma {
     imageUrl?: string | null
     assetId?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40041,6 +40240,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40059,6 +40264,12 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     assetId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40075,6 +40286,12 @@ export namespace Prisma {
     imageUrl?: string | null
     assetId?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40088,6 +40305,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40103,6 +40326,12 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     assetId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42134,6 +42363,9 @@ export namespace Prisma {
     publicEmail?: SortOrder
     phone?: SortOrder
     birthDate?: SortOrder
+    openToOpportunities?: SortOrder
+    opportunityMotivation?: SortOrder
+    showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -42153,6 +42385,9 @@ export namespace Prisma {
     publicEmail?: SortOrder
     phone?: SortOrder
     birthDate?: SortOrder
+    openToOpportunities?: SortOrder
+    opportunityMotivation?: SortOrder
+    showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -42172,6 +42407,9 @@ export namespace Prisma {
     publicEmail?: SortOrder
     phone?: SortOrder
     birthDate?: SortOrder
+    openToOpportunities?: SortOrder
+    opportunityMotivation?: SortOrder
+    showOpportunityMotivation?: SortOrder
     onboardingDone?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -42583,12 +42821,19 @@ export namespace Prisma {
     imageUrl?: SortOrder
     assetId?: SortOrder
     tags?: SortOrder
+    reviewerName?: SortOrder
+    reviewerRole?: SortOrder
+    reviewerEmail?: SortOrder
+    rating?: SortOrder
+    isVisible?: SortOrder
+    source?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ProofAvgOrderByAggregateInput = {
+    rating?: SortOrder
     order?: SortOrder
   }
 
@@ -42601,6 +42846,12 @@ export namespace Prisma {
     url?: SortOrder
     imageUrl?: SortOrder
     assetId?: SortOrder
+    reviewerName?: SortOrder
+    reviewerRole?: SortOrder
+    reviewerEmail?: SortOrder
+    rating?: SortOrder
+    isVisible?: SortOrder
+    source?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -42615,12 +42866,19 @@ export namespace Prisma {
     url?: SortOrder
     imageUrl?: SortOrder
     assetId?: SortOrder
+    reviewerName?: SortOrder
+    reviewerRole?: SortOrder
+    reviewerEmail?: SortOrder
+    rating?: SortOrder
+    isVisible?: SortOrder
+    source?: SortOrder
     order?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ProofSumOrderByAggregateInput = {
+    rating?: SortOrder
     order?: SortOrder
   }
 
@@ -46262,6 +46520,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -46290,6 +46551,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -46468,6 +46732,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -46496,6 +46763,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -47233,6 +47503,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47249,6 +47525,12 @@ export namespace Prisma {
     imageUrl?: string | null
     assetId?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47674,6 +47956,12 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"Proof"> | string | null
     assetId?: StringNullableFilter<"Proof"> | string | null
     tags?: StringNullableListFilter<"Proof">
+    reviewerName?: StringNullableFilter<"Proof"> | string | null
+    reviewerRole?: StringNullableFilter<"Proof"> | string | null
+    reviewerEmail?: StringNullableFilter<"Proof"> | string | null
+    rating?: IntFilter<"Proof"> | number
+    isVisible?: BoolFilter<"Proof"> | boolean
+    source?: StringFilter<"Proof"> | string
     order?: IntFilter<"Proof"> | number
     createdAt?: DateTimeFilter<"Proof"> | Date | string
     updatedAt?: DateTimeFilter<"Proof"> | Date | string
@@ -47762,6 +48050,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47791,6 +48082,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -47903,6 +48197,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -47932,6 +48229,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48039,6 +48339,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48068,6 +48371,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48131,6 +48437,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48160,6 +48469,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48212,6 +48524,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48241,6 +48556,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48304,6 +48622,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48333,6 +48654,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48385,6 +48709,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48414,6 +48741,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48526,6 +48856,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48555,6 +48888,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48662,6 +48998,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48691,6 +49030,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48803,6 +49145,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48832,6 +49177,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -48939,6 +49287,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -48968,6 +49319,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49031,6 +49385,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49060,6 +49417,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49112,6 +49472,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49141,6 +49504,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49253,6 +49619,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49282,6 +49651,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49389,6 +49761,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49418,6 +49793,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49530,6 +49908,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49559,6 +49940,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49666,6 +50050,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49695,6 +50082,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49774,6 +50164,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49790,6 +50186,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49946,6 +50348,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -49975,6 +50380,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50082,6 +50490,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50111,6 +50522,9 @@ export namespace Prisma {
     publicEmail?: string | null
     phone?: string | null
     birthDate?: Date | string | null
+    openToOpportunities?: boolean
+    opportunityMotivation?: string | null
+    showOpportunityMotivation?: boolean
     onboardingDone?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50391,6 +50805,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -50420,6 +50837,9 @@ export namespace Prisma {
     publicEmail?: NullableStringFieldUpdateOperationsInput | string | null
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     birthDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    openToOpportunities?: BoolFieldUpdateOperationsInput | boolean
+    opportunityMotivation?: NullableStringFieldUpdateOperationsInput | string | null
+    showOpportunityMotivation?: BoolFieldUpdateOperationsInput | boolean
     onboardingDone?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52687,6 +53107,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52704,6 +53130,12 @@ export namespace Prisma {
     imageUrl?: string | null
     assetId?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52790,6 +53222,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52807,6 +53245,12 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     assetId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53432,6 +53876,12 @@ export namespace Prisma {
     imageUrl?: string | null
     assetId?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -53762,6 +54212,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53778,6 +54234,12 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     assetId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53793,6 +54255,12 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     assetId?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54107,6 +54575,12 @@ export namespace Prisma {
     url?: string | null
     imageUrl?: string | null
     tags?: ProofCreatetagsInput | string[]
+    reviewerName?: string | null
+    reviewerRole?: string | null
+    reviewerEmail?: string | null
+    rating?: number
+    isVisible?: boolean
+    source?: string
     order?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54222,6 +54696,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54238,6 +54718,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54253,6 +54739,12 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     tags?: ProofUpdatetagsInput | string[]
+    reviewerName?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerRole?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewerEmail?: NullableStringFieldUpdateOperationsInput | string | null
+    rating?: IntFieldUpdateOperationsInput | number
+    isVisible?: BoolFieldUpdateOperationsInput | boolean
+    source?: StringFieldUpdateOperationsInput | string
     order?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

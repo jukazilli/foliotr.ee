@@ -5,11 +5,17 @@ import {
   canonicalTemplateResumeDefaultsSchema,
   type CanonicalTemplateEligibility,
 } from "@/lib/templates/manifest";
-import { templateListInclude, type TemplateListItem } from "@/lib/server/domain/templates";
+import {
+  templateListInclude,
+  type TemplateListItem,
+} from "@/lib/server/domain/templates";
 import type { VersionAggregate } from "@/lib/server/domain/includes";
 
 type DbClient = PrismaClient;
-type ReadonlyTemplateEligibility = Omit<CanonicalTemplateEligibility, "requiredProfileFields"> & {
+type ReadonlyTemplateEligibility = Omit<
+  CanonicalTemplateEligibility,
+  "requiredProfileFields"
+> & {
   readonly requiredProfileFields: readonly CanonicalTemplateEligibility["requiredProfileFields"][number][];
 };
 
@@ -86,7 +92,9 @@ export interface CanonicalTemplateListItem extends TemplateListItem {
   restrictions: ReturnType<typeof parseRestrictions>;
 }
 
-function hydrateCanonicalTemplate(template: TemplateListItem): CanonicalTemplateListItem {
+function hydrateCanonicalTemplate(
+  template: TemplateListItem
+): CanonicalTemplateListItem {
   const eligibility = parseEligibility(template.eligibility);
   const resumeDefaults = readTemplateResumeDefaults(template.resumeDefaults);
   const restrictions = parseRestrictions(template.restrictions);
@@ -132,7 +140,10 @@ export function evaluateTemplateEligibility(
   const headline = version?.customHeadline ?? profile.headline ?? null;
   const bio = version?.customBio ?? profile.bio ?? null;
 
-  if (eligibility.requiredProfileFields.includes("displayName") && !hasText(displayName)) {
+  if (
+    eligibility.requiredProfileFields.includes("displayName") &&
+    !hasText(displayName)
+  ) {
     issues.push({
       key: "displayName",
       label: "Nome publico",
@@ -216,16 +227,16 @@ export function evaluateTemplateEligibility(
   if (proofCount < eligibility.minProofItems) {
     issues.push({
       key: "proofs",
-      label: "Provas",
-      description: `Adicione pelo menos ${eligibility.minProofItems} provas publicas.`,
+      label: "Reviews",
+      description: `Adicione pelo menos ${eligibility.minProofItems} reviews públicas.`,
     });
   }
 
   if (linkCount + proofCount < eligibility.minLinkOrProofItems) {
     issues.push({
       key: "linksOrProofs",
-      label: "Links ou provas",
-      description: `Garanta pelo menos ${eligibility.minLinkOrProofItems} links ou provas publicas.`,
+      label: "Links ou reviews",
+      description: `Garanta pelo menos ${eligibility.minLinkOrProofItems} links ou reviews públicas.`,
     });
   }
 

@@ -132,6 +132,9 @@ model Profile {
   publicEmail    String?
   phone          String?
   birthDate      DateTime?
+  openToOpportunities     Boolean @default(false)
+  opportunityMotivation   String?  @db.Text
+  showOpportunityMotivation Boolean @default(false)
   onboardingDone Boolean @default(false)
 
   experiences  Experience[]
@@ -262,6 +265,12 @@ model Proof {
   assetId     String?
   asset       Asset?         @relation("ProofAsset", fields: [assetId], references: [id], onDelete: SetNull)
   tags        String[]
+  reviewerName  String?
+  reviewerRole  String?
+  reviewerEmail String?
+  rating         Int     @default(5)
+  isVisible      Boolean @default(false)
+  source         String  @default("manual")
   order       Int            @default(0)
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt

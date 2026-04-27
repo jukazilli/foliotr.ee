@@ -11,12 +11,13 @@ const features = [
   {
     icon: Fingerprint,
     title: "Uma base central",
-    description: "Perfil, experiências, projetos, links e provas ficam no mesmo lugar.",
+    description:
+      "Perfil, experiências, projetos, links e reviews ficam no mesmo lugar.",
     tone: "bg-cyan-100 text-cyan-900",
   },
   {
     icon: BadgeCheck,
-    title: "Prova com contexto",
+    title: "Review com contexto",
     description:
       "Resultados ganham métrica, papel, link e história suficiente para serem entendidos.",
     tone: "bg-green-100 text-green-900",
@@ -53,7 +54,7 @@ const features = [
 
 export default function Features() {
   return (
-    <section id="provas" className="bg-white py-16 sm:py-20">
+    <section id="reviews" className="bg-white py-16 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-end">
           <div>

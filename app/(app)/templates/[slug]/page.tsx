@@ -1,5 +1,11 @@
 import Link from "next/link";
-import { CheckCircle2, ExternalLink, Layers3, LockKeyhole, TriangleAlert } from "lucide-react";
+import {
+  CheckCircle2,
+  ExternalLink,
+  Layers3,
+  LockKeyhole,
+  TriangleAlert,
+} from "lucide-react";
 import { notFound } from "next/navigation";
 import { PageIntro, EmptyWorkspaceState } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +41,7 @@ export default async function TemplateDetailPage({
   }
 
   const baseEligibility = evaluateTemplateEligibility(template, profile);
-  const appliedVersionId = state.applied === "1" ? state.version ?? null : null;
+  const appliedVersionId = state.applied === "1" ? (state.version ?? null) : null;
 
   return (
     <div className="space-y-8">
@@ -64,7 +70,10 @@ export default async function TemplateDetailPage({
       {appliedVersionId ? (
         <Card className="rounded-[26px] border-green-200 bg-green-50/80">
           <CardContent className="flex items-start gap-3 p-5">
-            <CheckCircle2 className="mt-0.5 h-5 w-5 text-green-700" aria-hidden="true" />
+            <CheckCircle2
+              className="mt-0.5 h-5 w-5 text-green-700"
+              aria-hidden="true"
+            />
             <div>
               <p className="text-sm font-semibold text-green-900">Modelo aplicado.</p>
               <p className="mt-1 text-sm leading-7 text-green-800">
@@ -86,7 +95,9 @@ export default async function TemplateDetailPage({
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-[#FBF8CC] px-6 text-center">
-                <p className="text-sm font-medium text-neutral-600">Capa indisponivel.</p>
+                <p className="text-sm font-medium text-neutral-600">
+                  Capa indisponivel.
+                </p>
               </div>
             )}
           </div>
@@ -129,7 +140,10 @@ export default async function TemplateDetailPage({
 
               <div className="rounded-[20px] border border-lime-100 bg-lime-50/80 p-4">
                 <div className="flex items-start gap-3">
-                  <LockKeyhole className="mt-0.5 h-4 w-4 text-lime-800" aria-hidden="true" />
+                  <LockKeyhole
+                    className="mt-0.5 h-4 w-4 text-lime-800"
+                    aria-hidden="true"
+                  />
                   <div>
                     <p className="font-semibold text-neutral-900">Estilo fixo</p>
                     <p className="mt-1 text-sm leading-7 text-neutral-600">
@@ -151,9 +165,14 @@ export default async function TemplateDetailPage({
               {baseEligibility.eligible ? (
                 <div className="rounded-[20px] border border-green-200 bg-green-50/80 p-4">
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 text-green-700" aria-hidden="true" />
+                    <CheckCircle2
+                      className="mt-0.5 h-4 w-4 text-green-700"
+                      aria-hidden="true"
+                    />
                     <div>
-                      <p className="text-sm font-semibold text-green-900">Tudo certo.</p>
+                      <p className="text-sm font-semibold text-green-900">
+                        Tudo certo.
+                      </p>
                       <p className="mt-1 text-sm leading-7 text-green-800">
                         Seu perfil ja pode usar este modelo.
                       </p>
@@ -163,7 +182,10 @@ export default async function TemplateDetailPage({
               ) : (
                 <div className="rounded-[20px] border border-coral-200 bg-coral-50/80 p-4">
                   <div className="flex items-start gap-3">
-                    <TriangleAlert className="mt-0.5 h-4 w-4 text-coral-700" aria-hidden="true" />
+                    <TriangleAlert
+                      className="mt-0.5 h-4 w-4 text-coral-700"
+                      aria-hidden="true"
+                    />
                     <div>
                       <p className="text-sm font-semibold text-coral-900">
                         Faltam algumas informacoes.
@@ -194,7 +216,7 @@ export default async function TemplateDetailPage({
         <EmptyWorkspaceState
           title="Nenhuma versao disponivel"
           description="Crie uma versao para usar este modelo."
-          primaryAction={{ href: "/versions", label: "Ver versoes" }}
+          primaryAction={{ href: "/portfolios", label: "Ver portfolios" }}
           secondaryAction={{ href: "/profile", label: "Voltar ao perfil" }}
           accent="lime"
           label="Sem versoes"
@@ -210,13 +232,20 @@ export default async function TemplateDetailPage({
 
           <div className="grid gap-4 xl:grid-cols-2">
             {versions.map((version) => {
-              const eligibility = evaluateTemplateEligibility(template, profile, version);
+              const eligibility = evaluateTemplateEligibility(
+                template,
+                profile,
+                version
+              );
               const page = getPrimaryVersionPage(version);
               const alreadyApplied = page?.template?.slug === template.slug;
               const useAction = useCanonicalTemplateAction.bind(null, template.slug);
 
               return (
-                <Card key={version.id} className="rounded-[28px] border border-neutral-200 bg-white/90">
+                <Card
+                  key={version.id}
+                  className="rounded-[28px] border border-neutral-200 bg-white/90"
+                >
                   <CardContent className="space-y-5 p-6">
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -224,26 +253,36 @@ export default async function TemplateDetailPage({
                           <Badge variant={version.isDefault ? "success" : "default"}>
                             {version.isDefault ? "principal" : "versao"}
                           </Badge>
-                          {alreadyApplied ? <Badge variant="warning">aplicado</Badge> : null}
+                          {alreadyApplied ? (
+                            <Badge variant="warning">aplicado</Badge>
+                          ) : null}
                           {page?.publishState ? (
-                            <Badge variant="info">{page.publishState.toLowerCase()}</Badge>
+                            <Badge variant="info">
+                              {page.publishState.toLowerCase()}
+                            </Badge>
                           ) : null}
                         </div>
                         <h3 className="mt-3 font-display text-2xl font-semibold tracking-tight text-neutral-950">
                           {version.name}
                         </h3>
                         {version.context ? (
-                          <p className="mt-2 text-sm leading-7 text-neutral-600">{version.context}</p>
+                          <p className="mt-2 text-sm leading-7 text-neutral-600">
+                            {version.context}
+                          </p>
                         ) : null}
                       </div>
                     </div>
 
                     {!eligibility.eligible ? (
                       <div className="rounded-[20px] border border-coral-100 bg-coral-50/70 p-4">
-                        <p className="text-sm font-semibold text-coral-900">Faltam algumas informacoes.</p>
+                        <p className="text-sm font-semibold text-coral-900">
+                          Faltam algumas informacoes.
+                        </p>
                         <ul className="mt-2 space-y-1 text-sm leading-6 text-coral-900">
                           {eligibility.issues.map((issue) => (
-                            <li key={`${version.id}-${issue.key}`}>- {issue.description}</li>
+                            <li key={`${version.id}-${issue.key}`}>
+                              - {issue.description}
+                            </li>
                           ))}
                         </ul>
                       </div>
@@ -253,13 +292,16 @@ export default async function TemplateDetailPage({
                       </div>
                     )}
 
-                    <form action={useAction} className="flex flex-wrap items-center gap-3">
+                    <form
+                      action={useAction}
+                      className="flex flex-wrap items-center gap-3"
+                    >
                       <input type="hidden" name="versionId" value={version.id} />
                       <Button type="submit" disabled={!eligibility.eligible}>
                         {alreadyApplied ? "Aplicar de novo" : "Usar modelo"}
                       </Button>
                       <Button asChild variant="outline" size="sm">
-                        <Link href="/versions">Ver versao</Link>
+                        <Link href="/portfolios">Ver portfolio</Link>
                       </Button>
                     </form>
                   </CardContent>

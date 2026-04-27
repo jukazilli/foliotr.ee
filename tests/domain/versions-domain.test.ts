@@ -163,7 +163,7 @@ describe("versions domain", () => {
         customBio: undefined,
         isDefault: true,
       },
-      include: expect.any(Object),
+      select: { id: true },
     });
     expect(tx.versionExperience.createMany).toHaveBeenCalledWith({
       data: [{ versionId: "version_1", experienceId: "exp_1", order: 0 }],

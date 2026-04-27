@@ -2,7 +2,13 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 interface PageIntroProps {
@@ -24,19 +30,23 @@ export function PageIntro({
     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="max-w-2xl">
         {eyebrow ? (
-          <p className="font-data text-[11px] font-semibold uppercase tracking-[0.24em] text-neutral-400">
+          <p className="font-data text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="mt-3 font-display text-3xl font-semibold tracking-tight text-neutral-950 sm:text-[2.5rem]">
+        <h1 className="mt-3 font-display text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
           {title}
         </h1>
-        <p className="mt-3 max-w-xl text-sm leading-7 text-neutral-600 sm:text-[15px]">
+        <p className="mt-3 max-w-xl text-sm font-medium leading-7 text-muted sm:text-[15px]">
           {description}
         </p>
-        {meta ? <div className="mt-4 flex flex-wrap items-center gap-2">{meta}</div> : null}
+        {meta ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2">{meta}</div>
+        ) : null}
       </div>
-      {actions ? <div className="flex flex-wrap items-center gap-2">{actions}</div> : null}
+      {actions ? (
+        <div className="flex flex-wrap items-center gap-2">{actions}</div>
+      ) : null}
     </div>
   );
 }
@@ -57,11 +67,11 @@ interface EmptyWorkspaceStateProps {
 }
 
 const accentStyles = {
-  blue: "border-blue-100 bg-blue-50/70",
-  lime: "border-lime-100 bg-lime-50/80",
-  violet: "border-violet-100 bg-violet-50/75",
-  cyan: "border-cyan-100 bg-cyan-50/80",
-  neutral: "border-neutral-200 bg-white",
+  blue: "bg-white",
+  lime: "bg-cream",
+  violet: "bg-white",
+  cyan: "bg-cream",
+  neutral: "bg-white",
 };
 
 export function EmptyWorkspaceState({
@@ -77,14 +87,14 @@ export function EmptyWorkspaceState({
       <CardContent className="flex flex-col gap-5 px-6 py-8 sm:px-8">
         <div className="max-w-xl">
           {label ? (
-            <Badge variant="default" className="mb-4 bg-white/75 text-neutral-700">
+            <Badge variant="default" className="mb-4">
               {label}
             </Badge>
           ) : null}
-          <h2 className="font-display text-2xl font-semibold tracking-tight text-neutral-950">
+          <h2 className="font-display text-2xl font-bold tracking-[-0.02em] text-ink">
             {title}
           </h2>
-          <p className="mt-3 text-sm leading-7 text-neutral-600">{description}</p>
+          <p className="mt-3 text-sm font-medium leading-7 text-muted">{description}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {primaryAction ? (
@@ -115,23 +125,23 @@ interface StatCardProps {
 
 const statToneStyles = {
   neutral: "bg-white",
-  blue: "bg-blue-50/85",
-  violet: "bg-violet-50/85",
-  cyan: "bg-cyan-50/85",
-  lime: "bg-lime-50/90",
+  blue: "bg-white",
+  violet: "bg-white",
+  cyan: "bg-cream",
+  lime: "bg-cream",
 };
 
 export function StatCard({ label, value, hint, tone = "neutral" }: StatCardProps) {
   return (
     <Card className={cn("rounded-2xl border-white/70", statToneStyles[tone])}>
       <CardContent className="px-5 py-5">
-        <p className="font-data text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-400">
+        <p className="font-data text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
           {label}
         </p>
-        <p className="mt-3 font-display text-3xl font-semibold tracking-tight text-neutral-950">
+        <p className="mt-3 font-display text-3xl font-bold tracking-[-0.025em] text-ink">
           {value}
         </p>
-        <p className="mt-2 text-sm leading-6 text-neutral-600">{hint}</p>
+        <p className="mt-2 text-sm font-medium leading-6 text-muted">{hint}</p>
       </CardContent>
     </Card>
   );
@@ -148,9 +158,9 @@ interface FlowStepCardProps {
 
 const flowToneStyles = {
   neutral: "bg-white",
-  blue: "bg-blue-50/75",
-  violet: "bg-violet-50/80",
-  cyan: "bg-cyan-50/80",
+  blue: "bg-white",
+  violet: "bg-white",
+  cyan: "bg-cream",
 };
 
 export function FlowStepCard({
@@ -165,13 +175,13 @@ export function FlowStepCard({
     <Link href={href} className="group block">
       <Card
         className={cn(
-          "h-full rounded-2xl border-white/75 transition-all hover:-translate-y-0.5 hover:border-neutral-200 hover:shadow-md",
+          "h-full transition-all hover:-translate-y-0.5",
           flowToneStyles[tone]
         )}
       >
         <CardHeader className="space-y-4">
           <div className="flex items-center justify-between gap-3">
-            <span className="font-data text-[11px] font-semibold uppercase tracking-[0.22em] text-neutral-400">
+            <span className="font-data text-[11px] font-semibold uppercase tracking-[0.18em] text-muted">
               {step}
             </span>
             <Badge variant="default" className="bg-white/80 text-neutral-700">
@@ -179,10 +189,10 @@ export function FlowStepCard({
             </Badge>
           </div>
           <div>
-            <CardTitle className="font-display text-2xl font-semibold tracking-tight">
+            <CardTitle className="font-display text-xl font-bold tracking-[-0.02em]">
               {title}
             </CardTitle>
-            <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
+            <CardDescription className="mt-2 text-sm leading-7 text-muted">
               {description}
             </CardDescription>
           </div>

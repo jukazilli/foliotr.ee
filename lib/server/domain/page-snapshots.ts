@@ -1,8 +1,15 @@
 import { Prisma } from "@/generated/prisma-client";
 import type { ResumeConfig } from "@/generated/prisma-client";
-import type { RenderablePageBlock, TemplateProfile } from "@/components/templates/types";
+import type {
+  RenderablePageBlock,
+  TemplateProfile,
+} from "@/components/templates/types";
 import type { VersionForBlocks } from "@/components/blocks/types";
-import { getVersionSelectionIds, type ProfileAggregate, type VersionAggregate } from "@/lib/server/domain/includes";
+import {
+  getVersionSelectionIds,
+  type ProfileAggregate,
+  type VersionAggregate,
+} from "@/lib/server/domain/includes";
 
 export interface PageEditorSnapshot {
   profile: TemplateProfile;
@@ -54,6 +61,9 @@ export function buildEditorSnapshot(
       publicEmail: profile.publicEmail,
       phone: profile.phone,
       birthDate: profile.birthDate,
+      openToOpportunities: profile.openToOpportunities,
+      opportunityMotivation: profile.opportunityMotivation,
+      showOpportunityMotivation: profile.showOpportunityMotivation,
       onboardingDone: profile.onboardingDone,
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
@@ -121,7 +131,9 @@ export function readPageEditorSnapshot(value: unknown): PageEditorSnapshot | nul
   return value as unknown as PageEditorSnapshot;
 }
 
-export function readPublishedPageSnapshot(value: unknown): PublishedPageSnapshot | null {
+export function readPublishedPageSnapshot(
+  value: unknown
+): PublishedPageSnapshot | null {
   if (!isRecord(value) || !Array.isArray(value.blocks)) {
     return null;
   }
@@ -132,7 +144,9 @@ export function readPublishedPageSnapshot(value: unknown): PublishedPageSnapshot
   return value as unknown as PublishedPageSnapshot;
 }
 
-export function readPublishedResumeSnapshot(value: unknown): PublishedResumeSnapshot | null {
+export function readPublishedResumeSnapshot(
+  value: unknown
+): PublishedResumeSnapshot | null {
   const pageSnapshot = readPublishedPageSnapshot(value);
   if (!pageSnapshot || !isRecord(value) || !isRecord(value.config)) {
     return null;

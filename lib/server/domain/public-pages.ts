@@ -46,6 +46,8 @@ export type PublicPageRecord = Prisma.PageGetPayload<{
   include: typeof publicPageInclude;
 }>;
 
+export type PublicProfileHub = Awaited<ReturnType<typeof getPublicProfileHub>>;
+
 function orderPublishedPages(pages: PublicPageRecord[]) {
   return [...pages].sort((left, right) => {
     if (left.version.isDefault !== right.version.isDefault) {
@@ -83,6 +85,85 @@ export async function getPrimaryPublishedPage(username: string) {
   });
 
   return orderPublishedPages(pages)[0] ?? null;
+}
+
+export async function getPublicProfileHub(username: string) {
+  return prisma.profile.findFirst({
+    where: {
+      user: {
+        username,
+      },
+    },
+    select: {
+      id: true,
+      displayName: true,
+      avatarUrl: true,
+      headline: true,
+      bio: true,
+      location: true,
+      birthDate: true,
+      openToOpportunities: true,
+      opportunityMotivation: true,
+      showOpportunityMotivation: true,
+      experiences: {
+        orderBy: [{ current: "desc" }, { startDate: "desc" }],
+        select: {
+          role: true,
+          company: true,
+          current: true,
+        },
+      },
+      user: {
+        select: {
+          username: true,
+          vocationalTests: {
+            where: {
+              status: "completed",
+              publicInPortfolio: true,
+            },
+            orderBy: {
+              completedAt: "desc",
+            },
+            take: 1,
+          },
+        },
+      },
+      versions: {
+        orderBy: [{ isDefault: "desc" }, { updatedAt: "desc" }],
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          context: true,
+          customHeadline: true,
+          customBio: true,
+          isDefault: true,
+          resumeConfig: {
+            select: {
+              publishState: true,
+            },
+          },
+          pages: {
+            where: {
+              publishState: "PUBLISHED",
+            },
+            orderBy: [{ publishedAt: "desc" }, { updatedAt: "desc" }],
+            select: {
+              id: true,
+              slug: true,
+              title: true,
+              publishedAt: true,
+              template: {
+                select: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
 }
 
 export async function getPublishedPageByUsernameAndSlug(

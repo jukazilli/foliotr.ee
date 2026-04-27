@@ -91,7 +91,11 @@ describe("register API route", () => {
       data: {
         userId: "user_1",
         displayName: "Ana Souza",
-        onboardingDone: false,
+        headline: null,
+        location: null,
+        birthDate: null,
+        bio: null,
+        onboardingDone: true,
       },
     });
     expect(mocks.tx.version.create).toHaveBeenCalledWith({

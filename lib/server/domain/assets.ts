@@ -89,7 +89,10 @@ function collectAssetIdsFromPayload(value: unknown): string[] {
   const record = value as Record<string, unknown>;
   const assetIds = typeof record.assetId === "string" ? [record.assetId] : [];
 
-  return [...assetIds, ...Object.values(record).flatMap((item) => collectAssetIdsFromPayload(item))];
+  return [
+    ...assetIds,
+    ...Object.values(record).flatMap((item) => collectAssetIdsFromPayload(item)),
+  ];
 }
 
 function dedupeUsageLocations(locations: AssetUsageLocation[]) {
@@ -114,7 +117,10 @@ function toUsageSummary(locations: AssetUsageLocation[]): AssetUsageSummary {
   };
 }
 
-function buildPageBlockUsageLabel(page: { title: string | null; slug: string }, blockType: string) {
+function buildPageBlockUsageLabel(
+  page: { title: string | null; slug: string },
+  blockType: string
+) {
   const pageLabel = page.title?.trim() || page.slug;
   const normalizedBlockType = blockType.replace(/[-_]+/g, " ").trim();
 
@@ -272,7 +278,7 @@ async function buildOwnedAssetUsageMap(
     asset.proofAssets.forEach((proof) => {
       addUsageLocation(asset.id, {
         type: "proof",
-        label: proof.title || "Prova",
+        label: proof.title || "Review",
         referenceId: proof.id,
       });
     });
@@ -428,7 +434,9 @@ export async function listOwnedAssets(
       canDelete: !(usageMap.get(asset.id)?.inUse ?? false),
     })),
     nextCursor:
-      hasNextPage && !usePagePagination ? (pageItems[pageItems.length - 1]?.id ?? null) : null,
+      hasNextPage && !usePagePagination
+        ? (pageItems[pageItems.length - 1]?.id ?? null)
+        : null,
     page,
     limit,
     total,
@@ -500,11 +508,7 @@ export async function updateOwnedAsset(
   });
 }
 
-export async function deleteOwnedAsset(
-  db: DbClient,
-  userId: string,
-  assetId: string
-) {
+export async function deleteOwnedAsset(db: DbClient, userId: string, assetId: string) {
   const profile = await getOwnedProfileBase(db, userId);
   const asset = await db.asset.findFirst({
     where: {
