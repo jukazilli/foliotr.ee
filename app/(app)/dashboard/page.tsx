@@ -20,7 +20,7 @@ function plural(value: number, singular: string, pluralLabel: string) {
 
 export default async function DashboardPage() {
   const profile = await getDashboardViewer();
-  const firstName = (profile.displayName || profile.user.name || "você").split(" ")[0];
+  const firstName = (profile.displayName || profile.user.name || "voce").split(" ")[0];
   const totalProfileItems =
     profile._count.educations +
     profile._count.experiences +
@@ -43,46 +43,46 @@ export default async function DashboardPage() {
 
   const quickActions = [
     {
-      label: "Formação",
+      label: "Formacao",
       href: "/profile?tab=formacao",
       count: profile._count.educations,
       icon: GraduationCap,
-      helper: "Cursos, certificações e trajetórias de estudo.",
+      helper: "Cursos, certificacoes e trajetorias de estudo.",
     },
     {
-      label: "Experiências",
+      label: "Experiencias",
       href: "/profile?tab=experiencias",
       count: profile._count.experiences,
       icon: BriefcaseBusiness,
-      helper: "Cargos, freelas, estágios e responsabilidades.",
+      helper: "Cargos, freelas, estagios e responsabilidades.",
     },
     {
       label: "Projetos",
       href: "/profile?tab=projetos",
       count: profile._count.projects,
       icon: FolderOpenDot,
-      helper: "Cases, produtos, estudos e entregas comprováveis.",
+      helper: "Cases, produtos, estudos e entregas comprovaveis.",
     },
     {
       label: "Reconhecimentos",
       href: "/profile?tab=reconhecimentos",
       count: profile._count.achievements + profile._count.highlights,
       icon: Medal,
-      helper: "Prêmios, marcos, métricas e destaques.",
+      helper: "Premios, marcos, metricas e destaques.",
     },
     {
       label: "Links",
       href: "/profile?tab=links",
       count: profile._count.links + (profile.websiteUrl ? 1 : 0),
       icon: Link2,
-      helper: "Redes, sites, publicações e canais externos.",
+      helper: "Redes, sites, publicacoes e canais externos.",
     },
     {
       label: "Reviews",
       href: "/profile?tab=reviews",
       count: profile._count.proofs,
       icon: ExternalLink,
-      helper: "Avaliações recebidas e aprovadas para o perfil público.",
+      helper: "Avaliacoes recebidas e aprovadas para o perfil publico.",
     },
   ];
 
@@ -93,32 +93,32 @@ export default async function DashboardPage() {
       detail: `${totalProfileItems} ${plural(totalProfileItems, "item preenchido", "itens preenchidos")}`,
     },
     {
-      label: "Versões",
+      label: "Portfolios",
       value: profile.versions.length,
-      detail: `${profile.versions.length} ${plural(profile.versions.length, "versão criada", "versões criadas")}`,
+      detail: `${profile.versions.length} ${plural(profile.versions.length, "portfolio criado", "portfolios criados")}`,
     },
     {
-      label: "Páginas públicas",
+      label: "Paginas publicas",
       value: publishedPages,
-      detail: `${publishedPages} ${plural(publishedPages, "página publicada", "páginas publicadas")}`,
+      detail: `${publishedPages} ${plural(publishedPages, "pagina publicada", "paginas publicadas")}`,
     },
     {
-      label: "Currículos",
+      label: "Curriculos",
       value: publishedResumes,
-      detail: `${publishedResumes} ${plural(publishedResumes, "currículo publicado", "currículos publicados")}`,
+      detail: `${publishedResumes} ${plural(publishedResumes, "curriculo publicado", "curriculos publicados")}`,
     },
   ];
 
   const nextSteps = [
     {
       title: profile.headline
-        ? "Refinar apresentação"
-        : "Adicionar título profissional",
+        ? "Refinar apresentacao"
+        : "Adicionar titulo profissional",
       href: "/profile",
       done: Boolean(profile.headline),
       description: profile.headline
         ? profile.headline
-        : "Uma frase clara ajuda recrutadores a entenderem sua área em segundos.",
+        : "Uma frase clara ajuda recrutadores a entenderem sua area em segundos.",
     },
     {
       title:
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
       description:
         publishedPages > 0
           ? "Sua pagina ja pode ser compartilhada com clientes e recrutadores."
-          : "Transforme sua base em uma versao publica.",
+          : "Transforme sua base em um portfolio publico.",
     },
   ];
 
@@ -146,13 +146,13 @@ export default async function DashboardPage() {
       <section className="relative overflow-hidden rounded-[18px] border-2 border-line bg-lime p-6 shadow-hard-sm md:p-8 lg:col-span-12">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
-            <p className="eyebrow">Área inicial</p>
+            <p className="eyebrow">Area inicial</p>
             <h1 className="max-w-[12ch] text-[clamp(3rem,6vw,6.4rem)] font-extrabold leading-[0.98] tracking-[-0.04em] text-ink">
               Atualize seu Linkfolio, {firstName}.
             </h1>
             <p className="mt-5 max-w-2xl text-lg font-semibold leading-7 text-ink/80">
-              Organize sua base profissional, publique páginas e prepare versões
-              específicas para cada oportunidade.
+              Organize sua base profissional, publique portfolios e gere curriculos
+              rapidos para cada oportunidade.
             </p>
           </div>
 
@@ -203,7 +203,7 @@ export default async function DashboardPage() {
         <div className="md:col-span-2 xl:col-span-3">
           <p className="eyebrow">Base profissional</p>
           <h2 className="mt-2 max-w-3xl text-3xl font-extrabold leading-tight tracking-[-0.04em] text-ink md:text-4xl">
-            Edite os blocos que alimentam páginas, currículos e versões.
+            Edite os blocos que alimentam portfolios, curriculos e variacoes.
           </h2>
         </div>
 
@@ -251,7 +251,7 @@ export default async function DashboardPage() {
         <Card className="rounded-[18px] bg-cream text-ink">
           <CardContent className="p-5">
             <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.2em] text-muted">
-              Próximos passos
+              Proximos passos
             </p>
             <div className="mt-5 grid gap-4">
               {nextSteps.map((step) => (
@@ -284,7 +284,7 @@ export default async function DashboardPage() {
         <Card className="rounded-[18px] bg-white">
           <CardContent className="p-5">
             <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.2em] text-muted">
-              Versão ativa
+              Portfolio principal
             </p>
             <div className="mt-5 flex items-start gap-3">
               <span className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-line bg-cream">
@@ -295,7 +295,7 @@ export default async function DashboardPage() {
                   {defaultVersion?.name ?? "Principal"}
                 </h3>
                 <p className="mt-1 text-sm font-semibold leading-5 text-muted">
-                  Use versões para adaptar página e currículo a cada objetivo.
+                  Use variacoes para adaptar portfolio e curriculo a cada objetivo.
                 </p>
               </div>
             </div>
@@ -312,7 +312,7 @@ export default async function DashboardPage() {
         <Card className="rounded-[18px] bg-cream">
           <CardContent className="p-5">
             <p className="text-[0.72rem] font-extrabold uppercase tracking-[0.2em] text-muted">
-              Publicação
+              Publicacao
             </p>
             <div className="mt-5 grid gap-3">
               <Link

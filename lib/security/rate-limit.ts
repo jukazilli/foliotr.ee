@@ -27,6 +27,11 @@ export const AUTH_MUTATION_RATE_LIMIT: RateLimitOptions = {
   max: 5,
 };
 
+export const PUBLIC_REVIEW_RATE_LIMIT: RateLimitOptions = {
+  windowMs: 10 * 60_000,
+  max: 3,
+};
+
 export function checkRateLimit(
   key: string,
   options: RateLimitOptions,

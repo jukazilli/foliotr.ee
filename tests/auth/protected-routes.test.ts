@@ -12,6 +12,8 @@ describe("protected route middleware", () => {
   it("flags the logged shell routes as protected", () => {
     expect(isProtectedPath("/dashboard")).toBe(true);
     expect(isProtectedPath("/profile")).toBe(true);
+    expect(isProtectedPath("/gallery")).toBe(true);
+    expect(isProtectedPath("/portfolios")).toBe(true);
     expect(isProtectedPath("/versions")).toBe(true);
     expect(isProtectedPath("/pages")).toBe(true);
     expect(isProtectedPath("/resumes")).toBe(true);

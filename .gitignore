@@ -8,8 +8,9 @@ node_modules/
 # Testing
 /coverage
 /public/uploads/
+/output/
 
-# Local design references
+# Local references and legacy prototype artifacts
 /assets/curriculo-code/
 
 # Next.js

@@ -1,8 +1,10 @@
 # FolioTree MVP Executable Technical Plan
 
-Status: executable planning audit  
+Status: historical planning audit, superseded by `docs/current-architecture.md` and `docs/architecture-optimization-slices.md`  
 Date: 2026-04-18  
 Scope: current repository state + `/doc` source of truth
+
+> Historical note: this document remains useful as planning context, but it is not the active architecture or execution contract. Use `docs/current-architecture.md` for the current runtime map and `docs/architecture-optimization-slices.md` for the active optimization plan.
 
 ## 0. Sources And Precedence
 
@@ -13,9 +15,9 @@ Sources reviewed:
 - `doc/brand-deck.md`
 - `doc/setup.md`
 - `doc/mvp-technical-audit.md`
-- `doc/Design System/Brand Core.html`
-- `doc/Design System/Tonal System.html`
-- `doc/Design System/Typography System.html`
+- `prototipos-legados/design-system-legado/Brand Core.html`
+- `prototipos-legados/design-system-legado/Tonal System.html`
+- `prototipos-legados/design-system-legado/Typography System.html`
 - `package.json`
 - `prisma/schema.prisma`
 - `prisma/seed.ts`
@@ -32,7 +34,7 @@ Sources reviewed:
 Precedence rule:
 
 1. Product and brand meaning come from `/doc`.
-2. Visual direction and public UI rules come from `doc/Design System/*.html`, with the current implementation rule of Sora for display, Inter for UI, and IBM Plex Mono for data/meta.
+2. Visual direction and public UI rules come from `prototipos-legados/design-system-legado/*.html`, with the current implementation rule of Sora for display, Inter for UI, and IBM Plex Mono for data/meta.
 3. Runtime truth comes from the current Next.js, Prisma, route handlers, middleware, and tests.
 4. The Design System prototype is a visual/interaction reference, not a backend, routing, or persistence contract.
 

@@ -27,23 +27,23 @@ export default async function PagesPage() {
   return (
     <div className="space-y-8">
       <PageIntro
-        eyebrow="Paginas"
-        title="Paginas"
-        description="Edite e publique suas paginas."
+        eyebrow="Area tecnica"
+        title="Paginas de portfolio"
+        description="Edite as paginas tecnicas criadas a partir dos seus portfolios."
         meta={
           <>
-            <Badge variant="info">{pages.length} paginas</Badge>
+            <Badge variant="info">{pages.length} paginas tecnicas</Badge>
             <Badge variant="success">
               {pages.filter((page) => page.publishState === "PUBLISHED").length}{" "}
               publicadas
             </Badge>
-            <Badge variant="version">{versionsWithoutPage.length} sem pagina</Badge>
+            <Badge variant="version">{versionsWithoutPage.length} sem portfolio</Badge>
           </>
         }
         actions={
           <Button asChild variant="outline">
             <Link href="/templates">
-              Ver modelos
+              Criar portfolio
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
@@ -54,9 +54,9 @@ export default async function PagesPage() {
         <EmptyWorkspaceState
           accent="cyan"
           label="Sem paginas"
-          title="Voce ainda nao tem paginas"
-          description="Escolha um modelo para comecar."
-          primaryAction={{ href: "/templates", label: "Escolher modelo" }}
+          title="Voce ainda nao tem portfolios com pagina"
+          description="Comece por um portfolio. A pagina tecnica sera criada quando um modelo for aplicado."
+          primaryAction={{ href: "/portfolios", label: "Ir para portfolios" }}
           secondaryAction={{ href: "/portfolios", label: "Ver portfolios" }}
         />
       ) : (
@@ -79,7 +79,7 @@ export default async function PagesPage() {
                       </Badge>
                     </div>
                     <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
-                      {page.version.name} • {page.template.name}
+                      {page.version.name} / {page.template.name}
                     </CardDescription>
                   </div>
                   <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-cyan-50 text-cyan-700 shadow-sm">
@@ -103,10 +103,12 @@ export default async function PagesPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap gap-2">
                     <Button asChild variant="primary" size="sm">
-                      <Link href={`/pages/${page.id}/editor`}>Editar pagina</Link>
+                      <Link href={`/pages/${page.id}/editor`}>Editar portfolio</Link>
                     </Button>
                     <Button asChild variant="outline" size="sm">
-                      <Link href={`/pages/${page.id}/resume`}>Ver curriculo</Link>
+                      <Link href={`/pages/${page.id}/resume`}>
+                        Ver curriculo rapido
+                      </Link>
                     </Button>
                     <Button asChild variant="ghost" size="sm">
                       <Link href="/templates">Trocar modelo</Link>
@@ -133,10 +135,10 @@ export default async function PagesPage() {
       <Card className="rounded-[28px]">
         <CardHeader>
           <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-            Versoes sem pagina
+            Variacoes sem portfolio
           </CardTitle>
           <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
-            Escolha um modelo para criar a pagina.
+            Aplique um modelo a partir de Portfolios para criar a pagina publica.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -154,12 +156,12 @@ export default async function PagesPage() {
                     {version.description || version.context || "Sem descricao"}
                   </p>
                 </div>
-                <Badge variant="default">sem pagina</Badge>
+                <Badge variant="default">sem portfolio</Badge>
               </div>
             ))
           ) : (
             <p className="text-sm leading-7 text-neutral-600">
-              Todas as versoes ja tem pagina.
+              Todas as variacoes ja tem pagina de portfolio.
             </p>
           )}
         </CardContent>

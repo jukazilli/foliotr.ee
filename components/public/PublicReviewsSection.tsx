@@ -91,6 +91,12 @@ export default function PublicReviewsSection({
         >
           <input type="hidden" name="username" value={username} />
           <input type="hidden" name="returnPath" value={returnPath} />
+          <div className="hidden" aria-hidden="true">
+            <label>
+              Site
+              <input name="website" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
           <div>
             <p className="text-sm font-semibold text-neutral-950">Deixe uma review</p>
             <p className="mt-1 text-xs leading-5 text-neutral-500">

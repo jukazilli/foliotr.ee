@@ -7,10 +7,8 @@ build
 dist
 **/dist
 coverage
-editor-otimizacao
+output
+prototipos-legados
 assets/curriculo-code
 package-lock.json
-doc/Design System
-apps/**/dist
-packages/**/dist
 *.tsbuildinfo

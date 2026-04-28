@@ -1,8 +1,10 @@
 # FolioTree MVP Architecture
 
-Status: implemented foundation  
+Status: historical reference, superseded by `docs/current-architecture.md` and `docs/runtime-architecture-decision.md`  
 Version: v0.1.0  
 Last updated: 2026-04-18
+
+> Historical note: this document describes an early MVP foundation and a monorepo/API direction that is no longer the active architecture. The current app is a root-level fullstack Next.js application with `app/api/*`, NextAuth and Prisma.
 
 ## Purpose
 

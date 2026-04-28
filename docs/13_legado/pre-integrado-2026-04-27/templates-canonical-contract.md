@@ -128,16 +128,16 @@ First target: `portfolio-community`
 
 ### Subfase 9 — Resume mode
 
-  - [x] Projetar curriculo a partir da mesma `Version`
-  - [x] Ligar `ResumeConfig`
-  - [x] Remover fotos e ornamentos por padrao
-  - [x] Garantir consistencia com os mesmos dados semanticos
+- [x] Projetar curriculo a partir da mesma `Version`
+- [x] Ligar `ResumeConfig`
+- [x] Remover fotos e ornamentos por padrao
+- [x] Garantir consistencia com os mesmos dados semanticos
 
 ### Subfase 10 — Publicacao e QA
 
-  - [x] Publicar `/{username}`
-  - [x] Publicar `/{username}/resume`
-  - [x] Validar autorizacao e ownership
+- [x] Publicar `/{username}`
+- [x] Publicar `/{username}/resume`
+- [x] Validar autorizacao e ownership
 - [ ] Rodar testes de dominio e bloco
 - [ ] Rodar comparacao visual com `reference.png`
 

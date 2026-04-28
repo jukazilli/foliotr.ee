@@ -7,9 +7,9 @@ Last updated: 2026-04-17
 Implementation update: 2026-04-18  
 Design/UI source of truth for the current public flows:
 
-- `doc/Design System/Brand Core.html`
-- `doc/Design System/Tonal System.html`
-- `doc/Design System/Typography System.html`
+- `prototipos-legados/design-system-legado/Brand Core.html`
+- `prototipos-legados/design-system-legado/Tonal System.html`
+- `prototipos-legados/design-system-legado/Typography System.html`
 
 For this redesign cut, Poppins is the single official font across display, UI, and data/meta labels. The previous Sora/Inter/IBM Plex rule is obsolete.
 
@@ -266,7 +266,7 @@ The design should communicate:
 
 Approved direction:
 
-- exact tonal families from `doc/Design System/Tonal System.html`
+- exact tonal families from `prototipos-legados/design-system-legado/Tonal System.html`
 - Neutral 100 as the default public/product background
 - White as the primary surface
 - Neutral 900 as primary text

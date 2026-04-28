@@ -22,15 +22,15 @@ export default async function VersionsPage() {
     return (
       <div className="space-y-8">
         <PageIntro
-          eyebrow="Versoes"
-          title="Versoes"
-          description="Crie versoes para objetivos diferentes."
+          eyebrow="Area tecnica"
+          title="Variacoes internas"
+          description="Variacoes guardam selecoes diferentes do perfil para cada portfolio."
         />
         <EmptyWorkspaceState
           accent="violet"
-          label="Sem versoes"
-          title="Voce ainda nao tem versoes"
-          description="Crie uma versao para comecar."
+          label="Sem variacoes"
+          title="Voce ainda nao tem variacoes"
+          description="Comece pelo perfil ou por um portfolio para criar uma variacao."
           primaryAction={{ href: "/profile", label: "Completar perfil" }}
           secondaryAction={{ href: "/dashboard", label: "Voltar" }}
         />
@@ -41,15 +41,15 @@ export default async function VersionsPage() {
   return (
     <div className="space-y-8">
       <PageIntro
-        eyebrow="Versoes"
-        title="Versoes"
-        description="Crie versoes para diferentes objetivos."
+        eyebrow="Area tecnica"
+        title="Variacoes internas"
+        description="Gerencie as variacoes que alimentam portfolios e curriculos."
         meta={
           <>
-            <Badge variant="version">{versions.length} versoes</Badge>
+            <Badge variant="version">{versions.length} variacoes</Badge>
             <Badge variant="info">
               {versions.filter((version) => getPrimaryVersionPage(version)).length}{" "}
-              paginas
+              portfolios
             </Badge>
             <Badge variant="success">
               {versions.filter((version) => version.resumeConfig).length} curriculos
@@ -118,7 +118,7 @@ export default async function VersionsPage() {
                     {
                       label: "Pagina",
                       value: page ? 1 : 0,
-                      hint: page?.template?.name ?? "sem modelo",
+                      hint: page?.template?.name ?? "sem portfolio",
                     },
                     {
                       label: "Curriculo",
@@ -147,7 +147,7 @@ export default async function VersionsPage() {
                   <div className="mt-3 flex flex-wrap gap-2">
                     <Badge variant={page ? "info" : "default"}>
                       <Globe className="mr-1 h-3 w-3" aria-hidden="true" />
-                      {page ? "com pagina" : "sem pagina"}
+                      {page ? "com portfolio" : "sem portfolio"}
                     </Badge>
                     <Badge variant={hasResume ? "success" : "default"}>
                       <FileText className="mr-1 h-3 w-3" aria-hidden="true" />
@@ -162,10 +162,10 @@ export default async function VersionsPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="flex flex-wrap gap-2">
                     <Button asChild variant="outline" size="sm">
-                      <Link href="/portfolios">Ver portfolios</Link>
+                      <Link href="/portfolios">Abrir portfolios</Link>
                     </Button>
                     <Button asChild variant="ghost" size="sm">
-                      <Link href="/portfolios">Ver portfolios</Link>
+                      <Link href="/profile">Editar perfil</Link>
                     </Button>
                   </div>
                   <Link

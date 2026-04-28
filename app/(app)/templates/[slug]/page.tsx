@@ -48,7 +48,7 @@ export default async function TemplateDetailPage({
       <PageIntro
         eyebrow="Modelo"
         title={template.name}
-        description="Veja os detalhes e escolha uma versao."
+        description="Veja os detalhes e escolha a variacao que vai receber este modelo de portfolio."
         meta={
           <>
             <Badge variant="warning">{template.libraryStatus}</Badge>
@@ -77,7 +77,7 @@ export default async function TemplateDetailPage({
             <div>
               <p className="text-sm font-semibold text-green-900">Modelo aplicado.</p>
               <p className="mt-1 text-sm leading-7 text-green-800">
-                A pagina e o curriculo foram criados em rascunho.
+                O portfolio e o curriculo rapido foram criados em rascunho.
               </p>
             </div>
           </CardContent>
@@ -214,19 +214,19 @@ export default async function TemplateDetailPage({
 
       {versions.length === 0 ? (
         <EmptyWorkspaceState
-          title="Nenhuma versao disponivel"
-          description="Crie uma versao para usar este modelo."
+          title="Nenhuma variacao disponivel"
+          description="Crie um portfolio para usar este modelo."
           primaryAction={{ href: "/portfolios", label: "Ver portfolios" }}
           secondaryAction={{ href: "/profile", label: "Voltar ao perfil" }}
           accent="lime"
-          label="Sem versoes"
+          label="Sem variacoes"
         />
       ) : (
         <section className="space-y-4">
           <div className="flex items-center gap-2">
             <Layers3 className="h-4 w-4 text-neutral-500" aria-hidden="true" />
             <h2 className="font-display text-2xl font-semibold tracking-tight text-neutral-950">
-              Escolha uma versao
+              Escolha uma variacao
             </h2>
           </div>
 
@@ -251,7 +251,7 @@ export default async function TemplateDetailPage({
                       <div>
                         <div className="flex flex-wrap gap-2">
                           <Badge variant={version.isDefault ? "success" : "default"}>
-                            {version.isDefault ? "principal" : "versao"}
+                            {version.isDefault ? "principal" : "variacao"}
                           </Badge>
                           {alreadyApplied ? (
                             <Badge variant="warning">aplicado</Badge>

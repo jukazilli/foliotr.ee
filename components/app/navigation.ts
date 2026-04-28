@@ -36,20 +36,20 @@ export const appNavigation: AppNavItem[] = [
     description: "Complete suas informacoes.",
   },
   {
-    href: "/gallery",
-    label: "Galeria",
-    shortLabel: "Galeria",
-    icon: Images,
-    section: "principal",
-    description: "Reutilize imagens enviadas.",
-  },
-  {
     href: "/portfolios",
     label: "Portfolios",
     shortLabel: "Portfolios",
     icon: Layers3,
     section: "principal",
     description: "Publique versoes do seu trabalho.",
+  },
+  {
+    href: "/gallery",
+    label: "Galeria",
+    shortLabel: "Galeria",
+    icon: Images,
+    section: "principal",
+    description: "Reutilize imagens enviadas.",
   },
   {
     href: "/teste-vocacional/app",
@@ -85,7 +85,21 @@ export const libraryAppNavigation = appNavigation.filter(
   (item) => item.section === "biblioteca"
 );
 
+const TECHNICAL_ROUTE_NAV_ALIASES: Record<string, string> = {
+  "/pages": "/portfolios",
+  "/versions": "/portfolios",
+  "/resumes": "/portfolios",
+};
+
 export function getAppNavItem(pathname: string) {
+  const alias = Object.entries(TECHNICAL_ROUTE_NAV_ALIASES).find(
+    ([prefix]) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  );
+
+  if (alias) {
+    return appNavigation.find((item) => item.href === alias[1]) ?? appNavigation[0];
+  }
+
   return (
     appNavigation.find(
       (item) => pathname === item.href || pathname.startsWith(`${item.href}/`)

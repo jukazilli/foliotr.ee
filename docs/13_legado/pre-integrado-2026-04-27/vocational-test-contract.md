@@ -19,7 +19,7 @@ The authenticated route `/teste-vocacional/app` must provide a complete test flo
 
 The standalone source lives at:
 
-`orientacao-profissional-app/orientacao-profissional-app`
+`prototipos-legados/orientacao-profissional-app`
 
 Implementation rule:
 

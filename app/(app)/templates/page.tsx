@@ -43,20 +43,27 @@ export default async function TemplatesPage({
     listCanonicalTemplates(prisma),
   ]);
   const versions = await getOwnedVersions(user.id);
-  const targetVersion = versions.find((version) => version.isDefault) ?? versions[0] ?? null;
+  const targetVersion =
+    versions.find((version) => version.isDefault) ?? versions[0] ?? null;
 
   const categoryOptions = [
     "all",
-    ...Array.from(new Set(templates.map((template) => template.category.toLowerCase()))),
+    ...Array.from(
+      new Set(templates.map((template) => template.category.toLowerCase()))
+    ),
   ];
-  const selectedCategory = categoryOptions.includes((params.category ?? "all").toLowerCase())
+  const selectedCategory = categoryOptions.includes(
+    (params.category ?? "all").toLowerCase()
+  )
     ? (params.category ?? "all").toLowerCase()
     : "all";
   const selectedSort = params.sort === "name" ? "name" : "curated";
 
   const filteredTemplates = templates
     .filter((template) =>
-      selectedCategory === "all" ? true : template.category.toLowerCase() === selectedCategory
+      selectedCategory === "all"
+        ? true
+        : template.category.toLowerCase() === selectedCategory
     )
     .sort((left, right) => {
       if (selectedSort === "name") {
@@ -71,8 +78,11 @@ export default async function TemplatesPage({
       <section className="flex flex-col gap-4 rounded-2xl border border-neutral-200 bg-white/95 px-4 py-4 shadow-sm lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">
           <h1 className="font-display text-xl font-semibold tracking-tight text-neutral-950">
-            Escolha seu modelo e edite
+            Escolha um modelo para o portfolio
           </h1>
+          <p className="mt-1 text-sm font-semibold leading-6 text-neutral-600">
+            O modelo cria a pagina tecnica e abre o editor do portfolio selecionado.
+          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
@@ -96,7 +106,10 @@ export default async function TemplatesPage({
           </div>
 
           <div className="flex items-center rounded-lg border border-neutral-200 bg-neutral-100 p-1 text-sm font-semibold">
-            <SlidersHorizontal className="ml-2 mr-1 h-4 w-4 text-neutral-500" aria-hidden="true" />
+            <SlidersHorizontal
+              className="ml-2 mr-1 h-4 w-4 text-neutral-500"
+              aria-hidden="true"
+            />
             {[
               { key: "curated", label: "Destaque" },
               { key: "name", label: "Nome" },
@@ -135,7 +148,11 @@ export default async function TemplatesPage({
       ) : (
         <section className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,22rem),24rem))] justify-start gap-4">
           {filteredTemplates.map((template) => {
-            const eligibility = evaluateTemplateEligibility(template, profile, targetVersion);
+            const eligibility = evaluateTemplateEligibility(
+              template,
+              profile,
+              targetVersion
+            );
             const page = targetVersion ? getPrimaryVersionPage(targetVersion) : null;
             const appliedPage = page?.template?.slug === template.slug ? page : null;
             const useAction = useCanonicalTemplateAction.bind(null, template.slug);
@@ -155,7 +172,9 @@ export default async function TemplatesPage({
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-[#FBF8CC]">
-                      <span className="text-sm font-semibold text-neutral-500">{template.name}</span>
+                      <span className="text-sm font-semibold text-neutral-500">
+                        {template.name}
+                      </span>
                     </div>
                   )}
                 </div>
@@ -176,13 +195,23 @@ export default async function TemplatesPage({
                   <div className="grid grid-cols-2 gap-2">
                     {appliedPage ? (
                       <Button asChild>
-                        <Link href={`/pages/${appliedPage.id}/editor`}>Editar</Link>
+                        <Link href={`/pages/${appliedPage.id}/editor`}>
+                          Editar portfolio
+                        </Link>
                       </Button>
                     ) : (
                       <form action={useAction}>
-                        <input type="hidden" name="versionId" value={targetVersion?.id ?? ""} />
-                        <Button type="submit" disabled={editDisabled} className="w-full">
-                          Editar
+                        <input
+                          type="hidden"
+                          name="versionId"
+                          value={targetVersion?.id ?? ""}
+                        />
+                        <Button
+                          type="submit"
+                          disabled={editDisabled}
+                          className="w-full"
+                        >
+                          Usar modelo
                         </Button>
                       </form>
                     )}

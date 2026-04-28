@@ -305,6 +305,7 @@ export const publicReviewSchema = z.object({
   reviewerEmail: z.string().trim().email("Email invalido").optional().or(z.literal("")),
   rating: z.coerce.number().int().min(1).max(5),
   description: z.string().trim().min(10, "Escreva pelo menos 10 caracteres").max(500),
+  website: z.string().trim().max(200).optional().or(z.literal("")),
 });
 
 export const profileLinkSchema = z.object({

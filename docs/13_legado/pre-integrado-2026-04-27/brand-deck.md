@@ -5,7 +5,7 @@ Version: v0.0.1
 Last updated: 2026-04-17
 
 Implementation update: 2026-04-18  
-The public UI implementation must use the LINKFOLIO redesign as the current visual source of truth. The old `doc/Design System/*.html` references are replaced for implementation decisions. For the current cut, typography is Poppins across display, UI, and data/meta.
+The public UI implementation must use the LINKFOLIO redesign as the current visual source of truth. The old `prototipos-legados/design-system-legado/*.html` references are replaced for implementation decisions. For the current cut, typography is Poppins across display, UI, and data/meta.
 
 ## Document Purpose
 

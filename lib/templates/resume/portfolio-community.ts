@@ -161,7 +161,7 @@ export function projectPortfolioCommunityResume(
   if (input.behavioralAnalysis) {
     sectionMap.set("behavioral-analysis", {
       key: "behavioral-analysis",
-      title: "Análise comportamental",
+      title: "Analise comportamental",
       analysis: input.behavioralAnalysis,
     });
   }

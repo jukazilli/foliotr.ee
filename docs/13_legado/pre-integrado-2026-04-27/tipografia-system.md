@@ -7,7 +7,7 @@ Status: aprovado para o redesign atual
 
 Todo o produto usa `Poppins`.
 
-Não usar mais Sora, Inter ou IBM Plex Mono como fontes oficiais do app. Essas fontes pertencem ao design system anterior e foram substituídas pelo redesign construído em `redesign-teste`.
+Não usar mais Sora, Inter ou IBM Plex Mono como fontes oficiais do app. Essas fontes pertencem ao design system anterior e foram substituídas pelo redesign construído em `prototipos-legados/redesign-teste`.
 
 ## Uso
 

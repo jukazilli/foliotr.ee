@@ -18,7 +18,7 @@
 
 ## Objetivo do corte
 
-Transformar apenas o primeiro bloco da landing atual em uma experiencia de carrossel com rotacao por `wheel`, usando como materia-prima estrutural a referencia clonada em `landing-test/material/carousel-standalone`, mas aplicada ao sistema visual do `foliotree`.
+Transformar apenas o primeiro bloco da landing atual em uma experiencia de carrossel com rotacao por `wheel`, usando como materia-prima estrutural a referencia clonada em `prototipos-legados/landing-test/material/carousel-standalone`, mas aplicada ao sistema visual do `foliotree`.
 
 O corte inicial nao tenta resolver a landing inteira. Ele valida:
 
@@ -41,9 +41,9 @@ O corte inicial nao tenta resolver a landing inteira. Ele valida:
 
 ### Materia-prima de referencia
 
-- A referencia clonada usa `framer-motion` e sobreposicao de cards em [landing-test/material/carousel-standalone/app/components/CarouselScene.tsx](/c:/projetos/foliotree/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx).
-- O card expandido/colapsado esta em [landing-test/material/carousel-standalone/app/components/FantasyCard.tsx](/c:/projetos/foliotree/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx).
-- Os assets existentes estao em `landing-test/material/carousel-standalone/public/videos/`.
+- A referencia clonada usa `framer-motion` e sobreposicao de cards em [prototipos-legados/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx](/c:/projetos/foliotree/prototipos-legados/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx).
+- O card expandido/colapsado esta em [prototipos-legados/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx](/c:/projetos/foliotree/prototipos-legados/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx).
+- Os assets existentes estao em `prototipos-legados/landing-test/material/carousel-standalone/public/videos/`.
 - A referencia atual nasce no meio da pilha e usa `activeIndex = Math.floor(cards.length / 2)`.
 
 ### Paleta e tokens do FolioTree
@@ -213,9 +213,9 @@ Arquivos candidatos para o primeiro corte de implementacao:
 
 Arquivos de referencia a consumir sem copiar cegamente:
 
-- [landing-test/material/carousel-standalone/app/components/CarouselScene.tsx](/c:/projetos/foliotree/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx)
-- [landing-test/material/carousel-standalone/app/components/FantasyCard.tsx](/c:/projetos/foliotree/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx)
-- [landing-test/material/carousel-standalone/app/data/fantasyCards.ts](/c:/projetos/foliotree/landing-test/material/carousel-standalone/app/data/fantasyCards.ts)
+- [prototipos-legados/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx](/c:/projetos/foliotree/prototipos-legados/landing-test/material/carousel-standalone/app/components/CarouselScene.tsx)
+- [prototipos-legados/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx](/c:/projetos/foliotree/prototipos-legados/landing-test/material/carousel-standalone/app/components/FantasyCard.tsx)
+- [prototipos-legados/landing-test/material/carousel-standalone/app/data/fantasyCards.ts](/c:/projetos/foliotree/prototipos-legados/landing-test/material/carousel-standalone/app/data/fantasyCards.ts)
 
 ## Write set executado
 
@@ -256,7 +256,7 @@ Arquivos de referencia a consumir sem copiar cegamente:
 
 - O carrossel comeca no primeiro card e avanca por `wheel` apenas enquanto ainda houver cards a percorrer.
 - Nos limites inicial e final, a rolagem volta a ficar disponivel para o restante da pagina.
-- O `typecheck` do `foliotree` precisou excluir `landing-test/`, porque o material de estudo clonado possui seu proprio stack React/Next e nao deve participar do app principal.
+- O `typecheck` do `foliotree` precisou excluir `prototipos-legados/landing-test/`, porque o material de estudo clonado possui seu proprio stack React/Next e nao deve participar do app principal.
 - No segundo ciclo, a pilha foi reposicionada mais para a esquerda para reforcar a leitura "desde o começo", deixando os proximos cards mais legiveis na trilha visual da direita.
 - No segundo ciclo, o `wheel` passou a ser capturado tambem no nivel da janela enquanto o Hero domina a viewport, para manter o gesto principal do carrossel mesmo sem foco preciso no container.
 - No ciclo atual, as secoes seguintes da landing foram removidas do `app/page.tsx` para que o experimento mantenha apenas o Hero.

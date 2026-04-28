@@ -33,9 +33,9 @@ export default async function AuthenticatedResumePage({
     return (
       <div className="space-y-8">
         <PageIntro
-          eyebrow="Curriculo"
+          eyebrow="Curriculo rapido"
           title={page.version.name}
-          description="Veja e imprima seu curriculo."
+          description="Revise a leitura objetiva associada a este portfolio."
           meta={
             <>
               <Badge variant="info">{page.template.name}</Badge>
@@ -57,7 +57,7 @@ export default async function AuthenticatedResumePage({
               <Button asChild variant="outline">
                 <Link href={`/pages/${page.id}/editor`}>
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                  Pagina
+                  Voltar ao portfolio
                 </Link>
               </Button>
               {publicResumeHref ? (
@@ -67,7 +67,7 @@ export default async function AuthenticatedResumePage({
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Abrir
+                    Abrir publico
                     <ExternalLink className="h-4 w-4" aria-hidden="true" />
                   </Link>
                 </Button>
@@ -80,13 +80,15 @@ export default async function AuthenticatedResumePage({
           <CardContent className="flex flex-col gap-3 px-6 py-5 text-sm leading-7 text-neutral-700 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex flex-wrap items-center gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-neutral-50 px-3 py-2 font-semibold text-neutral-900">
-                Curriculo
+                Curriculo rapido
               </span>
-              <span className="text-neutral-500">Leitura mais direta</span>
+              <span className="text-neutral-500">
+                Modo objetivo do portfolio, pronto para leitura rapida ou impressao.
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href={`/pages/${page.id}/editor`}>Ver pagina</Link>
+                <Link href={`/pages/${page.id}/editor`}>Editar portfolio</Link>
               </Button>
               {publicTemplateHref ? (
                 <Button asChild variant="ghost" size="sm">
@@ -96,7 +98,7 @@ export default async function AuthenticatedResumePage({
                     rel="noopener noreferrer"
                   >
                     <Globe className="h-4 w-4" aria-hidden="true" />
-                    Abrir pagina
+                    Abrir portfolio publico
                   </Link>
                 </Button>
               ) : null}

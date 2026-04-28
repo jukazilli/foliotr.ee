@@ -57,8 +57,6 @@ describe("server env validation", () => {
       STORAGE_S3_BUCKET: "foliotree",
       STORAGE_S3_ACCESS_KEY_ID: "access-key",
       STORAGE_S3_SECRET_ACCESS_KEY: "secret-key",
-      NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co",
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "publishable-key",
     });
 
     expect(parsed.success).toBe(true);

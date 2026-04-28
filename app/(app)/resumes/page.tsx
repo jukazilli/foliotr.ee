@@ -31,11 +31,11 @@ export default async function ResumesPage() {
     <div className="space-y-8">
       <PageIntro
         eyebrow="Curriculos"
-        title="Curriculos"
-        description="Veja uma versao mais facil de ler."
+        title="Curriculos rapidos"
+        description="Leituras mais objetivas geradas a partir dos seus portfolios."
         meta={
           <>
-            <Badge variant="success">{resumeConfigs.length} curriculos</Badge>
+            <Badge variant="success">{resumeConfigs.length} curriculos rapidos</Badge>
             <Badge variant="version">
               {versionsWithoutResume.length} sem curriculo
             </Badge>
@@ -44,7 +44,7 @@ export default async function ResumesPage() {
         actions={
           <Button asChild variant="outline">
             <Link href="/portfolios">
-              Ver portfolios
+              Gerenciar portfolios
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </Button>
@@ -55,9 +55,9 @@ export default async function ResumesPage() {
         <EmptyWorkspaceState
           accent="lime"
           label="Sem curriculos"
-          title="Voce ainda nao tem curriculos"
-          description="Escolha uma versao para comecar."
-          primaryAction={{ href: "/portfolios", label: "Ver portfolios" }}
+          title="Voce ainda nao tem curriculos rapidos"
+          description="Ative o modo curriculo dentro de um portfolio para criar uma leitura objetiva."
+          primaryAction={{ href: "/portfolios", label: "Gerenciar portfolios" }}
           secondaryAction={{ href: "/profile", label: "Editar perfil" }}
         />
       ) : (
@@ -118,7 +118,9 @@ export default async function ResumesPage() {
                     <div className="flex flex-wrap gap-2">
                       {page?.id ? (
                         <Button asChild variant="primary" size="sm">
-                          <Link href={`/pages/${page.id}/resume`}>Abrir curriculo</Link>
+                          <Link href={`/pages/${page.id}/resume`}>
+                            Abrir curriculo rapido
+                          </Link>
                         </Button>
                       ) : null}
                       <Button asChild variant="outline" size="sm">
@@ -136,10 +138,10 @@ export default async function ResumesPage() {
       <Card className="rounded-[28px]">
         <CardHeader>
           <CardTitle className="font-display text-2xl font-semibold tracking-tight">
-            Versoes sem curriculo
+            Variacoes sem curriculo rapido
           </CardTitle>
           <CardDescription className="mt-2 text-sm leading-7 text-neutral-600">
-            Escolha uma versao para criar o curriculo.
+            Ative o modo curriculo dentro do portfolio associado.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -157,12 +159,12 @@ export default async function ResumesPage() {
                     {version.description || version.context || "Sem descricao"}
                   </p>
                 </div>
-                <Badge variant="default">sem curriculo</Badge>
+                <Badge variant="default">sem curriculo rapido</Badge>
               </div>
             ))
           ) : (
             <p className="text-sm leading-7 text-neutral-600">
-              Todas as versoes ja tem curriculo.
+              Todas as variacoes ja tem curriculo rapido.
             </p>
           )}
         </CardContent>
