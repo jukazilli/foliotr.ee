@@ -207,6 +207,8 @@ Evidencia:
 
 ## Slice 8 - QA integrado e fechamento
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slices 1 a 7.
@@ -219,5 +221,10 @@ Escopo:
 
 Evidencia:
 
-- Matriz promessa versus evidencia.
-- Status de fechamento por item.
+- `npm run typecheck` executado sem erro.
+- `npm run lint` executado sem erro.
+- `npm run test` executado sem erro apos atualizar testes de cadastro/onboarding para o novo contrato.
+- `npx prettier --check --ignore-unknown` executado nos arquivos tocados sem erro.
+- Playwright carregou `http://127.0.0.1:3000/juliano-zilli` com titulo `Juliano Zilli - FolioTree`.
+- Screenshot de verificacao publica capturado em `social-ui-remaster-public-profile.png`.
+- Dev server temporario encerrado apos a verificacao.

@@ -66,10 +66,12 @@ describe("onboarding API route", () => {
   });
 
   it("returns username suggestions when the requested username is already taken", async () => {
-    mocks.userFindUnique.mockImplementation(async ({ where }: { where: { username: string } }) => {
-      if (where.username === "juliano-zilli") return { id: "user_2" };
-      return null;
-    });
+    mocks.userFindUnique.mockImplementation(
+      async ({ where }: { where: { username: string } }) => {
+        if (where.username === "juliano-zilli") return { id: "user_2" };
+        return null;
+      }
+    );
 
     const route = await onboardingRoute();
     const response = await route.GET(requestCheck("juliano-zilli"));
@@ -82,15 +84,18 @@ describe("onboarding API route", () => {
   });
 
   it("blocks duplicate usernames on final onboarding submit", async () => {
-    mocks.userFindUnique.mockImplementation(async ({ where }: { where: { username: string } }) => {
-      if (where.username === "juliano-zilli") return { id: "user_2" };
-      return null;
-    });
+    mocks.userFindUnique.mockImplementation(
+      async ({ where }: { where: { username: string } }) => {
+        if (where.username === "juliano-zilli") return { id: "user_2" };
+        return null;
+      }
+    );
 
     const route = await onboardingRoute();
     const response = await route.POST(
       requestJson({
         username: "juliano-zilli",
+        displayName: "Juliano Zilli",
         headline: "Analista de Sistemas",
       })
     );
@@ -109,6 +114,7 @@ describe("onboarding API route", () => {
     const response = await route.POST(
       requestJson({
         username: " Juliano Zilli ",
+        displayName: "Juliano Zilli",
         headline: "Analista de Sistemas",
       })
     );
@@ -117,6 +123,19 @@ describe("onboarding API route", () => {
     expect(mocks.tx.user.update).toHaveBeenCalledWith({
       where: { id: "user_1" },
       data: { username: "juliano.zilli" },
+    });
+    expect(mocks.tx.profile.update).toHaveBeenCalledWith({
+      where: { userId: "user_1" },
+      data: {
+        displayName: "Juliano Zilli",
+        headline: "Analista de Sistemas",
+        bio: null,
+        location: null,
+        openToOpportunities: false,
+        opportunityMotivation: null,
+        showOpportunityMotivation: false,
+        onboardingDone: true,
+      },
     });
   });
 });

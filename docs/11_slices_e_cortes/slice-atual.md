@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 7 - Depreciacao controlada do editor tecnico.
+Slice 8 - QA integrado e fechamento.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a retirada do editor tecnico dos fluxos comuns.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas validacao integrada e fechamento documental.
 
 ## Objetivo
 
-Depreciar o editor tecnico de forma controlada, preservando compatibilidade por redirect e removendo links comuns para `/pages/{pageId}/editor`.
+Validar os slices implementados, corrigir testes impactados pelo novo contrato de onboarding e registrar evidencias objetivas de fechamento.
 
 ## Fontes de verdade
 
@@ -59,21 +59,21 @@ Depreciar o editor tecnico de forma controlada, preservando compatibilidade por 
 
 ## Slice executado
 
-Executado apenas o Slice 7.
+Executado apenas o Slice 8.
 
 Dentro:
 
-- `/pages` redireciona para `/portfolios?legacy=pages`.
-- `/pages/{pageId}/editor` redireciona para `/portfolios?legacy=editor`.
-- Links comuns de editar portfolio apontam para `/profile` ou `/portfolios`.
-- `versionPortfolioAction` redireciona para `/portfolios?created=1`.
-- Actions legadas do editor deixam de revalidar a rota do editor.
+- Validacoes estaticas.
+- Ajuste dos testes de cadastro/onboarding ao novo contrato.
+- Verificacao browser do perfil publico.
+- Registro de evidencias.
 
 Fora:
 
 - Migrar dados historicos de `Page`/`PageBlock`.
 - Adaptar internamente todo renderer `portfolio-community`.
 - Deletar componentes tecnicos legados do editor.
+- Testar fluxo autenticado completo em browser com login real.
 
 ## Skills/agentes a acionar
 
@@ -86,11 +86,11 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `app/(app)/pages/page.tsx` redireciona para `/portfolios`.
-- `app/(app)/pages/[pageId]/editor/page.tsx` redireciona para `/portfolios`.
-- `app/(app)/portfolios/page.tsx` nao aponta mais para editor.
-- `app/(app)/portfolios/actions.ts` nao redireciona mais para editor apos criar variacao.
-- `app/(app)/pages/[pageId]/resume/page.tsx` remove links de retorno ao editor.
-- `rg` por `/pages/.*editor`, `/editor`, `Editar portfolio` e `Voltar ao portfolio` em `app`, `components` e `lib` nao encontrou ocorrencias fora dos componentes tecnicos excluidos.
 - `npm run typecheck` executado sem erro.
+- `npm run lint` executado sem erro.
+- `npm run test` executado sem erro apos atualizar testes de cadastro/onboarding.
+- `npx prettier --check --ignore-unknown` executado nos arquivos tocados sem erro.
+- Playwright carregou `http://127.0.0.1:3000/juliano-zilli`.
+- Screenshot de verificacao publica: `social-ui-remaster-public-profile.png`.
+- Dev server temporario encerrado.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.
