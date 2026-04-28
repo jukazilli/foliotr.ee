@@ -210,8 +210,8 @@ export async function versionPortfolioAction(pageId: string) {
   revalidatePortfolioPaths(profile.user.username ?? user.username, slug);
 
   if (newPage) {
-    redirect("/portfolios?created=1");
+    redirect(`/portfolios/${version.id}/edit?created=1`);
   }
 
-  redirect("/portfolios");
+  redirect(`/portfolios/${version.id}/edit?created=1`);
 }

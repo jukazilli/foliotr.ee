@@ -56,6 +56,8 @@ Evidencia:
 
 ## Slice 2 - Editor multi-step da variacao
 
+Status: FECHADO
+
 Dependencias:
 
 - Slice 1.
@@ -78,6 +80,9 @@ Evidencia:
 - Usuario edita dados da variacao sem chamar `/api/profile`.
 - Usuario troca foto especifica da variacao.
 - Usuario salva rascunho e publica a variacao.
+- Rota `/portfolios/{versionId}/edit` criada.
+- Acao de versionar portfolio redireciona para o editor da variacao criada.
+- Persistencia inicial atualiza `Version.profileSnapshot`, `Page` e `ResumeConfig`.
 
 ## Slice 3 - Nome por cargo e cards de portfolios
 
