@@ -108,6 +108,8 @@ Evidencia:
 
 ## Slice 4 - Templates aplicados a variacao
 
+Status: FECHADO
+
 Dependencias:
 
 - Slice 2.
@@ -123,6 +125,8 @@ Evidencia:
 - Usuario seleciona template no wizard.
 - Publicacao usa template selecionado e dados da variacao.
 - Trocar template nao altera perfil global.
+- Seed semantico de blocos recebe `editorSnapshot.profile`.
+- `syncOwnedPageSnapshot` tambem resemeia blocos a partir do snapshot da variacao.
 
 ## Slice 5 - Compatibilidade e QA
 

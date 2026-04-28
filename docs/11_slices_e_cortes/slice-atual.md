@@ -5,65 +5,62 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 3 - Nome por cargo e cards de portfolios.
+Slice 4 - Templates aplicados a variacao.
 
 ## Modo de entrada
 
 Corte.
 
-O projeto ja existe e o recorte atual depende do snapshot por variacao e do wizard inicial. O objetivo e remover a ambiguidade entre template e portfolio: o nome principal deve representar o cargo/role da variacao, enquanto o template fica como metadado.
+O projeto ja existe e o wizard inicial ja permite selecionar template. O recorte atual fecha a consistencia operacional: quando a pagina e os blocos sao gerados, o template precisa consumir o snapshot da variacao, nao o perfil global vivo.
 
 ## Objetivo
 
-Centralizar a regra de nome do portfolio e aplicar essa regra em `/portfolios`, no wizard e na acao de duplicar variacao.
+Garantir que a aplicacao/troca de template e o reseed de blocos semanticos usem `Page.editorSnapshot.profile`, derivado de `Version.profileSnapshot`.
 
 ## Fontes de verdade
 
 - Pedido atual do usuario em 2026-04-28.
 - `docs/02_contratos/contrato-versionamento-portfolio.md`.
 - `docs/10_backlog/backlog-versionamento-portfolio.md`.
-- `app/(app)/portfolios/page.tsx`.
-- `app/(app)/portfolios/actions.ts`.
-- `app/(app)/portfolios/[versionId]/edit/actions.ts`.
+- `lib/server/domain/versions.ts`.
+- `lib/server/domain/templates.ts`.
+- `lib/templates/semantic/types.ts`.
 - `components/portfolios/PortfolioVariationWizard.tsx`.
 
 ## Contratos necessarios
 
-- `Version.name` deve representar o cargo/headline da variacao quando possivel.
-- O card de portfolio mostra cargo/nome da variacao como informacao principal.
-- Nome do template aparece apenas como detalhe visual.
-- Fallback final continua preservando o nome existente para compatibilidade.
+- Template pertence a portfolio/variacao, nao ao perfil.
+- Ao aplicar template, blocos iniciais e snapshots devem refletir a variacao.
+- Trocar template nao pode alterar `/api/profile` nem dados globais.
 
 ## Lacunas
 
-- Ainda falta escolher uma experiencia principal obrigatoria por variacao.
-- Ainda falta aplicar template sem editor tecnico em fluxo dedicado.
-- Cards sem page continuam em area separada de pendencias.
+- Ainda falta UI dedicada para visibilidade granular por item/secao.
+- Ainda falta QA browser autenticado da troca real de template.
+- Ainda falta remover/depreciar o editor tecnico legado de blocos.
 
 ## Backlog por dependencia
 
-1. Nome por cargo e cards de portfolios.
-2. Templates aplicados a variacao.
-3. Compatibilidade e QA.
+1. Templates aplicados a variacao.
+2. Compatibilidade e QA.
 
 ## Slice executado
 
-Executado apenas o Slice 3 do backlog de versionamento.
+Executado apenas o Slice 4 do backlog de versionamento.
 
 Dentro:
 
-- Helper `derivePortfolioVersionName`.
-- Helper `derivePortfolioNameFromSnapshot`.
-- Card de `/portfolios` exibindo cargo/headline como titulo principal.
-- Template exibido como metadado do card.
-- Wizard usando cargo/headline como titulo visual principal.
-- Duplicacao de portfolio criando a nova variacao com nome derivado do cargo da fonte.
+- `SemanticSeedContext.profile` aceita `TemplateProfile`.
+- `seedPageBlocksFromTemplate` aceita snapshot serializado da variacao.
+- `upsertOwnedPageOutput` semeia blocos usando `nextEditorSnapshot.profile`.
+- `syncOwnedPageSnapshot` resemeia blocos usando `editorSnapshot.profile`.
+- Wizard ja seleciona template e chama `upsertOwnedPageOutput`/`upsertOwnedResumeOutput`.
 
 Fora:
 
-- Regras de experiencia principal obrigatoria.
-- Remocao de todos os nomes antigos ja persistidos.
-- Migracao em massa de `Version.name`.
+- Editor tecnico legado.
+- Migracao em massa de blocos antigos.
+- Teste browser autenticado.
 
 ## Skills/agentes acionados
 
@@ -75,9 +72,8 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `lib/server/domain/portfolio-naming.ts` criado.
-- `app/(app)/portfolios/page.tsx` usa `derivePortfolioVersionName(version)` para o titulo do card.
-- `app/(app)/portfolios/actions.ts` usa a regra ao duplicar uma variacao.
-- `app/(app)/portfolios/[versionId]/edit/actions.ts` salva `Version.name` derivado do snapshot editado.
-- `components/portfolios/PortfolioVariationWizard.tsx` prioriza headline/cargo no titulo visual.
+- `lib/templates/semantic/types.ts` permite `TemplateProfile` no seed.
+- `lib/server/domain/templates.ts` aceita `TemplateProfile | ProfileAggregate`.
+- `lib/server/domain/versions.ts` passa `editorSnapshot.profile` ao seed de blocos.
+- Publicacao de `Page` e `ResumeConfig` segue usando snapshots derivados da variacao.
 - Validacoes do recorte devem incluir typecheck, lint/prettier dos arquivos tocados, build e `git diff --check`.

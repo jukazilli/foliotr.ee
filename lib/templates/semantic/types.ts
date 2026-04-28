@@ -1,11 +1,9 @@
 import type { TemplateBlockDef } from "@/generated/prisma-client";
-import type {
-  ProfileAggregate,
-  VersionAggregate,
-} from "@/lib/server/domain/includes";
+import type { TemplateProfile } from "@/components/templates/types";
+import type { ProfileAggregate, VersionAggregate } from "@/lib/server/domain/includes";
 
 export interface SemanticSeedContext {
-  profile: ProfileAggregate;
+  profile: ProfileAggregate | TemplateProfile;
   version: VersionAggregate;
 }
 

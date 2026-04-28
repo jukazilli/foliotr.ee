@@ -627,7 +627,7 @@ export async function upsertOwnedPageOutput(
         });
 
     await seedPageBlocksFromTemplate(tx, page.id, input.templateId, {
-      profile,
+      profile: nextEditorSnapshot.profile,
       version: versionAggregate,
       replaceExisting: current?.templateId
         ? current.templateId !== input.templateId
@@ -818,7 +818,7 @@ export async function syncOwnedPageSnapshot(
     });
 
     await seedPageBlocksFromTemplate(tx, page.id, page.templateId, {
-      profile,
+      profile: editorSnapshot.profile,
       version: versionAggregate,
       replaceExisting: true,
     });
