@@ -55,6 +55,8 @@ export function buildEditorSnapshot(
       bio: profile.bio,
       avatarUrl: profile.avatarUrl,
       bannerUrl: profile.bannerUrl,
+      bannerPositionX: profile.bannerPositionX,
+      bannerPositionY: profile.bannerPositionY,
       location: profile.location,
       pronouns: profile.pronouns,
       websiteUrl: profile.websiteUrl,

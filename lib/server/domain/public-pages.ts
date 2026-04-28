@@ -102,6 +102,8 @@ export async function getPublicProfileHub(username: string) {
       displayName: true,
       avatarUrl: true,
       bannerUrl: true,
+      bannerPositionX: true,
+      bannerPositionY: true,
       headline: true,
       bio: true,
       defaultPresentationId: true,

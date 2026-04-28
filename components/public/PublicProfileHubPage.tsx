@@ -10,13 +10,13 @@ import {
   Star,
   UserRound,
 } from "lucide-react";
+import { EditableProfileCover } from "@/components/public/EditableProfileCover";
 import PublicReviewsSection from "@/components/public/PublicReviewsSection";
 import type { PublicReviewSummary } from "@/lib/server/domain/reviews";
 import type { PublicProfileHub } from "@/lib/server/domain/public-pages";
 import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
-const limeCoverStyle = { backgroundColor: "#dfff00" };
 const softSurfaceStyle = {
   borderColor: "#e5e7eb",
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
@@ -126,17 +126,13 @@ export default function PublicProfileHubPage({
           className="overflow-hidden rounded-b-2xl border bg-white"
           style={softSurfaceStyle}
         >
-          <div className="relative h-48 sm:h-64" style={limeCoverStyle}>
-            {hub.bannerUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={hub.bannerUrl} alt="" className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-end p-5" style={limeCoverStyle}>
-                <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-neutral-800/70">
-                  FolioTree
-                </span>
-              </div>
-            )}
+          <div className="relative">
+            <EditableProfileCover
+              bannerUrl={hub.bannerUrl}
+              bannerPositionX={hub.bannerPositionX}
+              bannerPositionY={hub.bannerPositionY}
+              isOwner={isOwner}
+            />
             {isOwner ? (
               <Link
                 href="/profile"
@@ -152,11 +148,11 @@ export default function PublicProfileHubPage({
             ) : null}
           </div>
 
-          <div className="px-5 pb-5 sm:px-8 sm:pb-7">
+          <div className="relative z-10 px-5 pb-5 sm:px-8 sm:pb-7">
             <div className="-mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
                 <div
-                  className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100"
+                  className="relative z-20 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100"
                   style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
                 >
                   {hub.avatarUrl ? (

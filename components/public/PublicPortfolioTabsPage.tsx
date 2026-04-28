@@ -7,6 +7,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { submitPublicReviewAction } from "@/app/[username]/review-actions";
+import { PublicReviewRatingInput } from "@/components/public/PublicReviewRatingInput";
 import type {
   RenderablePageBlock,
   TemplateProfile,
@@ -454,17 +455,7 @@ export default function PublicPortfolioTabsPage({
                 placeholder="Email opcional"
                 className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
               />
-              <select
-                name="rating"
-                defaultValue="5"
-                className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
-              >
-                <option value="5">5 estrelas</option>
-                <option value="4">4 estrelas</option>
-                <option value="3">3 estrelas</option>
-                <option value="2">2 estrelas</option>
-                <option value="1">1 estrela</option>
-              </select>
+              <PublicReviewRatingInput defaultValue={5} compact />
               <textarea
                 name="description"
                 required

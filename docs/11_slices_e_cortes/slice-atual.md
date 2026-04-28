@@ -86,6 +86,9 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
+- Corte complementar de capa: perfil do dono recebeu upload e reposicionamento da foto de capa com persistencia em `bannerPositionX/Y`.
+- Foto de perfil ajustada para renderizar em camada acima da capa no hub publico/logado.
+- Campo "Nota" da review publica trocado de select para estrelas clicaveis, mantendo envio de `rating` numerico 1-5.
 - Corte complementar de navegacao visual: `/home` e `/{username}` usam o mesmo `PublicProfileHubPage`, com capa lime e superficies suaves preservadas mesmo dentro de `.app-shell`.
 - Corte complementar de retorno: em portfolio publicado `/{username}/{pageSlug}`, o link "Perfil" volta para `/home` quando o visitante e o dono logado; visitantes externos continuam indo para `/{username}`.
 - `/juliano-zilli/juliano-zilli` identificado como rota de portfolio publicado, nao como segunda tela de perfil; a correcao aplicada foi no retorno para o perfil inicial do dono.

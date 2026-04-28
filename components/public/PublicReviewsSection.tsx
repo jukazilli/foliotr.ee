@@ -1,5 +1,6 @@
 import { Star } from "lucide-react";
 import { submitPublicReviewAction } from "@/app/[username]/review-actions";
+import { PublicReviewRatingInput } from "@/components/public/PublicReviewRatingInput";
 import type { PublicReviewSummary } from "@/lib/server/domain/reviews";
 
 interface PublicReviewsSectionProps {
@@ -125,20 +126,7 @@ export default function PublicReviewsSection({
             placeholder="Email opcional"
             className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
           />
-          <label className="grid gap-2 text-sm font-medium text-neutral-700">
-            Nota
-            <select
-              name="rating"
-              defaultValue="5"
-              className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-            >
-              <option value="5">5 estrelas</option>
-              <option value="4">4 estrelas</option>
-              <option value="3">3 estrelas</option>
-              <option value="2">2 estrelas</option>
-              <option value="1">1 estrela</option>
-            </select>
-          </label>
+          <PublicReviewRatingInput defaultValue={5} />
           <textarea
             name="description"
             required

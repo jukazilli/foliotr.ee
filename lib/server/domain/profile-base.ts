@@ -25,6 +25,8 @@ const profileBaseSelect = {
   displayName: true,
   avatarUrl: true,
   bannerUrl: true,
+  bannerPositionX: true,
+  bannerPositionY: true,
   headline: true,
   bio: true,
   location: true,
@@ -233,6 +235,12 @@ export async function updateOwnedProfileFields(
         displayName: sanitizeNullable(input.displayName),
         avatarUrl: sanitizeNullable(input.avatarUrl),
         bannerUrl: sanitizeNullable(input.bannerUrl),
+        ...(input.bannerPositionX !== undefined
+          ? { bannerPositionX: input.bannerPositionX }
+          : {}),
+        ...(input.bannerPositionY !== undefined
+          ? { bannerPositionY: input.bannerPositionY }
+          : {}),
         headline: sanitizeNullable(input.headline),
         bio: sanitizeNullable(input.bio),
         location: sanitizeNullable(input.location),
@@ -985,6 +993,12 @@ export async function updateOwnedProfileBase(
           displayName: sanitizeNullable(input.displayName),
           avatarUrl: sanitizeNullable(input.avatarUrl),
           bannerUrl: sanitizeNullable(input.bannerUrl),
+          ...(input.bannerPositionX !== undefined
+            ? { bannerPositionX: input.bannerPositionX }
+            : {}),
+          ...(input.bannerPositionY !== undefined
+            ? { bannerPositionY: input.bannerPositionY }
+            : {}),
           headline: sanitizeNullable(input.headline),
           bio: sanitizeNullable(input.bio),
           location: sanitizeNullable(input.location),
