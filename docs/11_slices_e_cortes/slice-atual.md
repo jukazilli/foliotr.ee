@@ -1,51 +1,95 @@
 # Slice Atual
 
-Status: FECHADO  
-Last updated: 2026-04-27
+Status: EM CONTRATO  
+Last updated: 2026-04-28
 
 ## Nome
 
-Slice documental 1 - Estrutura integrada e legado.
+Slice 0 - Referencia e contrato visual do remaster social UI.
+
+## Modo de entrada
+
+Slice.
+
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. A entrega deve ser quebrada em slices.
 
 ## Objetivo
 
-Aplicar o Metodo Estrutural Integrado ao estado documental atual do projeto sem tentar reescrever todos os documentos em um unico corte.
+Fechar contrato minimo e backlog executavel para transformar o FolioTree de uma experiencia autenticada com aparencia de SaaS/sidebar/dashboard para uma experiencia social centrada no perfil publico do usuario.
 
-## Escopo dentro
+## Fontes de verdade
 
-- Criar estrutura `docs/00_*` a `docs/13_legado`.
-- Mover documentos planos atuais para `docs/13_legado/pre-integrado-2026-04-27/`.
-- Criar documentos ativos minimos.
-- Registrar backlog por dependencia.
-- Registrar evidencias de fechamento.
+- Pedido atual do usuario em 2026-04-28.
+- `docs/02_contratos/contrato-remaster-social-ui.md`.
+- `docs/10_backlog/backlog-remaster-social-ui.md`.
+- Codigo real em `app/`, `components/`, `lib/` e `prisma/schema.prisma`.
+- Referencia Facebook via Playwright, se autenticada pelo usuario, apenas como referencia de navegacao e perfil.
 
-## Escopo fora
+## Contratos necessarios
 
-- Reescrever todos os planos antigos.
-- Auditar cada jornada em browser.
-- Alterar codigo de runtime.
-- Fechar lacunas tecnicas como rate limit duravel ou Gemini.
+- Contrato de cadastro e onboarding.
+- Contrato da shell social autenticada.
+- Contrato do perfil publico e da visao do dono.
+- Contrato de edicao tipo About.
+- Contrato de portfolios em grid.
+- Contrato de templates sem dependencia de editor tecnico.
+- Contrato de depreciacao do `/dashboard` e do editor.
 
-## Skills
+## Lacunas
 
+- Card 2 do perfil publico ainda nao esta definido.
+- Falta observar ou dispensar formalmente a referencia Facebook.
+- Falta decidir se `/dashboard` sera redirect ou remocao dura.
+- Falta decidir compatibilidade de links para `/pages/{pageId}/editor`.
+- Falta definir busca da top bar.
+- Falta mapear controles visiveis apenas para dono logado.
+- Falta estrategia completa para migrar templates sem quebrar dados existentes.
+
+## Backlog por dependencia
+
+1. Referencia e contrato visual.
+2. Onboarding de conta para perfil publico.
+3. Top bar social e descontinuidade de dashboard.
+4. Perfil publico com capa e paridade do dono.
+5. Perfil/About editor.
+6. Portfolios em grade com acoes iconicas.
+7. Templates sem dependencia de editor.
+8. Depreciacao controlada do editor tecnico.
+9. QA integrado e fechamento.
+
+## Slice atual
+
+Executar apenas o Slice 0.
+
+Dentro:
+
+- Documentar contrato do remaster.
+- Documentar backlog por slices.
+- Preparar a captura de referencia visual.
+- Registrar lacunas que bloqueiam implementacao.
+
+Fora:
+
+- Alterar UI de runtime.
+- Remover dashboard.
+- Remover editor.
+- Migrar templates.
+- Redesenhar perfil publico.
+
+## Skills/agentes a acionar
+
+- `metodo-estrutural-integrado`
 - `always-todo`
 - `consistencia-documental`
-- `metodo-mfee`
+- `playwright`, quando iniciar a referencia Facebook e validacao visual
 
-## Evidencias
+Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiagente.
 
-- `docs/README.md` recriado como indice ativo.
-- `docs/00_governanca/*` criado.
-- `docs/01_produto_e_briefing/briefing-integrado.md` criado.
-- `docs/02_contratos/contratos-minimos.md` criado.
-- `docs/03_fundacoes/arquitetura-atual.md` criado.
-- `docs/10_backlog/backlog-estrutural.md` criado.
-- `docs/12_auditoria/inventario-e-auditoria-documental.md` criado.
-- Documentos antigos movidos para `docs/13_legado/pre-integrado-2026-04-27/`.
+## Evidencias de fechamento
 
-## Validacao esperada
-
-- `npm run typecheck`
-- `npm run lint`
-- `npx prettier --check --ignore-unknown docs`
-- busca de mojibake nos documentos ativos.
+- `docs/02_contratos/contrato-remaster-social-ui.md` criado.
+- `docs/10_backlog/backlog-remaster-social-ui.md` criado.
+- `docs/10_backlog/backlog-estrutural.md` atualizado.
+- `docs/README.md` atualizado com novos documentos.
+- Validacao documental executada.
+- Proxima acao operacional registrada: abrir Playwright na tela de login do Facebook para autenticacao manual do usuario e documentar referencia visual.

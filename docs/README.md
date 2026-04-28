@@ -2,7 +2,7 @@
 
 Status: active documentation index
 Metodo: Metodo Estrutural Integrado
-Last updated: 2026-04-27
+Last updated: 2026-04-28
 
 ## Modo de entrada
 
@@ -19,9 +19,11 @@ Leia nesta ordem:
 3. `03_fundacoes/arquitetura-atual.md`
 4. `01_produto_e_briefing/briefing-integrado.md`
 5. `02_contratos/contratos-minimos.md`
-6. `10_backlog/backlog-estrutural.md`
-7. `11_slices_e_cortes/slice-atual.md`
-8. `12_auditoria/inventario-e-auditoria-documental.md`
+6. `02_contratos/contrato-remaster-social-ui.md`, quando o corte atual for o remaster social
+7. `10_backlog/backlog-estrutural.md`
+8. `10_backlog/backlog-remaster-social-ui.md`, quando o corte atual for o remaster social
+9. `11_slices_e_cortes/slice-atual.md`
+10. `12_auditoria/inventario-e-auditoria-documental.md`
 
 ## Estrutura
 

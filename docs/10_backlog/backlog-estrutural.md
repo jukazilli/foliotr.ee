@@ -29,3 +29,4 @@ Last updated: 2026-04-27
 | 2     | Jornada Curriculo rapido               | Docs de jornada | PARCIAL | Fluxo autenticado e publico documentado                |
 | 3     | Jornada Reviews publicas               | Docs de jornada | PARCIAL | Envio, anti-spam e moderacao futura documentados       |
 | 4     | Jornada Teste vocacional               | Docs de modulo  | PARCIAL | Contrato entre prototipo legado e app real documentado |
+| 5     | Remaster social UI                     | Contrato visual | ATUAL   | Backlog por slices e contrato de navegacao/perfil      |
