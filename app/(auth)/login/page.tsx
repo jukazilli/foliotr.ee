@@ -8,7 +8,7 @@ import { RedesignFooter, RedesignHeader } from "@/components/landing/RedesignShe
 
 function getSafeCallbackUrl(value: string | null): string {
   if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/dashboard";
+    return "/onboarding";
   }
 
   return value;
@@ -41,7 +41,9 @@ function LoginContent() {
     }
 
     router.push(
-      getSafeCallbackUrl(searchParams.get("callbackUrl") ?? searchParams.get("redirect"))
+      getSafeCallbackUrl(
+        searchParams.get("callbackUrl") ?? searchParams.get("redirect")
+      )
     );
   }
 
@@ -106,8 +108,8 @@ export default function LoginPage() {
               <p className="eyebrow">Acesse sua conta</p>
               <h1 id="login-title">Bem-vindo de volta</h1>
               <p>
-                Entre para editar seu portfólio, atualizar versões e acompanhar
-                seus links publicados.
+                Entre para editar seu portfólio, atualizar versões e acompanhar seus
+                links publicados.
               </p>
             </div>
 

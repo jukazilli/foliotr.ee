@@ -21,7 +21,9 @@ import {
 } from "@/lib/server/domain/usernames";
 
 function readEmailInput(value: string | null) {
-  return String(value ?? "").trim().toLowerCase();
+  return String(value ?? "")
+    .trim()
+    .toLowerCase();
 }
 
 async function getEmailAvailability(email: string) {
@@ -135,10 +137,11 @@ export async function POST(request: NextRequest) {
           userId: user.id,
           displayName: data.name,
           headline: data.profession || null,
-          location: [data.city, data.state, data.country].filter(Boolean).join(", ") || null,
+          location:
+            [data.city, data.state, data.country].filter(Boolean).join(", ") || null,
           birthDate: data.birthDate ? new Date(data.birthDate) : null,
           bio: data.education ? `Escolaridade: ${data.education}` : null,
-          onboardingDone: true,
+          onboardingDone: false,
         },
       });
 

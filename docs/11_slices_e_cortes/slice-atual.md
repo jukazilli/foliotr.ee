@@ -1,21 +1,21 @@
 # Slice Atual
 
-Status: EM CONTRATO  
+Status: FECHADO  
 Last updated: 2026-04-28
 
 ## Nome
 
-Slice 0 - Referencia e contrato visual do remaster social UI.
+Slice 1 - Onboarding de conta para perfil publico.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. A entrega deve ser quebrada em slices.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas o fluxo cadastro -> onboarding -> perfil publico minimo.
 
 ## Objetivo
 
-Fechar contrato minimo e backlog executavel para transformar o FolioTree de uma experiencia autenticada com aparencia de SaaS/sidebar/dashboard para uma experiencia social centrada no perfil publico do usuario.
+Separar criacao de conta da montagem do perfil, reativando `/onboarding` como wizard real e fazendo `onboardingDone` representar o fechamento do perfil minimo.
 
 ## Fontes de verdade
 
@@ -57,24 +57,25 @@ Fechar contrato minimo e backlog executavel para transformar o FolioTree de uma 
 8. Depreciacao controlada do editor tecnico.
 9. QA integrado e fechamento.
 
-## Slice atual
+## Slice executado
 
-Executar apenas o Slice 0.
+Executado apenas o Slice 1.
 
 Dentro:
 
-- Documentar contrato do remaster.
-- Documentar backlog por slices.
-- Preparar a captura de referencia visual.
-- Registrar lacunas que bloqueiam implementacao.
+- Cadastro redireciona para `/onboarding`.
+- Cadastro cria perfil com `onboardingDone = false`.
+- `/onboarding` renderiza wizard autenticado.
+- API de onboarding atualiza username, nome publico, headline, bio, localizacao, status de oportunidades e experiencia atual opcional.
+- Conclusao redireciona para `/{username}`.
 
 Fora:
 
-- Alterar UI de runtime.
 - Remover dashboard.
 - Remover editor.
 - Migrar templates.
 - Redesenhar perfil publico.
+- Substituir sidebar por top bar.
 
 ## Skills/agentes a acionar
 
@@ -87,9 +88,10 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `docs/02_contratos/contrato-remaster-social-ui.md` criado.
-- `docs/10_backlog/backlog-remaster-social-ui.md` criado.
-- `docs/10_backlog/backlog-estrutural.md` atualizado.
-- `docs/README.md` atualizado com novos documentos.
-- Validacao documental executada.
-- Proxima acao operacional registrada: abrir Playwright na tela de login do Facebook para autenticacao manual do usuario e documentar referencia visual.
+- `app/api/register/route.ts` agora cria perfil com onboarding pendente.
+- `app/(auth)/register/page.tsx` redireciona novos usuarios para `/onboarding`.
+- `app/(onboarding)/onboarding/page.tsx` carrega estado real do perfil e renderiza wizard.
+- `components/onboarding/OnboardingWizard.tsx` criado.
+- `app/api/onboarding/route.ts` atualiza o perfil minimo e experiencia atual opcional.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.

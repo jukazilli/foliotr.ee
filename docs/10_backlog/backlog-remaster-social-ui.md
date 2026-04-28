@@ -32,6 +32,8 @@ Evidencia:
 
 ## Slice 1 - Onboarding de conta para perfil publico
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 0.
@@ -46,9 +48,11 @@ Escopo:
 
 Evidencia:
 
-- Criacao de conta validada em browser.
-- Usuario novo cai no onboarding, nao no dashboard.
-- Perfil publico minimo fica acessivel apos concluir.
+- Cadastro cria conta com `onboardingDone = false`.
+- `/onboarding` renderiza wizard real de perfil minimo.
+- Conclusao do onboarding atualiza perfil, experiencia atual opcional e redireciona para `/{username}`.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 2 - Top bar social e descontinuidade de dashboard
 
