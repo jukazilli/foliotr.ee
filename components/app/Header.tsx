@@ -122,7 +122,7 @@ function NavIcon({ item, active }: { item: SocialNavItem; active: boolean }) {
 
 export function Header({ userName, userImage, userUsername }: HeaderProps) {
   const pathname = usePathname();
-  const homeHref = userUsername ? `/${userUsername}` : "/profile";
+  const homeHref = "/home";
   const navItems: SocialNavItem[] = [
     { href: homeHref, label: "Inicio", icon: Home, match: [homeHref, "/dashboard"] },
     {

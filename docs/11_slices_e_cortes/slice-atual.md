@@ -86,6 +86,9 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
+- Corte complementar: casinha autenticada agora aponta para `/home`, rota dentro do shell `(app)`.
+- `/home` renderiza o hub do perfil do dono com `embedded`, mantendo a top bar persistente.
+- `/dashboard` redireciona para `/home`.
 - `npm run typecheck` executado sem erro.
 - `npm run lint` executado sem erro.
 - `npm run test` executado sem erro apos atualizar testes de cadastro/onboarding.

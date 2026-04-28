@@ -21,6 +21,7 @@ interface PublicProfileHubPageProps {
   hub: NonNullable<PublicProfileHub>;
   reviewSummary: PublicReviewSummary;
   isOwner?: boolean;
+  embedded?: boolean;
 }
 
 function calculateAge(value: Date | string | null) {
@@ -72,6 +73,7 @@ export default function PublicProfileHubPage({
   hub,
   reviewSummary,
   isOwner = false,
+  embedded = false,
 }: PublicProfileHubPageProps) {
   const displayName = hub.displayName || username;
   const defaultPresentation =
@@ -101,8 +103,18 @@ export default function PublicProfileHubPage({
   );
 
   return (
-    <div className="min-h-screen bg-[#f2f4f7] text-neutral-950">
-      <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
+    <div
+      className={
+        embedded ? "text-neutral-950" : "min-h-screen bg-[#f2f4f7] text-neutral-950"
+      }
+    >
+      <main
+        className={
+          embedded
+            ? "mx-auto flex w-full max-w-6xl flex-col gap-5"
+            : "mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8"
+        }
+      >
         <section className="overflow-hidden rounded-b-2xl border border-neutral-200 bg-white shadow-sm">
           <div className="relative h-48 bg-lime sm:h-64">
             {hub.bannerUrl ? (
@@ -382,14 +394,16 @@ export default function PublicProfileHubPage({
         />
       </div>
 
-      <footer className="border-t border-black/10 py-6 text-center">
-        <Link
-          href="/"
-          className="text-xs text-neutral-500 transition-colors hover:text-neutral-800"
-        >
-          Criado com <span className="font-semibold">FolioTree</span>
-        </Link>
-      </footer>
+      {embedded ? null : (
+        <footer className="border-t border-black/10 py-6 text-center">
+          <Link
+            href="/"
+            className="text-xs text-neutral-500 transition-colors hover:text-neutral-800"
+          >
+            Criado com <span className="font-semibold">FolioTree</span>
+          </Link>
+        </footer>
+      )}
     </div>
   );
 }
