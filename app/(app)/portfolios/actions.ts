@@ -6,9 +6,11 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { readTemplateResumeDefaults } from "@/lib/server/domain/canonical-templates";
 import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
+import { derivePortfolioVersionName } from "@/lib/server/domain/portfolio-naming";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
 import {
   createOwnedVersion,
+  getOwnedVersion,
   upsertOwnedPageOutput,
   upsertOwnedResumeOutput,
 } from "@/lib/server/domain/versions";
@@ -162,15 +164,16 @@ export async function versionPortfolioAction(pageId: string) {
   ]);
 
   const slug = await getNextVersionSlug(user.id);
-  const baseTitle = sourcePage.title ?? sourcePage.version.name;
+  const sourceVersion = await getOwnedVersion(prisma, user.id, sourcePage.versionId);
+  const baseTitle = derivePortfolioVersionName(sourceVersion);
   const version = await createOwnedVersion(prisma, user.id, {
-    name: `${baseTitle} ${slug.toUpperCase()}`,
-    description: sourcePage.version.description ?? undefined,
-    context: sourcePage.version.context ?? undefined,
-    emoji: sourcePage.version.emoji ?? undefined,
-    customHeadline: sourcePage.version.customHeadline ?? undefined,
-    customBio: sourcePage.version.customBio ?? undefined,
-    presentationId: sourcePage.version.presentationId ?? undefined,
+    name: baseTitle,
+    description: sourceVersion.description ?? undefined,
+    context: sourceVersion.context ?? undefined,
+    emoji: sourceVersion.emoji ?? undefined,
+    customHeadline: sourceVersion.customHeadline ?? undefined,
+    customBio: sourceVersion.customBio ?? undefined,
+    presentationId: sourceVersion.presentationId ?? undefined,
     isDefault: false,
     selections: {
       experienceIds: profile.experiences.map((item) => item.id),

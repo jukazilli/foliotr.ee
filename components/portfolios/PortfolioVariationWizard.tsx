@@ -194,7 +194,7 @@ export function PortfolioVariationWizard({
                 Variacao
               </p>
               <h1 className="font-display text-3xl font-black text-ink md:text-4xl">
-                {values.versionName || values.headline || "Portfolio"}
+                {values.headline || values.versionName || "Portfolio"}
               </h1>
               <p className="mt-1 text-sm font-bold text-ink/70">
                 {selectedTemplate?.name ?? "Sem tema selecionado"}
@@ -258,11 +258,11 @@ export function PortfolioVariationWizard({
           {activeStep === "identity" ? (
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
-                label="Nome da variacao"
+                label="Fallback do nome"
                 name="versionName"
                 value={values.versionName}
                 onChange={(value) => setField("versionName", value)}
-                placeholder="Ex: Analista de Sistemas"
+                placeholder="Usado se o cargo estiver vazio"
               />
               <TextField
                 label="Cargo exibido"

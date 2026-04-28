@@ -10,6 +10,7 @@ import {
   buildVersionProfileSnapshot,
   readVersionProfileSnapshot,
 } from "@/lib/server/domain/page-snapshots";
+import { derivePortfolioNameFromSnapshot } from "@/lib/server/domain/portfolio-naming";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
 import {
   getOwnedVersion,
@@ -113,11 +114,10 @@ export async function savePortfolioVariationAction(
     location: nullableText(readText(formData, "location")),
     updatedAt: new Date().toISOString(),
   };
-  const nextName =
-    nullableText(readText(formData, "versionName")) ??
-    nextHeadline ??
-    nextDisplayName ??
-    version.name;
+  const nextName = derivePortfolioNameFromSnapshot(
+    nextSnapshot,
+    nullableText(readText(formData, "versionName")) ?? version.name
+  );
   const pageSlug = normalizeSlug(
     readText(formData, "slug") || currentPage?.slug || "",
     createFallbackSlug({

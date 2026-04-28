@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getAppViewer, getOwnedVersions } from "@/lib/server/app-viewer";
 import { getPrimaryVersionPage } from "@/lib/server/domain/includes";
+import { derivePortfolioVersionName } from "@/lib/server/domain/portfolio-naming";
 import { formatDate } from "@/lib/utils";
 import {
   setPortfolioPublishStateAction,
@@ -281,7 +282,7 @@ export default async function PortfoliosPage({ searchParams }: PortfoliosPagePro
 
         <div className="overflow-hidden rounded-2xl border-2 border-line bg-white">
           <div className="hidden grid-cols-12 gap-4 border-b-2 border-line bg-gray-50 p-4 text-xs font-extrabold uppercase tracking-wider text-gray-500 lg:grid">
-            <div className="col-span-5">Nome / URL</div>
+            <div className="col-span-5">Cargo / URL</div>
             <div className="col-span-2">Modificado em</div>
             <div className="col-span-2 text-center">Itens</div>
             <div className="col-span-2 text-center">Status</div>
@@ -308,7 +309,8 @@ export default async function PortfoliosPage({ searchParams }: PortfoliosPagePro
                   resumeActive ? "DRAFT" : "PUBLISHED"
                 );
                 const versionAction = versionPortfolioAction.bind(null, page.id);
-                const itemTitle = page.title ?? version.name;
+                const itemTitle = derivePortfolioVersionName(version);
+                const templateName = page.template?.name ?? "Template";
 
                 return (
                   <article
@@ -335,9 +337,14 @@ export default async function PortfoliosPage({ searchParams }: PortfoliosPagePro
                           <h3 className="truncate font-display text-base font-extrabold text-black">
                             {itemTitle}
                           </h3>
-                          <p className="mt-1 w-fit max-w-full truncate rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-gray-500">
-                            {href}
-                          </p>
+                          <div className="mt-1 flex max-w-full flex-wrap items-center gap-1.5">
+                            <p className="w-fit max-w-full truncate rounded bg-gray-100 px-1.5 py-0.5 font-mono text-xs font-semibold text-gray-500">
+                              {href}
+                            </p>
+                            <span className="w-fit max-w-full truncate rounded bg-[#f6f8f1] px-1.5 py-0.5 text-xs font-extrabold text-gray-500">
+                              {templateName}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>

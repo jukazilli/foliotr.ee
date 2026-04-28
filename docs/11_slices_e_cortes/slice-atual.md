@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 2 - Editor multi-step da variacao.
+Slice 3 - Nome por cargo e cards de portfolios.
 
 ## Modo de entrada
 
 Corte.
 
-O projeto ja existe e o recorte atual depende do snapshot por variacao ja implementado. O objetivo e entregar o primeiro editor operacional para a variacao de portfolio, sem trazer de volta o editor tecnico de blocos.
+O projeto ja existe e o recorte atual depende do snapshot por variacao e do wizard inicial. O objetivo e remover a ambiguidade entre template e portfolio: o nome principal deve representar o cargo/role da variacao, enquanto o template fica como metadado.
 
 ## Objetivo
 
-Criar `/portfolios/{versionId}/edit` para que o usuario edite identidade, dados principais, foto/capa, tema e publicacao de uma variacao usando `Version.profileSnapshot` como fonte de escrita.
+Centralizar a regra de nome do portfolio e aplicar essa regra em `/portfolios`, no wizard e na acao de duplicar variacao.
 
 ## Fontes de verdade
 
@@ -24,49 +24,46 @@ Criar `/portfolios/{versionId}/edit` para que o usuario edite identidade, dados 
 - `docs/10_backlog/backlog-versionamento-portfolio.md`.
 - `app/(app)/portfolios/page.tsx`.
 - `app/(app)/portfolios/actions.ts`.
-- `lib/server/domain/versions.ts`.
-- `lib/server/domain/page-snapshots.ts`.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts`.
+- `components/portfolios/PortfolioVariationWizard.tsx`.
 
 ## Contratos necessarios
 
-- Editar variacao nao chama `/api/profile` nem altera o perfil global.
-- Foto/capa da variacao sao gravadas em `Version.profileSnapshot`.
-- Template continua pertencendo ao portfolio/page, nao ao perfil.
-- Publicar no wizard atualiza `Page` e `ResumeConfig` com snapshots derivados da variacao.
+- `Version.name` deve representar o cargo/headline da variacao quando possivel.
+- O card de portfolio mostra cargo/nome da variacao como informacao principal.
+- Nome do template aparece apenas como detalhe visual.
+- Fallback final continua preservando o nome existente para compatibilidade.
 
 ## Lacunas
 
-- Visibilidade granular por secao/item ainda nao foi implementada.
-- Edicao profunda de experiencias, projetos e reviews dentro da variacao fica para o proximo recorte.
-- O seed semantico dos blocos ainda usa o perfil agregado em `seedPageBlocksFromTemplate`; a publicacao ja recebe snapshot da variacao.
-- O ajuste fino de crop/posicao da foto especifica do portfolio ainda nao foi implementado neste wizard.
+- Ainda falta escolher uma experiencia principal obrigatoria por variacao.
+- Ainda falta aplicar template sem editor tecnico em fluxo dedicado.
+- Cards sem page continuam em area separada de pendencias.
 
 ## Backlog por dependencia
 
-1. Editor multi-step da variacao.
-2. Nome por cargo e cards de portfolios.
-3. Templates aplicados a variacao.
-4. Compatibilidade e QA.
+1. Nome por cargo e cards de portfolios.
+2. Templates aplicados a variacao.
+3. Compatibilidade e QA.
 
 ## Slice executado
 
-Executado apenas o Slice 2 do backlog de versionamento.
+Executado apenas o Slice 3 do backlog de versionamento.
 
 Dentro:
 
-- Rota `/portfolios/{versionId}/edit`.
-- Wizard com passos: identidade, dados, tema e publicacao.
-- Upload/selecao de foto e capa via `AssetGalleryPicker` com `purpose=portfolio`.
-- Server action que grava `Version.profileSnapshot`.
-- Server action que salva rascunho ou publica `Page` e `ResumeConfig`.
-- Acao de duplicar/versionar portfolio redirecionando direto para o editor da nova variacao.
+- Helper `derivePortfolioVersionName`.
+- Helper `derivePortfolioNameFromSnapshot`.
+- Card de `/portfolios` exibindo cargo/headline como titulo principal.
+- Template exibido como metadado do card.
+- Wizard usando cargo/headline como titulo visual principal.
+- Duplicacao de portfolio criando a nova variacao com nome derivado do cargo da fonte.
 
 Fora:
 
-- Visibilidade granular.
-- Normalizacao completa dos dados por variacao.
-- Remocao do editor tecnico legado.
-- Redesign completo do renderer publico.
+- Regras de experiencia principal obrigatoria.
+- Remocao de todos os nomes antigos ja persistidos.
+- Migracao em massa de `Version.name`.
 
 ## Skills/agentes acionados
 
@@ -78,9 +75,9 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `app/(app)/portfolios/[versionId]/edit/page.tsx` criada.
-- `app/(app)/portfolios/[versionId]/edit/actions.ts` criada.
-- `components/portfolios/PortfolioVariationWizard.tsx` criado.
-- `app/(app)/portfolios/actions.ts` redireciona variacao criada para o wizard.
-- Escrita da variacao passa por `Version.profileSnapshot`, `upsertOwnedPageOutput` e `upsertOwnedResumeOutput`.
+- `lib/server/domain/portfolio-naming.ts` criado.
+- `app/(app)/portfolios/page.tsx` usa `derivePortfolioVersionName(version)` para o titulo do card.
+- `app/(app)/portfolios/actions.ts` usa a regra ao duplicar uma variacao.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts` salva `Version.name` derivado do snapshot editado.
+- `components/portfolios/PortfolioVariationWizard.tsx` prioriza headline/cargo no titulo visual.
 - Validacoes do recorte devem incluir typecheck, lint/prettier dos arquivos tocados, build e `git diff --check`.

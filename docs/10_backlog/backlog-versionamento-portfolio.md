@@ -86,6 +86,8 @@ Evidencia:
 
 ## Slice 3 - Nome por cargo e cards de portfolios
 
+Status: FECHADO
+
 Dependencias:
 
 - Slice 1.
@@ -101,6 +103,8 @@ Evidencia:
 - Card mostra cargo/nome da variacao.
 - Nome do template aparece apenas como detalhe.
 - Criar variacao nao gera nomes baseados em template.
+- Helper `derivePortfolioVersionName` centraliza a regra de nome.
+- Duplicar portfolio usa cargo/headline da variacao fonte como nome base.
 
 ## Slice 4 - Templates aplicados a variacao
 
