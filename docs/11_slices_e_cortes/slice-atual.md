@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 4 - Perfil/About editor.
+Slice 5 - Portfolios em grade com acoes iconicas.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a reorganizacao do editor de perfil e o caminho de edicao da capa publica.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a tela autenticada de portfolios.
 
 ## Objetivo
 
-Transformar a navegacao do editor de perfil em experiencia tipo About, com lista de secoes e painel contextual, e permitir editar a capa publica usada no perfil.
+Trocar a lista/tabela de portfolios por grid de cards compactos com acoes iconicas, preservando os contratos de publicacao e variacao existentes.
 
 ## Fontes de verdade
 
@@ -59,21 +59,21 @@ Transformar a navegacao do editor de perfil em experiencia tipo About, com lista
 
 ## Slice executado
 
-Executado apenas o Slice 4.
+Executado apenas o Slice 5.
 
 Dentro:
 
-- `ProfileTabs` em lista lateral + painel contextual.
-- `bannerUrl` adicionado a validacao, persistencia e carregamento do perfil.
-- `ProfileEditor` permite adicionar, trocar e remover capa publica.
-- Persistencia segue o endpoint existente `/api/profile`.
+- `/portfolios` em grid responsivo.
+- Cards com titulo, status, link publico, contadores e badges.
+- Acoes iconicas para publicar portfolio, publicar curriculo, criar variacao, editar e ver publico.
+- Estados vazios e variacoes sem pagina preservados.
 
 Fora:
 
 - Remover editor.
 - Migrar templates.
-- Recriar portfolios em grid.
 - Reescrever todos os formularios internos do perfil.
+- Alterar server actions de portfolio.
 
 ## Skills/agentes a acionar
 
@@ -86,10 +86,6 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `components/profile/ProfileTabs.tsx` reorganizado.
-- `components/profile/ProfileEditor.tsx` edita capa publica.
-- `lib/validations.ts` aceita `bannerUrl`.
-- `lib/server/domain/profile-base.ts` persiste `bannerUrl`.
-- `lib/server/app-viewer.ts` carrega `bannerUrl`.
+- `app/(app)/portfolios/page.tsx` recriado como grid de cards.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.

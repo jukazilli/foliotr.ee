@@ -1,11 +1,13 @@
 import Link from "next/link";
 import {
   CheckCircle2,
-  ExternalLink,
+  CopyPlus,
+  Eye,
   FileText,
   Layers3,
   Pencil,
   Plus,
+  Power,
 } from "lucide-react";
 import { EmptyWorkspaceState, PageIntro } from "@/components/app/primitives";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +49,44 @@ function countSelectedItems(
   );
 }
 
+function IconButton({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <button
+      type="submit"
+      aria-label={label}
+      title={label}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-line bg-white text-ink transition hover:-translate-y-0.5 hover:bg-pink"
+    >
+      {children}
+    </button>
+  );
+}
+
+function IconLink({
+  href,
+  label,
+  children,
+  target,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+  target?: "_blank";
+}) {
+  return (
+    <Link
+      href={href}
+      target={target}
+      rel={target === "_blank" ? "noopener noreferrer" : undefined}
+      aria-label={label}
+      title={label}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full border-2 border-line bg-white text-ink transition hover:-translate-y-0.5 hover:bg-pink"
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default async function PortfoliosPage() {
   const { user } = await getAppViewer();
   const versions = await getOwnedVersions(user.id);
@@ -63,7 +103,6 @@ export default async function PortfoliosPage() {
   const activeCount = rows.filter(
     (item) => item.page?.publishState === "PUBLISHED"
   ).length;
-  const draftCount = rows.length - activeCount;
   const activeResumeCount = versions.filter(
     (version) => version.resumeConfig?.publishState === "PUBLISHED"
   ).length;
@@ -74,22 +113,22 @@ export default async function PortfoliosPage() {
     {
       label: "Portfolios",
       value: rows.length,
-      detail: `${activeCount} ativo${activeCount === 1 ? "" : "s"} / ${draftCount} rascunho${draftCount === 1 ? "" : "s"}`,
+      detail: `${activeCount} ativo${activeCount === 1 ? "" : "s"}`,
     },
     {
-      label: "Curriculos rapidos",
+      label: "Curriculos",
       value: activeResumeCount,
-      detail: "Modos de leitura objetiva publicados.",
+      detail: "Modos de leitura publicados.",
     },
     {
       label: "Apresentacoes",
       value: withPresentationCount,
-      detail: "Portfolios com apresentacao selecionada.",
+      detail: "Com apresentacao selecionada.",
     },
     {
       label: "Sem pagina",
       value: versionsWithoutPage.length,
-      detail: "Variacoes aguardando modelo.",
+      detail: "Aguardando modelo.",
     },
   ];
 
@@ -98,11 +137,11 @@ export default async function PortfoliosPage() {
       <PageIntro
         eyebrow="Portfolios"
         title="Portfolios"
-        description="Cockpit para criar, editar, publicar e acompanhar suas paginas publicas e curriculos rapidos."
+        description="Gerencie as experiencias publicadas no seu perfil."
         meta={
           <>
             <Badge variant="version">{rows.length} portfolios</Badge>
-            <Badge variant="success">{activeCount} ativas</Badge>
+            <Badge variant="success">{activeCount} ativos</Badge>
           </>
         }
         actions={
@@ -146,156 +185,118 @@ export default async function PortfoliosPage() {
           secondaryAction={{ href: "/profile", label: "Editar perfil" }}
         />
       ) : (
-        <Card className="overflow-hidden rounded-[18px]">
-          <CardContent className="p-0">
-            <div className="hidden border-b-2 border-line bg-cream px-4 py-3 text-[0.72rem] font-extrabold uppercase tracking-[0.16em] text-muted 2xl:grid 2xl:grid-cols-[8.5rem_minmax(12rem,1fr)_7rem_minmax(11rem,0.9fr)_13rem_18rem] 2xl:items-center 2xl:gap-3">
-              <span>Data</span>
-              <span>Titulo</span>
-              <span>Status</span>
-              <span>Link</span>
-              <span>Modos</span>
-              <span className="text-right">Acoes</span>
-            </div>
+        <section
+          className="grid gap-4 md:grid-cols-2 2xl:grid-cols-3"
+          aria-label="Portfolios publicados e rascunhos"
+        >
+          {rows.map(({ version, page }) => {
+            if (!page) return null;
 
-            <div className="divide-y-2 divide-line/10">
-              {rows.map(({ version, page }) => {
-                if (!page) return null;
+            const href = publicPath(user.username, page.slug);
+            const portfolioActive = page.publishState === "PUBLISHED";
+            const resumeActive = version.resumeConfig?.publishState === "PUBLISHED";
+            const selectedCount = countSelectedItems(version);
+            const togglePortfolioAction = setPortfolioPublishStateAction.bind(
+              null,
+              page.id,
+              portfolioActive ? "DRAFT" : "PUBLISHED"
+            );
+            const toggleResumeAction = setPortfolioResumeModeAction.bind(
+              null,
+              page.id,
+              resumeActive ? "DRAFT" : "PUBLISHED"
+            );
+            const versionAction = versionPortfolioAction.bind(null, page.id);
 
-                const href = publicPath(user.username, page.slug);
-                const portfolioActive = page.publishState === "PUBLISHED";
-                const resumeActive = version.resumeConfig?.publishState === "PUBLISHED";
-                const selectedCount = countSelectedItems(version);
-                const togglePortfolioAction = setPortfolioPublishStateAction.bind(
-                  null,
-                  page.id,
-                  portfolioActive ? "DRAFT" : "PUBLISHED"
-                );
-                const toggleResumeAction = setPortfolioResumeModeAction.bind(
-                  null,
-                  page.id,
-                  resumeActive ? "DRAFT" : "PUBLISHED"
-                );
-                const versionAction = versionPortfolioAction.bind(null, page.id);
+            return (
+              <article
+                key={version.id}
+                className="flex min-h-[19rem] flex-col rounded-[18px] border-2 border-line bg-white p-4 shadow-app"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-line bg-pink text-ink">
+                    <Layers3 className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <Badge variant={statusVariant(page.publishState)}>
+                    {statusLabel(page.publishState)}
+                  </Badge>
+                </div>
 
-                return (
-                  <div
-                    key={version.id}
-                    className="grid gap-4 px-4 py-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(18rem,0.9fr)] xl:items-start xl:gap-4 2xl:grid-cols-[8.5rem_minmax(12rem,1fr)_7rem_minmax(11rem,0.9fr)_13rem_18rem] 2xl:items-center 2xl:gap-3"
-                  >
-                    <div className="grid gap-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] xl:grid-cols-1 xl:gap-3 2xl:contents">
-                      <div>
-                        <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-muted 2xl:hidden">
-                          Data
-                        </p>
-                        <p className="mt-1 text-sm font-bold text-ink 2xl:mt-0">
-                          {formatDate(page.createdAt, "short")}
-                        </p>
-                      </div>
+                <div className="mt-4 min-w-0 flex-1">
+                  <p className="text-xs font-extrabold uppercase tracking-[0.14em] text-muted">
+                    {formatDate(page.createdAt, "short")}
+                  </p>
+                  <h2 className="mt-2 line-clamp-2 text-2xl font-extrabold leading-tight tracking-[-0.03em] text-ink">
+                    {page.title ?? version.name}
+                  </h2>
+                  <p className="mt-2 truncate text-sm font-semibold text-muted">
+                    {version.name} / {page.template.name}
+                  </p>
+                  <p className="mt-3 rounded-full border-2 border-line bg-cream px-3 py-2 font-mono text-xs font-bold text-ink">
+                    <span className="block truncate">{href}</span>
+                  </p>
+                </div>
 
-                      <div className="min-w-0">
-                        <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-muted 2xl:hidden">
-                          Titulo
-                        </p>
-                        <div className="mt-1 flex min-w-0 items-center gap-2 2xl:mt-0">
-                          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border-2 border-line bg-pink text-ink">
-                            <Layers3 className="h-4 w-4" aria-hidden="true" />
-                          </span>
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-extrabold text-ink">
-                              {page.title ?? version.name}
-                            </p>
-                            <p className="truncate text-xs font-semibold text-muted">
-                              {version.name} / {page.template.name}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <span className="rounded-full border-2 border-line bg-white px-3 py-1 text-xs font-extrabold text-ink">
+                    {selectedCount} itens
+                  </span>
+                  {resumeActive ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border-2 border-line bg-lime px-3 py-1 text-xs font-extrabold text-ink">
+                      <FileText className="h-3.5 w-3.5" aria-hidden="true" />
+                      curriculo
+                    </span>
+                  ) : null}
+                  {version.presentation ? (
+                    <span className="inline-flex items-center gap-1 rounded-full border-2 border-line bg-cream px-3 py-1 text-xs font-extrabold text-ink">
+                      <CheckCircle2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      apresentacao
+                    </span>
+                  ) : null}
+                </div>
 
-                    <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start 2xl:contents">
-                      <div className="grid gap-4 sm:grid-cols-[8.5rem_minmax(0,1fr)] xl:grid-cols-1 xl:gap-3 2xl:contents">
-                        <div>
-                          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-muted 2xl:hidden">
-                            Status
-                          </p>
-                          <Badge variant={statusVariant(page.publishState)}>
-                            {statusLabel(page.publishState)}
-                          </Badge>
-                        </div>
-
-                        <div className="min-w-0">
-                          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-muted 2xl:hidden">
-                            Link
-                          </p>
-                          <p className="mt-1 truncate rounded-full border-2 border-line bg-white px-3 py-2 font-mono text-xs font-bold text-ink 2xl:mt-0">
-                            {href}
-                          </p>
-                          <p className="mt-2 text-xs font-bold text-muted 2xl:hidden">
-                            {selectedCount} itens selecionados
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] xl:grid-cols-1 xl:gap-3 2xl:contents">
-                        <div className="flex flex-wrap gap-2">
-                          <form action={togglePortfolioAction}>
-                            <button
-                              type="submit"
-                              className={`inline-flex h-9 items-center rounded-full border-2 border-line px-3 text-xs font-extrabold uppercase transition hover:-translate-y-0.5 ${
-                                portfolioActive
-                                  ? "bg-pink text-ink"
-                                  : "bg-white text-muted"
-                              }`}
-                            >
-                              Portfolio
-                            </button>
-                          </form>
-                          <form action={toggleResumeAction}>
-                            <button
-                              type="submit"
-                              className={`inline-flex h-9 items-center rounded-full border-2 border-line px-3 text-xs font-extrabold uppercase transition hover:-translate-y-0.5 ${
-                                resumeActive
-                                  ? "bg-pink text-ink"
-                                  : "bg-white text-muted"
-                              }`}
-                            >
-                              Curriculo
-                            </button>
-                          </form>
-                          {version.presentation ? (
-                            <span className="inline-flex h-9 items-center rounded-full border-2 border-line bg-cream px-3 text-xs font-extrabold uppercase text-ink">
-                              Apresentacao
-                            </span>
-                          ) : null}
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-2 xl:justify-end 2xl:justify-end">
-                          <Button asChild variant="outline" size="sm">
-                            <Link href={`/pages/${page.id}/editor`}>
-                              <Pencil className="h-4 w-4" aria-hidden="true" />
-                              Editar
-                            </Link>
-                          </Button>
-                          <form action={versionAction}>
-                            <Button type="submit" variant="outline" size="sm">
-                              Criar variacao
-                            </Button>
-                          </form>
-                          <Button asChild variant="primary" size="sm">
-                            <Link href={href} target="_blank" rel="noopener noreferrer">
-                              Ver publico
-                              <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
+                <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t-2 border-line/10 pt-4">
+                  <div className="flex flex-wrap gap-2">
+                    <form action={togglePortfolioAction}>
+                      <IconButton
+                        label={
+                          portfolioActive
+                            ? "Despublicar portfolio"
+                            : "Publicar portfolio"
+                        }
+                      >
+                        <Power className="h-4 w-4" aria-hidden="true" />
+                      </IconButton>
+                    </form>
+                    <form action={toggleResumeAction}>
+                      <IconButton
+                        label={
+                          resumeActive ? "Despublicar curriculo" : "Publicar curriculo"
+                        }
+                      >
+                        <FileText className="h-4 w-4" aria-hidden="true" />
+                      </IconButton>
+                    </form>
+                    <form action={versionAction}>
+                      <IconButton label="Criar variacao">
+                        <CopyPlus className="h-4 w-4" aria-hidden="true" />
+                      </IconButton>
+                    </form>
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+
+                  <div className="flex flex-wrap gap-2">
+                    <IconLink href={`/pages/${page.id}/editor`} label="Editar">
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
+                    </IconLink>
+                    <IconLink href={href} label="Ver publico" target="_blank">
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                    </IconLink>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </section>
       )}
 
       {versionsWithoutPage.length > 0 ? (

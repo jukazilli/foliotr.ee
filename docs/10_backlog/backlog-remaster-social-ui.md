@@ -132,6 +132,8 @@ Evidencia:
 
 ## Slice 5 - Portfolios em grade com acoes iconicas
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 2.
@@ -144,8 +146,12 @@ Escopo:
 
 Evidencia:
 
-- Cards nao quebram layout com titulos longos.
-- Acoes funcionam em desktop e mobile.
+- `/portfolios` foi recriado como grid responsivo de cards.
+- Acoes de publicar portfolio, publicar curriculo, criar variacao, editar e ver publico usam icones com `aria-label` e `title`.
+- Server actions existentes foram preservadas.
+- Estados sem portfolio e variacoes sem pagina continuam visiveis.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 6 - Templates sem dependencia de editor
 
