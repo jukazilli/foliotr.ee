@@ -66,7 +66,6 @@ async function getOwnedPageForAction(userId: string, pageId: string) {
 
 function revalidatePortfolioPaths(username: string | null | undefined, slug: string) {
   revalidatePath("/portfolios");
-  revalidatePath("/dashboard");
   revalidatePath("/pages");
   revalidatePath("/resumes");
   revalidatePath("/versions");

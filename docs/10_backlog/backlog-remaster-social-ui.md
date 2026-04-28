@@ -56,6 +56,8 @@ Evidencia:
 
 ## Slice 2 - Top bar social e descontinuidade de dashboard
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 0.
@@ -70,8 +72,13 @@ Escopo:
 
 Evidencia:
 
-- Rotas autenticadas navegam pela top bar em desktop e mobile.
-- `/dashboard` nao e mais destino primario.
+- `AppShell` deixou de reservar espaco para sidebar.
+- `Header` foi substituido por top bar responsiva com busca, logo, icones e menu da conta.
+- Home da top bar aponta para `/{username}` quando ha username.
+- `/dashboard` passou a redirecionar para `/{username}` ou `/profile`.
+- Links internos de voltar/revalidar deixaram de usar `/dashboard`, salvo aliases de compatibilidade.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 3 - Perfil publico com capa e paridade do dono
 

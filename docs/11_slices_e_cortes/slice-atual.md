@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 1 - Onboarding de conta para perfil publico.
+Slice 2 - Top bar social e descontinuidade de dashboard.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas o fluxo cadastro -> onboarding -> perfil publico minimo.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a troca da shell autenticada para top bar e a retirada de `/dashboard` como destino primario.
 
 ## Objetivo
 
-Separar criacao de conta da montagem do perfil, reativando `/onboarding` como wizard real e fazendo `onboardingDone` representar o fechamento do perfil minimo.
+Substituir a navegacao autenticada com sidebar por uma top bar social e fazer `/dashboard` funcionar apenas como rota de compatibilidade que encaminha o usuario ao proprio perfil.
 
 ## Fontes de verdade
 
@@ -59,23 +59,23 @@ Separar criacao de conta da montagem do perfil, reativando `/onboarding` como wi
 
 ## Slice executado
 
-Executado apenas o Slice 1.
+Executado apenas o Slice 2.
 
 Dentro:
 
-- Cadastro redireciona para `/onboarding`.
-- Cadastro cria perfil com `onboardingDone = false`.
-- `/onboarding` renderiza wizard autenticado.
-- API de onboarding atualiza username, nome publico, headline, bio, localizacao, status de oportunidades e experiencia atual opcional.
-- Conclusao redireciona para `/{username}`.
+- `AppShell` sem padding/sidebar.
+- `Header` refeito como top bar responsiva.
+- Home da top bar aponta para `/{username}` quando ha username.
+- `/dashboard` redireciona para `/{username}` ou `/profile`.
+- Links internos de voltar/revalidar deixam de tratar `/dashboard` como destino primario.
 
 Fora:
 
-- Remover dashboard.
 - Remover editor.
 - Migrar templates.
 - Redesenhar perfil publico.
-- Substituir sidebar por top bar.
+- Recriar pagina publica com capa.
+- Recriar portfolios em grid.
 
 ## Skills/agentes a acionar
 
@@ -88,10 +88,10 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `app/api/register/route.ts` agora cria perfil com onboarding pendente.
-- `app/(auth)/register/page.tsx` redireciona novos usuarios para `/onboarding`.
-- `app/(onboarding)/onboarding/page.tsx` carrega estado real do perfil e renderiza wizard.
-- `components/onboarding/OnboardingWizard.tsx` criado.
-- `app/api/onboarding/route.ts` atualiza o perfil minimo e experiencia atual opcional.
+- `components/app/AppShell.tsx` sem estado de sidebar.
+- `components/app/Header.tsx` substituido por top bar social.
+- `components/app/navigation.ts` atualizado para compatibilidade sem dashboard primario.
+- `app/(app)/dashboard/page.tsx` redireciona para perfil do usuario.
+- `app/(app)/versions/page.tsx` e `app/(app)/portfolios/actions.ts` deixaram de apontar para dashboard como destino operacional.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.

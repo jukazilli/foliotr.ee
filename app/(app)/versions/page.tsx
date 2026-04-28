@@ -32,7 +32,7 @@ export default async function VersionsPage() {
           title="Voce ainda nao tem variacoes"
           description="Comece pelo perfil ou por um portfolio para criar uma variacao."
           primaryAction={{ href: "/profile", label: "Completar perfil" }}
-          secondaryAction={{ href: "/dashboard", label: "Voltar" }}
+          secondaryAction={{ href: "/portfolios", label: "Voltar" }}
         />
       </div>
     );
