@@ -55,9 +55,9 @@ export default async function AuthenticatedResumePage({
           actions={
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline">
-                <Link href={`/pages/${page.id}/editor`}>
+                <Link href="/portfolios">
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-                  Voltar ao portfolio
+                  Voltar aos portfolios
                 </Link>
               </Button>
               {publicResumeHref ? (
@@ -88,7 +88,7 @@ export default async function AuthenticatedResumePage({
             </div>
             <div className="flex flex-wrap gap-2">
               <Button asChild variant="outline" size="sm">
-                <Link href={`/pages/${page.id}/editor`}>Editar portfolio</Link>
+                <Link href="/profile">Editar dados do perfil</Link>
               </Button>
               {publicTemplateHref ? (
                 <Button asChild variant="ghost" size="sm">

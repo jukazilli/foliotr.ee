@@ -285,7 +285,7 @@ export default async function PortfoliosPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <IconLink href={`/pages/${page.id}/editor`} label="Editar">
+                    <IconLink href="/profile" label="Editar dados do perfil">
                       <Pencil className="h-4 w-4" aria-hidden="true" />
                     </IconLink>
                     <IconLink href={href} label="Ver publico" target="_blank">

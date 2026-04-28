@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 6 - Templates sem dependencia de editor.
+Slice 7 - Depreciacao controlada do editor tecnico.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a experiencia de selecao/aplicacao de templates.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a retirada do editor tecnico dos fluxos comuns.
 
 ## Objetivo
 
-Remover a dependencia direta do editor tecnico na jornada de templates, tratando template como linguagem visual aplicada ao portfolio.
+Depreciar o editor tecnico de forma controlada, preservando compatibilidade por redirect e removendo links comuns para `/pages/{pageId}/editor`.
 
 ## Fontes de verdade
 
@@ -59,22 +59,21 @@ Remover a dependencia direta do editor tecnico na jornada de templates, tratando
 
 ## Slice executado
 
-Executado apenas o Slice 6.
+Executado apenas o Slice 7.
 
 Dentro:
 
-- Aplicacao de template redireciona para `/portfolios`.
-- Galeria `/templates` usa copy de linguagem visual.
-- CTA principal virou `Aplicar modelo`.
-- Template aplicado leva para `/portfolios`.
-- Detalhe do template descreve composicao/tipografia/ritmo visual.
+- `/pages` redireciona para `/portfolios?legacy=pages`.
+- `/pages/{pageId}/editor` redireciona para `/portfolios?legacy=editor`.
+- Links comuns de editar portfolio apontam para `/profile` ou `/portfolios`.
+- `versionPortfolioAction` redireciona para `/portfolios?created=1`.
+- Actions legadas do editor deixam de revalidar a rota do editor.
 
 Fora:
 
-- Remover editor.
 - Migrar dados historicos de `Page`/`PageBlock`.
 - Adaptar internamente todo renderer `portfolio-community`.
-- Remover rota tecnica `/pages/{pageId}/editor`.
+- Deletar componentes tecnicos legados do editor.
 
 ## Skills/agentes a acionar
 
@@ -87,9 +86,11 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `app/(app)/templates/actions.ts` redireciona aplicacao para `/portfolios`.
-- `app/(app)/templates/page.tsx` remove copy/CTA de editor.
-- `app/(app)/templates/[slug]/page.tsx` remove copy de edicao de blocos.
-- `rg` em `app/(app)/templates` nao encontrou `editor`, `Editar portfolio`, `abre o editor`, `Abrir exemplo`, `Usar modelo` ou `/pages/.*/editor`.
+- `app/(app)/pages/page.tsx` redireciona para `/portfolios`.
+- `app/(app)/pages/[pageId]/editor/page.tsx` redireciona para `/portfolios`.
+- `app/(app)/portfolios/page.tsx` nao aponta mais para editor.
+- `app/(app)/portfolios/actions.ts` nao redireciona mais para editor apos criar variacao.
+- `app/(app)/pages/[pageId]/resume/page.tsx` remove links de retorno ao editor.
+- `rg` por `/pages/.*editor`, `/editor`, `Editar portfolio` e `Voltar ao portfolio` em `app`, `components` e `lib` nao encontrou ocorrencias fora dos componentes tecnicos excluidos.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.

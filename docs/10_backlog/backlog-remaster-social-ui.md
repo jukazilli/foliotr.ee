@@ -181,6 +181,8 @@ Evidencia:
 
 ## Slice 7 - Depreciacao controlada do editor tecnico
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 6.
@@ -194,8 +196,14 @@ Escopo:
 
 Evidencia:
 
-- `rg "/editor"` mostra apenas legado controlado ou compatibilidade documentada.
-- Usuario comum nao encontra editor tecnico no fluxo principal.
+- `/pages` redireciona para `/portfolios?legacy=pages`.
+- `/pages/{pageId}/editor` redireciona para `/portfolios?legacy=editor`.
+- Links comuns para editar portfolio foram trocados por `/profile` ou `/portfolios`.
+- `versionPortfolioAction` redireciona para `/portfolios?created=1`.
+- Actions legadas do editor nao revalidam mais `/pages/{pageId}/editor`.
+- `rg` por `/pages/.*editor`, `/editor`, `Editar portfolio` e `Voltar ao portfolio` em `app`, `components` e `lib` nao retornou ocorrencias fora dos componentes tecnicos excluidos.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 8 - QA integrado e fechamento
 
