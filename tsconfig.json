@@ -30,9 +30,9 @@
     "redesign-teste",
     "editor-otimizacao",
     "orientacao-profissional-app",
+    "apps",
+    "packages",
     "assets/curriculo-code",
-    "assets/template/**/template-code/**",
-    "apps/**/dist",
-    "packages/**/dist"
+    "assets/template/**/template-code/**"
   ]
 }

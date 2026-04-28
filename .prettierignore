@@ -12,9 +12,9 @@ landing-test
 redesign-teste
 editor-otimizacao
 orientacao-profissional-app
+apps
+packages
 assets/curriculo-code
 package-lock.json
 docs/Design System
-apps/**/dist
-packages/**/dist
 *.tsbuildinfo

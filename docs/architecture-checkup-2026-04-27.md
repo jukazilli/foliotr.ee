@@ -400,18 +400,18 @@ Recomendacao:
 
 Nao remover automaticamente. Validar com git history, deploy e referencias de docs.
 
-| Caminho                        | Status provavel                         | Acao sugerida                                             |
-| ------------------------------ | --------------------------------------- | --------------------------------------------------------- |
-| `landing-test/`                | referencia externa pesada               | mover para fora do repo ou storage                        |
-| `apps/`                        | heranca monorepo/artefato antigo        | auditar e remover se nao houver runtime                   |
-| `packages/`                    | heranca monorepo/artefato antigo        | auditar e remover se nao houver imports                   |
-| `redesign-teste/`              | referencia visual historica             | manter fora do repo ou reduzir a assets usados            |
-| `editor-otimizacao/`           | referencia de UX do editor              | arquivar como referencia, nao runtime                     |
-| `orientacao-profissional-app/` | prototipo incorporado                   | remover apos confirmar paridade com `components/vocation` |
-| `output/`                      | logs/screenshots de QA                  | ignorar ou limpar                                         |
-| `utils/supabase/`              | codigo nao usado pela arquitetura atual | remover junto das dependencias Supabase                   |
-| `generated/prisma-client/`     | gerado                                  | decidir se deve ser versionado                            |
-| `app/api/onboarding/route.ts`  | legado possivel                         | manter so se houver plano de onboarding futuro            |
+| Caminho                        | Status provavel                         | Acao sugerida                                                    |
+| ------------------------------ | --------------------------------------- | ---------------------------------------------------------------- |
+| `landing-test/`                | referencia externa pesada               | mover para fora do repo ou storage                               |
+| `apps/`                        | heranca monorepo/artefato antigo        | auditado em 2026-04-27; sem runtime ativo, ignorado pelos checks |
+| `packages/`                    | heranca monorepo/artefato antigo        | auditado em 2026-04-27; sem runtime ativo, ignorado pelos checks |
+| `redesign-teste/`              | referencia visual historica             | manter fora do repo ou reduzir a assets usados                   |
+| `editor-otimizacao/`           | referencia de UX do editor              | arquivar como referencia, nao runtime                            |
+| `orientacao-profissional-app/` | prototipo incorporado                   | remover apos confirmar paridade com `components/vocation`        |
+| `output/`                      | logs/screenshots de QA                  | ignorar ou limpar                                                |
+| `utils/supabase/`              | codigo nao usado pela arquitetura atual | remover junto das dependencias Supabase                          |
+| `generated/prisma-client/`     | gerado                                  | decidir se deve ser versionado                                   |
+| `app/api/onboarding/route.ts`  | legado possivel                         | manter so se houver plano de onboarding futuro                   |
 
 ## Recomendacao de arquitetura alvo
 
@@ -486,7 +486,7 @@ Telas tecnicas:
 ### Fase 4 - Limpeza de repositorio
 
 - [x] Mover `landing-test`, `redesign-teste`, `editor-otimizacao` e `orientacao-profissional-app` para referencias externas ou pasta ignorada.
-- [ ] Auditar/remover `apps` e `packages`.
+- [x] Auditar/remover `apps` e `packages`.
 - [ ] Decidir politica para `generated/prisma-client`.
 - [x] Isolar `output` como artefato local ignorado.
 

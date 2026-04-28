@@ -440,6 +440,8 @@ Risco:
 
 Objetivo: evitar 500 em `/favicon.ico` por handler dinamico fragil.
 
+Status: concluida em 2026-04-27.
+
 Arquivos provaveis:
 
 - `app/favicon.ico/route.ts`
@@ -448,19 +450,66 @@ Arquivos provaveis:
 
 Checklist:
 
-- [ ] Decidir entre arquivo estatico e handler com fallback.
-- [ ] Se manter handler, tratar erro de leitura.
-- [ ] Se usar padrao Next, remover rota dinamica e adicionar asset correto.
-- [ ] Validar content-type.
+- [x] Decidir entre arquivo estatico e handler com fallback.
+- [x] Se manter handler, tratar erro de leitura.
+- [x] Registrar que o padrao Next estatico nao foi usado neste corte para preservar `/favicon.ico`.
+- [x] Validar content-type.
+
+Execucao:
+
+- A rota `app/favicon.ico/route.ts` foi mantida para preservar compatibilidade direta com `/favicon.ico`.
+- O handler agora trata falhas de leitura de `public/favicon.svg` e responde com SVG fallback embutido.
+- O `Content-Type` ficou explicito como `image/svg+xml; charset=utf-8`.
+- Nenhuma alteracao foi feita em layout, metadata global ou assets publicos.
 
 Validacao:
 
 - `npm run typecheck`
+- `npm run lint`
 - Acessar `/favicon.ico` localmente.
 
 Risco:
 
 - Baixo.
+
+### Slice 8 - Heranca `apps` e `packages`
+
+Objetivo: fechar a pendencia de repositorio sobre diretorios da arquitetura monorepo antiga.
+
+Status: concluida em 2026-04-27.
+
+Arquivos alterados:
+
+- `.gitignore`
+- `.eslintignore`
+- `.prettierignore`
+- `tsconfig.json`
+- `docs/architecture-checkup-2026-04-27.md`
+
+Checklist:
+
+- [x] Confirmar que `apps/` e `packages/` nao possuem arquivos versionados.
+- [x] Confirmar que nao ha imports ativos para `apps/`, `packages/` ou `@foliotree`.
+- [x] Isolar os diretorios dos checks locais sem apagar referencia do disco.
+- [x] Atualizar o checkup como pendencia resolvida.
+
+Execucao:
+
+- `git ls-files apps packages` nao retornou arquivos versionados.
+- `git ls-files --others --exclude-standard apps packages` nao retornou arquivos pendentes para commit.
+- Fora de `node_modules`, `.next` e `dist`, foi encontrado apenas `apps/web/tsconfig.tsbuildinfo`, que ja e artefato ignorado.
+- `.gitignore`, `.eslintignore`, `.prettierignore` e `tsconfig.json` agora tratam `apps` e `packages` como heranca local/historica fora do runtime atual.
+- Nenhum codigo de runtime Next.js, Prisma, auth, UI ou API foi alterado.
+
+Validacao:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npx prettier --check .gitignore .eslintignore .prettierignore tsconfig.json docs/architecture-checkup-2026-04-27.md docs/architecture-optimization-slices.md`
+
+Risco:
+
+- Baixo. Mudanca restrita a ignores, TypeScript exclude e documentacao.
 
 ## Ordem recomendada
 
@@ -472,6 +521,7 @@ Risco:
 6. Slice 3 - Editor/preview em abas.
 7. Slice 6 - Higiene de repositorio.
 8. Slice 7 - Favicon.
+9. Slice 8 - Heranca `apps` e `packages`.
 
 Motivo:
 
