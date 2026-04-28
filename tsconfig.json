@@ -26,12 +26,7 @@
     "build",
     "coverage",
     "output",
-    "landing-test",
-    "redesign-teste",
-    "editor-otimizacao",
-    "orientacao-profissional-app",
-    "apps",
-    "packages",
+    "prototipos-legados",
     "assets/curriculo-code",
     "assets/template/**/template-code/**"
   ]

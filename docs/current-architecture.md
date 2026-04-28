@@ -107,5 +107,6 @@ The following documents are useful historical context but are not the active arc
 - `docs/mvp-architecture.md`
 - `docs/mvp-executable-plan.md`
 - `docs/mvp-technical-audit.md`
+- `prototipos-legados/`
 
-Use `docs/runtime-architecture-decision.md` for the runtime decision and this file for the current code-level architecture map.
+Use `docs/runtime-architecture-decision.md` for the runtime decision, `docs/documentation-governance.md` for document precedence, and this file for the current code-level architecture map.

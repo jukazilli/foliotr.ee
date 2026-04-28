@@ -86,7 +86,7 @@ Checklist:
 
 - [x] Confirmar branch ativa.
 - [x] Corrigir mojibake ou anotacoes soltas em docs tocadas.
-- [x] Corrigir `.prettierignore` para `docs/Design System`.
+- [x] Corrigir `.prettierignore` para `prototipos-legados/design-system-legado`.
 - [x] Adicionar `/gallery` e `/portfolios` em `PROTECTED_PREFIXES`.
 - [x] Atualizar teste de rotas protegidas.
 - [x] Criar doc curta da arquitetura atual.
@@ -412,7 +412,7 @@ Checklist:
 - [x] Confirmar se `utils/supabase/*` nao e importado.
 - [x] Remover dependencias Supabase se nao houver uso ativo.
 - [x] Isolar ou ignorar `output`.
-- [x] Decidir politica para `landing-test`, `redesign-teste`, `editor-otimizacao`, `orientacao-profissional-app`.
+- [x] Decidir politica para `prototipos-legados/landing-test`, `prototipos-legados/redesign-teste`, `prototipos-legados/editor-otimizacao`, `prototipos-legados/orientacao-profissional-app`.
 - [x] Nao remover referencias de design antes de copiar o essencial para docs.
 - [x] Nao mexer em `generated/prisma-client` nesta slice sem decisao especifica.
 
@@ -422,7 +422,7 @@ Execucao:
 - `utils/supabase/*` foi removido junto das dependencias `@supabase/ssr` e `@supabase/supabase-js`.
 - `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` foram removidas de `.env.example`, `lib/env.ts` e testes de ambiente.
 - `docs/setup.md` agora documenta Supabase apenas como possivel endpoint S3 compativel via `STORAGE_S3_*`, sem Auth/client Supabase.
-- `.gitignore`, `.prettierignore`, `.eslintignore` e `tsconfig.json` isolam `output`, `landing-test`, `redesign-teste`, `editor-otimizacao` e `orientacao-profissional-app` como referencia local/historica, sem apagar material visual.
+- `.gitignore`, `.prettierignore`, `.eslintignore` e `tsconfig.json` isolam `output` e os prototipos legados como referencia local/historica, sem apagar material visual.
 - `generated/prisma-client` nao foi alterado nesta slice.
 
 Validacao:
@@ -498,7 +498,7 @@ Execucao:
 - `git ls-files apps packages` nao retornou arquivos versionados.
 - `git ls-files --others --exclude-standard apps packages` nao retornou arquivos pendentes para commit.
 - Fora de `node_modules`, `.next` e `dist`, foi encontrado apenas `apps/web/tsconfig.tsbuildinfo`, que ja e artefato ignorado.
-- `.gitignore`, `.eslintignore`, `.prettierignore` e `tsconfig.json` agora tratam `apps` e `packages` como heranca local/historica fora do runtime atual.
+- `.gitignore`, `.eslintignore`, `.prettierignore` e `tsconfig.json` passaram a tratar `apps` e `packages` como heranca local/historica fora do runtime atual.
 - Nenhum codigo de runtime Next.js, Prisma, auth, UI ou API foi alterado.
 
 Validacao:
@@ -511,6 +511,54 @@ Risco:
 
 - Baixo. Mudanca restrita a ignores, TypeScript exclude e documentacao.
 
+### Slice 9 - Governanca documental e prototipos legados
+
+Objetivo: aplicar MFEE na documentacao, separar prototipos do runtime e criar regra objetiva de precedencia documental.
+
+Status: concluida em 2026-04-27.
+
+Arquivos e pastas alterados:
+
+- `docs/documentation-governance.md`
+- `docs/README.md`
+- `docs/current-architecture.md`
+- `docs/architecture-checkup-2026-04-27.md`
+- `prototipos-legados/README.md`
+- `prototipos-legados/*`
+- `.gitignore`
+- `.eslintignore`
+- `.prettierignore`
+- `tsconfig.json`
+
+Checklist:
+
+- [x] Inventariar prototipos e legados fora do runtime ativo.
+- [x] Mover prototipos para `prototipos-legados/`.
+- [x] Mover `docs/Design System` para `prototipos-legados/design-system-legado`.
+- [x] Mover `apps` e `packages` para `prototipos-legados/` como heranca monorepo.
+- [x] Criar governanca documental MFEE com fonte de verdade, precedencia e status.
+- [x] Atualizar referencias documentais para os novos caminhos.
+- [x] Excluir `prototipos-legados` de typecheck, lint e format.
+
+Execucao:
+
+- `prototipos-legados/` agora concentra `landing-test`, `redesign-teste`, `editor-otimizacao`, `orientacao-profissional-app`, `design-system-legado`, `apps` e `packages`.
+- `docs/documentation-governance.md` define precedencia: implementacao real, arquitetura atual, decisao de runtime, plano de otimizacao, checkup, docs de marca/visual, planos e legado.
+- `docs/README.md` passa a iniciar a leitura por `documentation-governance.md`.
+- `docs/current-architecture.md` aponta `prototipos-legados/` como contexto historico, nao contrato de arquitetura.
+- Nenhum arquivo de runtime ativo em `app/`, `components/`, `lib/`, `prisma/`, `tests/`, `middleware.ts` ou `auth.ts` foi alterado nesta slice.
+
+Validacao:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npx prettier --check --ignore-unknown .gitignore .eslintignore .prettierignore tsconfig.json docs/README.md docs/current-architecture.md docs/documentation-governance.md docs/architecture-checkup-2026-04-27.md docs/architecture-optimization-slices.md prototipos-legados/README.md`
+- Busca de mojibake nos arquivos de governanca e docs tocados.
+
+Risco:
+
+- Medio. Ha muitos arquivos movidos, mas o corte e documental/organizacional e nao altera runtime.
+
 ## Ordem recomendada
 
 1. Slice 0 - Baseline e protecoes.
@@ -522,6 +570,7 @@ Risco:
 7. Slice 6 - Higiene de repositorio.
 8. Slice 7 - Favicon.
 9. Slice 8 - Heranca `apps` e `packages`.
+10. Slice 9 - Governanca documental e prototipos legados.
 
 Motivo:
 

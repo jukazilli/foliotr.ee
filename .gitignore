@@ -10,14 +10,8 @@ node_modules/
 /public/uploads/
 /output/
 
-# Local design references
+# Local references and legacy prototype artifacts
 /assets/curriculo-code/
-/landing-test/
-/redesign-teste/
-/editor-otimizacao/
-/orientacao-profissional-app/
-/apps/
-/packages/
 
 # Next.js
 /.next/

@@ -8,13 +8,7 @@ dist
 **/dist
 coverage
 output
-landing-test
-redesign-teste
-editor-otimizacao
-orientacao-profissional-app
-apps
-packages
+prototipos-legados
 assets/curriculo-code
 package-lock.json
-docs/Design System
 *.tsbuildinfo

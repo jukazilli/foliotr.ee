@@ -16,9 +16,9 @@ Sources reviewed:
 - `doc/brand-core.md`
 - `doc/brand-deck.md`
 - `doc/tonal system.md`
-- `doc/Design System/Brand Core.html`
-- `doc/Design System/Tonal System.html`
-- `doc/Design System/Typography System.html`
+- `prototipos-legados/design-system-legado/Brand Core.html`
+- `prototipos-legados/design-system-legado/Tonal System.html`
+- `prototipos-legados/design-system-legado/Typography System.html`
 - `package.json`
 - `prisma/schema.prisma`
 - `auth.ts`
@@ -31,7 +31,7 @@ Sources reviewed:
 Precedence rule:
 
 - Product and brand direction come from `/doc`.
-- Public design tokens, color behavior, and typography rules come from `doc/Design System/*.html`, with the current implementation cut using Sora for display, Inter for UI, and IBM Plex Mono for data/meta as required by the product prompt.
+- Public design tokens, color behavior, and typography rules come from `prototipos-legados/design-system-legado/*.html`, with the current implementation cut using Sora for display, Inter for UI, and IBM Plex Mono for data/meta as required by the product prompt.
 - Runtime contracts, auth, routing, and persistence come from the current Next.js and Prisma implementation.
 - The Design System is a visual and interaction reference, not a backend, route, or domain contract source.
 
@@ -524,7 +524,7 @@ Work:
 
 - Fix current typecheck issues in `lib/types.ts` and `prisma/seed.ts`.
 - Confirm config file changes for Next, Tailwind, and PostCSS are intentional.
-- Decide whether untracked `apps/`, `packages/`, and `doc/Design System/` should be tracked, ignored, or removed by the user.
+- Decide whether untracked `apps/`, `packages/`, and `prototipos-legados/design-system-legado/` should be tracked, ignored, or removed by the user.
 - Normalize obvious mojibake in user-facing Portuguese only if the file encoding/source is confirmed.
 
 Validation:
@@ -691,7 +691,7 @@ Validation:
 - Forgot password is not a real secure reset flow yet.
 - Page/resume publication rules are partially modeled but not complete in the UI/API.
 - Asset storage exists in schema but not in runtime flow.
-- Untracked `apps/`, `packages/`, and `doc/Design System/` need an explicit repository decision before they become part of the architecture.
+- Untracked `apps/`, `packages/`, and `prototipos-legados/design-system-legado/` need an explicit repository decision before they become part of the architecture.
 
 ## 12. Recommended Next Cut
 

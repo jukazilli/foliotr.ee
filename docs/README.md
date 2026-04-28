@@ -1,8 +1,8 @@
 # FolioTree Documentation Index
 
-Status: active working documentation  
-Version: v0.1.0  
-Last updated: 2026-04-26
+Status: active working documentation
+Version: v0.2.0
+Last updated: 2026-04-27
 
 ## Purpose
 
@@ -14,7 +14,19 @@ These files are intentionally written in a stable, explicit style to reduce infe
 
 ## Documents
 
-### 1. `brand-core.md`
+### 1. `documentation-governance.md`
+
+Use this file first when deciding which document wins.
+
+It defines the MFEE governance rules for:
+
+- active source-of-truth order
+- historical documents
+- legacy prototypes
+- change rules
+- remaining governance gaps
+
+### 2. `brand-core.md`
 
 Use this file first.
 
@@ -37,7 +49,7 @@ Recommended use:
 - writing product copy
 - checking whether a concept fits the current brand
 
-### 2. `brand-deck.md`
+### 3. `brand-deck.md`
 
 Use this file second.
 
@@ -61,13 +73,13 @@ Recommended use:
 - design direction
 - product/brand coherence checks
 
-### 3. Redesign LINKFOLIO
+### 4. Redesign LINKFOLIO
 
 Use the current React implementation and the redesign notes as the source of truth for visual design:
 
 - `tonal system.md`
 - `tipografia-system.md`
-- `redesign-teste` as historical visual reference only
+- `prototipos-legados/redesign-teste` as historical visual reference only
 
 Current implementation rule:
 
@@ -77,7 +89,7 @@ Current implementation rule:
 - the repository and technical project may still use `FolioTree`
 - public and authenticated screens should follow the new bold, high-contrast, playful layout system
 
-### 4. `runtime-architecture-decision.md`
+### 5. `runtime-architecture-decision.md`
 
 Use this file when deciding where API routes should run.
 
@@ -88,7 +100,7 @@ It records the current approved runtime model:
 - Render is not the active API dependency for the current MVP
 - Render should be reconsidered only at the documented cut points, such as mobile clients, public API needs, workers, queues, WebSockets, or measurable serverless limits
 
-### 5. `current-architecture.md`
+### 6. `current-architecture.md`
 
 Use this file when you need the current code-level architecture map.
 
@@ -103,17 +115,34 @@ It records the active implementation model:
 
 The old `mvp-*` documents are historical context and should not override this file.
 
+### 7. `prototipos-legados/`
+
+Use this folder only as legacy reference.
+
+It contains moved prototypes and old architecture artifacts:
+
+- `landing-test`
+- `redesign-teste`
+- `editor-otimizacao`
+- `orientacao-profissional-app`
+- `design-system-legado`
+- `apps`
+- `packages`
+
+These files are not runtime code and must not override active docs or implementation.
+
 ## Reading order for AI systems
 
-1. Read `brand-core.md`
-2. Read `brand-deck.md`
-3. Read `tonal system.md`
-4. Read `tipografia-system.md`
-5. Treat `Design System/*.html` as replaced by the current redesign unless a later decision restores it
-6. Read `runtime-architecture-decision.md` before changing API/deployment architecture
-7. Read `current-architecture.md` before changing route ownership, auth, app shell or API contracts
-8. Treat unresolved topics as unresolved
-9. Do not invent product features, visual assets, or business decisions that are not explicitly documented
+1. Read `documentation-governance.md`
+2. Read `current-architecture.md`
+3. Read `runtime-architecture-decision.md` before changing API/deployment architecture
+4. Read `brand-core.md`
+5. Read `brand-deck.md`
+6. Read `tonal system.md`
+7. Read `tipografia-system.md`
+8. Treat `prototipos-legados/design-system-legado/*.html` as replaced by the current redesign unless a later decision restores it
+9. Treat unresolved topics as unresolved
+10. Do not invent product features, visual assets, or business decisions that are not explicitly documented
 
 ## AI Operating Rules
 

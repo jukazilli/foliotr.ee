@@ -269,21 +269,21 @@ Recomendacao:
 
 Tamanhos aproximados encontrados:
 
-- `landing-test`: 21.955 arquivos, 599,95 MB.
+- `prototipos-legados/landing-test`: 21.955 arquivos, 599,95 MB.
 - `apps`: 288 arquivos, 234,31 MB.
-- `redesign-teste`: 33 arquivos, 26,42 MB.
+- `prototipos-legados/redesign-teste`: 33 arquivos, 26,42 MB.
 - `generated`: 20 arquivos, 21,83 MB.
 - `output`: 23 arquivos, 2,19 MB.
-- `editor-otimizacao`: 66 arquivos, 0,35 MB.
-- `orientacao-profissional-app`: 23 arquivos, 0,07 MB.
+- `prototipos-legados/editor-otimizacao`: 66 arquivos, 0,35 MB.
+- `prototipos-legados/orientacao-profissional-app`: 23 arquivos, 0,07 MB.
 - `packages`: 10 arquivos, 0,05 MB.
 
 Classificacao sugerida:
 
-- `landing-test`: referencia visual pesada; deve sair do repo principal ou virar submodule/arquivo externo.
-- `redesign-teste`: referencia historica; manter somente assets usados em `public/redesign`.
-- `editor-otimizacao`: referencia de editor; manter fora do typecheck/lint ou arquivar.
-- `orientacao-profissional-app`: prototipo ja incorporado no app real; pode ser arquivado fora do repo.
+- `prototipos-legados/landing-test`: referencia visual pesada; deve sair do repo principal ou virar submodule/arquivo externo.
+- `prototipos-legados/redesign-teste`: referencia historica; manter somente assets usados em `public/redesign`.
+- `prototipos-legados/editor-otimizacao`: referencia de editor; manter fora do typecheck/lint ou arquivar.
+- `prototipos-legados/orientacao-profissional-app`: prototipo ja incorporado no app real; pode ser arquivado fora do repo.
 - `apps` e `packages`: parecem heranca da arquitetura monorepo antiga; revisar e remover se nao houver uso ativo.
 - `output`: artefatos de QA/logs/screenshots; nao deveria permanecer como area versionada permanente.
 
@@ -354,7 +354,7 @@ Recomendacao:
 
 #### 12. `format:check` e ignores parecem inconsistentes
 
-`.prettierignore` tem `doc/Design System`, enquanto o diretorio real e `docs/Design System`. Tambem ha muitos diretorios experimentais que precisam ficar fora de formatacao.
+`.prettierignore` tem `prototipos-legados/design-system-legado`, enquanto o diretorio real e `prototipos-legados/design-system-legado`. Tambem ha muitos diretorios experimentais que precisam ficar fora de formatacao.
 
 Impacto:
 
@@ -363,8 +363,8 @@ Impacto:
 
 Recomendacao:
 
-- Corrigir `doc/Design System` para `docs/Design System`.
-- Adicionar excludes consistentes para `landing-test`, `redesign-teste`, `output`, `apps`/`packages` se forem historicos.
+- Corrigir `prototipos-legados/design-system-legado` para `prototipos-legados/design-system-legado`.
+- Adicionar excludes consistentes para `prototipos-legados/landing-test`, `prototipos-legados/redesign-teste`, `output`, `apps`/`packages` se forem historicos.
 - Rodar formatacao por escopo antes de tentar formatar o repo todo.
 
 #### 13. `components/blocks` contem placeholders antigos
@@ -400,18 +400,19 @@ Recomendacao:
 
 Nao remover automaticamente. Validar com git history, deploy e referencias de docs.
 
-| Caminho                        | Status provavel                         | Acao sugerida                                                    |
-| ------------------------------ | --------------------------------------- | ---------------------------------------------------------------- |
-| `landing-test/`                | referencia externa pesada               | mover para fora do repo ou storage                               |
-| `apps/`                        | heranca monorepo/artefato antigo        | auditado em 2026-04-27; sem runtime ativo, ignorado pelos checks |
-| `packages/`                    | heranca monorepo/artefato antigo        | auditado em 2026-04-27; sem runtime ativo, ignorado pelos checks |
-| `redesign-teste/`              | referencia visual historica             | manter fora do repo ou reduzir a assets usados                   |
-| `editor-otimizacao/`           | referencia de UX do editor              | arquivar como referencia, nao runtime                            |
-| `orientacao-profissional-app/` | prototipo incorporado                   | remover apos confirmar paridade com `components/vocation`        |
-| `output/`                      | logs/screenshots de QA                  | ignorar ou limpar                                                |
-| `utils/supabase/`              | codigo nao usado pela arquitetura atual | remover junto das dependencias Supabase                          |
-| `generated/prisma-client/`     | gerado                                  | decidir se deve ser versionado                                   |
-| `app/api/onboarding/route.ts`  | legado possivel                         | manter so se houver plano de onboarding futuro                   |
+| Caminho                                           | Status provavel                         | Acao sugerida                                                 |
+| ------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------- |
+| `prototipos-legados/landing-test/`                | referencia externa pesada               | movido para pasta de legados; nao e runtime                   |
+| `prototipos-legados/apps/`                        | heranca monorepo/artefato antigo        | movido para pasta de legados; sem runtime ativo               |
+| `prototipos-legados/packages/`                    | heranca monorepo/artefato antigo        | movido para pasta de legados; sem runtime ativo               |
+| `prototipos-legados/redesign-teste/`              | referencia visual historica             | movido para pasta de legados; referencia visual               |
+| `prototipos-legados/editor-otimizacao/`           | referencia de UX do editor              | movido para pasta de legados; nao e editor paralelo           |
+| `prototipos-legados/orientacao-profissional-app/` | prototipo incorporado                   | movido para pasta de legados; referencia do teste vocacional  |
+| `prototipos-legados/design-system-legado/`        | design system estatico antigo           | movido para pasta de legados; substituido pelo redesign atual |
+| `output/`                                         | logs/screenshots de QA                  | ignorar ou limpar                                             |
+| `utils/supabase/`                                 | codigo nao usado pela arquitetura atual | remover junto das dependencias Supabase                       |
+| `generated/prisma-client/`                        | gerado                                  | decidir se deve ser versionado                                |
+| `app/api/onboarding/route.ts`                     | legado possivel                         | manter so se houver plano de onboarding futuro                |
 
 ## Recomendacao de arquitetura alvo
 
@@ -485,7 +486,7 @@ Telas tecnicas:
 
 ### Fase 4 - Limpeza de repositorio
 
-- [x] Mover `landing-test`, `redesign-teste`, `editor-otimizacao` e `orientacao-profissional-app` para referencias externas ou pasta ignorada.
+- [x] Mover prototipos e legados para `prototipos-legados/`.
 - [x] Auditar/remover `apps` e `packages`.
 - [ ] Decidir politica para `generated/prisma-client`.
 - [x] Isolar `output` como artefato local ignorado.

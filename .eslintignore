@@ -1,11 +1,5 @@
 assets/template/**/template-code/**
 assets/curriculo-code/**
 generated/**
-docs/Design System/**
 output/**
-landing-test/**
-redesign-teste/**
-editor-otimizacao/**
-orientacao-profissional-app/**
-apps/**
-packages/**
+prototipos-legados/**

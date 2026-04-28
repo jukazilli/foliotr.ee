@@ -3,13 +3,13 @@
 Status: slice 6 completed  
 Created: 2026-04-19  
 Scope: UI/UX refactor for `/pages/[pageId]/editor` only  
-Reference material: `editor-otimizacao/editor`
+Reference material: `prototipos-legados/editor-otimizacao/editor`
 
 ## Context
 
 The current FolioTree page editor is functional, but the editing experience is too large, card-heavy and inefficient for high-density template work.
 
-The folder `editor-otimizacao/` is reference material only. It must not become a second runtime, a parallel editor or a source of business rules.
+The folder `prototipos-legados/editor-otimizacao/` is reference material only. It must not become a second runtime, a parallel editor or a source of business rules.
 
 The real source of truth remains the current FolioTree implementation:
 
@@ -54,7 +54,7 @@ The main UX problems are:
 
 ## Reference UI Findings
 
-`editor-otimizacao/editor/src/imports/Canvas/Canvas.tsx` is a Figma/Vite export. It should be read as a layout reference, not as production code.
+`prototipos-legados/editor-otimizacao/editor/src/imports/Canvas/Canvas.tsx` is a Figma/Vite export. It should be read as a layout reference, not as production code.
 
 Useful patterns to transplant:
 
@@ -167,8 +167,8 @@ Proof expected:
 Slice 0 result:
 
 - Branch created: `feat/template-editor-ui-optimization`.
-- Initial `npm run typecheck` failed because TypeScript included `editor-otimizacao/`, which is reference material and has its own missing Vite/Radix dependencies.
-- Baseline config updated to exclude `editor-otimizacao/` from app checks:
+- Initial `npm run typecheck` failed because TypeScript included `prototipos-legados/editor-otimizacao/`, which is reference material and has its own missing Vite/Radix dependencies.
+- Baseline config updated to exclude `prototipos-legados/editor-otimizacao/` from app checks:
   - `tsconfig.json`
   - `.eslintignore`
   - `.prettierignore`
@@ -432,7 +432,7 @@ Validation:
 - [x] Current editor explored
   - Proof: `CanonicalPageEditor.tsx`, editor route and editor actions inspected.
 - [x] Reference UI explored
-  - Proof: `editor-otimizacao/editor/src/imports/Canvas/Canvas.tsx` inspected for layout patterns.
+  - Proof: `prototipos-legados/editor-otimizacao/editor/src/imports/Canvas/Canvas.tsx` inspected for layout patterns.
 - [x] Preserve/transplant/defer map defined
   - Proof: map documented above.
 - [x] Slice 0 completed
