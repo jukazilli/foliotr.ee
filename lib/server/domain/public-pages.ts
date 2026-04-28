@@ -99,6 +99,7 @@ export async function getPublicProfileHub(username: string) {
       id: true,
       displayName: true,
       avatarUrl: true,
+      bannerUrl: true,
       headline: true,
       bio: true,
       defaultPresentationId: true,
@@ -127,6 +128,7 @@ export async function getPublicProfileHub(username: string) {
       },
       user: {
         select: {
+          id: true,
           username: true,
           vocationalTests: {
             where: {

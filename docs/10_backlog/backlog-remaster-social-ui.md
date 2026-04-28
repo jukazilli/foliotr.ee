@@ -82,6 +82,8 @@ Evidencia:
 
 ## Slice 3 - Perfil publico com capa e paridade do dono
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 0.
@@ -96,9 +98,13 @@ Escopo:
 
 Evidencia:
 
-- Visitante anonimo ve perfil sem controles privados.
-- Dono logado ve mesma pagina com affordances de edicao.
-- Reviews e portfolio continuam acessiveis.
+- Query publica expoe `bannerUrl` e `user.id`.
+- `/{username}` detecta dono logado via `auth()`.
+- Hub publico renderiza capa, avatar, nome, headline, cards de sobre/portfolio/reviews e controles discretos para dono.
+- Portfolios/curriculos publicados continuam renderizados como links para as rotas publicas existentes.
+- Reviews continuam acessiveis no mesmo formulario publico.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 4 - Perfil/About editor
 

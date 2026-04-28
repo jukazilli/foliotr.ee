@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { auth } from "@/auth";
 import PublicProfileHubPage from "@/components/public/PublicProfileHubPage";
 import { getPublicProfileHub } from "@/lib/server/domain/public-pages";
 import { getPublicReviewSummary } from "@/lib/server/domain/reviews";
@@ -15,7 +16,7 @@ export async function generateMetadata({
   const hub = await getPublicProfileHub(username);
 
   if (!hub) {
-    return { title: "Página não encontrada - FolioTree" };
+    return { title: "Pagina nao encontrada - FolioTree" };
   }
 
   const displayName = hub.displayName ?? username;
@@ -25,13 +26,14 @@ export async function generateMetadata({
     title: `${displayName} - FolioTree`,
     description:
       headline ||
-      `Veja o perfil público, portfólios e currículos de ${displayName} no FolioTree.`,
+      `Veja o perfil publico, portfolios e curriculos de ${displayName} no FolioTree.`,
   };
 }
 
 export default async function PublicProfilePage({ params }: PublicProfilePageProps) {
   const { username } = await params;
-  const [hub, reviewSummary] = await Promise.all([
+  const [session, hub, reviewSummary] = await Promise.all([
+    auth(),
     getPublicProfileHub(username),
     getPublicReviewSummary(username),
   ]);
@@ -41,6 +43,11 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
   }
 
   return (
-    <PublicProfileHubPage username={username} hub={hub} reviewSummary={reviewSummary} />
+    <PublicProfileHubPage
+      username={username}
+      hub={hub}
+      reviewSummary={reviewSummary}
+      isOwner={session?.user?.id === hub.user.id}
+    />
   );
 }

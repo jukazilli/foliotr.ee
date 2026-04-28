@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 2 - Top bar social e descontinuidade de dashboard.
+Slice 3 - Perfil publico com capa e paridade do dono.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a troca da shell autenticada para top bar e a retirada de `/dashboard` como destino primario.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas o hub publico `/{username}` com capa, cards e controles discretos para dono.
 
 ## Objetivo
 
-Substituir a navegacao autenticada com sidebar por uma top bar social e fazer `/dashboard` funcionar apenas como rota de compatibilidade que encaminha o usuario ao proprio perfil.
+Recriar o perfil publico como centro da experiencia social, com capa, avatar, resumo em cards e paridade inicial entre visitante e dono logado.
 
 ## Fontes de verdade
 
@@ -59,23 +59,24 @@ Substituir a navegacao autenticada com sidebar por uma top bar social e fazer `/
 
 ## Slice executado
 
-Executado apenas o Slice 2.
+Executado apenas o Slice 3.
 
 Dentro:
 
-- `AppShell` sem padding/sidebar.
-- `Header` refeito como top bar responsiva.
-- Home da top bar aponta para `/{username}` quando ha username.
-- `/dashboard` redireciona para `/{username}` ou `/profile`.
-- Links internos de voltar/revalidar deixam de tratar `/dashboard` como destino primario.
+- `bannerUrl` e `user.id` expostos na query publica.
+- `/{username}` detecta se a sessao atual pertence ao dono do perfil.
+- Hub publico redesenhado com capa, avatar, nome, headline e cards.
+- Card Sobre concentra dados pessoais/profissionais ja existentes.
+- Card Portfolio resume portfolios publicados e teste publico.
+- Card Reviews resume media/contagem e ancora o formulario publico.
+- Dono logado ve acoes discretas de editar perfil e gerenciar portfolios.
 
 Fora:
 
 - Remover editor.
 - Migrar templates.
-- Redesenhar perfil publico.
-- Recriar pagina publica com capa.
 - Recriar portfolios em grid.
+- Reorganizar editor de perfil em formato About.
 
 ## Skills/agentes a acionar
 
@@ -88,10 +89,8 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `components/app/AppShell.tsx` sem estado de sidebar.
-- `components/app/Header.tsx` substituido por top bar social.
-- `components/app/navigation.ts` atualizado para compatibilidade sem dashboard primario.
-- `app/(app)/dashboard/page.tsx` redireciona para perfil do usuario.
-- `app/(app)/versions/page.tsx` e `app/(app)/portfolios/actions.ts` deixaram de apontar para dashboard como destino operacional.
+- `lib/server/domain/public-pages.ts` seleciona `bannerUrl` e `user.id`.
+- `app/[username]/page.tsx` passa `isOwner` ao hub publico.
+- `components/public/PublicProfileHubPage.tsx` renderiza capa, cards e controles do dono.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.
