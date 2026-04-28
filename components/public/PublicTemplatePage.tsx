@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import PublicPortfolioTabsPage from "@/components/public/PublicPortfolioTabsPage";
 import type { PublicPageRecord } from "@/lib/server/domain/public-pages";
 import {
@@ -25,7 +26,12 @@ export default async function PublicTemplatePage({
     page.version.profile.user.vocationalTests,
     "portfolio"
   );
-  const reviewSummary = await getPublicReviewSummary(username);
+  const [session, reviewSummary] = await Promise.all([
+    auth(),
+    getPublicReviewSummary(username),
+  ]);
+  const ownerProfileHref =
+    session?.user?.id === page.version.profile.user.id ? "/home" : undefined;
 
   return (
     <PublicPortfolioTabsPage
@@ -37,6 +43,7 @@ export default async function PublicTemplatePage({
       templateSourcePackage={page.template.sourcePackage}
       reviewSummary={reviewSummary}
       behavioralAnalysis={behavioralAnalysis}
+      profileHrefOverride={ownerProfileHref}
     />
   );
 }

@@ -86,6 +86,9 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
+- Corte complementar de navegacao visual: `/home` e `/{username}` usam o mesmo `PublicProfileHubPage`, com capa lime e superficies suaves preservadas mesmo dentro de `.app-shell`.
+- Corte complementar de retorno: em portfolio publicado `/{username}/{pageSlug}`, o link "Perfil" volta para `/home` quando o visitante e o dono logado; visitantes externos continuam indo para `/{username}`.
+- `/juliano-zilli/juliano-zilli` identificado como rota de portfolio publicado, nao como segunda tela de perfil; a correcao aplicada foi no retorno para o perfil inicial do dono.
 - Corte complementar: casinha autenticada agora aponta para `/home`, rota dentro do shell `(app)`.
 - `/home` renderiza o hub do perfil do dono com `embedded`, mantendo a top bar persistente.
 - `/dashboard` redireciona para `/home`.

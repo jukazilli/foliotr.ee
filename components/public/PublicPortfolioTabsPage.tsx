@@ -57,6 +57,7 @@ interface PublicPortfolioTabsPageProps {
   templateSourcePackage?: unknown;
   reviewSummary: PublicReviewSummary;
   behavioralAnalysis?: BehavioralAnalysisSnapshot | null;
+  profileHrefOverride?: string;
 }
 
 function readSourcePackage(value: unknown): PortfolioCommunitySourcePackage {
@@ -123,6 +124,7 @@ export default function PublicPortfolioTabsPage({
   templateSourcePackage,
   reviewSummary,
   behavioralAnalysis,
+  profileHrefOverride,
 }: PublicPortfolioTabsPageProps) {
   const sourcePackage = readSourcePackage(templateSourcePackage);
   const blockState = buildPortfolioCommunityBlockStateFromBlocks(blocks);
@@ -134,7 +136,7 @@ export default function PublicPortfolioTabsPage({
     sourcePackage,
   });
   const returnPath = pageSlug ? `/${username}/${pageSlug}` : `/${username}`;
-  const profileHref = `/${username}`;
+  const profileHref = profileHrefOverride ?? `/${username}`;
   const hasPortfolio = semantics.work.items.length > 0;
   const hasResume =
     semantics.experience.items.length > 0 ||

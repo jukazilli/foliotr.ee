@@ -22,6 +22,8 @@ const publicPageInclude = Prisma.validator<Prisma.PageInclude>()({
         select: {
           user: {
             select: {
+              id: true,
+              username: true,
               vocationalTests: {
                 where: {
                   status: "completed",

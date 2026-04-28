@@ -16,6 +16,13 @@ import type { PublicProfileHub } from "@/lib/server/domain/public-pages";
 import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
+const limeCoverStyle = { backgroundColor: "#dfff00" };
+const softSurfaceStyle = {
+  borderColor: "#e5e7eb",
+  boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+};
+const softBorderStyle = { borderColor: "#e5e7eb" };
+
 interface PublicProfileHubPageProps {
   username: string;
   hub: NonNullable<PublicProfileHub>;
@@ -61,7 +68,7 @@ function ProfileCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+    <section className="rounded-2xl border bg-white p-5" style={softSurfaceStyle}>
       <h2 className="text-base font-extrabold text-neutral-950">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -115,13 +122,16 @@ export default function PublicProfileHubPage({
             : "mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8"
         }
       >
-        <section className="overflow-hidden rounded-b-2xl border border-neutral-200 bg-white shadow-sm">
-          <div className="relative h-48 bg-lime sm:h-64">
+        <section
+          className="overflow-hidden rounded-b-2xl border bg-white"
+          style={softSurfaceStyle}
+        >
+          <div className="relative h-48 sm:h-64" style={limeCoverStyle}>
             {hub.bannerUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={hub.bannerUrl} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-end bg-lime p-5">
+              <div className="flex h-full w-full items-end p-5" style={limeCoverStyle}>
                 <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-neutral-800/70">
                   FolioTree
                 </span>
@@ -130,7 +140,11 @@ export default function PublicProfileHubPage({
             {isOwner ? (
               <Link
                 href="/profile"
-                className="absolute right-4 top-4 inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-900 shadow-sm transition hover:border-neutral-950"
+                className="absolute right-4 top-4 inline-flex h-10 items-center gap-2 rounded-full border bg-white px-4 text-sm font-bold text-neutral-900 transition hover:border-neutral-950"
+                style={{
+                  borderColor: "#d4d4d4",
+                  boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+                }}
               >
                 <Edit3 className="h-4 w-4" aria-hidden />
                 Editar perfil
@@ -141,7 +155,10 @@ export default function PublicProfileHubPage({
           <div className="px-5 pb-5 sm:px-8 sm:pb-7">
             <div className="-mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
-                <div className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 shadow-sm">
+                <div
+                  className="flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100"
+                  style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
+                >
                   {hub.avatarUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -245,7 +262,8 @@ export default function PublicProfileHubPage({
                 <Link
                   key={item.id}
                   href={item.href}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-neutral-200 p-3 transition hover:border-neutral-950"
+                  className="flex items-center justify-between gap-3 rounded-xl border p-3 transition hover:border-neutral-950"
+                  style={softBorderStyle}
                 >
                   <span className="min-w-0">
                     <span className="block truncate text-sm font-extrabold">
@@ -320,7 +338,8 @@ export default function PublicProfileHubPage({
             publishedItems.map((item) => (
               <article
                 key={item.id}
-                className="rounded-2xl border border-neutral-200 bg-white p-4 shadow-sm"
+                className="rounded-2xl border bg-white p-4"
+                style={softSurfaceStyle}
               >
                 <Link
                   href={item.href}
