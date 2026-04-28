@@ -130,6 +130,8 @@ Evidencia:
 
 ## Slice 5 - Compatibilidade e QA
 
+Status: FECHADO
+
 Dependencias:
 
 - Slices 1 a 4.
@@ -145,3 +147,10 @@ Evidencia:
 
 - Fluxo criar variacao -> editar dados -> escolher template -> publicar validado em browser.
 - `npm run typecheck`, lint/testes relevantes e busca de mojibake.
+- `npm run db:migrate:status` confirma schema atualizado.
+- `npm run test` passa com contrato de `profileSnapshot` atualizado.
+- `npm run lint` passa no repositorio.
+
+Observacao:
+
+- QA browser autenticado nao foi executado neste recorte por ausencia de sessao autenticada no navegador automatizado.

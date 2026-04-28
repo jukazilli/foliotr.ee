@@ -161,6 +161,16 @@ describe("versions domain", () => {
         emoji: undefined,
         customHeadline: undefined,
         customBio: undefined,
+        profileSnapshot: expect.objectContaining({
+          id: "profile_1",
+          experiences: [{ id: "exp_1" }],
+          educations: [{ id: "education_1" }],
+          projects: [{ id: "project_1" }],
+          skills: [{ id: "skill_1" }],
+          achievements: [{ id: "achievement_1" }],
+          proofs: [{ id: "proof_1" }],
+          links: [{ id: "link_1" }],
+        }),
         isDefault: true,
       },
       select: { id: true },
@@ -263,15 +273,13 @@ describe("versions domain", () => {
     tx.profile.findUnique.mockResolvedValue(freshProfile);
     tx.version.findFirst.mockResolvedValue({ id: "version_1", profileId: "profile_1" });
     tx.template.findUnique.mockResolvedValue({ id: "template_1", isActive: true });
-    tx.page.findFirst
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({
-        id: "page_1",
-        publishedAt: new Date("2026-04-18T10:00:00.000Z"),
-        templateId: "template_1",
-        editorSnapshot: staleEditorSnapshot,
-        publishedSnapshotAt: new Date("2026-04-18T10:00:00.000Z"),
-      });
+    tx.page.findFirst.mockResolvedValueOnce(null).mockResolvedValueOnce({
+      id: "page_1",
+      publishedAt: new Date("2026-04-18T10:00:00.000Z"),
+      templateId: "template_1",
+      editorSnapshot: staleEditorSnapshot,
+      publishedSnapshotAt: new Date("2026-04-18T10:00:00.000Z"),
+    });
     tx.page.update.mockResolvedValue({ id: "page_1" });
     tx.pageBlock.count.mockResolvedValue(1);
     tx.pageBlock.findMany.mockResolvedValue([]);
@@ -437,7 +445,9 @@ describe("versions domain", () => {
       },
     };
 
-    await expect(getOwnedVersion(db as never, "user_1", "version_foreign")).rejects.toMatchObject({
+    await expect(
+      getOwnedVersion(db as never, "user_1", "version_foreign")
+    ).rejects.toMatchObject({
       code: "NOT_FOUND",
       status: 404,
     } satisfies Partial<ApiRouteError>);
