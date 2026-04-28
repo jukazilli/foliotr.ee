@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 3 - Perfil publico com capa e paridade do dono.
+Slice 4 - Perfil/About editor.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas o hub publico `/{username}` com capa, cards e controles discretos para dono.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a reorganizacao do editor de perfil e o caminho de edicao da capa publica.
 
 ## Objetivo
 
-Recriar o perfil publico como centro da experiencia social, com capa, avatar, resumo em cards e paridade inicial entre visitante e dono logado.
+Transformar a navegacao do editor de perfil em experiencia tipo About, com lista de secoes e painel contextual, e permitir editar a capa publica usada no perfil.
 
 ## Fontes de verdade
 
@@ -59,24 +59,21 @@ Recriar o perfil publico como centro da experiencia social, com capa, avatar, re
 
 ## Slice executado
 
-Executado apenas o Slice 3.
+Executado apenas o Slice 4.
 
 Dentro:
 
-- `bannerUrl` e `user.id` expostos na query publica.
-- `/{username}` detecta se a sessao atual pertence ao dono do perfil.
-- Hub publico redesenhado com capa, avatar, nome, headline e cards.
-- Card Sobre concentra dados pessoais/profissionais ja existentes.
-- Card Portfolio resume portfolios publicados e teste publico.
-- Card Reviews resume media/contagem e ancora o formulario publico.
-- Dono logado ve acoes discretas de editar perfil e gerenciar portfolios.
+- `ProfileTabs` em lista lateral + painel contextual.
+- `bannerUrl` adicionado a validacao, persistencia e carregamento do perfil.
+- `ProfileEditor` permite adicionar, trocar e remover capa publica.
+- Persistencia segue o endpoint existente `/api/profile`.
 
 Fora:
 
 - Remover editor.
 - Migrar templates.
 - Recriar portfolios em grid.
-- Reorganizar editor de perfil em formato About.
+- Reescrever todos os formularios internos do perfil.
 
 ## Skills/agentes a acionar
 
@@ -89,8 +86,10 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `lib/server/domain/public-pages.ts` seleciona `bannerUrl` e `user.id`.
-- `app/[username]/page.tsx` passa `isOwner` ao hub publico.
-- `components/public/PublicProfileHubPage.tsx` renderiza capa, cards e controles do dono.
+- `components/profile/ProfileTabs.tsx` reorganizado.
+- `components/profile/ProfileEditor.tsx` edita capa publica.
+- `lib/validations.ts` aceita `bannerUrl`.
+- `lib/server/domain/profile-base.ts` persiste `bannerUrl`.
+- `lib/server/app-viewer.ts` carrega `bannerUrl`.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.

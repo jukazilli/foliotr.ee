@@ -108,6 +108,8 @@ Evidencia:
 
 ## Slice 4 - Perfil/About editor
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 3.
@@ -121,8 +123,12 @@ Escopo:
 
 Evidencia:
 
-- Edicoes persistem e aparecem no perfil publico.
-- Navegacao por secoes funciona sem perder rascunho.
+- `ProfileTabs` foi reorganizado para lista lateral + painel contextual.
+- `bannerUrl` entrou no contrato de validacao, persistencia e carregamento do editor.
+- `ProfileEditor` permite adicionar, trocar e remover capa publica a partir da galeria.
+- Persistencia usa o endpoint existente de perfil, sem novo contrato paralelo.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 5 - Portfolios em grade com acoes iconicas
 

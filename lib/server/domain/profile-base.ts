@@ -24,6 +24,7 @@ const profileBaseSelect = {
   id: true,
   displayName: true,
   avatarUrl: true,
+  bannerUrl: true,
   headline: true,
   bio: true,
   location: true,
@@ -231,6 +232,7 @@ export async function updateOwnedProfileFields(
       data: {
         displayName: sanitizeNullable(input.displayName),
         avatarUrl: sanitizeNullable(input.avatarUrl),
+        bannerUrl: sanitizeNullable(input.bannerUrl),
         headline: sanitizeNullable(input.headline),
         bio: sanitizeNullable(input.bio),
         location: sanitizeNullable(input.location),
@@ -982,6 +984,7 @@ export async function updateOwnedProfileBase(
         data: {
           displayName: sanitizeNullable(input.displayName),
           avatarUrl: sanitizeNullable(input.avatarUrl),
+          bannerUrl: sanitizeNullable(input.bannerUrl),
           headline: sanitizeNullable(input.headline),
           bio: sanitizeNullable(input.bio),
           location: sanitizeNullable(input.location),

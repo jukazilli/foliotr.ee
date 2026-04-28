@@ -37,6 +37,7 @@ type EditableProfile = {
   id: string;
   displayName: string | null;
   avatarUrl?: string | null;
+  bannerUrl?: string | null;
   headline: string | null;
   bio: string | null;
   location: string | null;
@@ -185,6 +186,7 @@ type ProjectCoverFitMode = "fit" | "fill" | "crop";
 
 type ProfileGalleryTarget =
   | { kind: "avatar" }
+  | { kind: "banner" }
   | { kind: "projectCover"; projectKey: string };
 
 function key() {
@@ -400,6 +402,7 @@ function normalizeProfile(profile: EditableProfile): EditableProfile {
     ...profile,
     displayName: text(profile.displayName),
     avatarUrl: cleanAssetUrl(profile.avatarUrl),
+    bannerUrl: cleanAssetUrl(profile.bannerUrl),
     headline: text(profile.headline),
     bio: text(profile.bio),
     location: text(profile.location),
@@ -542,6 +545,7 @@ function buildBasePayload(profile: EditableProfile) {
   return {
     displayName: profile.displayName ?? "",
     avatarUrl: cleanAssetUrl(profile.avatarUrl),
+    bannerUrl: cleanAssetUrl(profile.bannerUrl),
     headline: profile.headline ?? "",
     bio: profile.bio ?? "",
     location: profile.location ?? "",
@@ -941,9 +945,15 @@ export function ProfileEditor({
     status === "saving" ? "Salvando" : status === "saved" ? "Salvo" : "Salvar";
 
   const photoPreview = profile.avatarUrl || "";
+  const bannerPreview = profile.bannerUrl || "";
 
   function removeProfilePhoto() {
     setBase("avatarUrl", "" as EditableProfile["avatarUrl"]);
+    setPhotoError("");
+  }
+
+  function removeProfileBanner() {
+    setBase("bannerUrl", "" as EditableProfile["bannerUrl"]);
     setPhotoError("");
   }
 
@@ -981,6 +991,35 @@ export function ProfileEditor({
     router.refresh();
   }
 
+  async function applyBannerAsset(asset: GalleryImageAsset) {
+    const nextProfile = {
+      ...profile,
+      bannerUrl: asset.url,
+    };
+
+    const response = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(buildBasePayload(nextProfile)),
+    });
+
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(formatApiError(body));
+    }
+
+    const body = (await response.json()) as {
+      profile: Partial<EditableProfile>;
+    };
+
+    setProfile((current) =>
+      normalizeProfile({ ...current, ...body.profile, bannerUrl: asset.url })
+    );
+    setPhotoError("");
+    setStatus("saved");
+    router.refresh();
+  }
+
   function applyProjectCoverAsset(projectKey: string, asset: GalleryImageAsset) {
     updateList<EditableProject>("projects", projectKey, {
       imageUrl: asset.url,
@@ -996,6 +1035,11 @@ export function ProfileEditor({
 
     if (profileGalleryTarget.kind === "avatar") {
       await applyAvatarAsset(asset);
+      return;
+    }
+
+    if (profileGalleryTarget.kind === "banner") {
+      await applyBannerAsset(asset);
       return;
     }
 
@@ -1019,18 +1063,26 @@ export function ProfileEditor({
         title={
           profileGalleryTarget?.kind === "projectCover"
             ? "Galeria de capas"
-            : "Galeria de fotos"
+            : profileGalleryTarget?.kind === "banner"
+              ? "Galeria de capas do perfil"
+              : "Galeria de fotos"
         }
         description="Escolha uma imagem ja enviada ou envie uma nova."
         uploadPurpose={
-          profileGalleryTarget?.kind === "projectCover" ? "project" : "avatar"
+          profileGalleryTarget?.kind === "projectCover"
+            ? "project"
+            : profileGalleryTarget?.kind === "banner"
+              ? "banner"
+              : "avatar"
         }
         currentUrl={
           profileGalleryTarget?.kind === "projectCover"
             ? profile.projects.find(
                 (item) => item._key === profileGalleryTarget.projectKey
               )?.imageUrl
-            : profile.avatarUrl
+            : profileGalleryTarget?.kind === "banner"
+              ? profile.bannerUrl
+              : profile.avatarUrl
         }
         onOpenChange={(open) => {
           if (!open) setProfileGalleryTarget(null);
@@ -1107,6 +1159,55 @@ export function ProfileEditor({
                   <div className="app-col-main">
                     <Card className="rounded-[24px]">
                       <CardContent className="space-y-5 p-5">
+                        <div className="grid gap-4 rounded-[20px] border border-neutral-200 bg-neutral-50 p-4">
+                          <div className="overflow-hidden rounded-[18px] border border-neutral-200 bg-white">
+                            <div className="flex h-36 items-center justify-center bg-lime">
+                              {bannerPreview ? (
+                                <img
+                                  src={bannerPreview}
+                                  alt=""
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-neutral-700">
+                                  Capa do perfil
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-neutral-900">
+                                Capa publica
+                              </p>
+                              <p className="mt-1 text-sm text-neutral-600">
+                                Imagem exibida no topo do seu perfil publico.
+                              </p>
+                            </div>
+
+                            <div className="flex flex-wrap gap-2">
+                              <button
+                                type="button"
+                                onClick={() => openProfileGallery({ kind: "banner" })}
+                                className="inline-flex cursor-pointer items-center rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-50 disabled:pointer-events-none disabled:opacity-55"
+                              >
+                                {bannerPreview ? "Trocar capa" : "Adicionar capa"}
+                              </button>
+
+                              {bannerPreview ? (
+                                <button
+                                  type="button"
+                                  onClick={removeProfileBanner}
+                                  className="inline-flex items-center rounded-xl border border-neutral-200 bg-white px-3 py-2 text-sm font-semibold text-neutral-700 transition hover:bg-coral-50 hover:text-coral-800"
+                                >
+                                  Remover capa
+                                </button>
+                              ) : null}
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="grid gap-4 rounded-[20px] border border-neutral-200 bg-neutral-50 p-4 sm:grid-cols-[120px_1fr] sm:items-center">
                           <div className="mx-auto flex h-28 w-28 items-center justify-center overflow-hidden rounded-full border border-neutral-200 bg-white">
                             {photoPreview ? (

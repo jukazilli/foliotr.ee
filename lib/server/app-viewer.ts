@@ -86,7 +86,9 @@ export const getAppShellViewer = cache(async (): Promise<AppShellViewer> => {
   return {
     profile: {
       displayName: profile.displayName,
-      avatarUrl: profile.avatarUrl ? normalizeStoragePublicUrl(profile.avatarUrl) : null,
+      avatarUrl: profile.avatarUrl
+        ? normalizeStoragePublicUrl(profile.avatarUrl)
+        : null,
       onboardingDone: profile.onboardingDone,
     },
     user: profile.user,
@@ -164,6 +166,7 @@ export const getProfileEditorViewer = cache(async () => {
       id: true,
       displayName: true,
       avatarUrl: true,
+      bannerUrl: true,
       headline: true,
       bio: true,
       location: true,
@@ -396,10 +399,7 @@ export async function getOwnedPages(userId: string) {
 export async function getOwnedResumeConfigs(userId: string) {
   return prisma.resumeConfig.findMany({
     where: resumeAccessWhere(userId),
-    orderBy: [
-      { publishState: "desc" },
-      { updatedAt: "desc" },
-    ],
+    orderBy: [{ publishState: "desc" }, { updatedAt: "desc" }],
     include: {
       version: {
         select: {

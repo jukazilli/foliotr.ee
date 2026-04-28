@@ -182,6 +182,7 @@ export const onboardingSchema = z.object({
 export const profileSchema = z.object({
   displayName: z.string().max(120, "Nome muito longo").optional(),
   avatarUrl: nullableAssetUrlSchema,
+  bannerUrl: nullableAssetUrlSchema,
   headline: z.string().max(120, "Titulo deve ter no maximo 120 caracteres").optional(),
   bio: z.string().max(500, "Bio deve ter no maximo 500 caracteres").optional(),
   location: z.string().max(120, "Localizacao muito longa").optional(),
