@@ -118,8 +118,8 @@ export async function useCanonicalTemplateAction(slug: string, formData: FormDat
   revalidatePath("/resumes");
 
   if (appliedPage) {
-    redirect(`/pages/${appliedPage.id}/editor`);
+    redirect(`/portfolios?template=${slug}&applied=1`);
   }
 
-  redirect(`/templates/${slug}?applied=1&version=${versionId}`);
+  redirect(`/portfolios?template=${slug}&applied=1`);
 }

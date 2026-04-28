@@ -48,7 +48,7 @@ export default async function TemplateDetailPage({
       <PageIntro
         eyebrow="Modelo"
         title={template.name}
-        description="Veja os detalhes e escolha a variacao que vai receber este modelo de portfolio."
+        description="Veja os detalhes e escolha a variacao que vai receber esta linguagem visual."
         meta={
           <>
             <Badge variant="warning">{template.libraryStatus}</Badge>
@@ -77,7 +77,8 @@ export default async function TemplateDetailPage({
             <div>
               <p className="text-sm font-semibold text-green-900">Modelo aplicado.</p>
               <p className="mt-1 text-sm leading-7 text-green-800">
-                O portfolio e o curriculo rapido foram criados em rascunho.
+                O portfolio e o curriculo rapido foram criados em rascunho. Continue
+                pela area de portfolios.
               </p>
             </div>
           </CardContent>
@@ -147,7 +148,8 @@ export default async function TemplateDetailPage({
                   <div>
                     <p className="font-semibold text-neutral-900">Estilo fixo</p>
                     <p className="mt-1 text-sm leading-7 text-neutral-600">
-                      Voce pode editar conteudo, imagens e blocos.
+                      O conteudo vem do seu perfil. Este modelo define composicao,
+                      tipografia e ritmo visual.
                     </p>
                   </div>
                 </div>
@@ -298,7 +300,7 @@ export default async function TemplateDetailPage({
                     >
                       <input type="hidden" name="versionId" value={version.id} />
                       <Button type="submit" disabled={!eligibility.eligible}>
-                        {alreadyApplied ? "Aplicar de novo" : "Usar modelo"}
+                        {alreadyApplied ? "Aplicar de novo" : "Aplicar modelo"}
                       </Button>
                       <Button asChild variant="outline" size="sm">
                         <Link href="/portfolios">Ver portfolio</Link>

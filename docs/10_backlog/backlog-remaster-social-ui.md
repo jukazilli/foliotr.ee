@@ -155,6 +155,8 @@ Evidencia:
 
 ## Slice 6 - Templates sem dependencia de editor
 
+Status: FECHADO em 2026-04-28
+
 Dependencias:
 
 - Slice 0.
@@ -169,8 +171,13 @@ Escopo:
 
 Evidencia:
 
-- Aplicar template altera apresentacao esperada sem exigir editor.
-- Rotas publicas continuam renderizando portfolios existentes.
+- Aplicacao de template redireciona para `/portfolios`, nao para `/pages/{pageId}/editor`.
+- Galeria `/templates` usa copy de linguagem visual e CTA `Aplicar modelo`.
+- Template aplicado mostra CTA para ver portfolio, nao editar no editor tecnico.
+- Detalhe `/templates/{slug}` descreve composicao/tipografia/ritmo visual, nao edicao de blocos.
+- Busca por `editor`, `Editar portfolio`, `abre o editor`, `Abrir exemplo`, `Usar modelo` e `/pages/.*/editor` em `app/(app)/templates` nao retornou ocorrencias.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
 
 ## Slice 7 - Depreciacao controlada do editor tecnico
 

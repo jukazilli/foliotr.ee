@@ -5,17 +5,17 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 5 - Portfolios em grade com acoes iconicas.
+Slice 6 - Templates sem dependencia de editor.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a tela autenticada de portfolios.
+O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas a experiencia de selecao/aplicacao de templates.
 
 ## Objetivo
 
-Trocar a lista/tabela de portfolios por grid de cards compactos com acoes iconicas, preservando os contratos de publicacao e variacao existentes.
+Remover a dependencia direta do editor tecnico na jornada de templates, tratando template como linguagem visual aplicada ao portfolio.
 
 ## Fontes de verdade
 
@@ -59,21 +59,22 @@ Trocar a lista/tabela de portfolios por grid de cards compactos com acoes iconic
 
 ## Slice executado
 
-Executado apenas o Slice 5.
+Executado apenas o Slice 6.
 
 Dentro:
 
-- `/portfolios` em grid responsivo.
-- Cards com titulo, status, link publico, contadores e badges.
-- Acoes iconicas para publicar portfolio, publicar curriculo, criar variacao, editar e ver publico.
-- Estados vazios e variacoes sem pagina preservados.
+- Aplicacao de template redireciona para `/portfolios`.
+- Galeria `/templates` usa copy de linguagem visual.
+- CTA principal virou `Aplicar modelo`.
+- Template aplicado leva para `/portfolios`.
+- Detalhe do template descreve composicao/tipografia/ritmo visual.
 
 Fora:
 
 - Remover editor.
-- Migrar templates.
-- Reescrever todos os formularios internos do perfil.
-- Alterar server actions de portfolio.
+- Migrar dados historicos de `Page`/`PageBlock`.
+- Adaptar internamente todo renderer `portfolio-community`.
+- Remover rota tecnica `/pages/{pageId}/editor`.
 
 ## Skills/agentes a acionar
 
@@ -86,6 +87,9 @@ Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiage
 
 ## Evidencias de fechamento
 
-- `app/(app)/portfolios/page.tsx` recriado como grid de cards.
+- `app/(app)/templates/actions.ts` redireciona aplicacao para `/portfolios`.
+- `app/(app)/templates/page.tsx` remove copy/CTA de editor.
+- `app/(app)/templates/[slug]/page.tsx` remove copy de edicao de blocos.
+- `rg` em `app/(app)/templates` nao encontrou `editor`, `Editar portfolio`, `abre o editor`, `Abrir exemplo`, `Usar modelo` ou `/pages/.*/editor`.
 - `npm run typecheck` executado sem erro.
 - Busca de mojibake nos arquivos tocados executada sem ocorrencias.
