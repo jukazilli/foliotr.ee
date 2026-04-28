@@ -1,106 +1,87 @@
 # Slice Atual
 
-Status: FECHADO  
+Status: ATUAL
 Last updated: 2026-04-28
 
 ## Nome
 
-Slice 8 - QA integrado e fechamento.
+Slice 0 - Contrato e auditoria do versionamento de portfolio.
 
 ## Modo de entrada
 
 Slice.
 
-O projeto ja existe, a documentacao ativa ja foi integrada e o pedido atual e uma otimizacao incremental grande sobre navegacao autenticada, perfil publico, onboarding e templates. Este recorte executou apenas validacao integrada e fechamento documental.
+O projeto ja existe e o pedido atual identifica uma lacuna estrutural entre perfil global e variacoes de portfolio. Este recorte nao implementa schema/runtime; ele fecha o contrato minimo para evitar misturar `/profile` com edicao de portfolio.
 
 ## Objetivo
 
-Validar os slices implementados, corrigir testes impactados pelo novo contrato de onboarding e registrar evidencias objetivas de fechamento.
+Definir a separacao entre perfil global, portfolio, variacao, dados versionados e templates antes de implementar a nova jornada multi-step.
 
 ## Fontes de verdade
 
 - Pedido atual do usuario em 2026-04-28.
 - `docs/02_contratos/contrato-remaster-social-ui.md`.
 - `docs/10_backlog/backlog-remaster-social-ui.md`.
+- `docs/02_contratos/contrato-versionamento-portfolio.md`.
+- `docs/10_backlog/backlog-versionamento-portfolio.md`.
 - Codigo real em `app/`, `components/`, `lib/` e `prisma/schema.prisma`.
 - Referencia Facebook via Playwright, se autenticada pelo usuario, apenas como referencia de navegacao e perfil.
 
 ## Contratos necessarios
 
-- Contrato de cadastro e onboarding.
-- Contrato da shell social autenticada.
-- Contrato do perfil publico e da visao do dono.
-- Contrato de edicao tipo About.
-- Contrato de portfolios em grid.
-- Contrato de templates sem dependencia de editor tecnico.
-- Contrato de depreciacao do `/dashboard` e do editor.
+- Contrato de separacao entre perfil global e portfolio.
+- Contrato de snapshot editavel por `Version`.
+- Contrato de editor multi-step da variacao.
+- Contrato de nomes por cargo/role.
+- Contrato de aplicacao de templates apenas em portfolios/curriculos.
 
 ## Lacunas
 
-- Card 2 do perfil publico ainda nao esta definido.
-- Falta observar ou dispensar formalmente a referencia Facebook.
-- Falta decidir se `/dashboard` sera redirect ou remocao dura.
-- Falta decidir compatibilidade de links para `/pages/{pageId}/editor`.
-- Falta definir busca da top bar.
-- Falta mapear controles visiveis apenas para dono logado.
-- Falta estrategia completa para migrar templates sem quebrar dados existentes.
+- Definir se `Version.profileSnapshot Json` sera o primeiro corte ou se ja normalizaremos tabelas por variacao.
+- Definir se cada variacao tera experiencia principal obrigatoria.
+- Definir regras de visibilidade padrao por secao.
+- Definir migracao/fallback para variacoes existentes.
+- Definir se o wizard publica automaticamente ou permite rascunho no ultimo passo.
 
 ## Backlog por dependencia
 
-1. Referencia e contrato visual.
-2. Onboarding de conta para perfil publico.
-3. Top bar social e descontinuidade de dashboard.
-4. Perfil publico com capa e paridade do dono.
-5. Perfil/About editor.
-6. Portfolios em grade com acoes iconicas.
-7. Templates sem dependencia de editor.
-8. Depreciacao controlada do editor tecnico.
-9. QA integrado e fechamento.
+1. Contrato e auditoria do modelo atual.
+2. Snapshot editavel por variacao.
+3. Editor multi-step da variacao.
+4. Nome por cargo e cards de portfolios.
+5. Templates aplicados a variacao.
+6. Compatibilidade e QA.
 
 ## Slice executado
 
-Executado apenas o Slice 8.
+Executado apenas o Slice 0.
 
 Dentro:
 
-- Validacoes estaticas.
-- Ajuste dos testes de cadastro/onboarding ao novo contrato.
-- Verificacao browser do perfil publico.
-- Registro de evidencias.
+- Auditoria do modelo `Profile`, `Version`, `Page` e snapshots.
+- Contrato de versionamento de portfolio.
+- Backlog por dependencia.
 
 Fora:
 
-- Migrar dados historicos de `Page`/`PageBlock`.
-- Adaptar internamente todo renderer `portfolio-community`.
-- Deletar componentes tecnicos legados do editor.
-- Testar fluxo autenticado completo em browser com login real.
+- Alterar schema/runtime.
+- Criar editor multi-step.
+- Migrar variacoes existentes.
+- Alterar publicacao de portfolios.
 
 ## Skills/agentes a acionar
 
 - `metodo-estrutural-integrado`
 - `always-todo`
 - `consistencia-documental`
-- `playwright`, quando iniciar a referencia Facebook e validacao visual
+- `playwright`, quando iniciar validacao visual do editor multi-step
 
 Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiagente.
 
 ## Evidencias de fechamento
 
-- Corte complementar de capa: perfil do dono recebeu upload e reposicionamento da foto de capa com persistencia em `bannerPositionX/Y`.
-- Controle de capa movido para o topo da capa, ao lado de "Editar perfil", com trocar, remover, ajustar e salvar inline.
-- Foto de perfil ajustada para renderizar em camada acima da capa no hub publico/logado.
-- Campo "Nota" da review publica trocado de select para estrelas clicaveis, mantendo envio de `rating` numerico 1-5.
-- Corte complementar de navegacao visual: `/home` e `/{username}` usam o mesmo `PublicProfileHubPage`, com capa lime e superficies suaves preservadas mesmo dentro de `.app-shell`.
-- Corte complementar de retorno: em portfolio publicado `/{username}/{pageSlug}`, o link "Perfil" volta para `/home` quando o visitante e o dono logado; visitantes externos continuam indo para `/{username}`.
-- `/juliano-zilli/juliano-zilli` identificado como rota de portfolio publicado, nao como segunda tela de perfil; a correcao aplicada foi no retorno para o perfil inicial do dono.
-- Corte complementar: casinha autenticada agora aponta para `/home`, rota dentro do shell `(app)`.
-- `/home` renderiza o hub do perfil do dono com `embedded`, mantendo a top bar persistente.
-- `/dashboard` redireciona para `/home`.
-- `npm run typecheck` executado sem erro.
-- `npm run lint` executado sem erro.
-- `npm run test` executado sem erro apos atualizar testes de cadastro/onboarding.
-- `npx prettier --check --ignore-unknown` executado nos arquivos tocados sem erro.
-- Playwright carregou `http://127.0.0.1:3000/juliano-zilli`.
-- Screenshot de verificacao publica: `social-ui-remaster-public-profile.png`.
-- Dev server temporario encerrado.
-- Busca de mojibake nos arquivos tocados executada sem ocorrencias.
+- `Version` observado como selecao de entidades vivas do `Profile`.
+- `buildEditorSnapshot(profile, version)` observado como ponto que ainda recalcula snapshot a partir do perfil global.
+- `/portfolios` observado com acao de editar apontando para `/profile`, misturando intencao de editar portfolio com perfil global.
+- `docs/02_contratos/contrato-versionamento-portfolio.md` criado.
+- `docs/10_backlog/backlog-versionamento-portfolio.md` criado.
