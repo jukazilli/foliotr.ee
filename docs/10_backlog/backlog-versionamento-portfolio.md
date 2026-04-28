@@ -6,7 +6,7 @@ Contrato base: `docs/02_contratos/contrato-versionamento-portfolio.md`
 
 ## Slice 0 - Contrato e auditoria do modelo atual
 
-Status: ATUAL
+Status: FECHADO
 
 Dependencias:
 
@@ -26,6 +26,8 @@ Evidencia:
 - `docs/11_slices_e_cortes/slice-atual.md` atualizado.
 
 ## Slice 1 - Snapshot editavel por variacao
+
+Status: FECHADO
 
 Dependencias:
 
@@ -49,6 +51,8 @@ Evidencia:
 - Variacao nova possui `profileSnapshot`.
 - Editar perfil global depois da criacao nao altera o snapshot da variacao.
 - Typecheck e Prisma validate sem erro.
+- Migration `20260428150000_version_profile_snapshot` criada.
+- `buildEditorSnapshot` prefere `Version.profileSnapshot` e usa fallback seguro para variacoes antigas.
 
 ## Slice 2 - Editor multi-step da variacao
 

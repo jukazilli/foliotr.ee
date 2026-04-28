@@ -22674,6 +22674,7 @@ export namespace Prisma {
     customHeadline: number
     customBio: number
     presentationId: number
+    profileSnapshot: number
     isDefault: number
     createdAt: number
     updatedAt: number
@@ -22721,6 +22722,7 @@ export namespace Prisma {
     customHeadline?: true
     customBio?: true
     presentationId?: true
+    profileSnapshot?: true
     isDefault?: true
     createdAt?: true
     updatedAt?: true
@@ -22809,6 +22811,7 @@ export namespace Prisma {
     customHeadline: string | null
     customBio: string | null
     presentationId: string | null
+    profileSnapshot: JsonValue
     isDefault: boolean
     createdAt: Date
     updatedAt: Date
@@ -22841,6 +22844,7 @@ export namespace Prisma {
     customHeadline?: boolean
     customBio?: boolean
     presentationId?: boolean
+    profileSnapshot?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22869,6 +22873,7 @@ export namespace Prisma {
     customHeadline?: boolean
     customBio?: boolean
     presentationId?: boolean
+    profileSnapshot?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22886,6 +22891,7 @@ export namespace Prisma {
     customHeadline?: boolean
     customBio?: boolean
     presentationId?: boolean
+    profileSnapshot?: boolean
     isDefault?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22937,6 +22943,7 @@ export namespace Prisma {
       customHeadline: string | null
       customBio: string | null
       presentationId: string | null
+      profileSnapshot: Prisma.JsonValue
       isDefault: boolean
       createdAt: Date
       updatedAt: Date
@@ -23354,6 +23361,7 @@ export namespace Prisma {
     readonly customHeadline: FieldRef<"Version", 'String'>
     readonly customBio: FieldRef<"Version", 'String'>
     readonly presentationId: FieldRef<"Version", 'String'>
+    readonly profileSnapshot: FieldRef<"Version", 'Json'>
     readonly isDefault: FieldRef<"Version", 'Boolean'>
     readonly createdAt: FieldRef<"Version", 'DateTime'>
     readonly updatedAt: FieldRef<"Version", 'DateTime'>
@@ -37323,6 +37331,7 @@ export namespace Prisma {
     customHeadline: 'customHeadline',
     customBio: 'customBio',
     presentationId: 'presentationId',
+    profileSnapshot: 'profileSnapshot',
     isDefault: 'isDefault',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -39286,6 +39295,7 @@ export namespace Prisma {
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
     presentationId?: StringNullableFilter<"Version"> | string | null
+    profileSnapshot?: JsonFilter<"Version">
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
@@ -39313,6 +39323,7 @@ export namespace Prisma {
     customHeadline?: SortOrderInput | SortOrder
     customBio?: SortOrderInput | SortOrder
     presentationId?: SortOrderInput | SortOrder
+    profileSnapshot?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -39343,6 +39354,7 @@ export namespace Prisma {
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
     presentationId?: StringNullableFilter<"Version"> | string | null
+    profileSnapshot?: JsonFilter<"Version">
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
@@ -39370,6 +39382,7 @@ export namespace Prisma {
     customHeadline?: SortOrderInput | SortOrder
     customBio?: SortOrderInput | SortOrder
     presentationId?: SortOrderInput | SortOrder
+    profileSnapshot?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -39391,6 +39404,7 @@ export namespace Prisma {
     customHeadline?: StringNullableWithAggregatesFilter<"Version"> | string | null
     customBio?: StringNullableWithAggregatesFilter<"Version"> | string | null
     presentationId?: StringNullableWithAggregatesFilter<"Version"> | string | null
+    profileSnapshot?: JsonWithAggregatesFilter<"Version">
     isDefault?: BoolWithAggregatesFilter<"Version"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Version"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Version"> | Date | string
@@ -42176,6 +42190,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42203,6 +42218,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42226,6 +42242,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42253,6 +42270,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42278,6 +42296,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -42291,6 +42310,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -42306,6 +42326,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -44753,6 +44774,7 @@ export namespace Prisma {
     customHeadline?: SortOrder
     customBio?: SortOrder
     presentationId?: SortOrder
+    profileSnapshot?: SortOrder
     isDefault?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -49507,6 +49529,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -49532,6 +49555,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50018,6 +50042,7 @@ export namespace Prisma {
     customHeadline?: StringNullableFilter<"Version"> | string | null
     customBio?: StringNullableFilter<"Version"> | string | null
     presentationId?: StringNullableFilter<"Version"> | string | null
+    profileSnapshot?: JsonFilter<"Version">
     isDefault?: BoolFilter<"Version"> | boolean
     createdAt?: DateTimeFilter<"Version"> | Date | string
     updatedAt?: DateTimeFilter<"Version"> | Date | string
@@ -50223,6 +50248,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50248,6 +50274,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54021,6 +54048,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54047,6 +54075,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54190,6 +54219,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54216,6 +54246,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54629,6 +54660,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54655,6 +54687,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54693,6 +54726,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54719,6 +54753,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54741,6 +54776,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54767,6 +54803,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54844,6 +54881,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54870,6 +54908,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -54937,6 +54976,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -54963,6 +55003,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55038,6 +55079,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55064,6 +55106,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55129,6 +55172,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55155,6 +55199,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55240,6 +55285,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55266,6 +55312,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55341,6 +55388,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55367,6 +55415,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55428,6 +55477,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55454,6 +55504,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55505,6 +55556,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55531,6 +55583,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55602,6 +55655,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55628,6 +55682,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55689,6 +55744,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55715,6 +55771,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55800,6 +55857,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55826,6 +55884,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -55901,6 +55960,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55927,6 +55987,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -55994,6 +56055,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56020,6 +56082,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56077,6 +56140,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -56103,6 +56167,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -56164,6 +56229,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56190,6 +56256,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56552,6 +56619,7 @@ export namespace Prisma {
     customHeadline?: string | null
     customBio?: string | null
     presentationId?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -56968,6 +57036,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -56993,6 +57062,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57017,6 +57087,7 @@ export namespace Prisma {
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
     presentationId?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57116,6 +57187,7 @@ export namespace Prisma {
     emoji?: string | null
     customHeadline?: string | null
     customBio?: string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -57223,6 +57295,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57248,6 +57321,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -57272,6 +57346,7 @@ export namespace Prisma {
     emoji?: NullableStringFieldUpdateOperationsInput | string | null
     customHeadline?: NullableStringFieldUpdateOperationsInput | string | null
     customBio?: NullableStringFieldUpdateOperationsInput | string | null
+    profileSnapshot?: JsonNullValueInput | InputJsonValue
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

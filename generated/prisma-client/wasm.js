@@ -373,6 +373,7 @@ exports.Prisma.VersionScalarFieldEnum = {
   customHeadline: 'customHeadline',
   customBio: 'customBio',
   presentationId: 'presentationId',
+  profileSnapshot: 'profileSnapshot',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

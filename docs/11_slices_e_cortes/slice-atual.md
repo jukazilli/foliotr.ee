@@ -5,95 +5,82 @@ Last updated: 2026-04-28
 
 ## Nome
 
-Slice 1 - Adoção visual da tela de portfolios.
+Slice 1 - Snapshot editavel por variacao.
 
 ## Modo de entrada
 
-Slice.
+Corte.
 
-O projeto ja existe e o pedido atual define `prototipos-legados/spec-portifolios` como verdade de UI/UX para a tela de portfolios e para a direcao da shell autenticada. O backend real segue como verdade operacional.
+O projeto ja existe e o recorte atual vem do backlog de versionamento de portfolio. O objetivo e separar os dados base usados por um portfolio/variacao do perfil global do usuario, sem entregar ainda o editor multi-step.
 
 ## Objetivo
 
-Aplicar a linguagem visual compacta do prototipo na shell autenticada e na tela `/portfolios`, mantendo actions e dados reais.
+Criar a primeira fundacao tecnica para portfolio versionado: cada nova `Version` passa a gravar uma copia serializada dos dados base do perfil, e os snapshots de pagina/curriculo passam a preferir essa copia quando publicam ou sincronizam conteudo.
 
 ## Fontes de verdade
 
 - Pedido atual do usuario em 2026-04-28.
-- `docs/02_contratos/contrato-remaster-social-ui.md`.
-- `docs/10_backlog/backlog-remaster-social-ui.md`.
 - `docs/02_contratos/contrato-versionamento-portfolio.md`.
 - `docs/10_backlog/backlog-versionamento-portfolio.md`.
-- `docs/02_contratos/contrato-adocao-ui-spec-portifolios.md`.
-- `prototipos-legados/spec-portifolios/src/App.tsx`.
-- `prototipos-legados/spec-portifolios/src/index.css`.
-- Codigo real em `app/`, `components/`, `lib/` e `prisma/schema.prisma`.
-- Referencia Facebook via Playwright, se autenticada pelo usuario, apenas como referencia de navegacao e perfil.
+- `prisma/schema.prisma`.
+- `lib/server/domain/page-snapshots.ts`.
+- `lib/server/domain/versions.ts`.
 
 ## Contratos necessarios
 
-- Contrato de separacao entre perfil global e portfolio.
-- Contrato de snapshot editavel por `Version`.
-- Contrato de editor multi-step da variacao.
-- Contrato de nomes por cargo/role.
-- Contrato de aplicacao de templates apenas em portfolios/curriculos.
-- Contrato de adocao visual do prototipo sem quebrar backend real.
+- Portfolio e variacao nao editam o perfil global diretamente.
+- Perfil global segue o padrao do sistema e nao recebe template.
+- Portfolio/variacao pode receber template e deve carregar uma copia editavel de dados base.
+- Variacoes antigas sem copia persistida precisam continuar funcionando por fallback seguro.
 
 ## Lacunas
 
-- Definir se `Version.profileSnapshot Json` sera o primeiro corte ou se ja normalizaremos tabelas por variacao.
-- Definir se cada variacao tera experiencia principal obrigatoria.
-- Definir regras de visibilidade padrao por secao.
-- Definir migracao/fallback para variacoes existentes.
-- Definir se o wizard publica automaticamente ou permite rascunho no ultimo passo.
-- O editor `/portfolios/{versionId}/edit` ainda nao existe; o link fica preparado para o proximo slice.
-- A padronizacao de todas as telas do sistema deve acontecer por slices, nao neste corte.
+- Editor multi-step de variacao ainda nao existe.
+- A edicao granular de `profileSnapshot` e regras de ocultar/mostrar ficam para o proximo slice.
+- Cards por cargo/role e selecao de template por variacao ficam para slices seguintes.
+- Blocos semanticos ainda podem ser semeados a partir do perfil vivo na criacao; snapshots de editor/publicacao ja passam a preferir a copia da variacao.
 
 ## Backlog por dependencia
 
-1. Adoção visual da shell e tela de portfolios.
-2. Snapshot editavel por variacao.
-3. Editor multi-step da variacao.
-4. Nome por cargo e cards de portfolios.
-5. Templates aplicados a variacao.
-6. Expansao do padrao visual para templates, perfil e galeria.
-7. Compatibilidade e QA.
+1. Snapshot editavel por variacao.
+2. Editor multi-step da variacao.
+3. Nome por cargo e cards de portfolios.
+4. Templates aplicados a variacao.
+5. Compatibilidade e QA.
 
 ## Slice executado
 
-Executado apenas o Slice 1.
+Executado apenas o Slice 1 do backlog de versionamento.
 
 Dentro:
 
-- Tokens globais inspirados no prototipo.
-- Shell autenticada compacta mantendo logo real.
-- `/portfolios` com lista compacta, filtros e menu de tres pontos.
-- Remocao dos cards de metricas.
+- Campo `Version.profileSnapshot Json` no Prisma.
+- Migration para adicionar o campo em banco.
+- Builder `buildVersionProfileSnapshot(profile)`.
+- Leitor/fallback `readVersionProfileSnapshot`.
+- `createOwnedVersion` gravando a copia inicial do perfil agregado.
+- `buildEditorSnapshot` preferindo `Version.profileSnapshot` e caindo para o perfil vivo apenas em legado sem snapshot valido.
 
 Fora:
 
-- Criar editor multi-step.
-- Migrar variacoes existentes.
-- Alterar publicacao de portfolios.
-- Recriar todas as telas do sistema.
+- Tela `/portfolios/{versionId}/edit`.
+- Wizard multi-step.
+- Edicao de foto/dados/visibilidade da variacao.
+- Troca de template por variacao.
 
-## Skills/agentes a acionar
+## Skills/agentes acionados
 
 - `metodo-estrutural-integrado`
 - `always-todo`
 - `consistencia-documental`
-- `playwright`, quando iniciar validacao visual do editor multi-step
 
 Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiagente.
 
 ## Evidencias de fechamento
 
-- `Version` observado como selecao de entidades vivas do `Profile`.
-- `buildEditorSnapshot(profile, version)` observado como ponto que ainda recalcula snapshot a partir do perfil global.
-- `/portfolios` observado com acao de editar apontando para `/profile`, misturando intencao de editar portfolio com perfil global.
-- `docs/02_contratos/contrato-versionamento-portfolio.md` criado.
-- `docs/10_backlog/backlog-versionamento-portfolio.md` criado.
-- `docs/02_contratos/contrato-adocao-ui-spec-portifolios.md` criado.
-- `app/(app)/portfolios/page.tsx` substituido por lista compacta baseada no prototipo e actions reais.
-- `components/app/Header.tsx` e `components/app/AppShell.tsx` ajustados para shell compacta.
-- `app/globals.css` atualizado com cores/tipografia do prototipo.
+- `prisma/schema.prisma` atualizado com `Version.profileSnapshot`.
+- `prisma/migrations/20260428150000_version_profile_snapshot/migration.sql` criada.
+- `lib/server/domain/page-snapshots.ts` passa a construir e ler snapshot da variacao.
+- `lib/server/domain/versions.ts` cria nova variacao com copia serializada do perfil agregado.
+- Variacoes antigas recebem fallback seguro porque `{}` nao passa na validacao minima do leitor.
+- Validacoes do recorte devem incluir Prisma validate, typecheck, lint/prettier dos arquivos tocados e `git diff --check`.

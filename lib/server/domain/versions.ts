@@ -12,6 +12,7 @@ import {
   buildEditorSnapshot,
   buildPublishedPageSnapshot,
   buildPublishedResumeSnapshot,
+  buildVersionProfileSnapshot,
 } from "@/lib/server/domain/page-snapshots";
 import { seedPageBlocksFromTemplate } from "@/lib/server/domain/templates";
 import type {
@@ -29,21 +30,60 @@ const LONG_TRANSACTION_OPTIONS = {
   timeout: 20_000,
 } as const;
 
-const versionCreationProfileInclude = Prisma.validator<Prisma.ProfileInclude>()({
-  experiences: { select: { id: true } },
-  educations: { select: { id: true } },
-  projects: { select: { id: true } },
-  skills: { select: { id: true } },
-  achievements: { select: { id: true } },
-  proofs: { select: { id: true } },
-  highlights: { select: { id: true } },
-  links: { select: { id: true } },
-  presentations: { select: { id: true } },
+const versionSnapshotProfileInclude = Prisma.validator<Prisma.ProfileInclude>()({
+  user: {
+    select: {
+      id: true,
+      email: true,
+      username: true,
+      name: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
+  highlights: {
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    include: {
+      asset: true,
+    },
+  },
+  experiences: {
+    orderBy: [{ order: "asc" }, { startDate: "desc" }],
+    include: {
+      logoAsset: true,
+    },
+  },
+  educations: {
+    orderBy: [{ order: "asc" }, { startDate: "desc" }],
+  },
+  skills: { orderBy: { order: "asc" } },
+  projects: {
+    orderBy: [{ order: "asc" }, { updatedAt: "desc" }],
+    include: {
+      coverAsset: true,
+    },
+  },
+  achievements: {
+    orderBy: [{ order: "asc" }, { date: "desc" }],
+    include: {
+      asset: true,
+    },
+  },
+  links: { orderBy: { order: "asc" } },
+  proofs: {
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+    include: {
+      asset: true,
+    },
+  },
+  presentations: {
+    orderBy: [{ order: "asc" }, { createdAt: "asc" }],
+  },
   versions: { select: { id: true } },
 });
 
-type VersionCreationProfile = Prisma.ProfileGetPayload<{
-  include: typeof versionCreationProfileInclude;
+type VersionSnapshotProfile = Prisma.ProfileGetPayload<{
+  include: typeof versionSnapshotProfileInclude;
 }>;
 
 function sanitizeNullable(value: string | null | undefined) {
@@ -94,13 +134,13 @@ async function getOwnedProfileAggregateOrThrow(
   return profile;
 }
 
-async function getOwnedVersionCreationProfileOrThrow(
+async function getOwnedVersionSnapshotProfileOrThrow(
   db: ReadClient,
   userId: string
-): Promise<VersionCreationProfile> {
+): Promise<VersionSnapshotProfile> {
   const profile = await db.profile.findUnique({
     where: { userId },
-    include: versionCreationProfileInclude,
+    include: versionSnapshotProfileInclude,
   });
 
   if (!profile) {
@@ -141,7 +181,7 @@ export async function getOwnedVersion(
 }
 
 function resolveDefaultSelections(
-  profile: VersionCreationProfile | ProfileAggregate
+  profile: VersionSnapshotProfile | ProfileAggregate
 ): VersionSelectionInput {
   return {
     experienceIds: profile.experiences.map((item) => item.id),
@@ -346,7 +386,7 @@ async function syncVersionSelections(
 }
 
 function needsDefaultFlag(
-  profile: VersionCreationProfile | ProfileAggregate,
+  profile: VersionSnapshotProfile | ProfileAggregate,
   input: VersionInput
 ) {
   if (typeof input.isDefault === "boolean") {
@@ -381,7 +421,7 @@ export async function createOwnedVersion(
   input: VersionInput
 ): Promise<VersionAggregate> {
   return db.$transaction(async (tx) => {
-    const profile = await getOwnedVersionCreationProfileOrThrow(tx, userId);
+    const profile = await getOwnedVersionSnapshotProfileOrThrow(tx, userId);
     const isDefault = needsDefaultFlag(profile, input);
     const selections = input.selections ?? resolveDefaultSelections(profile);
 
@@ -407,6 +447,7 @@ export async function createOwnedVersion(
         ...(input.presentationId !== undefined
           ? { presentationId: input.presentationId }
           : {}),
+        profileSnapshot: asInputJsonValue(buildVersionProfileSnapshot(profile)),
         isDefault,
       },
       select: { id: true },

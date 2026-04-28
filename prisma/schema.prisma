@@ -355,6 +355,8 @@ model Version {
   presentationId String?
   presentation   ProfilePresentation? @relation(fields: [presentationId], references: [id], onDelete: SetNull)
 
+  profileSnapshot Json @default("{}")
+
   isDefault Boolean @default(false)
 
   pages        Page[]
