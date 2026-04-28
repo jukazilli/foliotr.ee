@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, PointerEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ImagePlus, Move, X } from "lucide-react";
+import { Check, ImagePlus, Move, Trash2, X } from "lucide-react";
 
 const limeCoverStyle = { backgroundColor: "#dfff00" };
 const positionStep = 4;
@@ -54,6 +54,7 @@ export function EditableProfileCover({
   const [imageUrl, setImageUrl] = useState(bannerUrl ?? "");
   const [localPreviewUrl, setLocalPreviewUrl] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [removeRequested, setRemoveRequested] = useState(false);
   const [position, setPosition] = useState({
     x: clampPercent(bannerPositionX),
     y: clampPercent(bannerPositionY),
@@ -62,7 +63,7 @@ export function EditableProfileCover({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const previewUrl = localPreviewUrl || imageUrl;
+  const previewUrl = removeRequested ? "" : localPreviewUrl || imageUrl;
   const hasImage = Boolean(previewUrl);
 
   useEffect(() => {
@@ -84,6 +85,7 @@ export function EditableProfileCover({
     if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
 
     setSelectedFile(file);
+    setRemoveRequested(false);
     setLocalPreviewUrl(URL.createObjectURL(file));
     setPosition({ x: 50, y: 50 });
     setEditing(true);
@@ -135,6 +137,7 @@ export function EditableProfileCover({
     if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
     setLocalPreviewUrl("");
     setSelectedFile(null);
+    setRemoveRequested(false);
     setImageUrl(bannerUrl ?? "");
     setPosition({
       x: clampPercent(bannerPositionX),
@@ -145,6 +148,7 @@ export function EditableProfileCover({
   }
 
   async function uploadSelectedFile(): Promise<string> {
+    if (removeRequested) return "";
     if (!selectedFile) return imageUrl;
 
     const formData = new FormData();
@@ -196,6 +200,7 @@ export function EditableProfileCover({
       if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
       setLocalPreviewUrl("");
       setSelectedFile(null);
+      setRemoveRequested(false);
       setImageUrl(nextBannerUrl);
       setEditing(false);
       router.refresh();
@@ -210,13 +215,21 @@ export function EditableProfileCover({
     }
   }
 
+  function removeCover() {
+    if (localPreviewUrl) URL.revokeObjectURL(localPreviewUrl);
+    setLocalPreviewUrl("");
+    setSelectedFile(null);
+    setRemoveRequested(true);
+    setEditing(true);
+    setError("");
+  }
+
   return (
     <div
       className={`relative h-48 overflow-hidden sm:h-64 ${
         editing ? "cursor-grab touch-none" : ""
       }`}
       style={limeCoverStyle}
-      onClick={beginEditing}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
@@ -249,72 +262,89 @@ export function EditableProfileCover({
             onChange={handleFileChange}
           />
 
-          <div className="absolute bottom-4 left-4 flex flex-wrap items-center gap-2">
+          <div
+            className="absolute right-44 top-4 z-30 flex flex-wrap justify-end gap-2 max-sm:right-4 max-sm:top-16"
+            onClick={(event) => event.stopPropagation()}
+          >
             <button
               type="button"
               className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
               onClick={(event) => {
                 event.stopPropagation();
-                inputRef.current?.click();
+                beginEditing();
               }}
             >
               <ImagePlus className="h-4 w-4" aria-hidden />
-              {hasImage ? "Trocar capa" : "Adicionar capa"}
+              {hasImage ? "Editar capa" : "Adicionar capa"}
             </button>
-            {editing && hasImage ? (
-              <span className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950/85 px-3 text-xs font-bold text-white">
-                <Move className="h-4 w-4" aria-hidden />
-                Arraste para posicionar
-              </span>
-            ) : null}
           </div>
 
           {editing ? (
             <div
-              className="absolute right-4 top-16 flex flex-wrap justify-end gap-2"
+              className="absolute right-4 top-16 z-30 flex max-w-[calc(100%-2rem)] flex-wrap justify-end gap-2 rounded-2xl bg-white/85 p-2 shadow-sm backdrop-blur max-sm:top-28"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="grid grid-cols-3 gap-1 rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm">
-                <span />
+              <button
+                type="button"
+                className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
+                onClick={() => inputRef.current?.click()}
+              >
+                <ImagePlus className="h-4 w-4" aria-hidden />
+                {hasImage ? "Trocar" : "Upload"}
+              </button>
+              {imageUrl || localPreviewUrl ? (
                 <button
                   type="button"
-                  className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                  onClick={() => moveBy(0, -positionStep)}
-                  aria-label="Mover capa para cima"
+                  className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-white px-4 text-sm font-bold text-red-700 shadow-sm"
+                  onClick={removeCover}
                 >
-                  ^
+                  <Trash2 className="h-4 w-4" aria-hidden />
+                  Remover
                 </button>
-                <span />
-                <button
-                  type="button"
-                  className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                  onClick={() => moveBy(-positionStep, 0)}
-                  aria-label="Mover capa para esquerda"
-                >
-                  {"<"}
-                </button>
-                <span className="grid h-8 w-8 place-items-center text-xs font-black">
-                  {position.x}/{position.y}
-                </span>
-                <button
-                  type="button"
-                  className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                  onClick={() => moveBy(positionStep, 0)}
-                  aria-label="Mover capa para direita"
-                >
-                  {">"}
-                </button>
-                <span />
-                <button
-                  type="button"
-                  className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                  onClick={() => moveBy(0, positionStep)}
-                  aria-label="Mover capa para baixo"
-                >
-                  v
-                </button>
-                <span />
-              </div>
+              ) : null}
+              {hasImage ? (
+                <div className="grid grid-cols-3 gap-1 rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm">
+                  <span />
+                  <button
+                    type="button"
+                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
+                    onClick={() => moveBy(0, -positionStep)}
+                    aria-label="Mover capa para cima"
+                  >
+                    ^
+                  </button>
+                  <span />
+                  <button
+                    type="button"
+                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
+                    onClick={() => moveBy(-positionStep, 0)}
+                    aria-label="Mover capa para esquerda"
+                  >
+                    {"<"}
+                  </button>
+                  <span className="grid h-8 w-8 place-items-center text-xs font-black">
+                    {position.x}/{position.y}
+                  </span>
+                  <button
+                    type="button"
+                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
+                    onClick={() => moveBy(positionStep, 0)}
+                    aria-label="Mover capa para direita"
+                  >
+                    {">"}
+                  </button>
+                  <span />
+                  <button
+                    type="button"
+                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
+                    onClick={() => moveBy(0, positionStep)}
+                    aria-label="Mover capa para baixo"
+                  >
+                    v
+                  </button>
+                  <span />
+                </div>
+              ) : null}
               <button
                 type="button"
                 className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950 px-4 text-sm font-bold text-white shadow-sm disabled:opacity-60"
@@ -332,6 +362,12 @@ export function EditableProfileCover({
                 <X className="h-4 w-4" aria-hidden />
                 Cancelar
               </button>
+              {hasImage ? (
+                <span className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950/85 px-3 text-xs font-bold text-white">
+                  <Move className="h-4 w-4" aria-hidden />
+                  Arraste a capa
+                </span>
+              ) : null}
             </div>
           ) : null}
 
