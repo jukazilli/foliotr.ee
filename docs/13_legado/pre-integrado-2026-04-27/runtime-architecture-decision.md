@@ -168,4 +168,3 @@ Required steps:
 Keep the current Vercel fullstack architecture through the MVP closure phase.
 
 Revisit Render only when one of the defined cut points is reached with evidence from product requirements or production behavior.
-
