@@ -5,7 +5,7 @@ import type { ChangeEvent, PointerEvent } from "react";
 import { useRouter } from "next/navigation";
 import { Check, ImagePlus, Move, Trash2, X } from "lucide-react";
 
-const limeCoverStyle = { backgroundColor: "#dfff00" };
+const coverFallbackStyle = { backgroundColor: "#ffffff" };
 const positionStep = 4;
 
 function clampPercent(value: number) {
@@ -234,7 +234,7 @@ export function EditableProfileCover({
       className={`relative h-48 overflow-hidden sm:h-64 ${
         editing ? "cursor-grab touch-none" : ""
       }`}
-      style={limeCoverStyle}
+      style={coverFallbackStyle}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
@@ -250,7 +250,7 @@ export function EditableProfileCover({
           style={{ objectPosition: `${position.x}% ${position.y}%` }}
         />
       ) : (
-        <div className="flex h-full w-full items-end p-5" style={limeCoverStyle}>
+        <div className="flex h-full w-full items-end p-5" style={coverFallbackStyle}>
           <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-neutral-800/70">
             FolioTree
           </span>

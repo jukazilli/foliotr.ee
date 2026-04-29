@@ -148,11 +148,11 @@ export default function PublicProfileHubPage({
             ) : null}
           </div>
 
-          <div className="relative z-10 px-5 pb-5 sm:px-8 sm:pb-7">
-            <div className="-mt-16 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+          <div className="relative z-10 bg-white px-5 pb-6 pt-6 sm:px-8 sm:pb-8 sm:pt-8">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <div
-                  className="relative z-20 flex h-32 w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100"
+                  className="relative z-20 -mt-8 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 sm:-mt-12 sm:h-40 sm:w-40"
                   style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
                 >
                   {hub.avatarUrl ? (
@@ -167,7 +167,7 @@ export default function PublicProfileHubPage({
                   )}
                 </div>
 
-                <div className="pb-1">
+                <div className="sm:pt-2">
                   <p className="text-sm font-bold text-neutral-500">@{username}</p>
                   <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">
                     {displayName}
