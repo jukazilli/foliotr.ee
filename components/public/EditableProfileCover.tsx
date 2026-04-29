@@ -16,13 +16,18 @@ async function parseJsonResponse(response: Response) {
   const payload = (await response.json().catch(() => null)) as unknown;
 
   if (!response.ok) {
+    const payloadRecord =
+      payload && typeof payload === "object"
+        ? (payload as Record<string, unknown>)
+        : null;
+    const nestedError =
+      payloadRecord?.error && typeof payloadRecord.error === "object"
+        ? (payloadRecord.error as Record<string, unknown>)
+        : null;
     const message =
-      payload &&
-      typeof payload === "object" &&
-      "message" in payload &&
-      typeof payload.message === "string"
-        ? payload.message
-        : "Nao foi possivel salvar a capa.";
+      (typeof payloadRecord?.message === "string" && payloadRecord.message) ||
+      (typeof nestedError?.message === "string" && nestedError.message) ||
+      "Nao foi possivel salvar a capa.";
     throw new Error(message);
   }
 
@@ -265,6 +270,9 @@ export function EditableProfileCover({
           <div
             className="absolute right-44 top-4 z-30 flex flex-wrap justify-end gap-2 max-sm:right-4 max-sm:top-16"
             onClick={(event) => event.stopPropagation()}
+            onPointerDown={(event) => event.stopPropagation()}
+            onPointerMove={(event) => event.stopPropagation()}
+            onPointerUp={(event) => event.stopPropagation()}
           >
             <button
               type="button"
@@ -283,11 +291,17 @@ export function EditableProfileCover({
             <div
               className="absolute right-4 top-16 z-30 flex max-w-[calc(100%-2rem)] flex-wrap justify-end gap-2 rounded-2xl bg-white/85 p-2 shadow-sm backdrop-blur max-sm:top-28"
               onClick={(event) => event.stopPropagation()}
+              onPointerDown={(event) => event.stopPropagation()}
+              onPointerMove={(event) => event.stopPropagation()}
+              onPointerUp={(event) => event.stopPropagation()}
             >
               <button
                 type="button"
                 className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
-                onClick={() => inputRef.current?.click()}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  inputRef.current?.click();
+                }}
               >
                 <ImagePlus className="h-4 w-4" aria-hidden />
                 {hasImage ? "Trocar" : "Upload"}
@@ -308,7 +322,10 @@ export function EditableProfileCover({
                   <button
                     type="button"
                     className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={() => moveBy(0, -positionStep)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      moveBy(0, -positionStep);
+                    }}
                     aria-label="Mover capa para cima"
                   >
                     ^
@@ -317,7 +334,10 @@ export function EditableProfileCover({
                   <button
                     type="button"
                     className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={() => moveBy(-positionStep, 0)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      moveBy(-positionStep, 0);
+                    }}
                     aria-label="Mover capa para esquerda"
                   >
                     {"<"}
@@ -328,7 +348,10 @@ export function EditableProfileCover({
                   <button
                     type="button"
                     className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={() => moveBy(positionStep, 0)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      moveBy(positionStep, 0);
+                    }}
                     aria-label="Mover capa para direita"
                   >
                     {">"}
@@ -337,7 +360,10 @@ export function EditableProfileCover({
                   <button
                     type="button"
                     className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={() => moveBy(0, positionStep)}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      moveBy(0, positionStep);
+                    }}
                     aria-label="Mover capa para baixo"
                   >
                     v
@@ -349,7 +375,10 @@ export function EditableProfileCover({
                 type="button"
                 className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950 px-4 text-sm font-bold text-white shadow-sm disabled:opacity-60"
                 disabled={saving}
-                onClick={saveCover}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  void saveCover();
+                }}
               >
                 <Check className="h-4 w-4" aria-hidden />
                 {saving ? "Salvando" : "Salvar capa"}
@@ -357,7 +386,10 @@ export function EditableProfileCover({
               <button
                 type="button"
                 className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
-                onClick={cancelEditing}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  cancelEditing();
+                }}
               >
                 <X className="h-4 w-4" aria-hidden />
                 Cancelar
