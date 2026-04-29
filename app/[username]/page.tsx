@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
+import { AppShell } from "@/components/app/AppShell";
 import PublicProfileHubPage from "@/components/public/PublicProfileHubPage";
 import { getPublicProfileHub } from "@/lib/server/domain/public-pages";
 import { getPublicReviewSummary } from "@/lib/server/domain/reviews";
@@ -42,12 +43,32 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
     notFound();
   }
 
+  const isOwner = session?.user?.id === hub.user.id;
+
+  if (isOwner) {
+    return (
+      <AppShell
+        userName={hub.displayName ?? hub.user.username ?? undefined}
+        userImage={hub.avatarUrl ?? undefined}
+        userUsername={hub.user.username}
+      >
+        <PublicProfileHubPage
+          username={username}
+          hub={hub}
+          reviewSummary={reviewSummary}
+          isOwner
+          embedded
+        />
+      </AppShell>
+    );
+  }
+
   return (
     <PublicProfileHubPage
       username={username}
       hub={hub}
       reviewSummary={reviewSummary}
-      isOwner={session?.user?.id === hub.user.id}
+      isOwner={false}
     />
   );
 }
