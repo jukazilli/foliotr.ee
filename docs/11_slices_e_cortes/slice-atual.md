@@ -5,7 +5,7 @@ Last updated: 2026-04-29
 
 ## Nome
 
-Slice 12 - Capa por versão.
+Slice 13 - Identidade versionada completa.
 
 ## Modo de entrada
 
@@ -13,56 +13,52 @@ Slice/Corte.
 
 ## Objetivo
 
-Adicionar capa própria para cada versão de portfólio, configurável antes de `Identidade`, reutilizando a galeria de assets e alimentando o carrossel público.
+Expandir a aba `Identidade` do editor de versão para carregar o estado atual do perfil mestre e permitir edição/exclusão no contexto da versão, sem alterar os dados base.
 
 ## Fontes de verdade
 
 - `docs/10_backlog/backlog-portfolio-versionado-ui.md`.
 - `components/portfolios/PortfolioVariationWizard.tsx`.
-- `components/assets/AssetGalleryPicker.tsx`.
-- `app/(app)/portfolios/[versionId]/edit/actions.ts`.
+- `lib/server/domain/page-snapshots.ts`.
 - `lib/server/domain/versions.ts`.
 - `lib/server/domain/includes.ts`.
-- `prisma/schema.prisma`.
-- `components/public/PublicPortfolioCarousel.tsx`.
+- `components/profile/ProfileEditor.tsx`.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts`.
 
 ## Contratos necessários
 
-- Capa da versão é separada da capa pública do perfil base.
-- O passo `Capa` vem antes de `Identidade`.
-- A imagem deve ser selecionada pela galeria central ou enviada por ela.
-- Salvar capa altera apenas a versão atual.
-- O carrossel público usa a capa da versão quando existir e fallback visual quando não existir.
+- A versão deve partir de uma cópia do estado atual do perfil mestre.
+- Edição de identidade deve persistir em `Version.profileSnapshot`.
+- Exclusão dentro da versão remove do snapshot/seleção da versão, não do perfil mestre.
+- Dados base permanecem intactos em `/profile`.
 
 ## Lacunas
 
-- `Version` ainda não possui campo persistido para capa.
-- Não há migration para capa da versão.
-- A query pública ainda não expõe capa de versão.
+- A UI atual da aba `Identidade` ainda edita apenas campos básicos.
+- Itens repetíveis ainda dependem das relações `Version*` para seleção e do snapshot para copy.
+- Reviews precisam de decisão específica: moderar/mostrar continua sendo regra do perfil, mas a versão pode escolher exibir ou ocultar.
 
 ## Backlog por dependência
 
-1. Adicionar campo de capa em `Version`.
-2. Atualizar includes/domínio para carregar a capa.
-3. Atualizar action de edição da variação.
-4. Adicionar passo `Capa` no wizard.
-5. Alimentar carrossel público com a capa.
-6. Validar TypeScript, lint, schema e mojibake.
+1. Mapear campos do snapshot que entram em `Identidade`.
+2. Definir controles compactos para dados básicos e listas.
+3. Persistir remoções/edições sem tocar dados base.
+4. Atualizar snapshots publicados e currículo.
+5. Validar TypeScript, lint e mojibake.
 
 ## Slice atual
 
 Dentro:
 
-- Persistir URL de capa da versão.
-- Reutilizar `AssetGalleryPicker` no passo `Capa`.
-- Mostrar preview de capa no editor.
-- Usar capa no carrossel público.
+- Planejar e implementar a primeira versão da UI de identidade completa.
+- Reusar padrões do editor de perfil onde fizer sentido.
+- Manter persistência isolada em versão.
 
 Fora:
 
+- Alterar schema sem necessidade objetiva.
 - Remover capa do perfil base.
-- Editar dados granulares de identidade.
-- Migrar capas antigas automaticamente.
+- Reescrever todo o editor de portfólio.
 
 ## Skills/agentes acionados
 
@@ -73,9 +69,8 @@ Subagentes não acionados: não houve pedido de delegação multiagente.
 
 ## Evidências de fechamento esperadas
 
-- Migration ou schema atualizado.
-- Editor com passo `Capa`.
-- Carrossel público recebendo capa da versão.
+- UI mostra dados do perfil mestre no editor da versão.
+- Alterações salvam apenas na versão.
 - `npm run typecheck`.
 - `npm run lint`.
 - `git diff --check`.

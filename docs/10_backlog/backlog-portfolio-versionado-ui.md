@@ -81,19 +81,29 @@ Evidência de fechamento:
 
 ## Slice 12 - Capa por versão
 
-Status: ATUAL
+Status: FECHADO em 2026-04-29
 
 Escopo previsto:
 
-- Adicionar campo de capa da versão no schema e domínio.
+- Usar `profileSnapshot.bannerUrl` como capa da versão, sem migration.
 - Adicionar passo `Capa` antes de `Identidade`.
 - Reutilizar `AssetGalleryPicker`.
 - Salvar capa sem alterar capa do perfil público.
 - Alimentar o carrossel público com a capa da versão.
 
+Evidência de fechamento:
+
+- `components/portfolios/PortfolioVariationWizard.tsx` ganhou passo `Capa` antes de `Identidade`.
+- O passo `Capa` reutiliza `AssetGalleryPicker`, permite trocar e remover a capa da versão.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts` já salva `bannerUrl` apenas em `Version.profileSnapshot`.
+- `lib/server/domain/public-pages.ts` expõe `profileSnapshot` para o hub público.
+- `components/public/PublicProfileHubPage.tsx` lê `profileSnapshot.bannerUrl` e envia `coverUrl` ao carrossel.
+- `npm run typecheck`: sem erro.
+- Busca de mojibake nos arquivos tocados: sem ocorrência.
+
 ## Slice 13 - Identidade versionada completa
 
-Status: BACKLOG
+Status: ATUAL
 
 Escopo previsto:
 

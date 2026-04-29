@@ -155,6 +155,7 @@ export async function getPublicProfileHub(username: string) {
           context: true,
           customHeadline: true,
           customBio: true,
+          profileSnapshot: true,
           isDefault: true,
           resumeConfig: {
             select: {

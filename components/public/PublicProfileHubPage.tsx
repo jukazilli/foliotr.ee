@@ -13,6 +13,7 @@ import { PublicPortfolioCarousel } from "@/components/public/PublicPortfolioCaro
 import PublicReviewsSection from "@/components/public/PublicReviewsSection";
 import type { PublicReviewSummary } from "@/lib/server/domain/reviews";
 import type { PublicProfileHub } from "@/lib/server/domain/public-pages";
+import { readVersionProfileSnapshot } from "@/lib/server/domain/page-snapshots";
 import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
 import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
@@ -56,6 +57,12 @@ function getPortfolioDescription(
   version: PublicProfileHubPageProps["hub"]["versions"][number]
 ) {
   return version.description || version.context || version.customBio || null;
+}
+
+function getPortfolioCover(
+  version: PublicProfileHubPageProps["hub"]["versions"][number]
+) {
+  return readVersionProfileSnapshot(version.profileSnapshot)?.bannerUrl ?? null;
 }
 
 function ProfileCard({
@@ -103,6 +110,7 @@ export default function PublicProfileHubPage({
           : null,
       title: getPortfolioTitle(version, page),
       description: getPortfolioDescription(version),
+      coverUrl: getPortfolioCover(version),
       templateName: page.template.name,
       isDefault: version.isDefault,
     }))

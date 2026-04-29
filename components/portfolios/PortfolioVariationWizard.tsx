@@ -53,6 +53,7 @@ type PortfolioVariationWizardProps = {
 };
 
 const steps = [
+  { id: "cover", label: "Capa", icon: ImageIcon },
   { id: "identity", label: "Identidade", icon: UserRound },
   { id: "data", label: "Dados", icon: FileText },
   { id: "template", label: "Tema", icon: LayoutTemplate },
@@ -100,7 +101,7 @@ export function PortfolioVariationWizard({
   published,
   error,
 }: PortfolioVariationWizardProps) {
-  const [activeStep, setActiveStep] = useState<StepId>("identity");
+  const [activeStep, setActiveStep] = useState<StepId>("cover");
   const [values, setValues] = useState(initialValues);
   const [pickerTarget, setPickerTarget] = useState<"avatarUrl" | "bannerUrl" | null>(
     null
@@ -159,14 +160,6 @@ export function PortfolioVariationWizard({
               <ImageIcon className="h-10 w-10" aria-hidden="true" />
             </div>
           )}
-          <button
-            type="button"
-            onClick={() => setPickerTarget("bannerUrl")}
-            className="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full border-2 border-line bg-white px-3 py-2 text-sm font-extrabold text-ink shadow-app"
-          >
-            <Upload className="h-4 w-4" aria-hidden="true" />
-            Capa
-          </button>
         </div>
 
         <div className="flex flex-col gap-4 px-5 pb-5 pt-0 md:flex-row md:items-end md:justify-between">
@@ -255,6 +248,63 @@ export function PortfolioVariationWizard({
         </div>
 
         <section className="rounded-2xl border-2 border-line bg-white p-5 shadow-app">
+          {activeStep === "cover" ? (
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(280px,0.8fr)]">
+              <div className="overflow-hidden rounded-2xl border-2 border-line bg-cream">
+                <div className="relative aspect-[16/7] min-h-56">
+                  {values.bannerUrl ? (
+                    <Image
+                      src={values.bannerUrl}
+                      alt=""
+                      fill
+                      sizes="(min-width: 1024px) 55vw, 100vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="grid h-full place-items-center text-ink/40">
+                      <ImageIcon className="h-12 w-12" aria-hidden="true" />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col justify-between gap-4">
+                <div>
+                  <p className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink/50">
+                    Capa da versão
+                  </p>
+                  <h2 className="mt-2 font-display text-2xl font-black text-ink">
+                    Imagem do carrossel
+                  </h2>
+                  <p className="mt-2 text-sm font-semibold leading-6 text-ink/70">
+                    Esta capa aparece no card público desta versão e não altera a capa
+                    do perfil base.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setPickerTarget("bannerUrl")}
+                  >
+                    <Upload className="h-4 w-4" aria-hidden="true" />
+                    Trocar capa
+                  </Button>
+                  {values.bannerUrl ? (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => setField("bannerUrl", "")}
+                    >
+                      Remover capa
+                    </Button>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          ) : null}
+
           {activeStep === "identity" ? (
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
