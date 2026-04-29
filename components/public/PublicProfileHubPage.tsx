@@ -4,7 +4,6 @@ import {
   BriefcaseBusiness,
   Edit3,
   MapPin,
-  MessageSquareText,
   Star,
   UserRound,
 } from "lucide-react";
@@ -146,17 +145,31 @@ export default function PublicProfileHubPage({
               bannerPositionY={hub.bannerPositionY}
               isOwner={isOwner}
             />
+            <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border bg-white/90 px-3 py-2 text-xs font-bold text-neutral-900 backdrop-blur">
+              <span className="font-extrabold">
+                {reviewSummary.averageRating?.toFixed(1) ?? "-"}
+              </span>
+              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-500" aria-hidden />
+              <span className="hidden text-neutral-600 sm:inline">
+                {reviewSummary.count
+                  ? `${reviewSummary.count} publicada${
+                      reviewSummary.count === 1 ? "" : "s"
+                    }`
+                  : "sem reviews"}
+              </span>
+            </div>
             {isOwner ? (
               <Link
                 href="/profile"
-                className="absolute right-4 top-4 inline-flex h-10 items-center gap-2 rounded-full border bg-white px-4 text-sm font-bold text-neutral-900 transition hover:border-neutral-950"
+                className="absolute right-4 top-4 inline-flex h-10 items-center gap-0 rounded-full border bg-white px-3 text-sm font-bold text-neutral-900 transition hover:border-neutral-950 sm:gap-2 sm:px-4"
                 style={{
                   borderColor: "#d4d4d4",
                   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
                 }}
+                aria-label="Editar perfil"
               >
                 <Edit3 className="h-4 w-4" aria-hidden />
-                Editar perfil
+                <span className="hidden sm:inline">Editar perfil</span>
               </Link>
             ) : null}
           </div>
@@ -210,7 +223,7 @@ export default function PublicProfileHubPage({
           className="grid gap-4 lg:col-span-full lg:grid-cols-[repeat(24,minmax(0,1fr))]"
           aria-label="Resumo do perfil"
         >
-          <ProfileCard title="Sobre" className="lg:col-span-8">
+          <ProfileCard title="Sobre" className="lg:col-span-12">
             <div className="space-y-3 text-sm font-semibold leading-6 text-neutral-700">
               {defaultPresentation?.body || hub.bio ? (
                 <p className="whitespace-pre-line">
@@ -259,7 +272,7 @@ export default function PublicProfileHubPage({
 
           <ProfileCard
             title={primaryPortfolioItem?.title ?? "Portfólio"}
-            className="lg:col-span-8"
+            className="lg:col-span-12"
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
@@ -277,36 +290,16 @@ export default function PublicProfileHubPage({
             </div>
           </ProfileCard>
 
-          <ProfileCard title="Reviews" className="lg:col-span-8">
-            <div className="space-y-3">
-              <div className="flex items-end gap-2">
-                <span className="text-4xl font-extrabold">
-                  {reviewSummary.averageRating?.toFixed(1) ?? "-"}
-                </span>
-                <span className="pb-1 text-sm font-semibold text-neutral-500">
-                  {reviewSummary.count
-                    ? `${reviewSummary.count} publicada${
-                        reviewSummary.count === 1 ? "" : "s"
-                      }`
-                    : "sem reviews"}
-                </span>
-              </div>
-              {reviewSummary.averageRating ? (
-                <span className="inline-flex items-center gap-1 text-yellow-500">
-                  <Star className="h-4 w-4 fill-yellow-400" aria-hidden />
-                  média das avaliações
-                </span>
-              ) : null}
-              <a
-                href="#reviews"
-                className="inline-flex items-center gap-2 text-sm font-extrabold text-neutral-950"
-              >
-                <MessageSquareText className="h-4 w-4" aria-hidden />
-                Ver ou enviar review
-              </a>
-            </div>
-          </ProfileCard>
         </section>
+
+        <div id="reviews" className="lg:col-span-full">
+          <PublicReviewsSection
+            username={username}
+            returnPath={`/${username}`}
+            summary={reviewSummary}
+            canSubmit={!isOwner}
+          />
+        </div>
 
         {behavioralAnalysis ? (
           <section className="grid gap-3 lg:col-span-full">
@@ -322,15 +315,6 @@ export default function PublicProfileHubPage({
           </section>
         ) : null}
       </main>
-
-      <div id="reviews">
-        <PublicReviewsSection
-          username={username}
-          returnPath={`/${username}`}
-          summary={reviewSummary}
-          canSubmit={!isOwner}
-        />
-      </div>
 
       {embedded ? null : (
         <footer className="border-t border-black/10 py-6 text-center">

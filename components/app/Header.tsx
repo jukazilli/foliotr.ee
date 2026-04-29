@@ -169,39 +169,52 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
   }
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-40 border-b-2 border-line bg-white px-3 py-2">
-      <div className="relative mx-auto flex max-w-[1560px] items-center gap-3">
-        <FolioTreeLogo
-          href={homeHref}
-          compact
-          className="shrink-0 rounded-full bg-white p-2"
-        />
-
-        <div className="hidden h-10 min-w-48 max-w-md flex-1 items-center gap-2 rounded-full border-2 border-line bg-white px-4 md:flex">
-          <Search className="h-4 w-4 text-muted" aria-hidden="true" />
-          <input
-            id="app-header-search"
-            name="appHeaderSearch"
-            type="search"
-            placeholder="Buscar no FolioTree"
-            className="min-w-0 flex-1 bg-transparent text-sm font-bold text-ink outline-none placeholder:text-muted"
-            aria-label="Buscar no FolioTree"
+    <>
+      <header className="fixed left-0 right-0 top-0 z-40 hidden border-b-2 border-line bg-white px-3 py-2 md:block">
+        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_minmax(260px,520px)_minmax(340px,1fr)_auto] items-center gap-3">
+          <FolioTreeLogo
+            href={homeHref}
+            compact
+            className="shrink-0 rounded-full bg-white p-2"
           />
-        </div>
 
-        <nav
-          className="flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto px-1 md:absolute md:left-1/2 md:flex-none md:-translate-x-1/2 md:gap-2"
-          aria-label="Navegação principal"
-        >
+          <div className="flex h-10 min-w-0 items-center gap-2 rounded-full border-2 border-line bg-white px-4">
+            <Search className="h-4 w-4 text-muted" aria-hidden="true" />
+            <input
+              id="app-header-search"
+              name="appHeaderSearch"
+              type="search"
+              placeholder="Buscar no FolioTree"
+              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-ink outline-none placeholder:text-muted"
+              aria-label="Buscar no FolioTree"
+            />
+          </div>
+
+          <nav
+            className="flex min-w-0 items-center justify-center gap-2 overflow-x-auto px-1"
+            aria-label="Navegação principal"
+          >
+            {navItems.map((item) => (
+              <NavIcon key={item.href} item={item} active={Boolean(isActive(item))} />
+            ))}
+          </nav>
+
+          <div className="flex shrink-0 items-center justify-end">
+            <AccountMenu userName={userName} userImage={userImage} />
+          </div>
+        </div>
+      </header>
+
+      <nav
+        className="fixed bottom-0 left-0 right-0 z-40 border-t-2 border-line bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 backdrop-blur md:hidden"
+        aria-label="Navegação principal"
+      >
+        <div className="mx-auto flex max-w-md items-center justify-around gap-1">
           {navItems.map((item) => (
             <NavIcon key={item.href} item={item} active={Boolean(isActive(item))} />
           ))}
-        </nav>
-
-        <div className="ml-auto flex shrink-0 items-center">
-          <AccountMenu userName={userName} userImage={userImage} />
         </div>
-      </div>
-    </header>
+      </nav>
+    </>
   );
 }

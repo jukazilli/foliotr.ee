@@ -35,34 +35,25 @@ export default function PublicReviewsSection({
   canSubmit = true,
 }: PublicReviewsSectionProps) {
   return (
-    <section className="border-b border-black/10 bg-white px-4 py-8 print:hidden sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-[1680px] gap-8 lg:grid-cols-[repeat(24,minmax(0,1fr))]">
-        <div className="space-y-5 lg:col-span-10">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
-              Reviews
-            </p>
-            <div className="mt-3 flex flex-wrap items-end gap-3">
-              <span className="text-4xl font-semibold text-neutral-950">
-                {summary.averageRating?.toFixed(1) ?? "-"}
-              </span>
-              <span className="pb-1 text-sm font-medium text-neutral-600">
-                {summary.count
-                  ? `${summary.count} review${summary.count === 1 ? "" : "s"} publicada${
-                      summary.count === 1 ? "" : "s"
-                    }`
-                  : "Nenhuma review publicada ainda"}
-              </span>
+    <section className="rounded-2xl border bg-white p-5 print:hidden">
+      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
+                Reviews
+              </p>
+              <h2 className="mt-1 text-2xl font-extrabold tracking-[-0.03em] text-neutral-950">
+                Avaliações publicadas
+              </h2>
             </div>
-            {summary.averageRating ? (
-              <div className="mt-3">
-                <Stars value={Math.round(summary.averageRating)} />
-              </div>
-            ) : null}
+            <span className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-bold text-neutral-600">
+              {summary.count} publicada{summary.count === 1 ? "" : "s"}
+            </span>
           </div>
 
-          <div className="grid gap-3">
-            {summary.reviews.slice(0, 3).map((review) => (
+          <div className="grid max-h-[420px] gap-3 overflow-y-auto pr-1">
+            {summary.reviews.slice(0, 8).map((review) => (
               <article
                 key={review.id}
                 className="rounded-lg border border-neutral-200 bg-neutral-50 p-4"
@@ -85,13 +76,18 @@ export default function PublicReviewsSection({
                 ) : null}
               </article>
             ))}
+            {summary.reviews.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-neutral-300 bg-neutral-50 p-5 text-sm font-semibold text-neutral-500">
+                Nenhuma avaliação publicada ainda.
+              </div>
+            ) : null}
           </div>
         </div>
 
         {canSubmit ? (
           <form
             action={submitPublicReviewAction}
-            className="grid w-full gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-[14]"
+            className="grid w-full gap-3 rounded-lg border border-neutral-200 bg-neutral-50 p-4"
           >
             <input type="hidden" name="username" value={username} />
             <input type="hidden" name="returnPath" value={returnPath} />
@@ -102,7 +98,9 @@ export default function PublicReviewsSection({
               </label>
             </div>
             <div>
-              <p className="text-sm font-semibold text-neutral-950">Deixe uma review</p>
+              <p className="text-sm font-semibold text-neutral-950">
+                Deixe uma avaliação
+              </p>
               <p className="mt-1 text-xs leading-5 text-neutral-500">
                 Ela fica oculta até o dono do perfil aprovar.
               </p>
@@ -119,23 +117,29 @@ export default function PublicReviewsSection({
               <input
                 name="reviewerRole"
                 maxLength={140}
-                placeholder="Cargo ou contexto"
+                placeholder="Cargo"
+                className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+              />
+              <input
+                name="reviewerCompany"
+                maxLength={120}
+                placeholder="Empresa"
+                className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+              />
+              <input
+                name="reviewerEmail"
+                type="email"
+                placeholder="Email opcional"
                 className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
               />
             </div>
-            <input
-              name="reviewerEmail"
-              type="email"
-              placeholder="Email opcional"
-              className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-            />
             <PublicReviewRatingInput defaultValue={5} />
             <textarea
               name="description"
               required
               minLength={10}
               maxLength={500}
-              placeholder="Como foi trabalhar com essa pessoa?"
+              placeholder="Escreva sua avaliação"
               className="min-h-28 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
             />
             <button
@@ -146,8 +150,8 @@ export default function PublicReviewsSection({
             </button>
           </form>
         ) : (
-          <div className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600 lg:col-span-[14]">
-            Reviews do seu perfil aparecem aqui para moderação.
+          <div className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600">
+            As avaliações do seu perfil aparecem aqui para moderação.
           </div>
         )}
       </div>

@@ -18,12 +18,29 @@ function safeReturnPath(value: FormDataEntryValue | null) {
   return value;
 }
 
+function withReviewerCompany(formData: FormData) {
+  const nextFormData = new FormData();
+  formData.forEach((value, key) => {
+    nextFormData.append(key, value);
+  });
+
+  const role = String(formData.get("reviewerRole") ?? "").trim();
+  const company = String(formData.get("reviewerCompany") ?? "").trim();
+  const roleWithCompany = [role, company].filter(Boolean).join(" - ");
+
+  if (roleWithCompany) {
+    nextFormData.set("reviewerRole", roleWithCompany.slice(0, 140));
+  }
+
+  return nextFormData;
+}
+
 export async function submitPublicReviewAction(formData: FormData) {
   const username = String(formData.get("username") ?? "");
   const returnPath = safeReturnPath(formData.get("returnPath"));
   const [requestHeaders, session] = await Promise.all([headers(), auth()]);
 
-  const result = await createPublicReview(formData, {
+  const result = await createPublicReview(withReviewerCompany(formData), {
     clientIp: getClientIpFromHeaders(requestHeaders),
     viewer: session?.user
       ? {

@@ -132,6 +132,38 @@ Escopo previsto:
 - Manter dados base intactos.
 - Definir UI compacta para listas grandes.
 
+## Slice 15 - Feed público de reviews e shell responsivo
+
+Status: FECHADO em 2026-04-29
+
+Escopo previsto:
+
+- Remover o card de reviews do resumo público.
+- Mover nota média e contagem para uma cápsula discreta sobre a capa do perfil público.
+- Usar a área abaixo dos cards como feed de reviews publicadas.
+- Colocar formulário compacto de review no card/feed.
+- Adaptar botões públicos no mobile para ocupar menos espaço.
+- Mudar a navegação mobile autenticada para barra inferior.
+- Ajustar centralização da navegação desktop entre busca e avatar.
+
+Fora:
+
+- Criar campo novo de empresa no banco.
+- Alterar moderação ou regra anti-autoavaliação.
+- Reescrever todo o shell autenticado.
+
+Evidência de fechamento:
+
+- `components/public/PublicProfileHubPage.tsx` removeu o card de reviews, moveu nota/estrela para a capa e inseriu o feed no corpo da página.
+- `components/public/PublicReviewsSection.tsx` virou feed de avaliações publicadas com formulário compacto.
+- `app/[username]/review-actions.ts` combina cargo e empresa em `reviewerRole` sem migration.
+- `components/app/Header.tsx` usa top bar apenas no desktop e navegação inferior no mobile.
+- `components/app/AppShell.tsx` reserva espaço inferior no mobile.
+- `npm run typecheck`: sem erro.
+- `npm run lint`: sem erro.
+- `git diff --check`: sem erro.
+- Busca de mojibake nos arquivos tocados: sem ocorrência.
+
 ## Slice 15 - Decisão sobre capa do perfil base
 
 Status: BACKLOG
