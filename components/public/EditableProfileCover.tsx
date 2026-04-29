@@ -3,10 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import type { ChangeEvent, PointerEvent } from "react";
 import { useRouter } from "next/navigation";
-import { Check, ImagePlus, Move, Trash2, X } from "lucide-react";
+import { Check, ImagePlus, Move, RefreshCcw, Trash2, X } from "lucide-react";
 
 const coverFallbackStyle = { backgroundColor: "#ffffff" };
-const positionStep = 4;
 
 function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
@@ -129,13 +128,6 @@ export function EditableProfileCover({
       dragStartRef.current = null;
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
-  }
-
-  function moveBy(deltaX: number, deltaY: number) {
-    setPosition((current) => ({
-      x: clampPercent(current.x + deltaX),
-      y: clampPercent(current.y + deltaY),
-    }));
   }
 
   function cancelEditing() {
@@ -289,7 +281,7 @@ export function EditableProfileCover({
 
           {editing ? (
             <div
-              className="absolute right-4 top-16 z-30 flex max-w-[calc(100%-2rem)] flex-wrap justify-end gap-2 rounded-2xl bg-white/85 p-2 shadow-sm backdrop-blur max-sm:top-28"
+              className="absolute left-4 top-4 z-30 flex max-w-[calc(100%-2rem)] flex-wrap items-center gap-2"
               onClick={(event) => event.stopPropagation()}
               onPointerDown={(event) => event.stopPropagation()}
               onPointerMove={(event) => event.stopPropagation()}
@@ -297,102 +289,51 @@ export function EditableProfileCover({
             >
               <button
                 type="button"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-950 shadow-sm transition hover:border-neutral-950"
                 onClick={(event) => {
                   event.stopPropagation();
                   inputRef.current?.click();
                 }}
+                aria-label={hasImage ? "Trocar capa" : "Enviar capa"}
+                title={hasImage ? "Trocar capa" : "Enviar capa"}
               >
-                <ImagePlus className="h-4 w-4" aria-hidden />
-                {hasImage ? "Trocar" : "Upload"}
+                <RefreshCcw className="h-4 w-4" aria-hidden />
               </button>
               {imageUrl || localPreviewUrl ? (
                 <button
                   type="button"
-                  className="inline-flex h-10 items-center gap-2 rounded-full border border-red-200 bg-white px-4 text-sm font-bold text-red-700 shadow-sm"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-red-200 bg-white text-red-700 shadow-sm transition hover:border-red-500"
                   onClick={removeCover}
+                  aria-label="Remover capa"
+                  title="Remover capa"
                 >
                   <Trash2 className="h-4 w-4" aria-hidden />
-                  Remover
                 </button>
-              ) : null}
-              {hasImage ? (
-                <div className="grid grid-cols-3 gap-1 rounded-2xl border border-neutral-300 bg-white p-1 shadow-sm">
-                  <span />
-                  <button
-                    type="button"
-                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      moveBy(0, -positionStep);
-                    }}
-                    aria-label="Mover capa para cima"
-                  >
-                    ^
-                  </button>
-                  <span />
-                  <button
-                    type="button"
-                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      moveBy(-positionStep, 0);
-                    }}
-                    aria-label="Mover capa para esquerda"
-                  >
-                    {"<"}
-                  </button>
-                  <span className="grid h-8 w-8 place-items-center text-xs font-black">
-                    {position.x}/{position.y}
-                  </span>
-                  <button
-                    type="button"
-                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      moveBy(positionStep, 0);
-                    }}
-                    aria-label="Mover capa para direita"
-                  >
-                    {">"}
-                  </button>
-                  <span />
-                  <button
-                    type="button"
-                    className="h-8 w-8 rounded-full text-sm font-black hover:bg-neutral-100"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      moveBy(0, positionStep);
-                    }}
-                    aria-label="Mover capa para baixo"
-                  >
-                    v
-                  </button>
-                  <span />
-                </div>
               ) : null}
               <button
                 type="button"
-                className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950 px-4 text-sm font-bold text-white shadow-sm disabled:opacity-60"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-neutral-950 text-white shadow-sm transition hover:bg-neutral-800 disabled:opacity-60"
                 disabled={saving}
                 onClick={(event) => {
                   event.stopPropagation();
                   void saveCover();
                 }}
+                aria-label={saving ? "Salvando capa" : "Salvar capa"}
+                title={saving ? "Salvando capa" : "Salvar capa"}
               >
                 <Check className="h-4 w-4" aria-hidden />
-                {saving ? "Salvando" : "Salvar capa"}
               </button>
               <button
                 type="button"
-                className="inline-flex h-10 items-center gap-2 rounded-full border border-neutral-300 bg-white px-4 text-sm font-bold text-neutral-950 shadow-sm"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 bg-white text-neutral-950 shadow-sm transition hover:border-neutral-950"
                 onClick={(event) => {
                   event.stopPropagation();
                   cancelEditing();
                 }}
+                aria-label="Cancelar edicao da capa"
+                title="Cancelar"
               >
                 <X className="h-4 w-4" aria-hidden />
-                Cancelar
               </button>
               {hasImage ? (
                 <span className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950/85 px-3 text-xs font-bold text-white">
