@@ -31,7 +31,7 @@ export default async function PublicTemplatePage({
     getPublicReviewSummary(username),
   ]);
   const ownerProfileHref =
-    session?.user?.id === page.version.profile.user.id ? "/home" : undefined;
+    session?.user?.id === page.version.profile.user.id ? `/${username}` : undefined;
 
   return (
     <PublicPortfolioTabsPage

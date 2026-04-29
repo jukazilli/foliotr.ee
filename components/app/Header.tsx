@@ -138,7 +138,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
       href: homeHref,
       label: "Inicio",
       icon: Home,
-      match: [homeHref, "/home", "/dashboard"],
+      match: [homeHref, "/dashboard"],
     },
     {
       href: "/portfolios",

@@ -227,7 +227,7 @@ export default async function PortfoliosPage({ searchParams }: PortfoliosPagePro
                 <Edit2 className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link
-                href="/home"
+                href={user.username ? `/${user.username}` : "/profile"}
                 aria-label="Visualizar perfil"
                 title="Visualizar perfil"
                 className="grid h-10 w-10 place-items-center rounded-full border-2 border-line bg-white transition-colors hover:bg-black hover:text-white"
