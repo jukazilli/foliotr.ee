@@ -3,14 +3,13 @@ import {
   ArrowUpRight,
   BriefcaseBusiness,
   Edit3,
-  FileText,
-  Globe2,
   MapPin,
   MessageSquareText,
   Star,
   UserRound,
 } from "lucide-react";
 import { EditableProfileCover } from "@/components/public/EditableProfileCover";
+import { PublicPortfolioCarousel } from "@/components/public/PublicPortfolioCarousel";
 import PublicReviewsSection from "@/components/public/PublicReviewsSection";
 import type { PublicReviewSummary } from "@/lib/server/domain/reviews";
 import type { PublicProfileHub } from "@/lib/server/domain/public-pages";
@@ -21,7 +20,6 @@ const softSurfaceStyle = {
   borderColor: "#e5e7eb",
   boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
 };
-const softBorderStyle = { borderColor: "#e5e7eb" };
 
 interface PublicProfileHubPageProps {
   username: string;
@@ -109,6 +107,8 @@ export default function PublicProfileHubPage({
       isDefault: version.isDefault,
     }))
   );
+  const primaryPortfolioItem =
+    publishedItems.find((item) => item.isDefault) ?? publishedItems[0] ?? null;
   const behavioralAnalysis = selectBehavioralAnalysis(
     hub.user.vocationalTests,
     "portfolio"
@@ -190,7 +190,7 @@ export default function PublicProfileHubPage({
                   href="/portfolios"
                   className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-neutral-950 px-4 text-sm font-bold text-white transition hover:bg-neutral-800"
                 >
-                  Gerenciar portfolios
+                  Gerenciar portfólios
                   <ArrowUpRight className="h-4 w-4" aria-hidden />
                 </Link>
               ) : null}
@@ -209,7 +209,7 @@ export default function PublicProfileHubPage({
                   {defaultPresentation?.body ?? hub.bio}
                 </p>
               ) : (
-                <p>Perfil em construcao.</p>
+                <p>Perfil em construção.</p>
               )}
 
               <div className="grid gap-2 pt-2">
@@ -222,7 +222,7 @@ export default function PublicProfileHubPage({
                 {age !== null ? <span>{age} anos</span> : null}
                 <span className="inline-flex items-center gap-2">
                   <BriefcaseBusiness className="h-4 w-4 text-neutral-500" aria-hidden />
-                  {isWorking ? "Trabalhando no momento" : "Disponivel no momento"}
+                  {isWorking ? "Trabalhando no momento" : "Disponível no momento"}
                 </span>
                 {currentExperience ? (
                   <span>
@@ -249,7 +249,10 @@ export default function PublicProfileHubPage({
             </div>
           </ProfileCard>
 
-          <ProfileCard title="Portfolio" className="lg:col-span-8">
+          <ProfileCard
+            title={primaryPortfolioItem?.title ?? "Portfólio"}
+            className="lg:col-span-8"
+          >
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-neutral-600">
@@ -262,30 +265,7 @@ export default function PublicProfileHubPage({
                   </span>
                 ) : null}
               </div>
-              {publishedItems.slice(0, 2).map((item) => (
-                <Link
-                  key={item.id}
-                  href={item.href}
-                  className="flex items-center justify-between gap-3 rounded-xl border p-3 transition hover:border-neutral-950"
-                  style={softBorderStyle}
-                >
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm font-extrabold">
-                      {item.title}
-                    </span>
-                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-[0.12em] text-neutral-500">
-                      <Globe2 className="h-3.5 w-3.5" aria-hidden />
-                      portfolio web
-                    </span>
-                  </span>
-                  <ArrowUpRight className="h-4 w-4 shrink-0" aria-hidden />
-                </Link>
-              ))}
-              {publishedItems.length === 0 ? (
-                <p className="text-sm font-semibold text-neutral-500">
-                  Nenhum portfolio publicado ainda.
-                </p>
-              ) : null}
+              <PublicPortfolioCarousel items={publishedItems} />
             </div>
           </ProfileCard>
 
@@ -306,7 +286,7 @@ export default function PublicProfileHubPage({
               {reviewSummary.averageRating ? (
                 <span className="inline-flex items-center gap-1 text-yellow-500">
                   <Star className="h-4 w-4 fill-yellow-400" aria-hidden />
-                  media das avaliacoes
+                  média das avaliações
                 </span>
               ) : null}
               <a
@@ -320,87 +300,8 @@ export default function PublicProfileHubPage({
           </ProfileCard>
         </section>
 
-        <section
-          className={`grid gap-3 ${
-            behavioralAnalysis ? "lg:col-span-16" : "lg:col-span-full"
-          }`}
-          aria-labelledby="published-links-title"
-        >
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
-                Portfolios e curriculos
-              </p>
-              <h2
-                id="published-links-title"
-                className="mt-1 text-2xl font-extrabold tracking-[-0.03em]"
-              >
-                Experiências publicadas
-              </h2>
-            </div>
-            <span className="text-sm font-bold text-neutral-500">
-              {publishedItems.length} ativo{publishedItems.length === 1 ? "" : "s"}
-            </span>
-          </div>
-
-          {publishedItems.length > 0 ? (
-            publishedItems.map((item) => (
-              <article
-                key={item.id}
-                className="rounded-2xl border bg-white p-4"
-                style={softSurfaceStyle}
-              >
-                <Link
-                  href={item.href}
-                  className="group flex items-center justify-between gap-4"
-                >
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="overflow-wrap-anywhere text-lg font-extrabold">
-                        {item.title}
-                      </h3>
-                      {item.isDefault ? (
-                        <span className="rounded-full bg-lime-100 px-2 py-1 text-xs font-extrabold text-lime-950">
-                          principal
-                        </span>
-                      ) : null}
-                    </div>
-                    {item.description ? (
-                      <p className="mt-1 overflow-wrap-anywhere text-sm font-semibold leading-6 text-neutral-600">
-                        {item.description}
-                      </p>
-                    ) : null}
-                    <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.12em] text-neutral-500">
-                      <Globe2 className="h-3.5 w-3.5" aria-hidden />
-                      Portfolio web
-                    </p>
-                  </div>
-                  <ArrowUpRight
-                    className="h-5 w-5 shrink-0 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    aria-hidden
-                  />
-                </Link>
-
-                {item.resumeHref ? (
-                  <Link
-                    href={item.resumeHref}
-                    className="mt-3 inline-flex items-center gap-2 rounded-xl border border-neutral-200 bg-neutral-50 px-3 py-2 text-sm font-extrabold text-neutral-800 transition hover:border-neutral-950 hover:bg-white"
-                  >
-                    <FileText className="h-4 w-4" aria-hidden />
-                    Ver curriculo rapido deste portfolio
-                  </Link>
-                ) : null}
-              </article>
-            ))
-          ) : (
-            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white/70 p-6 text-center text-sm font-semibold text-neutral-500">
-              Nenhum portfolio publicado ainda.
-            </div>
-          )}
-        </section>
-
         {behavioralAnalysis ? (
-          <section className="grid gap-3 lg:col-span-8">
+          <section className="grid gap-3 lg:col-span-full">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
                 Teste comportamental

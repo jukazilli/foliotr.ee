@@ -5,71 +5,78 @@ Last updated: 2026-04-29
 
 ## Nome
 
-Slice operacional 1 - Contratos de integrações e políticas técnicas.
+Slice 12 - Capa por versão.
 
 ## Modo de entrada
 
-Slice.
-
-A auditoria documental fechou governança, jornadas, módulos e remaster social UI, mas manteve lacunas operacionais sem contrato mínimo.
+Slice/Corte.
 
 ## Objetivo
 
-Definir contratos mínimos para rate limit durável, política Gemini e política de `generated/prisma-client`, antes de qualquer implementação operacional.
+Adicionar capa própria para cada versão de portfólio, configurável antes de `Identidade`, reutilizando a galeria de assets e alimentando o carrossel público.
 
 ## Fontes de verdade
 
-- `docs/10_backlog/backlog-estrutural.md`.
-- `docs/12_auditoria/inventario-e-auditoria-documental.md`.
-- `lib/security/rate-limit.ts`.
-- `lib/vocational-test/*`.
-- `prisma/schema.prisma` e `generated/prisma-client/`.
+- `docs/10_backlog/backlog-portfolio-versionado-ui.md`.
+- `components/portfolios/PortfolioVariationWizard.tsx`.
+- `components/assets/AssetGalleryPicker.tsx`.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts`.
+- `lib/server/domain/versions.ts`.
+- `lib/server/domain/includes.ts`.
+- `prisma/schema.prisma`.
+- `components/public/PublicPortfolioCarousel.tsx`.
 
 ## Contratos necessários
 
-- Escolha de provider para rate limit durável ou decisão explícita de manter memória em ambiente local.
-- Limites de custo/uso para Gemini e comportamento quando a chave não estiver configurada.
-- Política para versionar ou ignorar `generated/prisma-client`.
+- Capa da versão é separada da capa pública do perfil base.
+- O passo `Capa` vem antes de `Identidade`.
+- A imagem deve ser selecionada pela galeria central ou enviada por ela.
+- Salvar capa altera apenas a versão atual.
+- O carrossel público usa a capa da versão quando existir e fallback visual quando não existir.
 
 ## Lacunas
 
-- Não há provider definido para rate limit durável.
-- Não há política operacional final para Gemini.
-- Não há decisão final para o Prisma Client gerado.
+- `Version` ainda não possui campo persistido para capa.
+- Não há migration para capa da versão.
+- A query pública ainda não expõe capa de versão.
 
 ## Backlog por dependência
 
-1. Contrato de rate limit durável.
-2. Contrato operacional Gemini.
-3. Decisão sobre `generated/prisma-client`.
-4. Atualizar `docs/08_integracoes/`.
-5. Implementar apenas o que tiver contrato fechado.
+1. Adicionar campo de capa em `Version`.
+2. Atualizar includes/domínio para carregar a capa.
+3. Atualizar action de edição da variação.
+4. Adicionar passo `Capa` no wizard.
+5. Alimentar carrossel público com a capa.
+6. Validar TypeScript, lint, schema e mojibake.
 
 ## Slice atual
 
-Executar apenas contrato operacional antes de código.
-
 Dentro:
 
-- Documentar decisões e opções.
-- Marcar itens bloqueados se faltarem escolhas de provider.
-- Atualizar backlog estrutural.
+- Persistir URL de capa da versão.
+- Reutilizar `AssetGalleryPicker` no passo `Capa`.
+- Mostrar preview de capa no editor.
+- Usar capa no carrossel público.
 
 Fora:
 
-- Implementar Redis/Upstash/Vercel KV sem decisão.
-- Alterar geração Prisma sem decisão.
-- Alterar fluxo Gemini sem contrato.
+- Remover capa do perfil base.
+- Editar dados granulares de identidade.
+- Migrar capas antigas automaticamente.
 
 ## Skills/agentes acionados
 
 - `metodo-estrutural-integrado`.
 - `always-todo`.
 
-Subagentes não acionados: o usuário não solicitou delegação ou trabalho multiagente.
+Subagentes não acionados: não houve pedido de delegação multiagente.
 
 ## Evidências de fechamento esperadas
 
-- Contrato em `docs/08_integracoes/`.
-- Backlog estrutural atualizado.
-- Busca por mojibake nos docs alterados.
+- Migration ou schema atualizado.
+- Editor com passo `Capa`.
+- Carrossel público recebendo capa da versão.
+- `npm run typecheck`.
+- `npm run lint`.
+- `git diff --check`.
+- Busca de mojibake nos arquivos tocados.

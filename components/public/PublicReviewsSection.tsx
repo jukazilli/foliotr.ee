@@ -91,7 +91,7 @@ export default function PublicReviewsSection({
         {canSubmit ? (
           <form
             action={submitPublicReviewAction}
-            className="grid gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-14"
+            className="grid w-full gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-[14]"
           >
             <input type="hidden" name="username" value={username} />
             <input type="hidden" name="returnPath" value={returnPath} />
@@ -146,7 +146,7 @@ export default function PublicReviewsSection({
             </button>
           </form>
         ) : (
-          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600 lg:col-span-14">
+          <div className="w-full rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600 lg:col-span-[14]">
             Reviews do seu perfil aparecem aqui para moderação.
           </div>
         )}
