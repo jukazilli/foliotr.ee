@@ -1,81 +1,75 @@
 # Slice Atual
 
 Status: ATUAL
-Last updated: 2026-04-28
+Last updated: 2026-04-29
 
 ## Nome
 
-Slice 5 - Compatibilidade e QA.
+Slice operacional 1 - Contratos de integrações e políticas técnicas.
 
 ## Modo de entrada
 
-Auditoria.
+Slice.
 
-O pacote funcional de versionamento ja foi implementado nos slices 1 a 4. Este recorte fecha evidencias automatizadas e registra limites reais do QA.
+A auditoria documental fechou governança, jornadas, módulos e remaster social UI, mas manteve lacunas operacionais sem contrato mínimo.
 
 ## Objetivo
 
-Validar que schema, dominio, lint, testes e build continuam consistentes depois da introducao de `Version.profileSnapshot`, wizard de variacao, nomes por cargo e seed de template pelo snapshot.
+Definir contratos mínimos para rate limit durável, política Gemini e política de `generated/prisma-client`, antes de qualquer implementação operacional.
 
 ## Fontes de verdade
 
-- `docs/02_contratos/contrato-versionamento-portfolio.md`.
-- `docs/10_backlog/backlog-versionamento-portfolio.md`.
-- Commits do pacote na branch `feat/social-ui-remaster`.
-- Testes automatizados em `tests/domain/versions-domain.test.ts`.
-- Comandos de validacao executados localmente.
+- `docs/10_backlog/backlog-estrutural.md`.
+- `docs/12_auditoria/inventario-e-auditoria-documental.md`.
+- `lib/security/rate-limit.ts`.
+- `lib/vocational-test/*`.
+- `prisma/schema.prisma` e `generated/prisma-client/`.
 
-## Contratos necessarios
+## Contratos necessários
 
-- Variacao possui snapshot independente.
-- Wizard escreve em `Version.profileSnapshot`.
-- Card usa cargo/headline como nome principal.
-- Template e blocos consomem snapshot da variacao.
-- Testes precisam refletir o novo contrato de criacao de `Version`.
+- Escolha de provider para rate limit durável ou decisão explícita de manter memória em ambiente local.
+- Limites de custo/uso para Gemini e comportamento quando a chave não estiver configurada.
+- Política para versionar ou ignorar `generated/prisma-client`.
 
 ## Lacunas
 
-- QA browser autenticado nao foi executado por falta de sessao autenticada automatizada.
-- Visibilidade granular por item/secao continua pendente.
-- Depreciacao do editor tecnico legado continua pendente.
+- Não há provider definido para rate limit durável.
+- Não há política operacional final para Gemini.
+- Não há decisão final para o Prisma Client gerado.
 
-## Backlog por dependencia
+## Backlog por dependência
 
-1. Compatibilidade e QA.
+1. Contrato de rate limit durável.
+2. Contrato operacional Gemini.
+3. Decisão sobre `generated/prisma-client`.
+4. Atualizar `docs/08_integracoes/`.
+5. Implementar apenas o que tiver contrato fechado.
 
-## Slice executado
+## Slice atual
 
-Executado apenas o Slice 5 do backlog de versionamento.
+Executar apenas contrato operacional antes de código.
 
 Dentro:
 
-- `npm run db:migrate:status`.
-- `npm run typecheck`.
-- `npm run test`.
-- `npm run lint`.
-- `npm run build` ja executado nos slices funcionais e mantido como evidencia do pacote.
-- Teste de dominio atualizado para esperar `profileSnapshot` em `createOwnedVersion`.
-- Busca por mojibake e `git diff --check`.
+- Documentar decisões e opções.
+- Marcar itens bloqueados se faltarem escolhas de provider.
+- Atualizar backlog estrutural.
 
 Fora:
 
-- Browser QA autenticado.
-- Testes E2E novos.
-- Implementar lacunas funcionais futuras.
+- Implementar Redis/Upstash/Vercel KV sem decisão.
+- Alterar geração Prisma sem decisão.
+- Alterar fluxo Gemini sem contrato.
 
 ## Skills/agentes acionados
 
-- `metodo-estrutural-integrado`
-- `always-todo`
-- `consistencia-documental`
+- `metodo-estrutural-integrado`.
+- `always-todo`.
 
-Subagentes nao acionados: o usuario nao solicitou delegacao ou trabalho multiagente.
+Subagentes não acionados: o usuário não solicitou delegação ou trabalho multiagente.
 
-## Evidencias de fechamento
+## Evidências de fechamento esperadas
 
-- `npm run db:migrate:status`: schema atualizado.
-- `npm run typecheck`: sem erro.
-- `npm run test`: 20 arquivos, 79 testes passando.
-- `npm run lint`: sem warnings.
-- `tests/domain/versions-domain.test.ts` atualizado para o novo contrato.
-- `git diff --check`: sem erro.
+- Contrato em `docs/08_integracoes/`.
+- Backlog estrutural atualizado.
+- Busca por mojibake nos docs alterados.

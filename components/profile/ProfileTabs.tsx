@@ -19,26 +19,32 @@ export function ProfileTabs({ tabs, defaultValue }: ProfileTabsProps) {
   const initialValue = defaultValue ?? tabs[0]?.value ?? "";
   const [activeTab, setActiveTab] = useState(initialValue);
   const activePanelId = useMemo(() => `profile-tabpanel-${activeTab}`, [activeTab]);
-  const activeTabLabel = tabs.find((tab) => tab.value === activeTab)?.label ?? "Secao";
+  const tabValues = useMemo(() => tabs.map((tab) => tab.value).join("|"), [tabs]);
 
   useEffect(() => {
     if (tabs.length === 0) return;
 
-    const nextValue = defaultValue ?? tabs[0]?.value ?? "";
+    const nextValue =
+      defaultValue && tabs.some((tab) => tab.value === defaultValue)
+        ? defaultValue
+        : tabs.some((tab) => tab.value === activeTab)
+          ? activeTab
+          : tabs[0]?.value ?? "";
 
-    if (!tabs.some((tab) => tab.value === nextValue)) return;
-    setActiveTab(nextValue);
-  }, [defaultValue, tabs]);
+    if (nextValue && nextValue !== activeTab) {
+      setActiveTab(nextValue);
+    }
+  }, [activeTab, defaultValue, tabs, tabValues]);
 
   if (tabs.length === 0) return null;
 
   return (
-    <div className="grid gap-5 lg:grid-cols-[18rem_minmax(0,1fr)]">
-      <aside className="rounded-[22px] border-2 border-line bg-white p-3 shadow-app lg:sticky lg:top-24 lg:self-start">
+    <div className="grid gap-5 lg:h-[calc(100dvh-13rem)] lg:min-h-0 lg:grid-cols-[18rem_minmax(0,1fr)]">
+      <aside className="rounded-[22px] border-2 border-line bg-white p-3 shadow-app lg:sticky lg:top-24 lg:max-h-full lg:self-start lg:overflow-y-auto">
         <p className="px-3 pb-3 pt-1 text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-muted">
           Dados do perfil
         </p>
-        <div role="tablist" aria-label="Secoes do perfil" className="grid gap-1">
+        <div role="tablist" aria-label="Seções do perfil" className="grid gap-1">
           {tabs.map((tab) => {
             const selected = activeTab === tab.value;
 
@@ -69,16 +75,7 @@ export function ProfileTabs({ tabs, defaultValue }: ProfileTabsProps) {
         </div>
       </aside>
 
-      <section className="min-w-0">
-        <div className="mb-4 rounded-[18px] border border-neutral-200 bg-white px-4 py-3 shadow-sm">
-          <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.18em] text-neutral-500">
-            Editando
-          </p>
-          <h2 className="mt-1 text-xl font-extrabold text-neutral-950">
-            {activeTabLabel}
-          </h2>
-        </div>
-
+      <section className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
         {tabs.map((tab) => (
           <div
             key={tab.value}
@@ -87,7 +84,7 @@ export function ProfileTabs({ tabs, defaultValue }: ProfileTabsProps) {
             aria-labelledby={`profile-tab-${tab.value}`}
             hidden={activeTab !== tab.value}
             tabIndex={0}
-            className="outline-none"
+            className="outline-none lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:pr-2"
           >
             {activePanelId === `profile-tabpanel-${tab.value}` ? tab.children : null}
           </div>

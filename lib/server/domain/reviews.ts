@@ -12,10 +12,19 @@ interface CreatePublicReviewOptions {
   clientIp?: string;
   db?: ReviewsDatabase;
   now?: number;
+  viewer?: {
+    id?: string | null;
+    email?: string | null;
+    username?: string | null;
+  } | null;
 }
 
 function roundRating(value: number) {
   return Math.round(value * 10) / 10;
+}
+
+function normalizeIdentity(value: string | null | undefined) {
+  return value?.trim().toLowerCase() ?? "";
 }
 
 export async function getPublicReviewSummary(username: string) {
@@ -79,7 +88,7 @@ export async function createPublicReview(
   if (input.website) {
     return {
       ok: true,
-      message: "Review recebida. Ela ficara oculta ate o dono do perfil aprovar.",
+      message: "Review recebida. Ela ficará oculta até o dono do perfil aprovar.",
     };
   }
 
@@ -97,6 +106,21 @@ export async function createPublicReview(
     };
   }
 
+  if (input.reviewerEmail) {
+    const emailRateLimit = checkRateLimit(
+      `reviews:public-email:${normalizeIdentity(input.reviewerEmail)}:${input.username}`,
+      PUBLIC_REVIEW_RATE_LIMIT,
+      options.now
+    );
+
+    if (!emailRateLimit.allowed) {
+      return {
+        ok: false,
+        message: "Muitas reviews enviadas em pouco tempo. Tente novamente mais tarde.",
+      };
+    }
+  }
+
   const profile = await db.profile.findFirst({
     where: {
       user: {
@@ -105,6 +129,16 @@ export async function createPublicReview(
     },
     select: {
       id: true,
+      displayName: true,
+      publicEmail: true,
+      user: {
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          name: true,
+        },
+      },
       _count: {
         select: {
           proofs: true,
@@ -114,7 +148,28 @@ export async function createPublicReview(
   });
 
   if (!profile) {
-    return { ok: false, message: "Perfil nao encontrado." };
+    return { ok: false, message: "Perfil não encontrado." };
+  }
+
+  if (options.viewer?.id && options.viewer.id === profile.user.id) {
+    return {
+      ok: false,
+      message: "Você não pode enviar review para o próprio perfil.",
+    };
+  }
+
+  const reviewerEmail = normalizeIdentity(input.reviewerEmail);
+  const ownerEmails = [
+    normalizeIdentity(profile.user.email),
+    normalizeIdentity(profile.publicEmail),
+    normalizeIdentity(options.viewer?.email),
+  ].filter(Boolean);
+
+  if (reviewerEmail && ownerEmails.includes(reviewerEmail)) {
+    return {
+      ok: false,
+      message: "Use reviews de outras pessoas para compor sua reputação.",
+    };
   }
 
   const pendingPublicReviews = await db.proof.count({
@@ -129,7 +184,7 @@ export async function createPublicReview(
   if (pendingPublicReviews >= PUBLIC_REVIEW_PENDING_LIMIT) {
     return {
       ok: false,
-      message: "Este perfil ja tem muitas reviews aguardando aprovacao.",
+      message: "Este perfil já tem muitas reviews aguardando aprovação.",
     };
   }
 
@@ -152,6 +207,6 @@ export async function createPublicReview(
 
   return {
     ok: true,
-    message: "Review recebida. Ela ficara oculta ate o dono do perfil aprovar.",
+    message: "Review recebida. Ela ficará oculta até o dono do perfil aprovar.",
   };
 }

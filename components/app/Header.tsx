@@ -96,7 +96,7 @@ function AccountMenu({
           href="/settings"
         >
           <Settings className="h-4 w-4" aria-hidden="true" />
-          Configuracoes
+          Configurações
         </Link>
         <div className="my-2 h-px bg-line/20" />
         <form action={signOutAction}>
@@ -136,7 +136,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
   const navItems: SocialNavItem[] = [
     {
       href: homeHref,
-      label: "Inicio",
+      label: "Início",
       icon: Home,
       match: [homeHref, "/dashboard"],
     },
@@ -170,7 +170,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b-2 border-line bg-white px-3 py-2">
-      <div className="mx-auto flex max-w-[1560px] items-center gap-3">
+      <div className="relative mx-auto flex max-w-[1560px] items-center gap-3">
         <FolioTreeLogo
           href={homeHref}
           compact
@@ -190,8 +190,8 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
         </div>
 
         <nav
-          className="flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto px-1 md:flex-none md:gap-2"
-          aria-label="Navegacao principal"
+          className="flex min-w-0 flex-1 items-center justify-center gap-1 overflow-x-auto px-1 md:absolute md:left-1/2 md:flex-none md:-translate-x-1/2 md:gap-2"
+          aria-label="Navegação principal"
         >
           {navItems.map((item) => (
             <NavIcon key={item.href} item={item} active={Boolean(isActive(item))} />

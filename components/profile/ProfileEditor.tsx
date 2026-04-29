@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import {
   BriefcaseBusiness,
   Check,
+  ChevronDown,
+  ChevronUp,
   Crop,
   ExternalLink,
   FolderOpenDot,
@@ -248,19 +250,19 @@ function cleanAssetUrl(value: string | null | undefined) {
 }
 
 const ERROR_LABELS: Record<string, string> = {
-  displayName: "Nome de exibicao",
+  displayName: "Nome de exibição",
   headline: "Headline",
   bio: "Bio curta",
-  location: "Localizacao",
+  location: "Localização",
   pronouns: "Pronomes",
   websiteUrl: "Site",
-  publicEmail: "Email publico",
+  publicEmail: "Email público",
   phone: "Telefone",
   birthDate: "Data de nascimento",
   defaultPresentationId: "Apresentação padrão",
   openToOpportunities: "Aberto a oportunidades",
-  opportunityMotivation: "Motivacao de mudanca",
-  showOpportunityMotivation: "Mostrar motivacao",
+  opportunityMotivation: "Motivação de mudança",
+  showOpportunityMotivation: "Mostrar motivação",
   highlights: "Highlights",
   experiences: "Experiencias",
   educations: "Formacao",
@@ -272,24 +274,24 @@ const ERROR_LABELS: Record<string, string> = {
   links: "Links",
   company: "Empresa",
   role: "Cargo",
-  institution: "Instituicao",
+  institution: "Instituição",
   degree: "Curso",
-  field: "Area de estudo",
-  description: "Descricao",
-  startDate: "Data de inicio",
+  field: "Área de estudo",
+  description: "Descrição",
+  startDate: "Data de início",
   endDate: "Data final",
   current: "Atual",
   logoUrl: "Logo",
   name: "Nome",
   category: "Categoria",
   level: "Nivel",
-  title: "Titulo",
+  title: "Título",
   imageUrl: "Imagem",
   url: "URL",
-  repoUrl: "Repositorio",
+  repoUrl: "Repositório",
   tags: "Tags",
   date: "Data",
-  metric: "Metrica",
+  metric: "Métrica",
   platform: "Tipo",
   label: "Label",
 };
@@ -747,25 +749,6 @@ function IconButton({
   );
 }
 
-function SectionBar({
-  count,
-  label,
-  action,
-}: {
-  count: number;
-  label: string;
-  action: ReactNode;
-}) {
-  return (
-    <div className="mb-4 flex items-center justify-between gap-4">
-      <p className="font-data text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
-        {count} {label}
-      </p>
-      {action}
-    </div>
-  );
-}
-
 export function ProfileEditor({
   initialProfile,
   initialTab,
@@ -1120,7 +1103,7 @@ export function ProfileEditor({
           tabs={[
             {
               value: "dados",
-              label: "Dados basicos",
+              label: "Dados básicos",
               count: 1,
               children: (
                 <div className="app-grid-24">
@@ -1147,10 +1130,10 @@ export function ProfileEditor({
                           <div className="flex flex-wrap items-center justify-between gap-3">
                             <div>
                               <p className="text-sm font-semibold text-neutral-900">
-                                Capa publica
+                                Capa pública
                               </p>
                               <p className="mt-1 text-sm text-neutral-600">
-                                Imagem exibida no topo do seu perfil publico.
+                                Capa do perfil.
                               </p>
                             </div>
 
@@ -1232,7 +1215,7 @@ export function ProfileEditor({
                           </div>
                         </div>
 
-                        <Field label="Nome de exibicao">
+                        <Field label="Nome de exibição">
                           <input
                             id="profile-display-name"
                             name="displayName"
@@ -1241,7 +1224,7 @@ export function ProfileEditor({
                             onChange={onInput("displayName")}
                           />
                         </Field>
-                        <Field label="Handle" meta="URL publica">
+                          <Field label="Handle" meta="URL pública">
                           <UsernameEditor
                             initialUsername={username}
                             onChanged={setUsername}
@@ -1314,7 +1297,7 @@ export function ProfileEditor({
                           </label>
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
-                          <Field label="Localizacao">
+                          <Field label="Localização">
                             <input
                               id="profile-location"
                               name="location"
@@ -1334,7 +1317,7 @@ export function ProfileEditor({
                           </Field>
                         </div>
                         <div className="grid gap-4 sm:grid-cols-2">
-                          <Field label="Email publico">
+                          <Field label="Email público">
                             <input
                               id="profile-public-email"
                               name="publicEmail"
@@ -1368,7 +1351,7 @@ export function ProfileEditor({
                           </Field>
                           <Field label="Idade" meta="calculada automaticamente">
                             <div className="flex h-[42px] items-center rounded-xl border border-neutral-200 bg-neutral-50 px-3 text-sm font-medium text-neutral-700">
-                              {age !== null ? `${age} anos` : "Nao informada"}
+                              {age !== null ? `${age} anos` : "Não informada"}
                             </div>
                           </Field>
                         </div>
@@ -1389,13 +1372,13 @@ export function ProfileEditor({
             },
             {
               value: "formacao",
-              label: "Formacao",
+              label: "Formação",
               count: profile.educations.length,
               children: (
                 <ListPanel
                   icon={<GraduationCap className="h-4 w-4" />}
                   count={profile.educations.length}
-                  label="formacoes"
+                  label="formações"
                   addLabel="Formacao"
                   onAdd={() =>
                     addItem<EditableEducation>("educations", {
@@ -1412,7 +1395,11 @@ export function ProfileEditor({
                   }
                 >
                   {profile.educations.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.institution || item.degree}
+                      detail={item.field || item.degree}
+                    >
                       <CardContent className="grid gap-4 p-4 md:grid-cols-[130px_1fr_auto]">
                         <div className="space-y-3">
                           <input
@@ -1453,7 +1440,7 @@ export function ProfileEditor({
                           <div className="grid gap-3 sm:grid-cols-2">
                             <input
                               className={inputClass()}
-                              placeholder="Instituicao"
+                              placeholder="Instituição"
                               value={item.institution}
                               onChange={(event) =>
                                 updateList<EditableEducation>("educations", item._key, {
@@ -1474,7 +1461,7 @@ export function ProfileEditor({
                           </div>
                           <input
                             className={inputClass()}
-                            placeholder="Area de estudo"
+                            placeholder="Área de estudo"
                             value={item.field}
                             onChange={(event) =>
                               updateList<EditableEducation>("educations", item._key, {
@@ -1484,7 +1471,7 @@ export function ProfileEditor({
                           />
                           <textarea
                             className={textareaClass()}
-                            placeholder="Resumo da formacao, enfase, projetos ou conquistas"
+                            placeholder="Resumo da formação"
                             value={item.description}
                             onChange={(event) =>
                               updateList<EditableEducation>("educations", item._key, {
@@ -1494,7 +1481,7 @@ export function ProfileEditor({
                           />
                           <input
                             className={inputClass()}
-                            placeholder="Logo da instituicao"
+                            placeholder="Logo da instituição"
                             value={item.logoUrl}
                             onChange={(event) =>
                               updateList<EditableEducation>("educations", item._key, {
@@ -1504,7 +1491,7 @@ export function ProfileEditor({
                           />
                         </div>
                         <IconButton
-                          label="Remover formacao"
+                          label="Remover formação"
                           onClick={() =>
                             removeItem<EditableEducation>("educations", item._key)
                           }
@@ -1512,7 +1499,7 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
@@ -1537,12 +1524,12 @@ export function ProfileEditor({
                     })
                   }
                 >
-                  <div className="mb-4 rounded-[16px] border border-line bg-cream px-4 py-3 text-sm font-semibold text-muted">
-                    Crie apresentações reutilizáveis para trocar o texto de sobre em
-                    portfólios e currículos sem reescrever tudo.
-                  </div>
                   {profile.presentations.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.title}
+                      detail={item.context}
+                    >
                       <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
                         <div className="grid gap-3">
                           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line bg-cream px-4 py-3">
@@ -1621,21 +1608,21 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
             },
             {
               value: "experiencias",
-              label: "Experiencias",
+              label: "Experiências",
               count: profile.experiences.length,
               children: (
                 <ListPanel
                   icon={<BriefcaseBusiness className="h-4 w-4" />}
                   count={profile.experiences.length}
-                  label="experiencias"
-                  addLabel="Experiencia"
+                  label="experiências"
+                  addLabel="Experiência"
                   onAdd={() =>
                     addItem<EditableExperience>("experiences", {
                       _key: key(),
@@ -1651,7 +1638,11 @@ export function ProfileEditor({
                   }
                 >
                   {profile.experiences.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.role || item.company}
+                      detail={item.company || item.location}
+                    >
                       <CardContent className="grid gap-4 p-4 md:grid-cols-[130px_1fr_auto]">
                         <div className="space-y-3">
                           <input
@@ -1735,7 +1726,7 @@ export function ProfileEditor({
                           />
                           <input
                             className={inputClass()}
-                            placeholder="Localizacao"
+                            placeholder="Localização"
                             value={item.location}
                             onChange={(event) =>
                               updateList<EditableExperience>("experiences", item._key, {
@@ -1745,7 +1736,7 @@ export function ProfileEditor({
                           />
                         </div>
                         <IconButton
-                          label="Remover experiencia"
+                          label="Remover experiência"
                           onClick={() =>
                             removeItem<EditableExperience>("experiences", item._key)
                           }
@@ -1753,7 +1744,7 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
@@ -1787,7 +1778,12 @@ export function ProfileEditor({
                   }
                 >
                   {profile.projects.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.title}
+                      detail={item.tagsText}
+                      imageUrl={item.imageUrl}
+                    >
                       <CardContent className="grid gap-4 p-4 lg:grid-cols-[12rem_1fr_auto]">
                         <div className="space-y-2">
                           <div className="relative aspect-[7/5] overflow-hidden rounded-xl border border-neutral-200 bg-cyan-50">
@@ -1878,7 +1874,7 @@ export function ProfileEditor({
                                 min={0}
                                 max={100}
                                 value={item.coverPositionX}
-                                aria-label="Posicao horizontal da capa"
+                                aria-label="Posição horizontal da capa"
                                 onChange={(event) =>
                                   updateList<EditableProject>("projects", item._key, {
                                     coverPositionX: clampPercent(
@@ -1893,7 +1889,7 @@ export function ProfileEditor({
                                 min={0}
                                 max={100}
                                 value={item.coverPositionY}
-                                aria-label="Posicao vertical da capa"
+                                aria-label="Posição vertical da capa"
                                 onChange={(event) =>
                                   updateList<EditableProject>("projects", item._key, {
                                     coverPositionY: clampPercent(
@@ -1909,7 +1905,7 @@ export function ProfileEditor({
                         <div className="grid gap-3">
                           <input
                             className={inputClass()}
-                            placeholder="Titulo"
+                            placeholder="Título"
                             value={item.title}
                             onChange={(event) =>
                               updateList<EditableProject>("projects", item._key, {
@@ -1940,7 +1936,7 @@ export function ProfileEditor({
                             />
                             <input
                               className={inputClass()}
-                              placeholder="Repositorio"
+                              placeholder="Repositório"
                               value={item.repoUrl}
                               onChange={(event) =>
                                 updateList<EditableProject>("projects", item._key, {
@@ -1969,7 +1965,7 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
@@ -2143,7 +2139,11 @@ export function ProfileEditor({
                   }
                 >
                   {profile.links.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.label || item.platform}
+                      detail={item.url}
+                    >
                       <CardContent className="grid gap-3 p-4 md:grid-cols-[140px_1fr_1fr_auto]">
                         <input
                           className={inputClass()}
@@ -2182,7 +2182,7 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
@@ -2217,7 +2217,11 @@ export function ProfileEditor({
                 >
                   {/* TODO: quando planos premium existirem, reviews ocultas devem aparecer aqui apenas para usuarios premium logados. */}
                   {profile.proofs.map((item) => (
-                    <Card key={item._key} className="rounded-[20px]">
+                    <CollapsibleItemCard
+                      key={item._key}
+                      title={item.reviewerName || item.title}
+                      detail={item.reviewerRole || item.description}
+                    >
                       <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
                         <div className="grid gap-3">
                           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[14px] border border-line bg-cream px-4 py-3">
@@ -2226,7 +2230,7 @@ export function ProfileEditor({
                                 {item.isVisible ? "Pública" : "Oculta"}
                               </p>
                               <p className="text-xs text-muted">
-                                Reviews novas chegam ocultas até você aprovar.
+                                Novas reviews ficam ocultas até aprovação.
                               </p>
                             </div>
                             <label className="inline-flex items-center gap-2 text-sm font-bold text-ink">
@@ -2310,7 +2314,7 @@ export function ProfileEditor({
                           <Trash2 className="h-4 w-4" />
                         </IconButton>
                       </CardContent>
-                    </Card>
+                    </CollapsibleItemCard>
                   ))}
                 </ListPanel>
               ),
@@ -2337,23 +2341,105 @@ function ListPanel({
   onAdd: () => void;
   children: ReactNode;
 }) {
+  const [open, setOpen] = useState(true);
+
   return (
-    <section>
-      <SectionBar
-        count={count}
-        label={label}
-        action={
-          <Button type="button" variant="outline" size="sm" onClick={onAdd}>
+    <section className="rounded-[22px] border-2 border-line bg-white p-4 shadow-app">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setOpen((current) => !current)}
+          className="inline-flex min-w-0 items-center gap-3 text-left"
+          aria-expanded={open}
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-600">
+            {icon}
+          </span>
+          <span className="min-w-0">
+            <span className="block font-data text-[11px] font-semibold uppercase tracking-[0.18em] text-neutral-500">
+              {count} {label}
+            </span>
+          </span>
+          {open ? (
+            <ChevronUp className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
+          ) : (
+            <ChevronDown className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
+          )}
+        </button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setOpen(true);
+              onAdd();
+            }}
+          >
             <Plus className="h-4 w-4" aria-hidden />
             {addLabel}
           </Button>
-        }
-      />
-      <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-600">
-        {icon}
+        </div>
       </div>
-      <div className="space-y-3">{children}</div>
+      {open ? (
+        <div className="max-h-[min(66dvh,46rem)] space-y-3 overflow-y-auto pr-1">
+          {children}
+        </div>
+      ) : null}
     </section>
+  );
+}
+
+function CollapsibleItemCard({
+  title,
+  detail,
+  imageUrl,
+  children,
+}: {
+  title: string;
+  detail?: string;
+  imageUrl?: string;
+  children: ReactNode;
+}) {
+  const hasTitle = title.trim().length > 0;
+  const [open, setOpen] = useState(!hasTitle);
+
+  return (
+    <Card className="rounded-[20px]">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left"
+        aria-expanded={open}
+      >
+        {imageUrl !== undefined ? (
+          <span className="flex h-12 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-neutral-200 bg-cyan-50">
+            {imageUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={imageUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <ImagePlus className="h-5 w-5 text-neutral-300" aria-hidden="true" />
+            )}
+          </span>
+        ) : null}
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-extrabold text-ink">
+            {hasTitle ? title : "Novo item"}
+          </span>
+          {detail ? (
+            <span className="mt-0.5 block truncate text-xs font-semibold text-muted">
+              {detail}
+            </span>
+          ) : null}
+        </span>
+        {open ? (
+          <ChevronUp className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
+        ) : (
+          <ChevronDown className="h-4 w-4 shrink-0 text-neutral-500" aria-hidden />
+        )}
+      </button>
+      {open ? children : null}
+    </Card>
   );
 }
 
@@ -2379,19 +2465,19 @@ function CompactEditableRow({
       <CardContent className="grid gap-3 p-4 md:grid-cols-[1fr_1fr_160px_auto]">
         <input
           className={inputClass()}
-          placeholder="Titulo"
+          placeholder="Título"
           value={title}
           onChange={(event) => onTitle(event.target.value)}
         />
         <input
           className={inputClass()}
-          placeholder="Descricao"
+          placeholder="Descrição"
           value={detail}
           onChange={(event) => onDetail(event.target.value)}
         />
         <input
           className={inputClass()}
-          placeholder="Metrica"
+          placeholder="Métrica"
           value={metric}
           onChange={(event) => onMetric(event.target.value)}
         />

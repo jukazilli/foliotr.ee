@@ -1,49 +1,60 @@
-# Inventario e Auditoria Documental
+# Inventário e Auditoria Documental
 
-Status: PARCIAL  
-Last updated: 2026-04-27
+Status: PARCIAL
+Last updated: 2026-04-29
 
 ## Fontes analisadas
 
-- `docs/*.md` antes da reorganizacao.
+- `docs/*.md` antes da reorganização.
 - `prototipos-legados/`.
 - `package.json`.
 - Pastas reais: `app/`, `components/`, `lib/`, `prisma/`, `tests/`.
 - Framework local: `C:/projetos/.codex/FRAMEWOKS/metodo_estrutural_integrado.md`.
 
-## Inventario real
+## Inventário real
 
-| Area                           | Evidencia                                  | Status           |
+| Área                           | Evidência                                  | Status           |
 | ------------------------------ | ------------------------------------------ | ---------------- |
 | Runtime Next.js root           | `package.json`, `app/`, `app/api/*`        | FECHADO          |
 | Auth NextAuth                  | `auth.ts`, `middleware.ts`                 | FECHADO          |
-| Persistencia Prisma/PostgreSQL | `prisma/`, scripts `db:*`                  | FECHADO          |
+| Persistência Prisma/PostgreSQL | `prisma/`, scripts `db:*`                  | FECHADO          |
 | Docs antigas planas            | `docs/13_legado/pre-integrado-2026-04-27/` | FECHADO          |
-| Prototipos legados             | `prototipos-legados/`                      | FECHADO          |
+| Protótipos legados             | `prototipos-legados/`                      | FECHADO          |
 | Estrutura integrada            | `docs/00_*` a `docs/13_legado`             | FECHADO          |
-| Jornadas detalhadas            | `docs/06_jornadas/`                        | NAO IMPLEMENTADO |
-| Modulos detalhados             | `docs/07_modulos/`                         | NAO IMPLEMENTADO |
-| Integracoes detalhadas         | `docs/08_integracoes/`                     | NAO IMPLEMENTADO |
+| Jornadas detalhadas            | `docs/06_jornadas/`                        | FECHADO          |
+| Módulos detalhados             | `docs/07_modulos/`                         | FECHADO          |
+| Integrações detalhadas         | `docs/08_integracoes/`                     | NAO IMPLEMENTADO |
+
+## Auditoria de fechamento por trilha
+
+| Trilha | Evidência | Status |
+| --- | --- | --- |
+| Governança documental | Estrutura ativa, legado preservado, planos legados classificados, jornadas e módulos consolidados | FECHADO |
+| Produto e UX | Jornadas oficiais em `docs/06_jornadas/`, módulos em `docs/07_modulos/`, remaster social UI fechado até Slice 10 | FECHADO |
+| Fundação técnica operacional | Rate limit durável, política Gemini e política de `generated/prisma-client` sem decisão final | PARCIAL |
+| Integrações | `docs/08_integracoes/` ainda é placeholder | NAO IMPLEMENTADO |
 
 ## Lacunas
 
-| Lacuna                                                 | Impacto                           | Status           | Proximo passo          |
+| Lacuna                                                 | Impacto                           | Status           | Próximo passo          |
 | ------------------------------------------------------ | --------------------------------- | ---------------- | ---------------------- |
-| Planos antigos ainda nao classificados individualmente | Pode confundir retomada           | PARCIAL          | Slice documental 2     |
-| Jornadas oficiais ainda nao reescritas no novo padrao  | Dificulta auditoria ponta a ponta | NAO IMPLEMENTADO | Slice documental 3     |
-| Modulos oficiais ainda nao consolidados                | Dificulta ownership por dominio   | NAO IMPLEMENTADO | Slice documental 4     |
-| Rate limit duravel sem decisao                         | Risco operacional                 | PARCIAL          | Contrato de integracao |
-| Politica Gemini sem limites documentados               | Risco de custo/abuso              | PARCIAL          | Contrato operacional   |
-| `generated/prisma-client` sem politica final           | Risco de churn                    | PARCIAL          | Decisao tecnica        |
+| Planos antigos ainda não classificados individualmente | Pode confundir retomada           | FECHADO          | `docs/09_analises/classificacao-planos-legados.md` |
+| Jornadas oficiais ainda não reescritas no novo padrão  | Dificulta auditoria ponta a ponta | FECHADO          | `docs/06_jornadas/`    |
+| Módulos oficiais ainda não consolidados                | Dificulta ownership por domínio   | FECHADO          | `docs/07_modulos/`     |
+| Rate limit durável sem decisão                         | Risco operacional                 | PARCIAL          | Contrato de integração |
+| Política Gemini sem limites documentados               | Risco de custo/abuso              | PARCIAL          | Contrato operacional   |
+| `generated/prisma-client` sem política final           | Risco de churn                    | PARCIAL          | Decisão técnica        |
 
-## Decisao de fechamento do slice
+## Decisão de fechamento do slice
 
 O slice documental 1 pode ser considerado FECHADO porque:
 
 - a estrutura integrada existe;
 - o legado foi preservado;
-- o indice ativo existe;
-- fontes de verdade e contratos minimos foram criados;
-- backlog por dependencia foi registrado.
+- o índice ativo existe;
+- fontes de verdade e contratos mínimos foram criados;
+- backlog por dependência foi registrado.
 
 O projeto documental completo permanece PARCIAL.
+
+Motivo: a documentação de produto, jornadas, módulos e legado está fechada, mas as decisões operacionais de integração ainda não possuem contrato mínimo.

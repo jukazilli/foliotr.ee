@@ -258,7 +258,7 @@ export default function PublicProfileHubPage({
                 </span>
                 {behavioralAnalysis ? (
                   <span className="rounded-full bg-lime-100 px-3 py-1 text-xs font-extrabold text-lime-900">
-                    teste publico
+                    teste público
                   </span>
                 ) : null}
               </div>
@@ -335,7 +335,7 @@ export default function PublicProfileHubPage({
                 id="published-links-title"
                 className="mt-1 text-2xl font-extrabold tracking-[-0.03em]"
               >
-                Experiencias publicadas
+                Experiências publicadas
               </h2>
             </div>
             <span className="text-sm font-bold text-neutral-500">
@@ -419,6 +419,7 @@ export default function PublicProfileHubPage({
           username={username}
           returnPath={`/${username}`}
           summary={reviewSummary}
+          canSubmit={!isOwner}
         />
       </div>
 

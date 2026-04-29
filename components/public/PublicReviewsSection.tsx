@@ -7,6 +7,7 @@ interface PublicReviewsSectionProps {
   username: string;
   returnPath: string;
   summary: PublicReviewSummary;
+  canSubmit?: boolean;
 }
 
 function Stars({ value }: { value: number }) {
@@ -31,6 +32,7 @@ export default function PublicReviewsSection({
   username,
   returnPath,
   summary,
+  canSubmit = true,
 }: PublicReviewsSectionProps) {
   return (
     <section className="border-b border-black/10 bg-white px-4 py-8 print:hidden sm:px-6 lg:px-8">
@@ -86,62 +88,68 @@ export default function PublicReviewsSection({
           </div>
         </div>
 
-        <form
-          action={submitPublicReviewAction}
-          className="grid gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-14"
-        >
-          <input type="hidden" name="username" value={username} />
-          <input type="hidden" name="returnPath" value={returnPath} />
-          <div className="hidden" aria-hidden="true">
-            <label>
-              Site
-              <input name="website" tabIndex={-1} autoComplete="off" />
-            </label>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-neutral-950">Deixe uma review</p>
-            <p className="mt-1 text-xs leading-5 text-neutral-500">
-              Ela fica oculta até o dono do perfil aprovar.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input
-              name="reviewerName"
-              required
-              minLength={2}
-              maxLength={120}
-              placeholder="Seu nome"
-              className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-            />
-            <input
-              name="reviewerRole"
-              maxLength={140}
-              placeholder="Cargo ou contexto"
-              className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-            />
-          </div>
-          <input
-            name="reviewerEmail"
-            type="email"
-            placeholder="Email opcional"
-            className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-          />
-          <PublicReviewRatingInput defaultValue={5} />
-          <textarea
-            name="description"
-            required
-            minLength={10}
-            maxLength={500}
-            placeholder="Como foi trabalhar com essa pessoa?"
-            className="min-h-28 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
-          />
-          <button
-            type="submit"
-            className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-950 px-4 text-sm font-semibold text-white transition hover:bg-neutral-800"
+        {canSubmit ? (
+          <form
+            action={submitPublicReviewAction}
+            className="grid gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-14"
           >
-            Enviar review
-          </button>
-        </form>
+            <input type="hidden" name="username" value={username} />
+            <input type="hidden" name="returnPath" value={returnPath} />
+            <div className="hidden" aria-hidden="true">
+              <label>
+                Site
+                <input name="website" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-neutral-950">Deixe uma review</p>
+              <p className="mt-1 text-xs leading-5 text-neutral-500">
+                Ela fica oculta até o dono do perfil aprovar.
+              </p>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                name="reviewerName"
+                required
+                minLength={2}
+                maxLength={120}
+                placeholder="Seu nome"
+                className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+              />
+              <input
+                name="reviewerRole"
+                maxLength={140}
+                placeholder="Cargo ou contexto"
+                className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+              />
+            </div>
+            <input
+              name="reviewerEmail"
+              type="email"
+              placeholder="Email opcional"
+              className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+            />
+            <PublicReviewRatingInput defaultValue={5} />
+            <textarea
+              name="description"
+              required
+              minLength={10}
+              maxLength={500}
+              placeholder="Como foi trabalhar com essa pessoa?"
+              className="min-h-28 rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-900"
+            />
+            <button
+              type="submit"
+              className="inline-flex h-10 items-center justify-center rounded-md bg-neutral-950 px-4 text-sm font-semibold text-white transition hover:bg-neutral-800"
+            >
+              Enviar review
+            </button>
+          </form>
+        ) : (
+          <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-4 text-sm font-semibold text-neutral-600 lg:col-span-14">
+            Reviews do seu perfil aparecem aqui para moderação.
+          </div>
+        )}
       </div>
     </section>
   );
