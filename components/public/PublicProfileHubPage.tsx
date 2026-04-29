@@ -63,12 +63,17 @@ function getPortfolioDescription(
 function ProfileCard({
   title,
   children,
+  className = "",
 }: {
   title: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <section className="rounded-2xl border bg-white p-5" style={softSurfaceStyle}>
+    <section
+      className={`rounded-2xl border bg-white p-5 ${className}`}
+      style={softSurfaceStyle}
+    >
       <h2 className="text-base font-extrabold text-neutral-950">{title}</h2>
       <div className="mt-4">{children}</div>
     </section>
@@ -118,12 +123,12 @@ export default function PublicProfileHubPage({
       <main
         className={
           embedded
-            ? "mx-auto flex w-full max-w-6xl flex-col gap-5"
-            : "mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8"
+            ? "mx-auto grid w-full max-w-[1680px] gap-5 lg:grid-cols-[repeat(24,minmax(0,1fr))]"
+            : "mx-auto grid w-full max-w-[1680px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[repeat(24,minmax(0,1fr))] lg:px-8"
         }
       >
         <section
-          className="overflow-hidden rounded-b-2xl border bg-white"
+          className="overflow-hidden rounded-b-2xl border bg-white lg:col-span-full"
           style={softSurfaceStyle}
         >
           <div className="relative">
@@ -193,8 +198,11 @@ export default function PublicProfileHubPage({
           </div>
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-3" aria-label="Resumo do perfil">
-          <ProfileCard title="Sobre">
+        <section
+          className="grid gap-4 lg:col-span-full lg:grid-cols-[repeat(24,minmax(0,1fr))]"
+          aria-label="Resumo do perfil"
+        >
+          <ProfileCard title="Sobre" className="lg:col-span-8">
             <div className="space-y-3 text-sm font-semibold leading-6 text-neutral-700">
               {defaultPresentation?.body || hub.bio ? (
                 <p className="whitespace-pre-line">
@@ -241,7 +249,7 @@ export default function PublicProfileHubPage({
             </div>
           </ProfileCard>
 
-          <ProfileCard title="Portfolio">
+          <ProfileCard title="Portfolio" className="lg:col-span-8">
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-sm font-semibold text-neutral-600">
@@ -281,7 +289,7 @@ export default function PublicProfileHubPage({
             </div>
           </ProfileCard>
 
-          <ProfileCard title="Reviews">
+          <ProfileCard title="Reviews" className="lg:col-span-8">
             <div className="space-y-3">
               <div className="flex items-end gap-2">
                 <span className="text-4xl font-extrabold">
@@ -312,7 +320,12 @@ export default function PublicProfileHubPage({
           </ProfileCard>
         </section>
 
-        <section className="grid gap-3" aria-labelledby="published-links-title">
+        <section
+          className={`grid gap-3 ${
+            behavioralAnalysis ? "lg:col-span-16" : "lg:col-span-full"
+          }`}
+          aria-labelledby="published-links-title"
+        >
           <div className="flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
@@ -387,7 +400,7 @@ export default function PublicProfileHubPage({
         </section>
 
         {behavioralAnalysis ? (
-          <section className="grid gap-3">
+          <section className="grid gap-3 lg:col-span-8">
             <div>
               <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
                 Teste comportamental

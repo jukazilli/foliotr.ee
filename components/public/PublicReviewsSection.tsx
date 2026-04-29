@@ -34,8 +34,8 @@ export default function PublicReviewsSection({
 }: PublicReviewsSectionProps) {
   return (
     <section className="border-b border-black/10 bg-white px-4 py-8 print:hidden sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="space-y-5">
+      <div className="mx-auto grid max-w-[1680px] gap-8 lg:grid-cols-[repeat(24,minmax(0,1fr))]">
+        <div className="space-y-5 lg:col-span-10">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">
               Reviews
@@ -88,7 +88,7 @@ export default function PublicReviewsSection({
 
         <form
           action={submitPublicReviewAction}
-          className="grid gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4"
+          className="grid gap-4 rounded-lg border border-neutral-200 bg-neutral-50 p-4 lg:col-span-14"
         >
           <input type="hidden" name="username" value={username} />
           <input type="hidden" name="returnPath" value={returnPath} />

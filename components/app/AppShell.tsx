@@ -19,7 +19,7 @@ export function AppShell({
 
       <div className="min-h-screen w-full">
         <main className="app-main min-w-0 px-3 pb-8 pt-20 sm:px-4 lg:px-4 xl:px-6 2xl:px-8">
-          <div className="mx-auto w-full max-w-6xl">{children}</div>
+          <div className="app-container">{children}</div>
         </main>
       </div>
     </div>

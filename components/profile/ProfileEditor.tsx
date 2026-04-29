@@ -2,9 +2,7 @@
 
 import { useEffect, useMemo, useState, type ChangeEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
-  ArrowUpRight,
   BriefcaseBusiness,
   Check,
   Crop,
@@ -28,7 +26,6 @@ import {
 } from "@/components/assets/AssetGalleryPicker";
 import { ProfileTabs } from "@/components/profile/ProfileTabs";
 import { UsernameEditor } from "@/components/settings/UsernameEditor";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { normalizeStoragePublicUrl } from "@/lib/storage/public-url";
@@ -787,8 +784,8 @@ export function ProfileEditor({
   const [today, setToday] = useState<Date | null>(null);
   const [profileGalleryTarget, setProfileGalleryTarget] =
     useState<ProfileGalleryTarget | null>(null);
-
   const username = profile.user.username;
+
   const age = useMemo(() => {
     if (!profile.birthDate || !today) return null;
     const birthDate = new Date(`${profile.birthDate}T00:00:00`);
@@ -1057,7 +1054,7 @@ export function ProfileEditor({
   }
 
   return (
-    <div className="app-grid-18">
+    <div className="app-grid-24">
       <AssetGalleryPicker
         open={Boolean(profileGalleryTarget)}
         title={
@@ -1097,38 +1094,9 @@ export function ProfileEditor({
           <h1 className="mt-3 font-display text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
             {profile.displayName || profile.user.name || "Seu perfil"}
           </h1>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Badge variant="default">{profile.educations.length} formacoes</Badge>
-            <Badge variant="info">{profile.experiences.length} experiencias</Badge>
-            <Badge variant="version">{profile.projects.length} projetos</Badge>
-            <Badge variant="premium">
-              {profile.proofs.length +
-                profile.achievements.length +
-                profile.highlights.length}{" "}
-              reviews e marcos
-            </Badge>
-            <Badge variant="info">{profile.presentations.length} apresentações</Badge>
-            <Badge variant="warning">{profile.versions.length} versoes</Badge>
-          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {username ? (
-            <>
-              <Button asChild variant="outline">
-                <Link href={`/${username}`} target="_blank">
-                  Perfil público
-                  <ArrowUpRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/${username}/resume`} target="_blank">
-                  Curriculo
-                  <ArrowUpRight className="h-4 w-4" aria-hidden />
-                </Link>
-              </Button>
-            </>
-          ) : null}
           <Button onClick={saveProfile} loading={status === "saving"}>
             {status === "saved" ? (
               <Check className="h-4 w-4" aria-hidden />
@@ -1155,7 +1123,7 @@ export function ProfileEditor({
               label: "Dados basicos",
               count: 1,
               children: (
-                <div className="app-grid-18">
+                <div className="app-grid-24">
                   <div className="app-col-main">
                     <Card className="rounded-[24px]">
                       <CardContent className="space-y-5 p-5">
