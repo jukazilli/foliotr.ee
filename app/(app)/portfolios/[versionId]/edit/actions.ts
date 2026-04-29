@@ -150,7 +150,7 @@ export async function savePortfolioVariationAction(
     emoji: version.emoji ?? undefined,
     customHeadline: nextHeadline ?? "",
     customBio: nextBio ?? "",
-    presentationId: version.presentationId,
+    presentationId: nullableText(readText(formData, "presentationId")),
     isDefault: version.isDefault,
     selections,
   });

@@ -121,16 +121,42 @@ Evidência de fechamento:
 - `npm run typecheck`: sem erro.
 - Busca de mojibake nos arquivos tocados: sem ocorrência.
 
-## Slice 14 - Identidade versionada: edição granular
+## Slice 14 - Identidade versionada: seleção compacta e consulta
 
-Status: ATUAL
+Status: FECHADO em 2026-04-29
 
 Escopo previsto:
 
-- Permitir editar texto de experiências, formações, projetos e demais blocos dentro da versão.
-- Persistir alterações textuais no `profileSnapshot`.
+- Compactar as coleções da aba `Identidade` com expandir/recolher por seção.
+- Manter rolagem interna nas listas para evitar página gigante em perfis com muitos itens.
+- Permitir marcar/desmarcar itens por checkbox.
+- Permitir consultar detalhes do item em popup ao clicar no título.
+- Adicionar seleção de apresentações na aba `Identidade`.
+- Impedir mais de uma apresentação por versão.
 - Manter dados base intactos.
-- Definir UI compacta para listas grandes.
+
+Evidência de fechamento:
+
+- `components/portfolios/PortfolioVariationWizard.tsx` passou a renderizar coleções colapsáveis com chevron e scroll interno.
+- Checkboxes continuam controlando o que entra na versão sem alterar dados base.
+- Clique no título abre modal com detalhes enviados pelo snapshot.
+- `app/(app)/portfolios/[versionId]/edit/page.tsx` envia detalhes e apresentações para a UI.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts` persiste `presentationId` da versão.
+- `npm run typecheck`: sem erro.
+- `npm run lint`: sem erro.
+- `git diff --check`: sem erro.
+- Busca de mojibake nos arquivos tocados: sem ocorrência.
+
+## Slice 16 - Identidade versionada: edição textual granular
+
+Status: BACKLOG
+
+Escopo previsto:
+
+- Definir formato de patch textual por coleção no `profileSnapshot`.
+- Permitir editar texto de experiências, formações, projetos e demais blocos dentro da versão.
+- Persistir alterações textuais apenas no `profileSnapshot`.
+- Validar que dados base continuam intactos.
 
 ## Slice 15 - Feed público de reviews e shell responsivo
 

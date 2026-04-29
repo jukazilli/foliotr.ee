@@ -36,10 +36,23 @@ function readFirstText(item: Record<string, unknown>, keys: string[]) {
   return "";
 }
 
+function buildDetails(
+  item: Record<string, unknown>,
+  fields: Array<[label: string, keys: string[]]>
+) {
+  return fields
+    .map(([label, keys]) => {
+      const value = readFirstText(item, keys);
+      return value ? `${label}: ${value}` : null;
+    })
+    .filter((value): value is string => value !== null);
+}
+
 function toCollectionItem(
   item: Record<string, unknown>,
   titleKeys: string[],
-  subtitleKeys: string[]
+  subtitleKeys: string[],
+  detailFields: Array<[label: string, keys: string[]]> = []
 ) {
   const id = readFirstText(item, ["id"]);
   if (!id) return null;
@@ -48,6 +61,7 @@ function toCollectionItem(
     id,
     title: readFirstText(item, titleKeys) || "Item sem título",
     subtitle: readFirstText(item, subtitleKeys) || null,
+    details: buildDetails(item, detailFields),
   };
 }
 
@@ -58,31 +72,86 @@ function buildVersionCollections(snapshot: unknown) {
       : {};
 
   return {
+    presentations: toRecordArray(source.presentations)
+      .map((item) =>
+        toCollectionItem(item, ["title"], ["context"], [
+          ["Contexto", ["context"]],
+          ["Apresentação", ["body"]],
+        ])
+      )
+      .filter((item): item is NonNullable<typeof item> => item !== null),
     experiences: toRecordArray(source.experiences)
-      .map((item) => toCollectionItem(item, ["role"], ["company", "location"]))
+      .map((item) =>
+        toCollectionItem(item, ["role"], ["company", "location"], [
+          ["Empresa", ["company"]],
+          ["Local", ["location"]],
+          ["Início", ["startDate"]],
+          ["Fim", ["endDate"]],
+          ["Descrição", ["description"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     educations: toRecordArray(source.educations)
-      .map((item) => toCollectionItem(item, ["degree", "field"], ["institution"]))
+      .map((item) =>
+        toCollectionItem(item, ["degree", "field"], ["institution"], [
+          ["Instituição", ["institution"]],
+          ["Área", ["field"]],
+          ["Início", ["startDate"]],
+          ["Fim", ["endDate"]],
+          ["Descrição", ["description"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     projects: toRecordArray(source.projects)
-      .map((item) => toCollectionItem(item, ["title"], ["description", "url"]))
+      .map((item) =>
+        toCollectionItem(item, ["title"], ["description", "url"], [
+          ["Descrição", ["description"]],
+          ["URL", ["url"]],
+          ["Repositório", ["repoUrl", "repositoryUrl"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     skills: toRecordArray(source.skills)
-      .map((item) => toCollectionItem(item, ["name"], ["category", "level"]))
+      .map((item) =>
+        toCollectionItem(item, ["name"], ["category", "level"], [
+          ["Categoria", ["category"]],
+          ["Nível", ["level"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     achievements: toRecordArray(source.achievements)
-      .map((item) => toCollectionItem(item, ["title"], ["metric", "description"]))
+      .map((item) =>
+        toCollectionItem(item, ["title"], ["metric", "description"], [
+          ["Métrica", ["metric"]],
+          ["Descrição", ["description"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     proofs: toRecordArray(source.proofs)
       .map((item) =>
-        toCollectionItem(item, ["title", "reviewerName"], ["metric", "description"])
+        toCollectionItem(item, ["title", "reviewerName"], ["metric", "description"], [
+          ["Avaliador", ["reviewerName"]],
+          ["Cargo", ["reviewerRole"]],
+          ["Métrica", ["metric"]],
+          ["Descrição", ["description"]],
+        ])
       )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     highlights: toRecordArray(source.highlights)
-      .map((item) => toCollectionItem(item, ["title"], ["metric", "description"]))
+      .map((item) =>
+        toCollectionItem(item, ["title"], ["metric", "description"], [
+          ["Métrica", ["metric"]],
+          ["Descrição", ["description"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
     links: toRecordArray(source.links)
-      .map((item) => toCollectionItem(item, ["label", "platform"], ["url"]))
+      .map((item) =>
+        toCollectionItem(item, ["label", "platform"], ["url"], [
+          ["Plataforma", ["platform"]],
+          ["URL", ["url"]],
+        ])
+      )
       .filter((item): item is NonNullable<typeof item> => item !== null),
   };
 }
@@ -153,6 +222,7 @@ export default async function PortfolioVariationEditPage({
           publishState: page?.publishState ?? "DRAFT",
           collections: buildVersionCollections(snapshot),
           selections: {
+            presentationId: version.presentationId ?? "",
             experienceIds: version.experiences.map((item) => item.experienceId),
             educationIds: version.educations.map((item) => item.educationId),
             projectIds: version.projects.map((item) => item.projectId),
