@@ -29,6 +29,34 @@ type WizardTemplate = {
   category: string;
 };
 
+type VersionCollectionItem = {
+  id: string;
+  title: string;
+  subtitle?: string | null;
+};
+
+type VersionCollections = {
+  experiences: VersionCollectionItem[];
+  educations: VersionCollectionItem[];
+  projects: VersionCollectionItem[];
+  skills: VersionCollectionItem[];
+  achievements: VersionCollectionItem[];
+  proofs: VersionCollectionItem[];
+  highlights: VersionCollectionItem[];
+  links: VersionCollectionItem[];
+};
+
+type VersionSelectionValues = {
+  experienceIds: string[];
+  educationIds: string[];
+  projectIds: string[];
+  skillIds: string[];
+  achievementIds: string[];
+  proofIds: string[];
+  highlightIds: string[];
+  linkIds: string[];
+};
+
 type WizardInitialValues = {
   versionName: string;
   displayName: string;
@@ -41,6 +69,8 @@ type WizardInitialValues = {
   publicHref: string | null;
   templateId: string;
   publishState: "DRAFT" | "PUBLISHED" | "ARCHIVED";
+  collections: VersionCollections;
+  selections: VersionSelectionValues;
 };
 
 type PortfolioVariationWizardProps = {
@@ -66,6 +96,16 @@ function inputClassName() {
   return "w-full rounded-xl border-2 border-line bg-white px-3 py-2 text-sm font-semibold text-ink outline-none transition focus:border-black";
 }
 
+type TextFieldName =
+  | "versionName"
+  | "displayName"
+  | "headline"
+  | "bio"
+  | "location"
+  | "avatarUrl"
+  | "bannerUrl"
+  | "slug";
+
 function TextField({
   label,
   name,
@@ -74,7 +114,7 @@ function TextField({
   placeholder,
 }: {
   label: string;
-  name: keyof WizardInitialValues;
+  name: TextFieldName;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -103,6 +143,7 @@ export function PortfolioVariationWizard({
 }: PortfolioVariationWizardProps) {
   const [activeStep, setActiveStep] = useState<StepId>("cover");
   const [values, setValues] = useState(initialValues);
+  const [selections, setSelections] = useState(initialValues.selections);
   const [pickerTarget, setPickerTarget] = useState<"avatarUrl" | "bannerUrl" | null>(
     null
   );
@@ -123,6 +164,79 @@ export function PortfolioVariationWizard({
     if (!pickerTarget) return;
     setField(pickerTarget, asset.url);
     setPickerTarget(null);
+  }
+
+  function toggleSelection(
+    key: keyof VersionSelectionValues,
+    id: string,
+    checked: boolean
+  ) {
+    setSelections((current) => {
+      const currentIds = current[key];
+      const nextIds = checked
+        ? Array.from(new Set([...currentIds, id]))
+        : currentIds.filter((itemId) => itemId !== id);
+
+      return { ...current, [key]: nextIds };
+    });
+  }
+
+  function renderCollection(
+    label: string,
+    key: keyof VersionCollections,
+    selectionKey: keyof VersionSelectionValues
+  ) {
+    const items = values.collections[key];
+    const selected = new Set(selections[selectionKey]);
+
+    return (
+      <section className="rounded-2xl border-2 border-line bg-cream p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-display text-xl font-black text-ink">{label}</h3>
+          <span className="rounded-full border-2 border-line bg-white px-2 py-1 text-xs font-black text-ink">
+            {selected.size}/{items.length}
+          </span>
+        </div>
+
+        {items.length > 0 ? (
+          <div className="mt-3 grid max-h-56 gap-2 overflow-y-auto pr-1">
+            {items.map((item) => {
+              const checked = selected.has(item.id);
+
+              return (
+                <label
+                  key={item.id}
+                  className="flex items-start gap-3 rounded-xl border-2 border-line bg-white p-3 text-sm font-bold text-ink"
+                >
+                  <input
+                    type="checkbox"
+                    name={selectionKey}
+                    value={item.id}
+                    checked={checked}
+                    onChange={(event) =>
+                      toggleSelection(selectionKey, item.id, event.target.checked)
+                    }
+                    className="mt-1 h-4 w-4 accent-black"
+                  />
+                  <span className="min-w-0">
+                    <span className="block overflow-wrap-anywhere">{item.title}</span>
+                    {item.subtitle ? (
+                      <span className="mt-1 block overflow-wrap-anywhere text-xs font-semibold text-ink/60">
+                        {item.subtitle}
+                      </span>
+                    ) : null}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm font-semibold text-ink/60">
+            Nenhum item no perfil mestre.
+          </p>
+        )}
+      </section>
+    );
   }
 
   return (
@@ -306,35 +420,57 @@ export function PortfolioVariationWizard({
           ) : null}
 
           {activeStep === "identity" ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              <TextField
-                label="Fallback do nome"
-                name="versionName"
-                value={values.versionName}
-                onChange={(value) => setField("versionName", value)}
-                placeholder="Usado se o cargo estiver vazio"
-              />
-              <TextField
-                label="Cargo exibido"
-                name="headline"
-                value={values.headline}
-                onChange={(value) => setField("headline", value)}
-                placeholder="Cargo ou posicionamento"
-              />
-              <TextField
-                label="Nome exibido"
-                name="displayName"
-                value={values.displayName}
-                onChange={(value) => setField("displayName", value)}
-                placeholder="Nome publico desta variacao"
-              />
-              <TextField
-                label="Cidade"
-                name="location"
-                value={values.location}
-                onChange={(value) => setField("location", value)}
-                placeholder="Cidade/UF"
-              />
+            <div className="grid gap-5">
+              <div className="grid gap-4 md:grid-cols-2">
+                <TextField
+                  label="Fallback do nome"
+                  name="versionName"
+                  value={values.versionName}
+                  onChange={(value) => setField("versionName", value)}
+                  placeholder="Usado se o cargo estiver vazio"
+                />
+                <TextField
+                  label="Cargo exibido"
+                  name="headline"
+                  value={values.headline}
+                  onChange={(value) => setField("headline", value)}
+                  placeholder="Cargo ou posicionamento"
+                />
+                <TextField
+                  label="Nome exibido"
+                  name="displayName"
+                  value={values.displayName}
+                  onChange={(value) => setField("displayName", value)}
+                  placeholder="Nome público desta variação"
+                />
+                <TextField
+                  label="Cidade"
+                  name="location"
+                  value={values.location}
+                  onChange={(value) => setField("location", value)}
+                  placeholder="Cidade/UF"
+                />
+              </div>
+
+              <div>
+                <p className="font-mono text-xs font-black uppercase tracking-[0.18em] text-ink/50">
+                  Dados do perfil mestre
+                </p>
+                <h2 className="mt-1 font-display text-2xl font-black text-ink">
+                  Escolha o que entra nesta versão
+                </h2>
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-2">
+                {renderCollection("Experiências", "experiences", "experienceIds")}
+                {renderCollection("Formação", "educations", "educationIds")}
+                {renderCollection("Projetos", "projects", "projectIds")}
+                {renderCollection("Reconhecimentos", "achievements", "achievementIds")}
+                {renderCollection("Skills", "skills", "skillIds")}
+                {renderCollection("Reviews", "proofs", "proofIds")}
+                {renderCollection("Destaques", "highlights", "highlightIds")}
+                {renderCollection("Links", "links", "linkIds")}
+              </div>
             </div>
           ) : null}
 

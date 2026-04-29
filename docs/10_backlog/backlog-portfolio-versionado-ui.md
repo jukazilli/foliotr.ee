@@ -101,18 +101,38 @@ Evidência de fechamento:
 - `npm run typecheck`: sem erro.
 - Busca de mojibake nos arquivos tocados: sem ocorrência.
 
-## Slice 13 - Identidade versionada completa
+## Slice 13 - Identidade versionada: seleção de dados
+
+Status: FECHADO em 2026-04-29
+
+Escopo previsto:
+
+- Carregar o estado atual do perfil mestre no snapshot da versão.
+- Expor dados básicos, formação, experiências, projetos, reconhecimentos, skills, destaques, links e reviews na aba `Identidade`.
+- Permitir incluir/remover dados dentro da versão sem alterar dados base.
+- Persistir mudanças em `profileSnapshot` e seleções `Version*`.
+
+Evidência de fechamento:
+
+- `app/(app)/portfolios/[versionId]/edit/page.tsx` carrega coleções do snapshot da versão.
+- `components/portfolios/PortfolioVariationWizard.tsx` mostra coleções na aba `Identidade` com checkboxes por item.
+- `app/(app)/portfolios/[versionId]/edit/actions.ts` salva seleções em `VersionExperience`, `VersionEducation`, `VersionProject`, `VersionSkill`, `VersionAchievement`, `VersionProof`, `VersionHighlight` e `VersionLink`.
+- A persistência de seleção usa `updateOwnedVersion`, preservando ownership e sem alterar dados base.
+- `npm run typecheck`: sem erro.
+- Busca de mojibake nos arquivos tocados: sem ocorrência.
+
+## Slice 14 - Identidade versionada: edição granular
 
 Status: ATUAL
 
 Escopo previsto:
 
-- Carregar o estado atual do perfil mestre no snapshot da versão.
-- Expor dados básicos, formação, apresentações, experiências, projetos, reconhecimentos, links e reviews na aba `Identidade`.
-- Permitir editar/remover dados dentro da versão sem alterar dados base.
-- Persistir mudanças em `profileSnapshot` e seleções `Version*`.
+- Permitir editar texto de experiências, formações, projetos e demais blocos dentro da versão.
+- Persistir alterações textuais no `profileSnapshot`.
+- Manter dados base intactos.
+- Definir UI compacta para listas grandes.
 
-## Slice 14 - Decisão sobre capa do perfil base
+## Slice 15 - Decisão sobre capa do perfil base
 
 Status: BACKLOG
 

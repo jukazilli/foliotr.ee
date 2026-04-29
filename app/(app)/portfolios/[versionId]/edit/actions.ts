@@ -14,6 +14,7 @@ import { derivePortfolioNameFromSnapshot } from "@/lib/server/domain/portfolio-n
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
 import {
   getOwnedVersion,
+  updateOwnedVersion,
   upsertOwnedPageOutput,
   upsertOwnedResumeOutput,
 } from "@/lib/server/domain/versions";
@@ -26,6 +27,12 @@ function readText(formData: FormData, key: string) {
 
 function nullableText(value: string) {
   return value.length > 0 ? value : null;
+}
+
+function readIds(formData: FormData, key: string) {
+  return formData
+    .getAll(key)
+    .filter((value): value is string => typeof value === "string" && value.length > 0);
 }
 
 function normalizeSlug(value: string, fallback: string) {
@@ -125,13 +132,32 @@ export async function savePortfolioVariationAction(
       versionId,
     })
   );
+  const selections = {
+    experienceIds: readIds(formData, "experienceIds"),
+    educationIds: readIds(formData, "educationIds"),
+    projectIds: readIds(formData, "projectIds"),
+    skillIds: readIds(formData, "skillIds"),
+    achievementIds: readIds(formData, "achievementIds"),
+    proofIds: readIds(formData, "proofIds"),
+    highlightIds: readIds(formData, "highlightIds"),
+    linkIds: readIds(formData, "linkIds"),
+  };
+
+  await updateOwnedVersion(prisma, session.user.id, version.id, {
+    name: nextName,
+    description: version.description ?? undefined,
+    context: version.context ?? undefined,
+    emoji: version.emoji ?? undefined,
+    customHeadline: nextHeadline ?? "",
+    customBio: nextBio ?? "",
+    presentationId: version.presentationId,
+    isDefault: version.isDefault,
+    selections,
+  });
 
   await prisma.version.update({
     where: { id: version.id },
     data: {
-      name: nextName,
-      customHeadline: nextHeadline,
-      customBio: nextBio,
       profileSnapshot: asInputJsonValue(nextSnapshot),
     },
   });
