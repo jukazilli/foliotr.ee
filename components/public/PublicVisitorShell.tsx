@@ -70,9 +70,35 @@ function VisitorThemeToggle() {
 }
 
 export function PublicVisitorShell({ children }: { children: React.ReactNode }) {
+  const [isTopbarHidden, setIsTopbarHidden] = useState(false);
+
+  useEffect(() => {
+    let ticking = false;
+
+    function updateTopbar() {
+      setIsTopbarHidden(window.scrollY > 12);
+      ticking = false;
+    }
+
+    function queueUpdate() {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(updateTopbar);
+    }
+
+    window.addEventListener("scroll", queueUpdate, { passive: true });
+    window.addEventListener("resize", queueUpdate);
+    updateTopbar();
+
+    return () => {
+      window.removeEventListener("scroll", queueUpdate);
+      window.removeEventListener("resize", queueUpdate);
+    };
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f2f4f7] text-neutral-950">
-      <header className="topbar" data-topbar>
+      <header className={`topbar${isTopbarHidden ? " is-hidden" : ""}`} data-topbar>
         <Link className="brand" href="/" aria-label="LINKFOLIO inicio">
           <span>LINKFOLIO</span>
         </Link>
