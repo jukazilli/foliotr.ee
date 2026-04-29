@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { AppShell } from "@/components/app/AppShell";
 import PublicProfileHubPage from "@/components/public/PublicProfileHubPage";
+import { PublicVisitorShell } from "@/components/public/PublicVisitorShell";
 import { getPublicProfileHub } from "@/lib/server/domain/public-pages";
 import { getPublicReviewSummary } from "@/lib/server/domain/reviews";
 
@@ -64,11 +65,14 @@ export default async function PublicProfilePage({ params }: PublicProfilePagePro
   }
 
   return (
-    <PublicProfileHubPage
-      username={username}
-      hub={hub}
-      reviewSummary={reviewSummary}
-      isOwner={false}
-    />
+    <PublicVisitorShell>
+      <PublicProfileHubPage
+        username={username}
+        hub={hub}
+        reviewSummary={reviewSummary}
+        isOwner={false}
+        embedded
+      />
+    </PublicVisitorShell>
   );
 }
