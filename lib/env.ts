@@ -47,6 +47,9 @@ export const serverEnvSchema = z
     STORAGE_PUBLIC_BASE_URL: optionalUrlSchema,
     GEMINI_API_KEY: z.string().trim().optional(),
     GEMINI_MODEL: z.string().trim().optional(),
+    FEEDBACK_EMAIL_TO: z.string().trim().email().optional().or(z.literal("")),
+    FEEDBACK_EMAIL_FROM: z.string().trim().email().optional().or(z.literal("")),
+    RESEND_API_KEY: z.string().trim().optional(),
   })
   .superRefine((env, ctx) => {
     if (env.STORAGE_PROVIDER !== "s3") return;
