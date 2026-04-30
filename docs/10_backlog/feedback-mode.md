@@ -23,6 +23,21 @@ Criar um modo de feedback interno para usuarios logados reportarem melhorias ou 
 - Quando o modo desenvolvedor esta ativo, o overlay mostra todas as marcacoes existentes na rota atual.
 - O modo desenvolvedor nao cria feedback; ele apenas visualiza tickets e marcas.
 
+## Configuracao
+
+- `FEEDBACK_EMAIL_TO`: email que recebe os tickets.
+- `FEEDBACK_EMAIL_FROM`: remetente usado no envio. Padrao: `LINKFOLIO <feedback@linkfolio.local>`.
+- `RESEND_API_KEY`: chave usada para enviar via Resend.
+- Se `FEEDBACK_EMAIL_TO` ou `RESEND_API_KEY` nao estiverem configurados, o ticket continua sendo salvo e o envio de email e ignorado com log no servidor.
+- A role `DEVELOPER` deve ser atribuida no banco. Nao existe autopromocao pela interface.
+
+## Rotas e Componentes Entregues
+
+- `POST /api/feedback/tickets`: cria ticket para usuario logado.
+- `GET /api/feedback/tickets?route=/rota`: lista tickets para desenvolvedor.
+- `FeedbackModeProvider`: captura feedback, renderiza modal e marcacoes.
+- `DeveloperModeCard`: ativa/desativa o modo desenvolvedor nas configuracoes para roles autorizadas.
+
 ## Slices
 
 ### Slice 0 - Contrato e branch
