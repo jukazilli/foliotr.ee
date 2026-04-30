@@ -82,8 +82,8 @@ export function BehavioralRadar({
   const rings = [25, 50, 75, 100];
 
   return (
-    <figure className="min-w-0 rounded-[24px] border-2 border-line bg-white p-4 shadow-hard-sm">
-      <figcaption className="mb-3 text-sm font-semibold uppercase text-ink">
+    <figure className="min-w-0 rounded-xl border border-[#dddfe2] bg-white p-4 shadow-[0_1px_2px_rgb(0_0_0/0.08)]">
+      <figcaption className="mb-3 text-sm font-semibold uppercase text-[#050505]">
         {title}
       </figcaption>
       <svg
@@ -173,10 +173,10 @@ export function BehavioralRadar({
         </g>
       </svg>
       {legend?.length ? (
-        <dl className="mt-2 grid gap-1.5 text-[10px] leading-4 text-muted">
+        <dl className="mt-2 grid gap-1.5 text-[10px] leading-4 text-[#65676b]">
           {legend.map((item) => (
             <div key={item.label} className="min-w-0">
-              <dt className="inline font-medium text-ink">{item.label}</dt>
+              <dt className="inline font-medium text-[#050505]">{item.label}</dt>
               <dd className="inline">: {item.description}</dd>
             </div>
           ))}
