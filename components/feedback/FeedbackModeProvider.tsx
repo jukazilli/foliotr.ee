@@ -6,9 +6,12 @@ import {
   MouseEvent as ReactMouseEvent,
   ReactNode,
   useContext,
+  useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
+import { usePathname } from "next/navigation";
 import { CheckCircle2, X } from "lucide-react";
 
 type FeedbackKind = "IMPROVEMENT" | "CORRECTION";
@@ -31,12 +34,15 @@ type FeedbackTarget = {
 type FeedbackMarker = FeedbackTarget & {
   number: number;
   kind: FeedbackKind;
+  message?: string;
 };
 
 type FeedbackContextValue = {
   feedbackMode: boolean;
+  developerMode: boolean;
   setFeedbackMode: (active: boolean) => void;
   toggleFeedbackMode: () => void;
+  setDeveloperMode: (active: boolean) => void;
 };
 
 const FeedbackContext = createContext<FeedbackContextValue | null>(null);
@@ -88,23 +94,105 @@ export function useFeedbackMode() {
   return context;
 }
 
-export function FeedbackModeProvider({ children }: { children: ReactNode }) {
+const DEVELOPER_MODE_STORAGE_KEY = "linkfolio-developer-feedback-mode";
+
+export function FeedbackModeProvider({
+  children,
+  isDeveloper = false,
+}: {
+  children: ReactNode;
+  isDeveloper?: boolean;
+}) {
+  const pathname = usePathname();
   const [feedbackMode, setFeedbackMode] = useState(false);
+  const [developerMode, setDeveloperModeState] = useState(false);
   const [target, setTarget] = useState<FeedbackTarget | null>(null);
   const [kind, setKind] = useState<FeedbackKind>("IMPROVEMENT");
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [markers, setMarkers] = useState<FeedbackMarker[]>([]);
+  const [developerMarkers, setDeveloperMarkers] = useState<FeedbackMarker[]>([]);
+
+  const setDeveloperMode = useCallback((active: boolean) => {
+    if (!isDeveloper) return;
+    setDeveloperModeState(active);
+    window.localStorage.setItem(DEVELOPER_MODE_STORAGE_KEY, active ? "true" : "false");
+    window.dispatchEvent(
+      new CustomEvent("linkfolio:developer-feedback-mode", {
+        detail: { active },
+      })
+    );
+  }, [isDeveloper]);
 
   const contextValue = useMemo<FeedbackContextValue>(
     () => ({
       feedbackMode,
+      developerMode,
       setFeedbackMode,
       toggleFeedbackMode: () => setFeedbackMode((current) => !current),
+      setDeveloperMode,
     }),
-    [feedbackMode]
+    [developerMode, feedbackMode, setDeveloperMode]
   );
+
+  useEffect(() => {
+    if (!isDeveloper) return;
+
+    const stored = window.localStorage.getItem(DEVELOPER_MODE_STORAGE_KEY) === "true";
+    setDeveloperModeState(stored);
+
+    function onDeveloperMode(event: Event) {
+      const customEvent = event as CustomEvent<{ active?: boolean }>;
+      setDeveloperModeState(Boolean(customEvent.detail?.active));
+    }
+
+    window.addEventListener("linkfolio:developer-feedback-mode", onDeveloperMode);
+    return () =>
+      window.removeEventListener("linkfolio:developer-feedback-mode", onDeveloperMode);
+  }, [isDeveloper]);
+
+  useEffect(() => {
+    if (!isDeveloper || !developerMode) {
+      setDeveloperMarkers([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    fetch(`/api/feedback/tickets?route=${encodeURIComponent(pathname)}`, {
+      signal: controller.signal,
+    })
+      .then((response) => (response.ok ? response.json() : { tickets: [] }))
+      .then(
+        (body: {
+          tickets?: Array<{
+            number: number;
+            kind: FeedbackKind;
+            message: string;
+            route: string;
+            url: string;
+            x: number;
+            y: number;
+            relativeX: number;
+            relativeY: number;
+            viewportWidth: number;
+            viewportHeight: number;
+            elementTag: string | null;
+            elementId: string | null;
+            elementClasses: string | null;
+            elementText: string | null;
+          }>;
+        }) => {
+          setDeveloperMarkers(Array.isArray(body.tickets) ? body.tickets : []);
+        }
+      )
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setDeveloperMarkers([]);
+      });
+
+    return () => controller.abort();
+  }, [developerMode, isDeveloper, pathname]);
 
   function closeModal() {
     setTarget(null);
@@ -115,7 +203,9 @@ export function FeedbackModeProvider({ children }: { children: ReactNode }) {
   }
 
   function handleCaptureClick(event: ReactMouseEvent<HTMLDivElement>) {
-    if (!feedbackMode || target || isIgnoredTarget(event.target)) return;
+    if (developerMode || !feedbackMode || target || isIgnoredTarget(event.target)) {
+      return;
+    }
 
     event.preventDefault();
     event.stopPropagation();
@@ -168,12 +258,27 @@ export function FeedbackModeProvider({ children }: { children: ReactNode }) {
           </div>
         ) : null}
 
-        {markers.map((marker) => (
+        {developerMode ? (
+          <div
+            className="pointer-events-none fixed bottom-5 left-1/2 z-[70] -translate-x-1/2 rounded-full bg-[#8b0024] px-4 py-2 text-sm font-semibold text-white shadow-[0_8px_24px_rgb(0_0_0/0.18)]"
+            data-feedback-ignore="true"
+          >
+            Modo desenvolvedor ativo. Marcações visíveis nesta rota.
+          </div>
+        ) : null}
+
+        {[...developerMarkers, ...markers].map((marker) => (
           <span
-            key={marker.number}
-            className="pointer-events-none fixed z-[65] flex h-7 min-w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#0866ff] px-2 text-xs font-bold text-white shadow-[0_4px_14px_rgb(0_0_0/0.22)]"
-            style={{ left: marker.x, top: marker.y }}
-            title={`Feedback #${marker.number}`}
+            key={`${marker.route}-${marker.number}`}
+            className={`pointer-events-auto fixed z-[65] flex h-7 min-w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full px-2 text-xs font-bold text-white shadow-[0_4px_14px_rgb(0_0_0/0.22)] ${
+              marker.kind === "CORRECTION" ? "bg-[#ff4d00]" : "bg-[#0866ff]"
+            }`}
+            style={{
+              left: `${marker.relativeX * 100}vw`,
+              top: `${marker.relativeY * 100}vh`,
+            }}
+            title={`Feedback #${marker.number}${marker.message ? `: ${marker.message}` : ""}`}
+            data-feedback-ignore="true"
           >
             #{marker.number}
           </span>
@@ -188,8 +293,8 @@ export function FeedbackModeProvider({ children }: { children: ReactNode }) {
               onSubmit={submitFeedback}
               className="absolute grid w-[min(92vw,24rem)] gap-3 rounded-xl border border-[#dddfe2] bg-white p-4 shadow-[0_18px_48px_rgb(0_0_0/0.18)]"
               style={{
-                left: Math.min(target.x + 12, target.viewportWidth - 400),
-                top: Math.min(target.y + 12, target.viewportHeight - 280),
+                left: Math.max(12, Math.min(target.x + 12, target.viewportWidth - 400)),
+                top: Math.max(12, Math.min(target.y + 12, target.viewportHeight - 280)),
               }}
             >
               <div className="flex items-start justify-between gap-3">

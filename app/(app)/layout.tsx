@@ -9,6 +9,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       userName={viewer.user.name ?? viewer.profile.displayName ?? undefined}
       userImage={viewer.profile.avatarUrl ?? undefined}
       userUsername={viewer.user.username}
+      userRole={viewer.user.role}
     >
       {children}
     </AppShell>

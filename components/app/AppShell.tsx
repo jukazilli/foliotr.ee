@@ -5,6 +5,7 @@ interface AppShellProps {
   userName?: string;
   userImage?: string;
   userUsername?: string | null;
+  userRole?: "USER" | "DEVELOPER";
   children: React.ReactNode;
 }
 
@@ -12,11 +13,12 @@ export function AppShell({
   userName,
   userImage,
   userUsername,
+  userRole = "USER",
   children,
 }: AppShellProps) {
   return (
     <div className="app-shell min-h-screen bg-paper text-ink">
-      <FeedbackModeProvider>
+      <FeedbackModeProvider isDeveloper={userRole === "DEVELOPER"}>
         <Header userName={userName} userImage={userImage} userUsername={userUsername} />
 
         <div className="min-h-screen w-full">
