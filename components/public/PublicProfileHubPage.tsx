@@ -221,11 +221,6 @@ export default function PublicProfileHubPage({
             <h2 className="text-xl font-bold tracking-[-0.02em] text-[#050505] sm:text-2xl">
               Meus Portfólios
             </h2>
-            {behavioralAnalysis ? (
-              <span className="rounded-full bg-[#f0f2f5] px-3 py-1 text-xs font-bold text-[#65676b]">
-                teste público
-              </span>
-            ) : null}
           </div>
           <PublicPortfolioCarousel items={publishedItems} />
         </section>
@@ -308,9 +303,6 @@ export default function PublicProfileHubPage({
         {behavioralAnalysis ? (
           <section className="grid gap-3 lg:col-span-full">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-neutral-500">
-                Teste comportamental
-              </p>
               <h2 className="mt-1 text-2xl font-extrabold tracking-[-0.03em]">
                 Como costumo trabalhar
               </h2>
