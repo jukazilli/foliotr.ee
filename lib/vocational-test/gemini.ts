@@ -1,4 +1,5 @@
 import type { Answers, TestResult, UserProfile } from "./types";
+import { bigFiveDescriptions, riasecDescriptions } from "./labels";
 
 const DEFAULT_GEMINI_MODEL = "gemini-2.0-flash";
 
@@ -15,19 +16,11 @@ type GeminiReportOutput = {
 };
 
 function buildReportPrompt({ profile, result }: GeminiReportInput) {
-  const topAreas = result.recommendedAreas.slice(0, 3).map((item, index) => ({
-    rank: index + 1,
-    area: item.area.area,
-    score: item.score,
-    careers: item.area.carreiras.slice(0, 6),
-    reasons: item.reasons,
-    nextSteps: item.area.proximosPassos,
-  }));
-
   return [
     "Você é um orientador profissional. Gere um relatório final em português do Brasil.",
     "Use linguagem clara, cuidadosa e prática. Não apresente o teste como diagnóstico psicológico.",
-    "Estruture com: síntese, perfil comportamental, áreas compatíveis, pontos de atenção, próximos passos e aviso responsável.",
+    "Estruture com: síntese, perfil RIASEC, perfil Big Five, motivação, pontos de atenção, próximos passos e aviso responsável.",
+    "Não liste áreas, cursos ou carreiras recomendadas. Explique os perfis por comportamentos observáveis e preferências de trabalho.",
     "Não invente notas além dos dados. Use os dados abaixo como fonte de verdade.",
     "",
     JSON.stringify(
@@ -43,9 +36,10 @@ function buildReportPrompt({ profile, result }: GeminiReportInput) {
           arquetipoDominante: result.dominantArchetypeLabel,
           confianca: `${result.confidence}/100 - ${result.confidenceLabel}`,
           bigFive: result.bigFive.ranking,
+          bigFiveDescricoes: bigFiveDescriptions,
           riasec: result.riasec.ranking,
+          riasecDescricoes: riasecDescriptions,
           arquetipos: result.archetype.ranking,
-          areas: topAreas,
           forcas: result.strengths,
           pontosDeAtencao: result.attentionPoints,
         },

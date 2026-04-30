@@ -106,6 +106,7 @@ model VocationalTestSession {
   reportProvider       String?
   reportModel          String?
   reportGeneratedAt    DateTime?
+  publicInProfile      Boolean   @default(false)
   publicInPortfolio    Boolean   @default(false)
   publicInResume       Boolean   @default(false)
   completedAt          DateTime?
@@ -128,6 +129,7 @@ model Profile {
   bannerUrl                 String?
   bannerPositionX           Int       @default(50)
   bannerPositionY           Int       @default(50)
+  bannerScale               Int       @default(100)
   location                  String?
   pronouns                  String?
   websiteUrl                String?

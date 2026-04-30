@@ -159,7 +159,7 @@ export default function PublicPortfolioTabsPage({
 
   return (
     <main
-      className="ft-tabs-shell h-screen overflow-hidden bg-[#F7F7F2] text-[#03045E]"
+      className="ft-tabs-shell h-screen overflow-hidden bg-[#f2f4f7] text-[#050505]"
       style={{
         fontFamily: `var(--font-template-portfolio), ${sourcePackage.canvas.fontFamily}, ui-sans-serif, system-ui, sans-serif`,
       }}
@@ -168,6 +168,43 @@ export default function PublicPortfolioTabsPage({
         .ft-tab-panel { display: none; }
         .ft-tab-panel:target { display: block; }
         .ft-tab-panels:not(:has(.ft-tab-panel:target)) #apresentacao { display: block; }
+        .ft-tabs-shell [class*="border-2"],
+        .ft-tabs-shell [class*="border-4"] {
+          border-width: 1px !important;
+          border-color: #dddfe2 !important;
+        }
+        .ft-tabs-shell [class*="shadow-["] {
+          box-shadow: 0 1px 2px rgb(0 0 0 / 0.16) !important;
+        }
+        .ft-tabs-shell [class*="bg-[#F5EE84]"] {
+          background: #e7f3ff !important;
+          color: #0866ff !important;
+        }
+        .ft-tabs-shell [class*="bg-[#F7F7F2]"] {
+          background: #f7f8fa !important;
+        }
+        .ft-tabs-shell [class*="text-[#03045E]"] {
+          color: #050505 !important;
+        }
+        .ft-tabs-shell [class*="text-[#474306]"] {
+          color: #65676b !important;
+        }
+        .ft-tabs-shell .font-extrabold,
+        .ft-tabs-shell .font-black {
+          font-weight: 700 !important;
+        }
+        .ft-tabs-shell .font-bold {
+          font-weight: 600 !important;
+        }
+        .ft-tabs-shell p:not([class*="uppercase"]) {
+          font-weight: 400 !important;
+        }
+        .ft-tabs-shell input,
+        .ft-tabs-shell textarea {
+          border-width: 1px !important;
+          border-color: #dddfe2 !important;
+          font-weight: 400 !important;
+        }
       `}</style>
 
       <header className="flex h-[4.5rem] items-center gap-3 border-b-2 border-[#03045E]/10 bg-white/85 px-4 backdrop-blur sm:px-6">

@@ -5,6 +5,11 @@ type RadarItem = {
   value: number;
 };
 
+type RadarLegendItem = {
+  label: string;
+  description: string;
+};
+
 function pointFor(
   index: number,
   total: number,
@@ -30,26 +35,59 @@ function polygonPoints(items: RadarItem[], radius: number, center: number) {
     .join(" ");
 }
 
+function labelLines(label: string) {
+  if (label === "Estabilidade emocional") return ["Estabilidade", "emocional"];
+  if (label.length <= 14) return [label];
+
+  const words = label.split(" ");
+  if (words.length > 1) return words;
+
+  return [label];
+}
+
+function labelPlacement(x: number, center: number) {
+  if (x < center - 48) {
+    return {
+      x: Math.max(36, x),
+      textAnchor: "end" as const,
+    };
+  }
+
+  if (x > center + 48) {
+    return {
+      x: Math.min(204, x),
+      textAnchor: "start" as const,
+    };
+  }
+
+  return {
+    x,
+    textAnchor: "middle" as const,
+  };
+}
+
 export function BehavioralRadar({
   title,
   items,
   color = "#245fd6",
+  legend,
 }: {
   title: string;
   items: RadarItem[];
   color?: string;
+  legend?: RadarLegendItem[];
 }) {
   const center = 120;
   const radius = 82;
   const rings = [25, 50, 75, 100];
 
   return (
-    <figure className="min-w-0 rounded-[24px] border-2 border-line bg-white p-4 shadow-hard-sm">
-      <figcaption className="mb-3 text-sm font-extrabold uppercase text-ink">
+    <figure className="min-w-0 rounded-xl border border-[#dddfe2] bg-white p-4 shadow-[0_1px_2px_rgb(0_0_0/0.08)]">
+      <figcaption className="mb-3 text-sm font-semibold uppercase text-[#050505]">
         {title}
       </figcaption>
       <svg
-        viewBox="0 0 240 270"
+        viewBox="-18 0 276 270"
         role="img"
         aria-label={title}
         className="h-auto w-full"
@@ -66,13 +104,15 @@ export function BehavioralRadar({
                 .join(" ")}
               fill="none"
               stroke="#111111"
-              strokeOpacity={ring === 100 ? 0.35 : 0.16}
-              strokeWidth={ring === 100 ? 2 : 1.5}
+              strokeOpacity={ring === 100 ? 0.22 : 0.09}
+              strokeWidth={ring === 100 ? 1.15 : 0.75}
             />
           ))}
           {items.map((item, index) => {
             const edge = pointFor(index, items.length, 100, radius, center);
-            const label = pointFor(index, items.length, 118, radius, center);
+            const label = pointFor(index, items.length, 126, radius, center);
+            const placement = labelPlacement(label.x, center);
+            const lines = labelLines(item.label);
 
             return (
               <g key={item.label}>
@@ -82,17 +122,25 @@ export function BehavioralRadar({
                   x2={edge.x}
                   y2={edge.y}
                   stroke="#111111"
-                  strokeOpacity="0.12"
-                  strokeWidth="1"
+                  strokeOpacity="0.07"
+                  strokeWidth="0.75"
                 />
                 <text
-                  x={label.x}
+                  x={placement.x}
                   y={label.y}
-                  textAnchor="middle"
+                  textAnchor={placement.textAnchor}
                   dominantBaseline="middle"
-                  className="fill-ink text-[10px] font-extrabold"
+                  className="fill-ink text-[6px] font-semibold"
                 >
-                  {item.label}
+                  {lines.map((line, lineIndex) => (
+                    <tspan
+                      key={line}
+                      x={placement.x}
+                      dy={lineIndex === 0 ? `${(1 - lines.length) * 3}px` : "6px"}
+                    >
+                      {line}
+                    </tspan>
+                  ))}
                 </text>
               </g>
             );
@@ -100,21 +148,22 @@ export function BehavioralRadar({
           <polygon
             points={polygonPoints(items, radius, center)}
             fill={color}
-            fillOpacity="0.18"
+            fillOpacity="0.1"
             stroke={color}
-            strokeWidth="4"
+            strokeWidth="1.8"
             strokeLinejoin="round"
           />
           {items.map((item, index) => {
             const point = pointFor(index, items.length, item.value, radius, center);
             return (
               <g key={`${item.label}-${item.value}`}>
-                <circle cx={point.x} cy={point.y} r="6" fill={color} />
+                <circle cx={point.x} cy={point.y} r="6.5" fill={color} />
                 <text
                   x={point.x}
-                  y={point.y + 18}
+                  y={point.y}
                   textAnchor="middle"
-                  className="fill-muted text-[9px] font-bold"
+                  dominantBaseline="central"
+                  className="fill-white text-[5px] font-semibold"
                 >
                   {item.value}
                 </text>
@@ -123,6 +172,16 @@ export function BehavioralRadar({
           })}
         </g>
       </svg>
+      {legend?.length ? (
+        <dl className="mt-2 grid gap-1.5 text-[10px] leading-4 text-[#65676b]">
+          {legend.map((item) => (
+            <div key={item.label} className="min-w-0">
+              <dt className="inline font-medium text-[#050505]">{item.label}</dt>
+              <dd className="inline">: {item.description}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </figure>
   );
 }

@@ -27,6 +27,7 @@ const profileBaseSelect = {
   bannerUrl: true,
   bannerPositionX: true,
   bannerPositionY: true,
+  bannerScale: true,
   headline: true,
   bio: true,
   location: true,
@@ -241,6 +242,7 @@ export async function updateOwnedProfileFields(
         ...(input.bannerPositionY !== undefined
           ? { bannerPositionY: input.bannerPositionY }
           : {}),
+        ...(input.bannerScale !== undefined ? { bannerScale: input.bannerScale } : {}),
         headline: sanitizeNullable(input.headline),
         bio: sanitizeNullable(input.bio),
         location: sanitizeNullable(input.location),

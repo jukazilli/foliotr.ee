@@ -11,6 +11,10 @@ function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+function clampScale(value: number) {
+  return Math.max(75, Math.min(250, Math.round(value)));
+}
+
 async function parseJsonResponse(response: Response) {
   const payload = (await response.json().catch(() => null)) as unknown;
 
@@ -37,6 +41,7 @@ interface EditableProfileCoverProps {
   bannerUrl: string | null;
   bannerPositionX: number;
   bannerPositionY: number;
+  bannerScale: number;
   isOwner: boolean;
 }
 
@@ -44,10 +49,12 @@ export function EditableProfileCover({
   bannerUrl,
   bannerPositionX,
   bannerPositionY,
+  bannerScale,
   isOwner,
 }: EditableProfileCoverProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const coverRef = useRef<HTMLDivElement | null>(null);
   const dragStartRef = useRef<{
     pointerId: number;
     clientX: number;
@@ -63,6 +70,7 @@ export function EditableProfileCover({
     x: clampPercent(bannerPositionX),
     y: clampPercent(bannerPositionY),
   });
+  const [scale, setScale] = useState(clampScale(bannerScale || 100));
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -76,10 +84,31 @@ export function EditableProfileCover({
     };
   }, [localPreviewUrl]);
 
+  useEffect(() => {
+    const cover = coverRef.current;
+    if (!cover || !editing || !hasImage) return;
+
+    function onWheel(event: globalThis.WheelEvent) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const direction = event.deltaY > 0 ? -1 : 1;
+      const step = event.ctrlKey ? 3 : 6;
+      setScale((current) => clampScale(current + direction * step));
+    }
+
+    cover.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      cover.removeEventListener("wheel", onWheel);
+    };
+  }, [editing, hasImage]);
+
   function beginEditing() {
     if (!isOwner) return;
     setEditing(true);
     setError("");
+    window.requestAnimationFrame(() => coverRef.current?.focus());
   }
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
@@ -92,8 +121,10 @@ export function EditableProfileCover({
     setRemoveRequested(false);
     setLocalPreviewUrl(URL.createObjectURL(file));
     setPosition({ x: 50, y: 50 });
+    setScale(100);
     setEditing(true);
     setError("");
+    window.requestAnimationFrame(() => coverRef.current?.focus());
   }
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
@@ -140,6 +171,7 @@ export function EditableProfileCover({
       x: clampPercent(bannerPositionX),
       y: clampPercent(bannerPositionY),
     });
+    setScale(clampScale(bannerScale || 100));
     setEditing(false);
     setError("");
   }
@@ -190,6 +222,7 @@ export function EditableProfileCover({
             bannerUrl: nextBannerUrl,
             bannerPositionX: position.x,
             bannerPositionY: position.y,
+            bannerScale: scale,
           }),
         })
       );
@@ -219,14 +252,20 @@ export function EditableProfileCover({
     setRemoveRequested(true);
     setEditing(true);
     setError("");
+    window.requestAnimationFrame(() => coverRef.current?.focus());
   }
 
   return (
     <div
-      className={`relative h-48 overflow-hidden sm:h-64 ${
-        editing ? "cursor-grab touch-none" : ""
+      ref={coverRef}
+      className={`relative h-72 overflow-hidden sm:h-[22rem] lg:h-[24rem] ${
+        editing ? "cursor-grab touch-none outline-none" : ""
       }`}
       style={coverFallbackStyle}
+      tabIndex={editing ? 0 : -1}
+      onClick={() => {
+        if (editing) coverRef.current?.focus();
+      }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerEnd}
@@ -239,7 +278,11 @@ export function EditableProfileCover({
           alt=""
           className="h-full w-full select-none object-cover"
           draggable={false}
-          style={{ objectPosition: `${position.x}% ${position.y}%` }}
+          style={{
+            objectPosition: `${position.x}% ${position.y}%`,
+            transform: `scale(${scale / 100})`,
+            transformOrigin: `${position.x}% ${position.y}%`,
+          }}
         />
       ) : (
         <div className="flex h-full w-full items-end p-5" style={coverFallbackStyle}>
@@ -338,7 +381,8 @@ export function EditableProfileCover({
               {hasImage ? (
                 <span className="inline-flex h-10 items-center gap-2 rounded-full bg-neutral-950/85 px-3 text-xs font-bold text-white">
                   <Move className="h-4 w-4" aria-hidden />
-                  Arraste a capa
+                  Arraste ou use o scroll para zoom
+                  <span className="text-white/70">{scale}%</span>
                 </span>
               ) : null}
             </div>

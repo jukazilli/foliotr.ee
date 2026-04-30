@@ -185,6 +185,7 @@ export const profileSchema = z.object({
   bannerUrl: nullableAssetUrlSchema,
   bannerPositionX: z.coerce.number().int().min(0).max(100).optional(),
   bannerPositionY: z.coerce.number().int().min(0).max(100).optional(),
+  bannerScale: z.coerce.number().int().min(75).max(250).optional(),
   headline: z.string().max(120, "Titulo deve ter no maximo 120 caracteres").optional(),
   bio: z.string().max(500, "Bio deve ter no maximo 500 caracteres").optional(),
   location: z.string().max(120, "Localizacao muito longa").optional(),

@@ -1,8 +1,59 @@
 # Backlog - Remaster Social UI
 
-Status: active backlog  
-Last updated: 2026-04-28  
+Status: active backlog
+Last updated: 2026-04-29
 Contrato base: `docs/02_contratos/contrato-remaster-social-ui.md`
+
+## Slice 16 - Perfil público Facebook-like: portfólios, dados e reviews
+
+Status: FECHADO em 2026-04-29
+
+Dependências:
+
+- `components/public/PublicProfileHubPage.tsx`.
+- `components/public/PublicPortfolioCarousel.tsx`.
+- `components/public/PublicReviewsSection.tsx`.
+- `app/[username]/review-actions.ts`.
+- Regras já fechadas de reviews sem autoavaliação.
+
+Escopo dentro:
+
+- Remover CTA `Gerenciar portfólios` do topo do perfil.
+- Remover card de currículo rápido da área pública.
+- Trocar os cards `Sobre` e portfólio por uma seção `Meus Portfólios` em carrossel horizontal inspirado em `Pessoas que talvez você conheça`.
+- Exibir cards de portfólio com capa, cargo/título, empresa quando houver e botão `Ver detalhes`.
+- Criar bloco `Dados pessoais` com bio, localização, trabalho atual/headline e status de oportunidade em linguagem mais curta.
+- Criar composer compacto de review ao lado de dados pessoais para visitantes, abrindo modal com estrelas, nome, cargo, empresa e texto.
+- Manter reviews publicadas em seção dedicada de largura total no fim.
+
+Escopo fora:
+
+- Copiar classes ou assets internos do Facebook.
+- Criar botão `Ver tudo` ou botão `X` nos cards.
+- Criar novo schema de review.
+- Implementar seletor controlado cidade/estado neste corte.
+
+Lacunas:
+
+- Não há biblioteca de cidade/estado instalada no projeto. A localização segue texto livre até um corte próprio de validação/localidade.
+
+Evidência esperada:
+
+- `npm run typecheck`.
+- `npm run lint`.
+- `git diff --check`.
+- Busca de mojibake nos arquivos tocados.
+
+Evidência de fechamento:
+
+- `components/public/PublicProfileHubPage.tsx` removeu `Gerenciar portfólios`, substituiu os cards antigos por `Meus Portfólios`, `Dados pessoais` e composer de review.
+- `components/public/PublicPortfolioCarousel.tsx` virou carrossel horizontal com cards de 222px inspirados em `Pessoas que talvez você conheça`, sem currículo rápido.
+- `components/public/PublicReviewComposer.tsx` criou o modal de envio de review com estrelas, nome, cargo, empresa e texto.
+- `components/public/PublicReviewsSection.tsx` ficou dedicado apenas às avaliações publicadas em largura total.
+- `npm run typecheck`: sem erro.
+- `npm run lint`: sem erro.
+- `git diff --check`: sem erro.
+- Busca de mojibake nos arquivos tocados: sem ocorrência.
 
 ## Slice 0 - Referencia e contrato visual
 

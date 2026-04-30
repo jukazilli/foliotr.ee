@@ -27,7 +27,11 @@ const publicPageInclude = Prisma.validator<Prisma.PageInclude>()({
               vocationalTests: {
                 where: {
                   status: "completed",
-                  OR: [{ publicInPortfolio: true }, { publicInResume: true }],
+                  OR: [
+                    { publicInProfile: true },
+                    { publicInPortfolio: true },
+                    { publicInResume: true },
+                  ],
                 },
                 orderBy: {
                   completedAt: "desc",
@@ -104,6 +108,7 @@ export async function getPublicProfileHub(username: string) {
       bannerUrl: true,
       bannerPositionX: true,
       bannerPositionY: true,
+      bannerScale: true,
       headline: true,
       bio: true,
       defaultPresentationId: true,
@@ -137,7 +142,7 @@ export async function getPublicProfileHub(username: string) {
           vocationalTests: {
             where: {
               status: "completed",
-              publicInPortfolio: true,
+              publicInProfile: true,
             },
             orderBy: {
               completedAt: "desc",

@@ -50,17 +50,20 @@ export function toBehavioralAnalysisSnapshot(
 
 export function selectBehavioralAnalysis(
   sessions: PublicAnalysisRecord[] | undefined,
-  target: "portfolio" | "resume"
+  target: "profile" | "portfolio" | "resume"
 ) {
   if (!sessions?.length) return null;
 
   const selected = sessions.find((session) => {
     const flags = session as PublicAnalysisRecord & {
+      publicInProfile?: boolean;
       publicInPortfolio?: boolean;
       publicInResume?: boolean;
     };
 
-    return target === "portfolio" ? flags.publicInPortfolio : flags.publicInResume;
+    if (target === "profile") return flags.publicInProfile;
+    if (target === "portfolio") return flags.publicInPortfolio;
+    return flags.publicInResume;
   });
 
   return toBehavioralAnalysisSnapshot(selected);

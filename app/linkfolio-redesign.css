@@ -1,20 +1,20 @@
 :root {
-  --paper: #faf9f6;
+  --paper: #f2f4f7;
   --white: #ffffff;
-  --ink: #1f2b16;
-  --muted: #42503a;
-  --line: #111111;
+  --ink: #050505;
+  --muted: #65676b;
+  --line: #dddfe2;
   --orange: #ff4d00;
-  --lime: #dfff00;
-  --blue: #245fd6;
-  --blue-soft: #2f66d0;
+  --lime: #f0f2f5;
+  --blue: #0866ff;
+  --blue-soft: #e7f3ff;
   --rose: #8b0024;
-  --pink: #ffd7f3;
-  --cream: #eff4dc;
-  --green: #6f7a47;
+  --pink: #e7f3ff;
+  --cream: #f7f8fa;
+  --green: #1f4f16;
   --cyan: #00d1ff;
-  --peach: #ffd1b3;
-  --shadow: 10px 10px 0 0 var(--line);
+  --peach: #f0f2f5;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.16);
   --radius-pill: 999px;
   --radius-card: 28px;
   --page-pad-x: clamp(20px, 7vw, 120px);
@@ -24,7 +24,7 @@
   --section-gap: clamp(32px, 5vw, 72px);
   --display-size: clamp(3rem, 5.8vw, 6.8rem);
   --lead-size: clamp(1.25rem, 1.65vw, 1.5rem);
-  --button-light-bg: #f1f1ee;
+  --button-light-bg: #f0f2f5;
   --button-submit-bg: #214a11;
   --hero-heading: #244b13;
   --username-prefix: #7b7f72;
@@ -34,7 +34,7 @@
   --community-heading-color: #202637;
   --footer-bg: #4a2474;
   --theme-toggle-bg: #f1f1ee;
-  --theme-toggle-color: #111111;
+  --theme-toggle-color: #050505;
   --theme-toggle-border: rgba(17, 17, 17, 0.14);
   --theme-media-filter: grayscale(1) contrast(1.02) brightness(0.92);
 }
@@ -42,9 +42,9 @@
 body[data-theme="noir"] {
   --paper: #d8d7d2;
   --white: #f2f1ed;
-  --ink: #111111;
+  --ink: #050505;
   --muted: #5c5c59;
-  --line: #050505;
+  --line: #303338;
   --orange: #8a8983;
   --lime: #d1d0ca;
   --blue: #3e3e3a;
@@ -55,7 +55,7 @@ body[data-theme="noir"] {
   --green: #575650;
   --cyan: #9c9b97;
   --peach: #c6c4be;
-  --shadow: 10px 10px 0 0 rgba(0, 0, 0, 0.72);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.22);
   --button-light-bg: #cac8c2;
   --button-submit-bg: #252525;
   --hero-heading: #141414;
@@ -65,9 +65,9 @@ body[data-theme="noir"] {
   --resume-blue-bg: #383834;
   --community-heading-color: #141414;
   --footer-bg: #242421;
-  --theme-toggle-bg: #111111;
+  --theme-toggle-bg: #050505;
   --theme-toggle-color: #f2f1ed;
-  --theme-toggle-border: #111111;
+  --theme-toggle-border: #050505;
 }
 
 * {
@@ -215,19 +215,17 @@ main {
   align-items: center;
   justify-content: center;
   border: 0;
-  border-radius: 0;
-  padding: 0 clamp(18px, 2vw, 28px);
+  border-radius: 8px;
+  padding: 0 clamp(16px, 1.6vw, 22px);
   font-size: clamp(0.82rem, 0.95vw, 0.95rem);
-  font-weight: 800;
-  text-transform: uppercase;
+  font-weight: 700;
+  text-transform: none;
   cursor: pointer;
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease;
+  transition: background 180ms ease;
 }
 
 .button:hover {
-  transform: translateY(-2px);
+  transform: none;
 }
 
 .button-light {
@@ -236,7 +234,7 @@ main {
 }
 
 .button-dark {
-  background: var(--orange);
+  background: var(--blue);
   color: var(--white);
 }
 
@@ -247,13 +245,13 @@ main {
 }
 
 .button-accent {
-  background: var(--lime);
-  color: var(--ink);
+  background: var(--pink);
+  color: var(--blue);
 }
 
 .button-soft {
   background: var(--pink);
-  color: var(--ink);
+  color: var(--blue);
 }
 
 .button-rest {
@@ -728,7 +726,7 @@ body[data-theme="noir"] .ana-portrait {
   background-image: url("/redesign/img/julio.png");
   background-size: cover;
   background-position: center;
-  box-shadow: 6px 6px 0 0 var(--line);
+  box-shadow: var(--shadow);
 }
 
 .social-body strong {
@@ -760,7 +758,7 @@ body[data-theme="noir"] .ana-portrait {
   line-height: 1;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  box-shadow: 4px 4px 0 0 var(--line);
+  box-shadow: var(--shadow);
 }
 
 .social-body span:nth-of-type(2) {
@@ -1482,7 +1480,7 @@ body[data-theme="noir"] .ana-portrait {
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--white);
-  box-shadow: 6px 6px 0 0 var(--line);
+  box-shadow: var(--shadow);
   overflow: hidden;
 }
 

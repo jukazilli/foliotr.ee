@@ -2,8 +2,10 @@ import { careerCatalog } from "./career-catalog";
 import { questions } from "./questions";
 import {
   archetypeLabels,
+  bigFiveDescriptions,
   bigFiveLabels,
   dimensionLabels,
+  riasecDescriptions,
   riasecCodes,
   riasecLabels,
 } from "./labels";
@@ -186,21 +188,26 @@ function buildSummary(
   profile: UserProfile,
   riasec: ScoreMap<RiasecDimension>,
   bigFive: ScoreMap<BigFiveDimension>,
-  archetype: ScoreMap<ArchetypeDimension>,
-  topArea: AreaRecommendation
+  archetype: ScoreMap<ArchetypeDimension>
 ): string {
   const firstName = profile.name?.trim()?.split(" ")[0] || "Seu resultado";
   const topRiasec = riasec.ranking
     .slice(0, 3)
-    .map((item) => item.label)
-    .join(", ");
+    .map(
+      (item) =>
+        `${item.label}, ligado a ${riasecDescriptions[item.key]}`
+    )
+    .join("; ");
   const topBigFive = bigFive.ranking
     .slice(0, 2)
-    .map((item) => item.label)
-    .join(" e ");
+    .map(
+      (item) =>
+        `${item.label}, que indica tendência a ${bigFiveDescriptions[item.key]}`
+    )
+    .join("; ");
   const topArchetype = archetype.ranking[0].label;
 
-  return `${firstName}, seu perfil mostra maior aproximação com ${topRiasec}. No comportamento, aparecem como forças principais ${topBigFive}. Como motivação, o arquétipo ${topArchetype} indica o tipo de ambiente que tende a gerar mais sentido para você. A área mais compatível neste momento é ${topArea.area.area}, mas o resultado deve ser usado como apoio à reflexão, não como decisão definitiva.`;
+  return `${firstName}, seu perfil mostra maior aproximação com ${topRiasec}. No Big Five, suas forças mais altas aparecem em ${topBigFive}. Como motivação, o arquétipo ${topArchetype} indica o tipo de ambiente que tende a gerar mais sentido para você. Use este resultado como apoio à reflexão, não como decisão definitiva.`;
 }
 
 function buildStrengths(
@@ -280,7 +287,7 @@ export function calculateResult(answers: Answers, profile: UserProfile): TestRes
     attentionPoints: buildAttentionPoints(bigFive, riasec),
     confidence,
     confidenceLabel: classifyConfidence(confidence),
-    summary: buildSummary(profile, riasec, bigFive, archetype, recommendedAreas[0]),
+    summary: buildSummary(profile, riasec, bigFive, archetype),
     completedAt: new Date().toISOString(),
   };
 }

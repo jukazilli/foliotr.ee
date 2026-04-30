@@ -4,10 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
-  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
   FileText,
   RotateCcw,
-  Save,
 } from "lucide-react";
 import { affinityScale, agreementScale } from "@/lib/vocational-test/scales";
 import { questions } from "@/lib/vocational-test/questions";
@@ -26,6 +26,7 @@ type PersistedSession = {
   answers: Answers;
   result?: TestResult | null;
   aiReport?: string | null;
+  publicInProfile?: boolean;
   publicInPortfolio?: boolean;
   publicInResume?: boolean;
   completedAt?: string | null;
@@ -74,6 +75,7 @@ function normalizeSession(input: unknown): PersistedSession | null {
     answers: session.answers ?? {},
     result: session.result ?? null,
     aiReport: session.aiReport ?? null,
+    publicInProfile: Boolean(session.publicInProfile),
     publicInPortfolio: Boolean(session.publicInPortfolio),
     publicInResume: Boolean(session.publicInResume),
     completedAt: session.completedAt ?? null,
@@ -86,13 +88,12 @@ export function VocationalTestApp() {
   const [answers, setAnswers] = useState<Answers>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [result, setResult] = useState<TestResult | null>(null);
-  const [aiReport, setAiReport] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasLoadedSession, setHasLoadedSession] = useState(false);
   const [completedSessions, setCompletedSessions] = useState<PersistedSession[]>([]);
+  const [expandedSessionIds, setExpandedSessionIds] = useState<string[]>([]);
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
   const progress = Math.round((answeredCount / questions.length) * 100);
@@ -130,6 +131,7 @@ export function VocationalTestApp() {
         if (!active) return;
 
         setCompletedSessions(sessions);
+        setExpandedSessionIds(sessions[0]?.id ? [sessions[0].id] : []);
 
         if (session) {
           setProfile(session.profile);
@@ -138,7 +140,6 @@ export function VocationalTestApp() {
             Math.min(Math.max(session.currentQuestionIndex, 0), questions.length - 1)
           );
           setResult(session.result ?? null);
-          setAiReport(session.aiReport ?? null);
           setStage(getInitialStage(session));
         }
       } catch (requestError) {
@@ -168,7 +169,6 @@ export function VocationalTestApp() {
     if (!hasLoadedSession || stage === "intro" || stage === "result") return;
 
     const timeout = window.setTimeout(async () => {
-      setSaving(true);
       setError(null);
 
       try {
@@ -193,8 +193,6 @@ export function VocationalTestApp() {
             ? requestError.message
             : "Erro ao salvar progresso."
         );
-      } finally {
-        setSaving(false);
       }
     }, 550);
 
@@ -213,7 +211,6 @@ export function VocationalTestApp() {
     setAnswers({});
     setCurrentQuestionIndex(0);
     setResult(null);
-    setAiReport(null);
     setStage("profile");
   }
 
@@ -245,6 +242,7 @@ export function VocationalTestApp() {
           status?: string;
           result?: TestResult;
           aiReport?: string | null;
+          publicInProfile?: boolean;
           publicInPortfolio?: boolean;
           publicInResume?: boolean;
           completedAt?: string | null;
@@ -256,7 +254,6 @@ export function VocationalTestApp() {
       }
 
       setResult(payload.session.result);
-      setAiReport(payload.session.aiReport ?? null);
       setCompletedSessions((previous) => [
         {
           id: payload.session?.id ?? `local-${Date.now()}`,
@@ -266,12 +263,16 @@ export function VocationalTestApp() {
           answers,
           result: payload.session?.result ?? null,
           aiReport: payload.session?.aiReport ?? null,
+          publicInProfile: Boolean(payload.session?.publicInProfile),
           publicInPortfolio: Boolean(payload.session?.publicInPortfolio),
           publicInResume: Boolean(payload.session?.publicInResume),
           completedAt: payload.session?.completedAt ?? new Date().toISOString(),
         },
         ...previous.filter((item) => item.id !== payload.session?.id),
       ]);
+      if (payload.session?.id) {
+        setExpandedSessionIds([payload.session.id]);
+      }
       setStage("result");
     } catch (requestError) {
       setError(
@@ -282,14 +283,28 @@ export function VocationalTestApp() {
     }
   }
 
+  function toggleSession(sessionId: string) {
+    setExpandedSessionIds((previous) =>
+      previous.includes(sessionId)
+        ? previous.filter((id) => id !== sessionId)
+        : [sessionId, ...previous]
+    );
+  }
+
   async function updateVisibility(
     sessionId: string,
-    field: "publicInPortfolio" | "publicInResume",
+    field: "publicInProfile" | "publicInPortfolio" | "publicInResume",
     value: boolean
   ) {
+    const previousSessions = completedSessions;
+
     setCompletedSessions((previous) =>
       previous.map((session) =>
-        session.id === sessionId ? { ...session, [field]: value } : session
+        session.id === sessionId
+          ? { ...session, [field]: value }
+          : value
+            ? { ...session, [field]: false }
+            : session
       )
     );
 
@@ -312,8 +327,8 @@ export function VocationalTestApp() {
           : "Erro ao atualizar publicação."
       );
       setCompletedSessions((previous) =>
-        previous.map((session) =>
-          session.id === sessionId ? { ...session, [field]: !value } : session
+        previous.map(
+          (session) => previousSessions.find((item) => item.id === session.id) ?? session
         )
       );
     }
@@ -321,106 +336,91 @@ export function VocationalTestApp() {
 
   if (loading) {
     return (
-      <section className="brand-card mx-auto max-w-3xl p-8">
-        <p className="brand-eyebrow">Teste vocacional</p>
-        <h1 className="brand-title mt-4 text-5xl">Carregando seu progresso</h1>
+      <section className="mx-auto max-w-3xl rounded-xl border border-[#dddfe2] bg-white p-8 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
+        <p className="brand-eyebrow">Mapa de interesses</p>
+        <h1 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-[#050505]">
+          Carregando seu progresso
+        </h1>
       </section>
     );
   }
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6">
-      <header className="brand-card bg-white p-6 sm:p-8">
+    <div className="mx-auto grid max-w-6xl gap-6 bg-[#f2f4f7] text-[#050505]">
+      <header className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="brand-eyebrow">Teste vocacional</p>
-            <h1 className="brand-title mt-4 max-w-4xl text-5xl sm:text-6xl">
+            <p className="brand-eyebrow">Mapa de interesses</p>
+            <h1 className="mt-3 max-w-4xl text-3xl font-bold tracking-[-0.02em] text-[#050505] sm:text-4xl">
               Descubra caminhos com base em evidências do seu perfil.
             </h1>
-            <p className="brand-copy mt-5 max-w-2xl text-base sm:text-lg">
-              Responda ao mapa de interesses, comportamento e motivação. O resultado
-              fica salvo no seu perfil.
+            <p className="mt-4 max-w-2xl text-base font-normal leading-7 text-[#65676b]">
+              Responda ao mapa de interesses, comportamento e motivação. O resultado fica
+              salvo no seu perfil.
             </p>
-          </div>
-          <div className="flex items-center gap-2 rounded-full border-2 border-line bg-cream px-4 py-3 text-sm font-extrabold text-ink">
-            <Save className="h-4 w-4" aria-hidden="true" />
-            {saving ? "Salvando" : "Salvo automaticamente"}
           </div>
         </div>
       </header>
 
       {error ? (
-        <div className="rounded-[20px] border-2 border-line bg-pink px-5 py-4 font-bold text-ink shadow-hard-sm">
+        <div className="rounded-xl border border-[#dddfe2] bg-white px-5 py-4 font-semibold text-[#050505] shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
           {error}
         </div>
       ) : null}
 
+      {stage === "result" && result ? (
+        <section className="flex flex-col gap-3 rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="brand-eyebrow">Resultado atual</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+              {profile.name
+                ? `${profile.name}, seu mapa de interesses está pronto`
+                : "Seu mapa de interesses está pronto"}
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              className="brand-button brand-button-pink gap-2"
+              onClick={restart}
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              Refazer mapa
+            </button>
+            <button
+              type="button"
+              className="brand-button brand-button-secondary"
+              onClick={() => window.print()}
+            >
+              Imprimir
+            </button>
+          </div>
+        </section>
+      ) : null}
+
       {completedSessions.length > 0 ? (
-        <section className="brand-card bg-white p-5 sm:p-6">
+        <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="brand-eyebrow">Meus resultados</p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-[-0.04em] text-ink">
-                Histórico do teste vocacional
+              <h2 className="mt-2 text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+                Histórico de mapas realizados
               </h2>
             </div>
-            <p className="max-w-xl text-sm font-semibold text-muted">
-              Você controla se cada resultado aparece no portfólio ou no currículo
+            <p className="max-w-xl text-sm font-normal leading-6 text-[#65676b]">
+              Você controla qual resultado aparece no perfil, portfólio ou currículo
               público.
             </p>
           </div>
           <div className="mt-5 grid gap-3">
             {completedSessions.map((session) => (
-              <article
+              <TestHistoryItem
                 key={session.id}
-                className="grid gap-4 rounded-[18px] border-2 border-line bg-cream p-4 lg:grid-cols-[minmax(0,1fr)_auto]"
-              >
-                <div>
-                  <h3 className="font-extrabold text-ink">
-                    {session.result?.dominantArchetypeLabel
-                      ? `Arquétipo ${session.result.dominantArchetypeLabel}`
-                      : "Resultado vocacional"}
-                  </h3>
-                  <p className="mt-1 text-sm font-semibold text-muted">
-                    RIASEC {session.result?.riasecCode ?? "-"} ·{" "}
-                    {session.completedAt
-                      ? new Intl.DateTimeFormat("pt-BR").format(
-                          new Date(session.completedAt)
-                        )
-                      : "sem data"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-line bg-white px-3 py-2 text-sm font-extrabold">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(session.publicInPortfolio)}
-                      onChange={(event) =>
-                        updateVisibility(
-                          session.id,
-                          "publicInPortfolio",
-                          event.target.checked
-                        )
-                      }
-                    />
-                    Portfólio
-                  </label>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-line bg-white px-3 py-2 text-sm font-extrabold">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(session.publicInResume)}
-                      onChange={(event) =>
-                        updateVisibility(
-                          session.id,
-                          "publicInResume",
-                          event.target.checked
-                        )
-                      }
-                    />
-                    Currículo
-                  </label>
-                </div>
-              </article>
+                session={session}
+                expanded={expandedSessionIds.includes(session.id)}
+                onToggle={() => toggleSession(session.id)}
+                onUpdateVisibility={updateVisibility}
+              />
             ))}
           </div>
         </section>
@@ -428,14 +428,14 @@ export function VocationalTestApp() {
 
       {stage === "intro" ? (
         <section className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="brand-card-soft p-6 sm:p-8">
+          <div className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
             <p className="brand-eyebrow">Como funciona</p>
-            <h2 className="mt-4 text-4xl font-extrabold tracking-[-0.04em] text-ink">
+            <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-[#050505]">
               60 perguntas, três leituras e um relatório final.
             </h2>
-            <p className="brand-copy mt-4">
-              O teste cruza RIASEC, Big Five e arquétipos de motivação para sugerir
-              áreas compatíveis, forças, pontos de atenção e próximos passos práticos.
+            <p className="mt-4 text-base font-normal leading-7 text-[#65676b]">
+              O mapa cruza RIASEC, Big Five e arquétipos de motivação para sugerir
+              forças, pontos de atenção e próximos passos práticos.
             </p>
             <button
               type="button"
@@ -446,9 +446,11 @@ export function VocationalTestApp() {
             </button>
           </div>
 
-          <div className="brand-card bg-lime p-6 sm:p-8">
-            <p className="text-sm font-extrabold uppercase text-ink">Uso responsável</p>
-            <p className="mt-4 text-lg font-bold leading-7 text-ink">
+          <div className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
+            <p className="text-sm font-bold uppercase text-[#65676b]">
+              Uso responsável
+            </p>
+            <p className="mt-4 text-base font-normal leading-7 text-[#050505]">
               O resultado apoia reflexão e decisão. Ele não substitui orientação
               profissional humana, avaliação psicológica ou validação prática da rotina
               de cada carreira.
@@ -459,26 +461,26 @@ export function VocationalTestApp() {
 
       {stage === "profile" ? (
         <form
-          className="brand-card bg-cream p-6 sm:p-8"
+          className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8"
           onSubmit={(event) => {
             event.preventDefault();
             setStage("test");
           }}
         >
           <p className="brand-eyebrow">Antes de começar</p>
-          <h2 className="mt-4 text-4xl font-extrabold tracking-[-0.04em] text-ink">
+          <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-[#050505]">
             Personalize a leitura do relatório.
           </h2>
-          <p className="brand-copy mt-3 max-w-2xl">
+          <p className="mt-3 max-w-2xl text-base font-normal leading-7 text-[#65676b]">
             Essas informações não alteram o cálculo. Elas ajudam o relatório final a
             conversar com o seu momento.
           </p>
 
           <div className="mt-8 grid gap-5">
             <label className="grid gap-2">
-              <span className="text-sm font-extrabold uppercase text-ink">Nome</span>
+              <span className="text-sm font-semibold uppercase text-[#050505]">Nome</span>
               <input
-                className="brand-input border-2 border-line"
+                className="rounded-lg border border-[#dddfe2] bg-white px-4 py-3 text-[#050505] outline-none focus:border-[#1877f2]"
                 value={profile.name}
                 placeholder="Ex: Ana, João, Maria..."
                 onChange={(event) =>
@@ -488,11 +490,11 @@ export function VocationalTestApp() {
             </label>
 
             <label className="grid gap-2">
-              <span className="text-sm font-extrabold uppercase text-ink">
+              <span className="text-sm font-semibold uppercase text-[#050505]">
                 Momento atual
               </span>
               <select
-                className="brand-input border-2 border-line"
+                className="rounded-lg border border-[#dddfe2] bg-white px-4 py-3 text-[#050505] outline-none focus:border-[#1877f2]"
                 value={profile.moment}
                 onChange={(event) =>
                   setProfile((prev) => ({
@@ -510,11 +512,11 @@ export function VocationalTestApp() {
             </label>
 
             <label className="grid gap-2">
-              <span className="text-sm font-extrabold uppercase text-ink">
+              <span className="text-sm font-semibold uppercase text-[#050505]">
                 O que você espera descobrir?
               </span>
               <textarea
-                className="min-h-32 rounded-[18px] border-2 border-line bg-white px-6 py-4 font-bold text-ink outline-none focus:shadow-[inset_0_0_0_3px_var(--pink)]"
+                className="min-h-32 rounded-lg border border-[#dddfe2] bg-white px-4 py-3 font-normal text-[#050505] outline-none focus:border-[#1877f2]"
                 value={profile.goal}
                 placeholder="Ex: Quero entender quais áreas combinam comigo antes de escolher um curso."
                 onChange={(event) =>
@@ -531,41 +533,41 @@ export function VocationalTestApp() {
       ) : null}
 
       {stage === "test" ? (
-        <section className="brand-card bg-white p-5 sm:p-8">
+        <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
           <div className="mb-7">
-            <div className="flex items-center justify-between gap-4 text-sm font-extrabold uppercase text-ink">
+            <div className="flex items-center justify-between gap-4 text-sm font-semibold uppercase text-[#65676b]">
               <span>
                 {answeredCount} de {questions.length} respondidas
               </span>
               <span>{progress}%</span>
             </div>
-            <div className="mt-3 h-4 overflow-hidden rounded-full border-2 border-line bg-cream">
+            <div className="mt-3 h-3 overflow-hidden rounded-full bg-[#f0f2f5]">
               <div className="h-full bg-orange" style={{ width: `${progress}%` }} />
             </div>
           </div>
 
           <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-            <aside className="rounded-[24px] border-2 border-line bg-blue p-5 text-white shadow-hard-sm">
-              <p className="text-xs font-extrabold uppercase">Bloco atual</p>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.03em]">
+            <aside className="rounded-xl bg-[#f0f2f5] p-5 text-[#050505]">
+              <p className="text-xs font-bold uppercase text-[#65676b]">Bloco atual</p>
+              <h2 className="mt-3 text-2xl font-bold tracking-[-0.02em]">
                 {getBlockLabel(currentQuestion.block)}
               </h2>
-              <p className="mt-4 text-sm font-semibold leading-6 text-white/90">
+              <p className="mt-4 text-sm font-normal leading-6 text-[#65676b]">
                 {getBlockInstruction(currentQuestion.block)}
               </p>
             </aside>
 
             <div>
-              <div className="rounded-[24px] border-2 border-line bg-cream p-5 sm:p-7">
+              <div className="rounded-xl border border-[#dddfe2] bg-white p-5 sm:p-7">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <span className="rounded-full border-2 border-line bg-pink px-4 py-2 text-sm font-extrabold text-ink">
+                  <span className="rounded-full bg-[#f0f2f5] px-4 py-2 text-sm font-semibold text-[#050505]">
                     {dimensionLabels[currentQuestion.dimension]}
                   </span>
-                  <strong className="text-sm uppercase text-ink">
+                  <strong className="text-sm font-semibold uppercase text-[#65676b]">
                     Pergunta {currentQuestion.number}/{questions.length}
                   </strong>
                 </div>
-                <h3 className="mt-6 text-3xl font-extrabold leading-tight tracking-[-0.03em] text-ink">
+                <h3 className="mt-6 text-2xl font-bold leading-tight tracking-[-0.02em] text-[#050505]">
                   {currentQuestion.text}
                 </h3>
               </div>
@@ -578,14 +580,14 @@ export function VocationalTestApp() {
                   <button
                     key={option.value}
                     type="button"
-                    className={`flex min-h-16 items-center gap-4 border-2 border-line px-4 py-3 text-left font-bold transition ${
+                    className={`flex min-h-16 items-center gap-4 rounded-xl border px-4 py-3 text-left font-normal transition ${
                       selectedAnswer === option.value
-                        ? "bg-lime text-ink shadow-hard-sm"
-                        : "bg-white text-ink hover:bg-pink"
+                        ? "border-[#1877f2] bg-[#e7f3ff] text-[#050505]"
+                        : "border-[#dddfe2] bg-white text-[#050505] hover:bg-[#f0f2f5]"
                     }`}
                     onClick={() => updateAnswer(option.value)}
                   >
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-line bg-white text-lg font-extrabold">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#f0f2f5] text-lg font-semibold">
                       {option.value}
                     </span>
                     <span>{option.label}</span>
@@ -620,7 +622,7 @@ export function VocationalTestApp() {
                   }}
                 >
                   {currentQuestionIndex >= questions.length - 1
-                    ? "Finalizar teste"
+                    ? "Finalizar mapa"
                     : "Próxima"}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -630,139 +632,169 @@ export function VocationalTestApp() {
         </section>
       ) : null}
 
-      {stage === "result" && result ? (
-        <section className="grid gap-6">
-          <div className="brand-card bg-white p-6 sm:p-8">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <p className="brand-eyebrow">Relatório final</p>
-                <h2 className="mt-4 text-4xl font-extrabold tracking-[-0.04em] text-ink">
-                  {profile.name
-                    ? `${profile.name}, seu mapa profissional está pronto`
-                    : "Seu mapa profissional está pronto"}
-                </h2>
-                <p className="brand-copy mt-4 max-w-3xl">{result.summary}</p>
-              </div>
-              <div className="grid min-w-64 gap-3 rounded-[24px] border-2 border-line bg-cream p-5">
-                <ResultKpi label="RIASEC" value={result.riasecCode} />
-                <ResultKpi label="Arquétipo" value={result.dominantArchetypeLabel} />
-                <ResultKpi label="Clareza" value={`${result.confidence}/100`} />
-              </div>
-            </div>
-          </div>
-
-          <BehavioralAnalysisSection
-            analysis={{
-              id: "current-result",
-              completedAt: result.completedAt,
-              aiReport,
-              result,
-            }}
-          />
-
-          <div className="brand-card-soft p-6 sm:p-8">
-            <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-6 w-6 text-blue" aria-hidden="true" />
-              <h3 className="text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                Áreas mais compatíveis
-              </h3>
-            </div>
-            <div className="mt-6 grid gap-4">
-              {result.recommendedAreas.slice(0, 3).map((item, index) => (
-                <article
-                  key={item.area.id}
-                  className="border-2 border-line bg-white p-5 shadow-hard-sm"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <h4 className="text-2xl font-extrabold tracking-[-0.02em] text-ink">
-                      #{index + 1} {item.area.area}
-                    </h4>
-                    <span className="rounded-full bg-orange px-4 py-2 text-sm font-extrabold text-white">
-                      {item.score}/100
-                    </span>
-                  </div>
-                  <p className="brand-copy mt-3">{item.area.description}</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {item.area.carreiras.slice(0, 8).map((career) => (
-                      <span
-                        key={career}
-                        className="rounded-full border-2 border-line bg-pink px-3 py-1 text-sm font-bold text-ink"
-                      >
-                        {career}
-                      </span>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            <InsightList
-              title="Forças principais"
-              items={result.strengths.map((item) => ({
-                title: item.title,
-                text: item.description,
-              }))}
-            />
-            <InsightList
-              title="Pontos de atenção"
-              items={result.attentionPoints.map((item) => ({
-                title: item.title,
-                text: `${item.risk} ${item.development}`,
-              }))}
-            />
-          </div>
-
-          <div className="brand-card bg-white p-6 sm:p-8">
-            <div className="flex items-center gap-3">
-              <FileText className="h-6 w-6 text-orange" aria-hidden="true" />
-              <h3 className="text-3xl font-extrabold tracking-[-0.03em] text-ink">
-                Relatório Gemini
-              </h3>
-            </div>
-            {aiReport ? (
-              <div className="prose prose-sm mt-5 max-w-none whitespace-pre-wrap text-ink">
-                {aiReport}
-              </div>
-            ) : (
-              <p className="brand-copy mt-5">
-                O resultado calculado já foi salvo. Para gerar o relatório narrativo por
-                IA, configure `GEMINI_API_KEY` no ambiente e refaça a finalização do
-                teste.
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="brand-button brand-button-pink gap-2"
-              onClick={restart}
-            >
-              <RotateCcw className="h-4 w-4" aria-hidden="true" />
-              Refazer teste
-            </button>
-            <button
-              type="button"
-              className="brand-button brand-button-secondary"
-              onClick={() => window.print()}
-            >
-              Imprimir
-            </button>
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }
 
 function ResultKpi({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between gap-4 border-b-2 border-line pb-2 last:border-b-0 last:pb-0">
-      <span className="text-sm font-extrabold uppercase text-muted">{label}</span>
-      <strong className="text-xl font-extrabold text-ink">{value}</strong>
+    <div className="flex items-center justify-between gap-4 border-b border-[#dddfe2] pb-2 last:border-b-0 last:pb-0">
+      <span className="text-sm font-semibold uppercase text-[#65676b]">{label}</span>
+      <strong className="text-lg font-bold text-[#050505]">{value}</strong>
     </div>
+  );
+}
+
+function formatCompletedAt(value?: string | null) {
+  return value
+    ? new Intl.DateTimeFormat("pt-BR").format(new Date(value))
+    : "sem data";
+}
+
+function TestHistoryItem({
+  session,
+  expanded,
+  onToggle,
+  onUpdateVisibility,
+}: {
+  session: PersistedSession;
+  expanded: boolean;
+  onToggle: () => void;
+  onUpdateVisibility: (
+    sessionId: string,
+    field: "publicInProfile" | "publicInPortfolio" | "publicInResume",
+    value: boolean
+  ) => void;
+}) {
+  const sessionResult = session.result;
+
+  return (
+    <article className="rounded-xl border border-[#dddfe2] bg-[#f7f8fa]">
+      <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <button
+          type="button"
+          className="flex min-w-0 items-start gap-3 text-left"
+          onClick={onToggle}
+          aria-expanded={expanded}
+        >
+          <span className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[#65676b]">
+            {expanded ? (
+              <ChevronUp className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <ChevronDown className="h-4 w-4" aria-hidden="true" />
+            )}
+          </span>
+          <span>
+            <span className="block font-semibold text-[#050505]">
+              {sessionResult?.dominantArchetypeLabel
+                ? `Arquétipo ${sessionResult.dominantArchetypeLabel}`
+                : "Resultado do mapa"}
+            </span>
+            <span className="mt-1 block text-sm font-normal text-[#65676b]">
+              RIASEC {sessionResult?.riasecCode ?? "-"} ·{" "}
+              {formatCompletedAt(session.completedAt)}
+            </span>
+          </span>
+        </button>
+
+        <div className="flex flex-wrap gap-2">
+          <VisibilityCheckbox
+            label="Perfil"
+            checked={Boolean(session.publicInProfile)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInProfile", checked)
+            }
+          />
+          <VisibilityCheckbox
+            label="Portfólio"
+            checked={Boolean(session.publicInPortfolio)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInPortfolio", checked)
+            }
+          />
+          <VisibilityCheckbox
+            label="Currículo"
+            checked={Boolean(session.publicInResume)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInResume", checked)
+            }
+          />
+        </div>
+      </div>
+
+      {expanded && sessionResult ? (
+        <div className="grid gap-5 border-t border-[#dddfe2] bg-white p-4 sm:p-5">
+          <section className="rounded-xl bg-[#f0f2f5] p-5">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-orange" aria-hidden="true" />
+              <h3 className="text-xl font-bold tracking-[-0.02em] text-[#050505]">
+                Relatório do mapa
+              </h3>
+            </div>
+            <p className="mt-4 whitespace-pre-line text-sm font-normal leading-6 text-[#050505]">
+              {session.aiReport || sessionResult.summary}
+            </p>
+          </section>
+
+          <div className="grid gap-3 rounded-xl bg-[#f0f2f5] p-5 sm:grid-cols-3">
+            <ResultKpi label="RIASEC" value={sessionResult.riasecCode} />
+            <ResultKpi
+              label="Arquétipo"
+              value={sessionResult.dominantArchetypeLabel}
+            />
+            <ResultKpi label="Clareza" value={`${sessionResult.confidence}/100`} />
+          </div>
+
+          <BehavioralAnalysisSection
+            analysis={{
+              id: session.id,
+              completedAt: session.completedAt ?? sessionResult.completedAt,
+              aiReport: null,
+              result: sessionResult,
+            }}
+            showSummary={false}
+          />
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <InsightList
+              title="Forças principais"
+              items={sessionResult.strengths.map((item) => ({
+                title: item.title,
+                text: item.description,
+              }))}
+            />
+            <InsightList
+              title="Pontos de atenção"
+              items={sessionResult.attentionPoints.map((item) => ({
+                title: item.title,
+                text: `${item.risk} ${item.development}`,
+              }))}
+            />
+          </div>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function VisibilityCheckbox({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-[#050505]">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      {label}
+    </label>
   );
 }
 
@@ -774,13 +806,17 @@ function InsightList({
   items: Array<{ title: string; text: string }>;
 }) {
   return (
-    <article className="brand-card bg-white p-6">
-      <h3 className="text-3xl font-extrabold tracking-[-0.03em] text-ink">{title}</h3>
+    <article className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
+      <h3 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+        {title}
+      </h3>
       <div className="mt-5 grid gap-4">
         {items.map((item) => (
-          <div key={item.title} className="border-l-4 border-orange pl-4">
-            <h4 className="font-extrabold text-ink">{item.title}</h4>
-            <p className="brand-copy mt-1 text-sm">{item.text}</p>
+          <div key={item.title} className="border-l-2 border-orange pl-4">
+            <h4 className="font-semibold text-[#050505]">{item.title}</h4>
+            <p className="mt-1 text-sm font-normal leading-6 text-[#65676b]">
+              {item.text}
+            </p>
           </div>
         ))}
       </div>

@@ -22,6 +22,7 @@ type ProfileSnapshotSource = Pick<
   | "bannerUrl"
   | "bannerPositionX"
   | "bannerPositionY"
+  | "bannerScale"
   | "location"
   | "pronouns"
   | "websiteUrl"
@@ -90,6 +91,7 @@ export function buildVersionProfileSnapshot(
     bannerUrl: profile.bannerUrl,
     bannerPositionX: profile.bannerPositionX,
     bannerPositionY: profile.bannerPositionY,
+    bannerScale: profile.bannerScale,
     location: profile.location,
     pronouns: profile.pronouns,
     websiteUrl: profile.websiteUrl,
