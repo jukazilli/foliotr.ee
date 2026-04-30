@@ -16,6 +16,7 @@ import {
 import { signOutAction } from "@/components/app/actions";
 import { HeaderSearch } from "@/components/app/HeaderSearch";
 import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
+import { useFeedbackMode } from "@/components/feedback/FeedbackModeProvider";
 
 interface HeaderProps {
   userName?: string;
@@ -159,6 +160,7 @@ function NavIcon({
 
 export function Header({ userName, userImage, userUsername }: HeaderProps) {
   const pathname = usePathname();
+  const { feedbackMode, toggleFeedbackMode } = useFeedbackMode();
   const homeHref = userUsername ? `/${userUsername}` : "/home";
   const navItems: SocialNavItem[] = [
     {
@@ -224,14 +226,20 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
           </nav>
 
           <div className="flex shrink-0 items-center justify-end gap-2">
-            <Link
-              href="/gallery"
-              aria-label="Galeria"
-              title="Galeria"
-              className="grid h-12 w-12 place-items-center rounded-full bg-[#e4e6eb] text-ink transition hover:bg-gray-300"
+            <button
+              type="button"
+              aria-label={feedbackMode ? "Desativar modo feedback" : "Ativar modo feedback"}
+              title={feedbackMode ? "Desativar modo feedback" : "Ativar modo feedback"}
+              data-feedback-ignore="true"
+              onClick={toggleFeedbackMode}
+              className={`grid h-12 w-12 place-items-center rounded-full transition ${
+                feedbackMode
+                  ? "bg-[#0866ff] text-white"
+                  : "bg-[#e4e6eb] text-ink hover:bg-gray-300"
+              }`}
             >
               <Grid3X3 className="h-6 w-6" aria-hidden="true" />
-            </Link>
+            </button>
             <Link
               href="/settings"
               aria-label="Configurações"

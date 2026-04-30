@@ -128,6 +128,7 @@ exports.Prisma.UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   username: 'username',
   name: 'name',
+  role: 'role',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -167,6 +168,29 @@ exports.Prisma.PasswordResetTokenScalarFieldEnum = {
   expiresAt: 'expiresAt',
   usedAt: 'usedAt',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.FeedbackTicketScalarFieldEnum = {
+  id: 'id',
+  number: 'number',
+  kind: 'kind',
+  message: 'message',
+  route: 'route',
+  url: 'url',
+  x: 'x',
+  y: 'y',
+  relativeX: 'relativeX',
+  relativeY: 'relativeY',
+  viewportWidth: 'viewportWidth',
+  viewportHeight: 'viewportHeight',
+  elementTag: 'elementTag',
+  elementId: 'elementId',
+  elementClasses: 'elementClasses',
+  elementText: 'elementText',
+  reporterUserId: 'reporterUserId',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.VocationalTestSessionScalarFieldEnum = {
@@ -552,6 +576,16 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  DEVELOPER: 'DEVELOPER'
+};
+
+exports.FeedbackKind = exports.$Enums.FeedbackKind = {
+  IMPROVEMENT: 'IMPROVEMENT',
+  CORRECTION: 'CORRECTION'
+};
+
 exports.AssetKind = exports.$Enums.AssetKind = {
   IMAGE: 'IMAGE',
   DOCUMENT: 'DOCUMENT',
@@ -578,6 +612,7 @@ exports.Prisma.ModelName = {
   Session: 'Session',
   VerificationToken: 'VerificationToken',
   PasswordResetToken: 'PasswordResetToken',
+  FeedbackTicket: 'FeedbackTicket',
   VocationalTestSession: 'VocationalTestSession',
   Profile: 'Profile',
   ProfilePresentation: 'ProfilePresentation',

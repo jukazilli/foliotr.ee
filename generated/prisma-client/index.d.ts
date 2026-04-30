@@ -39,6 +39,11 @@ export type VerificationToken = $Result.DefaultSelection<Prisma.$VerificationTok
  */
 export type PasswordResetToken = $Result.DefaultSelection<Prisma.$PasswordResetTokenPayload>
 /**
+ * Model FeedbackTicket
+ * 
+ */
+export type FeedbackTicket = $Result.DefaultSelection<Prisma.$FeedbackTicketPayload>
+/**
  * Model VocationalTestSession
  * 
  */
@@ -173,7 +178,23 @@ export type VersionLink = $Result.DefaultSelection<Prisma.$VersionLinkPayload>
  * Enums
  */
 export namespace $Enums {
-  export const AssetKind: {
+  export const UserRole: {
+  USER: 'USER',
+  DEVELOPER: 'DEVELOPER'
+};
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole]
+
+
+export const FeedbackKind: {
+  IMPROVEMENT: 'IMPROVEMENT',
+  CORRECTION: 'CORRECTION'
+};
+
+export type FeedbackKind = (typeof FeedbackKind)[keyof typeof FeedbackKind]
+
+
+export const AssetKind: {
   IMAGE: 'IMAGE',
   DOCUMENT: 'DOCUMENT',
   VIDEO: 'VIDEO',
@@ -202,6 +223,14 @@ export const PublishState: {
 export type PublishState = (typeof PublishState)[keyof typeof PublishState]
 
 }
+
+export type UserRole = $Enums.UserRole
+
+export const UserRole: typeof $Enums.UserRole
+
+export type FeedbackKind = $Enums.FeedbackKind
+
+export const FeedbackKind: typeof $Enums.FeedbackKind
 
 export type AssetKind = $Enums.AssetKind
 
@@ -387,6 +416,16 @@ export class PrismaClient<
     * ```
     */
   get passwordResetToken(): Prisma.PasswordResetTokenDelegate<ExtArgs>;
+
+  /**
+   * `prisma.feedbackTicket`: Exposes CRUD operations for the **FeedbackTicket** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more FeedbackTickets
+    * const feedbackTickets = await prisma.feedbackTicket.findMany()
+    * ```
+    */
+  get feedbackTicket(): Prisma.FeedbackTicketDelegate<ExtArgs>;
 
   /**
    * `prisma.vocationalTestSession`: Exposes CRUD operations for the **VocationalTestSession** model.
@@ -1093,6 +1132,7 @@ export namespace Prisma {
     Session: 'Session',
     VerificationToken: 'VerificationToken',
     PasswordResetToken: 'PasswordResetToken',
+    FeedbackTicket: 'FeedbackTicket',
     VocationalTestSession: 'VocationalTestSession',
     Profile: 'Profile',
     ProfilePresentation: 'ProfilePresentation',
@@ -1134,7 +1174,7 @@ export namespace Prisma {
 
   export type TypeMap<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, ClientOptions = {}> = {
     meta: {
-      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "vocationalTestSession" | "profile" | "profilePresentation" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
+      modelProps: "user" | "account" | "session" | "verificationToken" | "passwordResetToken" | "feedbackTicket" | "vocationalTestSession" | "profile" | "profilePresentation" | "experience" | "education" | "skill" | "project" | "achievement" | "profileLink" | "proof" | "highlight" | "asset" | "version" | "template" | "templateBlockDef" | "page" | "pageBlock" | "resumeConfig" | "versionExperience" | "versionEducation" | "versionProject" | "versionSkill" | "versionAchievement" | "versionProof" | "versionHighlight" | "versionLink"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1485,6 +1525,76 @@ export namespace Prisma {
           count: {
             args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
             result: $Utils.Optional<PasswordResetTokenCountAggregateOutputType> | number
+          }
+        }
+      }
+      FeedbackTicket: {
+        payload: Prisma.$FeedbackTicketPayload<ExtArgs>
+        fields: Prisma.FeedbackTicketFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.FeedbackTicketFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.FeedbackTicketFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          findFirst: {
+            args: Prisma.FeedbackTicketFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.FeedbackTicketFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          findMany: {
+            args: Prisma.FeedbackTicketFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>[]
+          }
+          create: {
+            args: Prisma.FeedbackTicketCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          createMany: {
+            args: Prisma.FeedbackTicketCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.FeedbackTicketCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>[]
+          }
+          delete: {
+            args: Prisma.FeedbackTicketDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          update: {
+            args: Prisma.FeedbackTicketUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          deleteMany: {
+            args: Prisma.FeedbackTicketDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.FeedbackTicketUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          upsert: {
+            args: Prisma.FeedbackTicketUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$FeedbackTicketPayload>
+          }
+          aggregate: {
+            args: Prisma.FeedbackTicketAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateFeedbackTicket>
+          }
+          groupBy: {
+            args: Prisma.FeedbackTicketGroupByArgs<ExtArgs>
+            result: $Utils.Optional<FeedbackTicketGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.FeedbackTicketCountArgs<ExtArgs>
+            result: $Utils.Optional<FeedbackTicketCountAggregateOutputType> | number
           }
         }
       }
@@ -3473,6 +3583,7 @@ export namespace Prisma {
     sessions: number
     passwordResetTokens: number
     vocationalTests: number
+    feedbackTickets: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3480,6 +3591,7 @@ export namespace Prisma {
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
     passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
     vocationalTests?: boolean | UserCountOutputTypeCountVocationalTestsArgs
+    feedbackTickets?: boolean | UserCountOutputTypeCountFeedbackTicketsArgs
   }
 
   // Custom InputTypes
@@ -3519,6 +3631,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountVocationalTestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: VocationalTestSessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountFeedbackTicketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedbackTicketWhereInput
   }
 
 
@@ -4254,6 +4373,7 @@ export namespace Prisma {
     passwordHash: string | null
     username: string | null
     name: string | null
+    role: $Enums.UserRole | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4264,6 +4384,7 @@ export namespace Prisma {
     passwordHash: string | null
     username: string | null
     name: string | null
+    role: $Enums.UserRole | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -4274,6 +4395,7 @@ export namespace Prisma {
     passwordHash: number
     username: number
     name: number
+    role: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -4286,6 +4408,7 @@ export namespace Prisma {
     passwordHash?: true
     username?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4296,6 +4419,7 @@ export namespace Prisma {
     passwordHash?: true
     username?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -4306,6 +4430,7 @@ export namespace Prisma {
     passwordHash?: true
     username?: true
     name?: true
+    role?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -4389,6 +4514,7 @@ export namespace Prisma {
     passwordHash: string | null
     username: string | null
     name: string | null
+    role: $Enums.UserRole
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -4416,6 +4542,7 @@ export namespace Prisma {
     passwordHash?: boolean
     username?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     profile?: boolean | User$profileArgs<ExtArgs>
@@ -4423,6 +4550,7 @@ export namespace Prisma {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
     vocationalTests?: boolean | User$vocationalTestsArgs<ExtArgs>
+    feedbackTickets?: boolean | User$feedbackTicketsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -4432,6 +4560,7 @@ export namespace Prisma {
     passwordHash?: boolean
     username?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -4442,6 +4571,7 @@ export namespace Prisma {
     passwordHash?: boolean
     username?: boolean
     name?: boolean
+    role?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
@@ -4452,6 +4582,7 @@ export namespace Prisma {
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     passwordResetTokens?: boolean | User$passwordResetTokensArgs<ExtArgs>
     vocationalTests?: boolean | User$vocationalTestsArgs<ExtArgs>
+    feedbackTickets?: boolean | User$feedbackTicketsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -4464,6 +4595,7 @@ export namespace Prisma {
       sessions: Prisma.$SessionPayload<ExtArgs>[]
       passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
       vocationalTests: Prisma.$VocationalTestSessionPayload<ExtArgs>[]
+      feedbackTickets: Prisma.$FeedbackTicketPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -4471,6 +4603,7 @@ export namespace Prisma {
       passwordHash: string | null
       username: string | null
       name: string | null
+      role: $Enums.UserRole
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -4842,6 +4975,7 @@ export namespace Prisma {
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany"> | Null>
     passwordResetTokens<T extends User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Subset<T, User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany"> | Null>
     vocationalTests<T extends User$vocationalTestsArgs<ExtArgs> = {}>(args?: Subset<T, User$vocationalTestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VocationalTestSessionPayload<ExtArgs>, T, "findMany"> | Null>
+    feedbackTickets<T extends User$feedbackTicketsArgs<ExtArgs> = {}>(args?: Subset<T, User$feedbackTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4876,6 +5010,7 @@ export namespace Prisma {
     readonly passwordHash: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
     readonly name: FieldRef<"User", 'String'>
+    readonly role: FieldRef<"User", 'UserRole'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -5284,6 +5419,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: VocationalTestSessionScalarFieldEnum | VocationalTestSessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.feedbackTickets
+   */
+  export type User$feedbackTicketsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    where?: FeedbackTicketWhereInput
+    orderBy?: FeedbackTicketOrderByWithRelationInput | FeedbackTicketOrderByWithRelationInput[]
+    cursor?: FeedbackTicketWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: FeedbackTicketScalarFieldEnum | FeedbackTicketScalarFieldEnum[]
   }
 
   /**
@@ -9069,6 +9224,1192 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: PasswordResetTokenInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model FeedbackTicket
+   */
+
+  export type AggregateFeedbackTicket = {
+    _count: FeedbackTicketCountAggregateOutputType | null
+    _avg: FeedbackTicketAvgAggregateOutputType | null
+    _sum: FeedbackTicketSumAggregateOutputType | null
+    _min: FeedbackTicketMinAggregateOutputType | null
+    _max: FeedbackTicketMaxAggregateOutputType | null
+  }
+
+  export type FeedbackTicketAvgAggregateOutputType = {
+    number: number | null
+    x: number | null
+    y: number | null
+    relativeX: number | null
+    relativeY: number | null
+    viewportWidth: number | null
+    viewportHeight: number | null
+  }
+
+  export type FeedbackTicketSumAggregateOutputType = {
+    number: number | null
+    x: number | null
+    y: number | null
+    relativeX: number | null
+    relativeY: number | null
+    viewportWidth: number | null
+    viewportHeight: number | null
+  }
+
+  export type FeedbackTicketMinAggregateOutputType = {
+    id: string | null
+    number: number | null
+    kind: $Enums.FeedbackKind | null
+    message: string | null
+    route: string | null
+    url: string | null
+    x: number | null
+    y: number | null
+    relativeX: number | null
+    relativeY: number | null
+    viewportWidth: number | null
+    viewportHeight: number | null
+    elementTag: string | null
+    elementId: string | null
+    elementClasses: string | null
+    elementText: string | null
+    reporterUserId: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FeedbackTicketMaxAggregateOutputType = {
+    id: string | null
+    number: number | null
+    kind: $Enums.FeedbackKind | null
+    message: string | null
+    route: string | null
+    url: string | null
+    x: number | null
+    y: number | null
+    relativeX: number | null
+    relativeY: number | null
+    viewportWidth: number | null
+    viewportHeight: number | null
+    elementTag: string | null
+    elementId: string | null
+    elementClasses: string | null
+    elementText: string | null
+    reporterUserId: string | null
+    status: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type FeedbackTicketCountAggregateOutputType = {
+    id: number
+    number: number
+    kind: number
+    message: number
+    route: number
+    url: number
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag: number
+    elementId: number
+    elementClasses: number
+    elementText: number
+    reporterUserId: number
+    status: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type FeedbackTicketAvgAggregateInputType = {
+    number?: true
+    x?: true
+    y?: true
+    relativeX?: true
+    relativeY?: true
+    viewportWidth?: true
+    viewportHeight?: true
+  }
+
+  export type FeedbackTicketSumAggregateInputType = {
+    number?: true
+    x?: true
+    y?: true
+    relativeX?: true
+    relativeY?: true
+    viewportWidth?: true
+    viewportHeight?: true
+  }
+
+  export type FeedbackTicketMinAggregateInputType = {
+    id?: true
+    number?: true
+    kind?: true
+    message?: true
+    route?: true
+    url?: true
+    x?: true
+    y?: true
+    relativeX?: true
+    relativeY?: true
+    viewportWidth?: true
+    viewportHeight?: true
+    elementTag?: true
+    elementId?: true
+    elementClasses?: true
+    elementText?: true
+    reporterUserId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FeedbackTicketMaxAggregateInputType = {
+    id?: true
+    number?: true
+    kind?: true
+    message?: true
+    route?: true
+    url?: true
+    x?: true
+    y?: true
+    relativeX?: true
+    relativeY?: true
+    viewportWidth?: true
+    viewportHeight?: true
+    elementTag?: true
+    elementId?: true
+    elementClasses?: true
+    elementText?: true
+    reporterUserId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type FeedbackTicketCountAggregateInputType = {
+    id?: true
+    number?: true
+    kind?: true
+    message?: true
+    route?: true
+    url?: true
+    x?: true
+    y?: true
+    relativeX?: true
+    relativeY?: true
+    viewportWidth?: true
+    viewportHeight?: true
+    elementTag?: true
+    elementId?: true
+    elementClasses?: true
+    elementText?: true
+    reporterUserId?: true
+    status?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type FeedbackTicketAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedbackTicket to aggregate.
+     */
+    where?: FeedbackTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedbackTickets to fetch.
+     */
+    orderBy?: FeedbackTicketOrderByWithRelationInput | FeedbackTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: FeedbackTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedbackTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedbackTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned FeedbackTickets
+    **/
+    _count?: true | FeedbackTicketCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: FeedbackTicketAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: FeedbackTicketSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: FeedbackTicketMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: FeedbackTicketMaxAggregateInputType
+  }
+
+  export type GetFeedbackTicketAggregateType<T extends FeedbackTicketAggregateArgs> = {
+        [P in keyof T & keyof AggregateFeedbackTicket]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateFeedbackTicket[P]>
+      : GetScalarType<T[P], AggregateFeedbackTicket[P]>
+  }
+
+
+
+
+  export type FeedbackTicketGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: FeedbackTicketWhereInput
+    orderBy?: FeedbackTicketOrderByWithAggregationInput | FeedbackTicketOrderByWithAggregationInput[]
+    by: FeedbackTicketScalarFieldEnum[] | FeedbackTicketScalarFieldEnum
+    having?: FeedbackTicketScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: FeedbackTicketCountAggregateInputType | true
+    _avg?: FeedbackTicketAvgAggregateInputType
+    _sum?: FeedbackTicketSumAggregateInputType
+    _min?: FeedbackTicketMinAggregateInputType
+    _max?: FeedbackTicketMaxAggregateInputType
+  }
+
+  export type FeedbackTicketGroupByOutputType = {
+    id: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag: string | null
+    elementId: string | null
+    elementClasses: string | null
+    elementText: string | null
+    reporterUserId: string | null
+    status: string
+    createdAt: Date
+    updatedAt: Date
+    _count: FeedbackTicketCountAggregateOutputType | null
+    _avg: FeedbackTicketAvgAggregateOutputType | null
+    _sum: FeedbackTicketSumAggregateOutputType | null
+    _min: FeedbackTicketMinAggregateOutputType | null
+    _max: FeedbackTicketMaxAggregateOutputType | null
+  }
+
+  type GetFeedbackTicketGroupByPayload<T extends FeedbackTicketGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<FeedbackTicketGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof FeedbackTicketGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], FeedbackTicketGroupByOutputType[P]>
+            : GetScalarType<T[P], FeedbackTicketGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type FeedbackTicketSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    number?: boolean
+    kind?: boolean
+    message?: boolean
+    route?: boolean
+    url?: boolean
+    x?: boolean
+    y?: boolean
+    relativeX?: boolean
+    relativeY?: boolean
+    viewportWidth?: boolean
+    viewportHeight?: boolean
+    elementTag?: boolean
+    elementId?: boolean
+    elementClasses?: boolean
+    elementText?: boolean
+    reporterUserId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reporterUser?: boolean | FeedbackTicket$reporterUserArgs<ExtArgs>
+  }, ExtArgs["result"]["feedbackTicket"]>
+
+  export type FeedbackTicketSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    number?: boolean
+    kind?: boolean
+    message?: boolean
+    route?: boolean
+    url?: boolean
+    x?: boolean
+    y?: boolean
+    relativeX?: boolean
+    relativeY?: boolean
+    viewportWidth?: boolean
+    viewportHeight?: boolean
+    elementTag?: boolean
+    elementId?: boolean
+    elementClasses?: boolean
+    elementText?: boolean
+    reporterUserId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    reporterUser?: boolean | FeedbackTicket$reporterUserArgs<ExtArgs>
+  }, ExtArgs["result"]["feedbackTicket"]>
+
+  export type FeedbackTicketSelectScalar = {
+    id?: boolean
+    number?: boolean
+    kind?: boolean
+    message?: boolean
+    route?: boolean
+    url?: boolean
+    x?: boolean
+    y?: boolean
+    relativeX?: boolean
+    relativeY?: boolean
+    viewportWidth?: boolean
+    viewportHeight?: boolean
+    elementTag?: boolean
+    elementId?: boolean
+    elementClasses?: boolean
+    elementText?: boolean
+    reporterUserId?: boolean
+    status?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type FeedbackTicketInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporterUser?: boolean | FeedbackTicket$reporterUserArgs<ExtArgs>
+  }
+  export type FeedbackTicketIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reporterUser?: boolean | FeedbackTicket$reporterUserArgs<ExtArgs>
+  }
+
+  export type $FeedbackTicketPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "FeedbackTicket"
+    objects: {
+      reporterUser: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      number: number
+      kind: $Enums.FeedbackKind
+      message: string
+      route: string
+      url: string
+      x: number
+      y: number
+      relativeX: number
+      relativeY: number
+      viewportWidth: number
+      viewportHeight: number
+      elementTag: string | null
+      elementId: string | null
+      elementClasses: string | null
+      elementText: string | null
+      reporterUserId: string | null
+      status: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["feedbackTicket"]>
+    composites: {}
+  }
+
+  type FeedbackTicketGetPayload<S extends boolean | null | undefined | FeedbackTicketDefaultArgs> = $Result.GetResult<Prisma.$FeedbackTicketPayload, S>
+
+  type FeedbackTicketCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = 
+    Omit<FeedbackTicketFindManyArgs, 'select' | 'include' | 'distinct'> & {
+      select?: FeedbackTicketCountAggregateInputType | true
+    }
+
+  export interface FeedbackTicketDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['FeedbackTicket'], meta: { name: 'FeedbackTicket' } }
+    /**
+     * Find zero or one FeedbackTicket that matches the filter.
+     * @param {FeedbackTicketFindUniqueArgs} args - Arguments to find a FeedbackTicket
+     * @example
+     * // Get one FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends FeedbackTicketFindUniqueArgs>(args: SelectSubset<T, FeedbackTicketFindUniqueArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findUnique"> | null, null, ExtArgs>
+
+    /**
+     * Find one FeedbackTicket that matches the filter or throw an error with `error.code='P2025'` 
+     * if no matches were found.
+     * @param {FeedbackTicketFindUniqueOrThrowArgs} args - Arguments to find a FeedbackTicket
+     * @example
+     * // Get one FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends FeedbackTicketFindUniqueOrThrowArgs>(args: SelectSubset<T, FeedbackTicketFindUniqueOrThrowArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findUniqueOrThrow">, never, ExtArgs>
+
+    /**
+     * Find the first FeedbackTicket that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketFindFirstArgs} args - Arguments to find a FeedbackTicket
+     * @example
+     * // Get one FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends FeedbackTicketFindFirstArgs>(args?: SelectSubset<T, FeedbackTicketFindFirstArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findFirst"> | null, null, ExtArgs>
+
+    /**
+     * Find the first FeedbackTicket that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketFindFirstOrThrowArgs} args - Arguments to find a FeedbackTicket
+     * @example
+     * // Get one FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends FeedbackTicketFindFirstOrThrowArgs>(args?: SelectSubset<T, FeedbackTicketFindFirstOrThrowArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findFirstOrThrow">, never, ExtArgs>
+
+    /**
+     * Find zero or more FeedbackTickets that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all FeedbackTickets
+     * const feedbackTickets = await prisma.feedbackTicket.findMany()
+     * 
+     * // Get first 10 FeedbackTickets
+     * const feedbackTickets = await prisma.feedbackTicket.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const feedbackTicketWithIdOnly = await prisma.feedbackTicket.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends FeedbackTicketFindManyArgs>(args?: SelectSubset<T, FeedbackTicketFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "findMany">>
+
+    /**
+     * Create a FeedbackTicket.
+     * @param {FeedbackTicketCreateArgs} args - Arguments to create a FeedbackTicket.
+     * @example
+     * // Create one FeedbackTicket
+     * const FeedbackTicket = await prisma.feedbackTicket.create({
+     *   data: {
+     *     // ... data to create a FeedbackTicket
+     *   }
+     * })
+     * 
+     */
+    create<T extends FeedbackTicketCreateArgs>(args: SelectSubset<T, FeedbackTicketCreateArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "create">, never, ExtArgs>
+
+    /**
+     * Create many FeedbackTickets.
+     * @param {FeedbackTicketCreateManyArgs} args - Arguments to create many FeedbackTickets.
+     * @example
+     * // Create many FeedbackTickets
+     * const feedbackTicket = await prisma.feedbackTicket.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends FeedbackTicketCreateManyArgs>(args?: SelectSubset<T, FeedbackTicketCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many FeedbackTickets and returns the data saved in the database.
+     * @param {FeedbackTicketCreateManyAndReturnArgs} args - Arguments to create many FeedbackTickets.
+     * @example
+     * // Create many FeedbackTickets
+     * const feedbackTicket = await prisma.feedbackTicket.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many FeedbackTickets and only return the `id`
+     * const feedbackTicketWithIdOnly = await prisma.feedbackTicket.createManyAndReturn({ 
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends FeedbackTicketCreateManyAndReturnArgs>(args?: SelectSubset<T, FeedbackTicketCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "createManyAndReturn">>
+
+    /**
+     * Delete a FeedbackTicket.
+     * @param {FeedbackTicketDeleteArgs} args - Arguments to delete one FeedbackTicket.
+     * @example
+     * // Delete one FeedbackTicket
+     * const FeedbackTicket = await prisma.feedbackTicket.delete({
+     *   where: {
+     *     // ... filter to delete one FeedbackTicket
+     *   }
+     * })
+     * 
+     */
+    delete<T extends FeedbackTicketDeleteArgs>(args: SelectSubset<T, FeedbackTicketDeleteArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "delete">, never, ExtArgs>
+
+    /**
+     * Update one FeedbackTicket.
+     * @param {FeedbackTicketUpdateArgs} args - Arguments to update one FeedbackTicket.
+     * @example
+     * // Update one FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends FeedbackTicketUpdateArgs>(args: SelectSubset<T, FeedbackTicketUpdateArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "update">, never, ExtArgs>
+
+    /**
+     * Delete zero or more FeedbackTickets.
+     * @param {FeedbackTicketDeleteManyArgs} args - Arguments to filter FeedbackTickets to delete.
+     * @example
+     * // Delete a few FeedbackTickets
+     * const { count } = await prisma.feedbackTicket.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends FeedbackTicketDeleteManyArgs>(args?: SelectSubset<T, FeedbackTicketDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more FeedbackTickets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many FeedbackTickets
+     * const feedbackTicket = await prisma.feedbackTicket.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends FeedbackTicketUpdateManyArgs>(args: SelectSubset<T, FeedbackTicketUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create or update one FeedbackTicket.
+     * @param {FeedbackTicketUpsertArgs} args - Arguments to update or create a FeedbackTicket.
+     * @example
+     * // Update or create a FeedbackTicket
+     * const feedbackTicket = await prisma.feedbackTicket.upsert({
+     *   create: {
+     *     // ... data to create a FeedbackTicket
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the FeedbackTicket we want to update
+     *   }
+     * })
+     */
+    upsert<T extends FeedbackTicketUpsertArgs>(args: SelectSubset<T, FeedbackTicketUpsertArgs<ExtArgs>>): Prisma__FeedbackTicketClient<$Result.GetResult<Prisma.$FeedbackTicketPayload<ExtArgs>, T, "upsert">, never, ExtArgs>
+
+
+    /**
+     * Count the number of FeedbackTickets.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketCountArgs} args - Arguments to filter FeedbackTickets to count.
+     * @example
+     * // Count the number of FeedbackTickets
+     * const count = await prisma.feedbackTicket.count({
+     *   where: {
+     *     // ... the filter for the FeedbackTickets we want to count
+     *   }
+     * })
+    **/
+    count<T extends FeedbackTicketCountArgs>(
+      args?: Subset<T, FeedbackTicketCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], FeedbackTicketCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a FeedbackTicket.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends FeedbackTicketAggregateArgs>(args: Subset<T, FeedbackTicketAggregateArgs>): Prisma.PrismaPromise<GetFeedbackTicketAggregateType<T>>
+
+    /**
+     * Group by FeedbackTicket.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {FeedbackTicketGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends FeedbackTicketGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: FeedbackTicketGroupByArgs['orderBy'] }
+        : { orderBy?: FeedbackTicketGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, FeedbackTicketGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetFeedbackTicketGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the FeedbackTicket model
+   */
+  readonly fields: FeedbackTicketFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for FeedbackTicket.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__FeedbackTicketClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    reporterUser<T extends FeedbackTicket$reporterUserArgs<ExtArgs> = {}>(args?: Subset<T, FeedbackTicket$reporterUserArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | null, null, ExtArgs>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the FeedbackTicket model
+   */ 
+  interface FeedbackTicketFieldRefs {
+    readonly id: FieldRef<"FeedbackTicket", 'String'>
+    readonly number: FieldRef<"FeedbackTicket", 'Int'>
+    readonly kind: FieldRef<"FeedbackTicket", 'FeedbackKind'>
+    readonly message: FieldRef<"FeedbackTicket", 'String'>
+    readonly route: FieldRef<"FeedbackTicket", 'String'>
+    readonly url: FieldRef<"FeedbackTicket", 'String'>
+    readonly x: FieldRef<"FeedbackTicket", 'Int'>
+    readonly y: FieldRef<"FeedbackTicket", 'Int'>
+    readonly relativeX: FieldRef<"FeedbackTicket", 'Float'>
+    readonly relativeY: FieldRef<"FeedbackTicket", 'Float'>
+    readonly viewportWidth: FieldRef<"FeedbackTicket", 'Int'>
+    readonly viewportHeight: FieldRef<"FeedbackTicket", 'Int'>
+    readonly elementTag: FieldRef<"FeedbackTicket", 'String'>
+    readonly elementId: FieldRef<"FeedbackTicket", 'String'>
+    readonly elementClasses: FieldRef<"FeedbackTicket", 'String'>
+    readonly elementText: FieldRef<"FeedbackTicket", 'String'>
+    readonly reporterUserId: FieldRef<"FeedbackTicket", 'String'>
+    readonly status: FieldRef<"FeedbackTicket", 'String'>
+    readonly createdAt: FieldRef<"FeedbackTicket", 'DateTime'>
+    readonly updatedAt: FieldRef<"FeedbackTicket", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * FeedbackTicket findUnique
+   */
+  export type FeedbackTicketFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedbackTicket to fetch.
+     */
+    where: FeedbackTicketWhereUniqueInput
+  }
+
+  /**
+   * FeedbackTicket findUniqueOrThrow
+   */
+  export type FeedbackTicketFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedbackTicket to fetch.
+     */
+    where: FeedbackTicketWhereUniqueInput
+  }
+
+  /**
+   * FeedbackTicket findFirst
+   */
+  export type FeedbackTicketFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedbackTicket to fetch.
+     */
+    where?: FeedbackTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedbackTickets to fetch.
+     */
+    orderBy?: FeedbackTicketOrderByWithRelationInput | FeedbackTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedbackTickets.
+     */
+    cursor?: FeedbackTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedbackTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedbackTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedbackTickets.
+     */
+    distinct?: FeedbackTicketScalarFieldEnum | FeedbackTicketScalarFieldEnum[]
+  }
+
+  /**
+   * FeedbackTicket findFirstOrThrow
+   */
+  export type FeedbackTicketFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedbackTicket to fetch.
+     */
+    where?: FeedbackTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedbackTickets to fetch.
+     */
+    orderBy?: FeedbackTicketOrderByWithRelationInput | FeedbackTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for FeedbackTickets.
+     */
+    cursor?: FeedbackTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedbackTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedbackTickets.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of FeedbackTickets.
+     */
+    distinct?: FeedbackTicketScalarFieldEnum | FeedbackTicketScalarFieldEnum[]
+  }
+
+  /**
+   * FeedbackTicket findMany
+   */
+  export type FeedbackTicketFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter, which FeedbackTickets to fetch.
+     */
+    where?: FeedbackTicketWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of FeedbackTickets to fetch.
+     */
+    orderBy?: FeedbackTicketOrderByWithRelationInput | FeedbackTicketOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing FeedbackTickets.
+     */
+    cursor?: FeedbackTicketWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` FeedbackTickets from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` FeedbackTickets.
+     */
+    skip?: number
+    distinct?: FeedbackTicketScalarFieldEnum | FeedbackTicketScalarFieldEnum[]
+  }
+
+  /**
+   * FeedbackTicket create
+   */
+  export type FeedbackTicketCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * The data needed to create a FeedbackTicket.
+     */
+    data: XOR<FeedbackTicketCreateInput, FeedbackTicketUncheckedCreateInput>
+  }
+
+  /**
+   * FeedbackTicket createMany
+   */
+  export type FeedbackTicketCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many FeedbackTickets.
+     */
+    data: FeedbackTicketCreateManyInput | FeedbackTicketCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * FeedbackTicket createManyAndReturn
+   */
+  export type FeedbackTicketCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * The data used to create many FeedbackTickets.
+     */
+    data: FeedbackTicketCreateManyInput | FeedbackTicketCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * FeedbackTicket update
+   */
+  export type FeedbackTicketUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * The data needed to update a FeedbackTicket.
+     */
+    data: XOR<FeedbackTicketUpdateInput, FeedbackTicketUncheckedUpdateInput>
+    /**
+     * Choose, which FeedbackTicket to update.
+     */
+    where: FeedbackTicketWhereUniqueInput
+  }
+
+  /**
+   * FeedbackTicket updateMany
+   */
+  export type FeedbackTicketUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update FeedbackTickets.
+     */
+    data: XOR<FeedbackTicketUpdateManyMutationInput, FeedbackTicketUncheckedUpdateManyInput>
+    /**
+     * Filter which FeedbackTickets to update
+     */
+    where?: FeedbackTicketWhereInput
+  }
+
+  /**
+   * FeedbackTicket upsert
+   */
+  export type FeedbackTicketUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * The filter to search for the FeedbackTicket to update in case it exists.
+     */
+    where: FeedbackTicketWhereUniqueInput
+    /**
+     * In case the FeedbackTicket found by the `where` argument doesn't exist, create a new FeedbackTicket with this data.
+     */
+    create: XOR<FeedbackTicketCreateInput, FeedbackTicketUncheckedCreateInput>
+    /**
+     * In case the FeedbackTicket was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<FeedbackTicketUpdateInput, FeedbackTicketUncheckedUpdateInput>
+  }
+
+  /**
+   * FeedbackTicket delete
+   */
+  export type FeedbackTicketDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
+    /**
+     * Filter which FeedbackTicket to delete.
+     */
+    where: FeedbackTicketWhereUniqueInput
+  }
+
+  /**
+   * FeedbackTicket deleteMany
+   */
+  export type FeedbackTicketDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which FeedbackTickets to delete
+     */
+    where?: FeedbackTicketWhereInput
+  }
+
+  /**
+   * FeedbackTicket.reporterUser
+   */
+  export type FeedbackTicket$reporterUserArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * FeedbackTicket without action
+   */
+  export type FeedbackTicketDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the FeedbackTicket
+     */
+    select?: FeedbackTicketSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: FeedbackTicketInclude<ExtArgs> | null
   }
 
 
@@ -37063,6 +38404,7 @@ export namespace Prisma {
     passwordHash: 'passwordHash',
     username: 'username',
     name: 'name',
+    role: 'role',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -37117,6 +38459,32 @@ export namespace Prisma {
   };
 
   export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
+  export const FeedbackTicketScalarFieldEnum: {
+    id: 'id',
+    number: 'number',
+    kind: 'kind',
+    message: 'message',
+    route: 'route',
+    url: 'url',
+    x: 'x',
+    y: 'y',
+    relativeX: 'relativeX',
+    relativeY: 'relativeY',
+    viewportWidth: 'viewportWidth',
+    viewportHeight: 'viewportHeight',
+    elementTag: 'elementTag',
+    elementId: 'elementId',
+    elementClasses: 'elementClasses',
+    elementText: 'elementText',
+    reporterUserId: 'reporterUserId',
+    status: 'status',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type FeedbackTicketScalarFieldEnum = (typeof FeedbackTicketScalarFieldEnum)[keyof typeof FeedbackTicketScalarFieldEnum]
 
 
   export const VocationalTestSessionScalarFieldEnum: {
@@ -37619,6 +38987,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'UserRole'
+   */
+  export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole'>
+    
+
+
+  /**
+   * Reference to a field of type 'UserRole[]'
+   */
+  export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
+    
+
+
+  /**
    * Reference to a field of type 'DateTime'
    */
   export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -37643,6 +39025,34 @@ export namespace Prisma {
    * Reference to a field of type 'Int[]'
    */
   export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'FeedbackKind'
+   */
+  export type EnumFeedbackKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedbackKind'>
+    
+
+
+  /**
+   * Reference to a field of type 'FeedbackKind[]'
+   */
+  export type ListEnumFeedbackKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FeedbackKind[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float'
+   */
+  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+  /**
+   * Reference to a field of type 'Float[]'
+   */
+  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -37700,20 +39110,6 @@ export namespace Prisma {
    */
   export type ListEnumPublishStateFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PublishState[]'>
     
-
-
-  /**
-   * Reference to a field of type 'Float'
-   */
-  export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-  /**
-   * Reference to a field of type 'Float[]'
-   */
-  export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
   /**
    * Deep Input Types
    */
@@ -37728,6 +39124,7 @@ export namespace Prisma {
     passwordHash?: StringNullableFilter<"User"> | string | null
     username?: StringNullableFilter<"User"> | string | null
     name?: StringNullableFilter<"User"> | string | null
+    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     profile?: XOR<ProfileNullableRelationFilter, ProfileWhereInput> | null
@@ -37735,6 +39132,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
     vocationalTests?: VocationalTestSessionListRelationFilter
+    feedbackTickets?: FeedbackTicketListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -37743,6 +39141,7 @@ export namespace Prisma {
     passwordHash?: SortOrderInput | SortOrder
     username?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     profile?: ProfileOrderByWithRelationInput
@@ -37750,6 +39149,7 @@ export namespace Prisma {
     sessions?: SessionOrderByRelationAggregateInput
     passwordResetTokens?: PasswordResetTokenOrderByRelationAggregateInput
     vocationalTests?: VocationalTestSessionOrderByRelationAggregateInput
+    feedbackTickets?: FeedbackTicketOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -37761,6 +39161,7 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     passwordHash?: StringNullableFilter<"User"> | string | null
     name?: StringNullableFilter<"User"> | string | null
+    role?: EnumUserRoleFilter<"User"> | $Enums.UserRole
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     profile?: XOR<ProfileNullableRelationFilter, ProfileWhereInput> | null
@@ -37768,6 +39169,7 @@ export namespace Prisma {
     sessions?: SessionListRelationFilter
     passwordResetTokens?: PasswordResetTokenListRelationFilter
     vocationalTests?: VocationalTestSessionListRelationFilter
+    feedbackTickets?: FeedbackTicketListRelationFilter
   }, "id" | "email" | "username">
 
   export type UserOrderByWithAggregationInput = {
@@ -37776,6 +39178,7 @@ export namespace Prisma {
     passwordHash?: SortOrderInput | SortOrder
     username?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -37792,6 +39195,7 @@ export namespace Prisma {
     passwordHash?: StringNullableWithAggregatesFilter<"User"> | string | null
     username?: StringNullableWithAggregatesFilter<"User"> | string | null
     name?: StringNullableWithAggregatesFilter<"User"> | string | null
+    role?: EnumUserRoleWithAggregatesFilter<"User"> | $Enums.UserRole
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -38040,6 +39444,138 @@ export namespace Prisma {
     expiresAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
     usedAt?: DateTimeNullableWithAggregatesFilter<"PasswordResetToken"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"PasswordResetToken"> | Date | string
+  }
+
+  export type FeedbackTicketWhereInput = {
+    AND?: FeedbackTicketWhereInput | FeedbackTicketWhereInput[]
+    OR?: FeedbackTicketWhereInput[]
+    NOT?: FeedbackTicketWhereInput | FeedbackTicketWhereInput[]
+    id?: StringFilter<"FeedbackTicket"> | string
+    number?: IntFilter<"FeedbackTicket"> | number
+    kind?: EnumFeedbackKindFilter<"FeedbackTicket"> | $Enums.FeedbackKind
+    message?: StringFilter<"FeedbackTicket"> | string
+    route?: StringFilter<"FeedbackTicket"> | string
+    url?: StringFilter<"FeedbackTicket"> | string
+    x?: IntFilter<"FeedbackTicket"> | number
+    y?: IntFilter<"FeedbackTicket"> | number
+    relativeX?: FloatFilter<"FeedbackTicket"> | number
+    relativeY?: FloatFilter<"FeedbackTicket"> | number
+    viewportWidth?: IntFilter<"FeedbackTicket"> | number
+    viewportHeight?: IntFilter<"FeedbackTicket"> | number
+    elementTag?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementClasses?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementText?: StringNullableFilter<"FeedbackTicket"> | string | null
+    reporterUserId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    status?: StringFilter<"FeedbackTicket"> | string
+    createdAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+    reporterUser?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+  }
+
+  export type FeedbackTicketOrderByWithRelationInput = {
+    id?: SortOrder
+    number?: SortOrder
+    kind?: SortOrder
+    message?: SortOrder
+    route?: SortOrder
+    url?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+    elementTag?: SortOrderInput | SortOrder
+    elementId?: SortOrderInput | SortOrder
+    elementClasses?: SortOrderInput | SortOrder
+    elementText?: SortOrderInput | SortOrder
+    reporterUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    reporterUser?: UserOrderByWithRelationInput
+  }
+
+  export type FeedbackTicketWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    number?: number
+    AND?: FeedbackTicketWhereInput | FeedbackTicketWhereInput[]
+    OR?: FeedbackTicketWhereInput[]
+    NOT?: FeedbackTicketWhereInput | FeedbackTicketWhereInput[]
+    kind?: EnumFeedbackKindFilter<"FeedbackTicket"> | $Enums.FeedbackKind
+    message?: StringFilter<"FeedbackTicket"> | string
+    route?: StringFilter<"FeedbackTicket"> | string
+    url?: StringFilter<"FeedbackTicket"> | string
+    x?: IntFilter<"FeedbackTicket"> | number
+    y?: IntFilter<"FeedbackTicket"> | number
+    relativeX?: FloatFilter<"FeedbackTicket"> | number
+    relativeY?: FloatFilter<"FeedbackTicket"> | number
+    viewportWidth?: IntFilter<"FeedbackTicket"> | number
+    viewportHeight?: IntFilter<"FeedbackTicket"> | number
+    elementTag?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementClasses?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementText?: StringNullableFilter<"FeedbackTicket"> | string | null
+    reporterUserId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    status?: StringFilter<"FeedbackTicket"> | string
+    createdAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+    reporterUser?: XOR<UserNullableRelationFilter, UserWhereInput> | null
+  }, "id" | "number">
+
+  export type FeedbackTicketOrderByWithAggregationInput = {
+    id?: SortOrder
+    number?: SortOrder
+    kind?: SortOrder
+    message?: SortOrder
+    route?: SortOrder
+    url?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+    elementTag?: SortOrderInput | SortOrder
+    elementId?: SortOrderInput | SortOrder
+    elementClasses?: SortOrderInput | SortOrder
+    elementText?: SortOrderInput | SortOrder
+    reporterUserId?: SortOrderInput | SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: FeedbackTicketCountOrderByAggregateInput
+    _avg?: FeedbackTicketAvgOrderByAggregateInput
+    _max?: FeedbackTicketMaxOrderByAggregateInput
+    _min?: FeedbackTicketMinOrderByAggregateInput
+    _sum?: FeedbackTicketSumOrderByAggregateInput
+  }
+
+  export type FeedbackTicketScalarWhereWithAggregatesInput = {
+    AND?: FeedbackTicketScalarWhereWithAggregatesInput | FeedbackTicketScalarWhereWithAggregatesInput[]
+    OR?: FeedbackTicketScalarWhereWithAggregatesInput[]
+    NOT?: FeedbackTicketScalarWhereWithAggregatesInput | FeedbackTicketScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"FeedbackTicket"> | string
+    number?: IntWithAggregatesFilter<"FeedbackTicket"> | number
+    kind?: EnumFeedbackKindWithAggregatesFilter<"FeedbackTicket"> | $Enums.FeedbackKind
+    message?: StringWithAggregatesFilter<"FeedbackTicket"> | string
+    route?: StringWithAggregatesFilter<"FeedbackTicket"> | string
+    url?: StringWithAggregatesFilter<"FeedbackTicket"> | string
+    x?: IntWithAggregatesFilter<"FeedbackTicket"> | number
+    y?: IntWithAggregatesFilter<"FeedbackTicket"> | number
+    relativeX?: FloatWithAggregatesFilter<"FeedbackTicket"> | number
+    relativeY?: FloatWithAggregatesFilter<"FeedbackTicket"> | number
+    viewportWidth?: IntWithAggregatesFilter<"FeedbackTicket"> | number
+    viewportHeight?: IntWithAggregatesFilter<"FeedbackTicket"> | number
+    elementTag?: StringNullableWithAggregatesFilter<"FeedbackTicket"> | string | null
+    elementId?: StringNullableWithAggregatesFilter<"FeedbackTicket"> | string | null
+    elementClasses?: StringNullableWithAggregatesFilter<"FeedbackTicket"> | string | null
+    elementText?: StringNullableWithAggregatesFilter<"FeedbackTicket"> | string | null
+    reporterUserId?: StringNullableWithAggregatesFilter<"FeedbackTicket"> | string | null
+    status?: StringWithAggregatesFilter<"FeedbackTicket"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"FeedbackTicket"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"FeedbackTicket"> | Date | string
   }
 
   export type VocationalTestSessionWhereInput = {
@@ -40438,6 +41974,7 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileCreateNestedOneWithoutUserInput
@@ -40445,6 +41982,7 @@ export namespace Prisma {
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -40453,6 +41991,7 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
@@ -40460,6 +41999,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUpdateInput = {
@@ -40468,6 +42008,7 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneWithoutUserNestedInput
@@ -40475,6 +42016,7 @@ export namespace Prisma {
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -40483,6 +42025,7 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -40490,6 +42033,7 @@ export namespace Prisma {
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -40498,6 +42042,7 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -40508,6 +42053,7 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40518,6 +42064,7 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -40776,6 +42323,166 @@ export namespace Prisma {
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     usedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketCreateInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    reporterUser?: UserCreateNestedOneWithoutFeedbackTicketsInput
+  }
+
+  export type FeedbackTicketUncheckedCreateInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    reporterUserId?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedbackTicketUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reporterUser?: UserUpdateOneWithoutFeedbackTicketsNestedInput
+  }
+
+  export type FeedbackTicketUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketCreateManyInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    reporterUserId?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedbackTicketUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    reporterUserId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type VocationalTestSessionCreateInput = {
@@ -43407,6 +45114,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type EnumUserRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
+  }
+
   export type DateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -43447,6 +45161,12 @@ export namespace Prisma {
     none?: VocationalTestSessionWhereInput
   }
 
+  export type FeedbackTicketListRelationFilter = {
+    every?: FeedbackTicketWhereInput
+    some?: FeedbackTicketWhereInput
+    none?: FeedbackTicketWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -43468,12 +45188,17 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type FeedbackTicketOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     email?: SortOrder
     passwordHash?: SortOrder
     username?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -43484,6 +45209,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     username?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -43494,6 +45220,7 @@ export namespace Prisma {
     passwordHash?: SortOrder
     username?: SortOrder
     name?: SortOrder
+    role?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -43532,6 +45259,16 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type EnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserRoleFilter<$PrismaModel>
+    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type DateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -43744,6 +45481,160 @@ export namespace Prisma {
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntFilter<$PrismaModel> | number
   }
+
+  export type EnumFeedbackKindFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedbackKind | EnumFeedbackKindFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedbackKindFilter<$PrismaModel> | $Enums.FeedbackKind
+  }
+
+  export type FloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type UserNullableRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type FeedbackTicketCountOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    kind?: SortOrder
+    message?: SortOrder
+    route?: SortOrder
+    url?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+    elementTag?: SortOrder
+    elementId?: SortOrder
+    elementClasses?: SortOrder
+    elementText?: SortOrder
+    reporterUserId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FeedbackTicketAvgOrderByAggregateInput = {
+    number?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+  }
+
+  export type FeedbackTicketMaxOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    kind?: SortOrder
+    message?: SortOrder
+    route?: SortOrder
+    url?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+    elementTag?: SortOrder
+    elementId?: SortOrder
+    elementClasses?: SortOrder
+    elementText?: SortOrder
+    reporterUserId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FeedbackTicketMinOrderByAggregateInput = {
+    id?: SortOrder
+    number?: SortOrder
+    kind?: SortOrder
+    message?: SortOrder
+    route?: SortOrder
+    url?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+    elementTag?: SortOrder
+    elementId?: SortOrder
+    elementClasses?: SortOrder
+    elementText?: SortOrder
+    reporterUserId?: SortOrder
+    status?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type FeedbackTicketSumOrderByAggregateInput = {
+    number?: SortOrder
+    x?: SortOrder
+    y?: SortOrder
+    relativeX?: SortOrder
+    relativeY?: SortOrder
+    viewportWidth?: SortOrder
+    viewportHeight?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type EnumFeedbackKindWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedbackKind | EnumFeedbackKindFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedbackKindWithAggregatesFilter<$PrismaModel> | $Enums.FeedbackKind
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeedbackKindFilter<$PrismaModel>
+    _max?: NestedEnumFeedbackKindFilter<$PrismaModel>
+  }
+
+  export type FloatWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
   export type JsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
         Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -43857,22 +45748,6 @@ export namespace Prisma {
 
   export type VocationalTestSessionSumOrderByAggregateInput = {
     currentQuestionIndex?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
   export type JsonWithAggregatesFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -45540,6 +47415,13 @@ export namespace Prisma {
     connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
   }
 
+  export type FeedbackTicketCreateNestedManyWithoutReporterUserInput = {
+    create?: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput> | FeedbackTicketCreateWithoutReporterUserInput[] | FeedbackTicketUncheckedCreateWithoutReporterUserInput[]
+    connectOrCreate?: FeedbackTicketCreateOrConnectWithoutReporterUserInput | FeedbackTicketCreateOrConnectWithoutReporterUserInput[]
+    createMany?: FeedbackTicketCreateManyReporterUserInputEnvelope
+    connect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+  }
+
   export type ProfileUncheckedCreateNestedOneWithoutUserInput = {
     create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
@@ -45574,12 +47456,23 @@ export namespace Prisma {
     connect?: VocationalTestSessionWhereUniqueInput | VocationalTestSessionWhereUniqueInput[]
   }
 
+  export type FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput = {
+    create?: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput> | FeedbackTicketCreateWithoutReporterUserInput[] | FeedbackTicketUncheckedCreateWithoutReporterUserInput[]
+    connectOrCreate?: FeedbackTicketCreateOrConnectWithoutReporterUserInput | FeedbackTicketCreateOrConnectWithoutReporterUserInput[]
+    createMany?: FeedbackTicketCreateManyReporterUserInputEnvelope
+    connect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type EnumUserRoleFieldUpdateOperationsInput = {
+    set?: $Enums.UserRole
   }
 
   export type DateTimeFieldUpdateOperationsInput = {
@@ -45652,6 +47545,20 @@ export namespace Prisma {
     deleteMany?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
   }
 
+  export type FeedbackTicketUpdateManyWithoutReporterUserNestedInput = {
+    create?: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput> | FeedbackTicketCreateWithoutReporterUserInput[] | FeedbackTicketUncheckedCreateWithoutReporterUserInput[]
+    connectOrCreate?: FeedbackTicketCreateOrConnectWithoutReporterUserInput | FeedbackTicketCreateOrConnectWithoutReporterUserInput[]
+    upsert?: FeedbackTicketUpsertWithWhereUniqueWithoutReporterUserInput | FeedbackTicketUpsertWithWhereUniqueWithoutReporterUserInput[]
+    createMany?: FeedbackTicketCreateManyReporterUserInputEnvelope
+    set?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    disconnect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    delete?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    connect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    update?: FeedbackTicketUpdateWithWhereUniqueWithoutReporterUserInput | FeedbackTicketUpdateWithWhereUniqueWithoutReporterUserInput[]
+    updateMany?: FeedbackTicketUpdateManyWithWhereWithoutReporterUserInput | FeedbackTicketUpdateManyWithWhereWithoutReporterUserInput[]
+    deleteMany?: FeedbackTicketScalarWhereInput | FeedbackTicketScalarWhereInput[]
+  }
+
   export type ProfileUncheckedUpdateOneWithoutUserNestedInput = {
     create?: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
     connectOrCreate?: ProfileCreateOrConnectWithoutUserInput
@@ -45718,6 +47625,20 @@ export namespace Prisma {
     deleteMany?: VocationalTestSessionScalarWhereInput | VocationalTestSessionScalarWhereInput[]
   }
 
+  export type FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput = {
+    create?: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput> | FeedbackTicketCreateWithoutReporterUserInput[] | FeedbackTicketUncheckedCreateWithoutReporterUserInput[]
+    connectOrCreate?: FeedbackTicketCreateOrConnectWithoutReporterUserInput | FeedbackTicketCreateOrConnectWithoutReporterUserInput[]
+    upsert?: FeedbackTicketUpsertWithWhereUniqueWithoutReporterUserInput | FeedbackTicketUpsertWithWhereUniqueWithoutReporterUserInput[]
+    createMany?: FeedbackTicketCreateManyReporterUserInputEnvelope
+    set?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    disconnect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    delete?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    connect?: FeedbackTicketWhereUniqueInput | FeedbackTicketWhereUniqueInput[]
+    update?: FeedbackTicketUpdateWithWhereUniqueWithoutReporterUserInput | FeedbackTicketUpdateWithWhereUniqueWithoutReporterUserInput[]
+    updateMany?: FeedbackTicketUpdateManyWithWhereWithoutReporterUserInput | FeedbackTicketUpdateManyWithWhereWithoutReporterUserInput[]
+    deleteMany?: FeedbackTicketScalarWhereInput | FeedbackTicketScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutAccountsInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
@@ -45772,9 +47693,9 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutPasswordResetTokensInput, UserUpdateWithoutPasswordResetTokensInput>, UserUncheckedUpdateWithoutPasswordResetTokensInput>
   }
 
-  export type UserCreateNestedOneWithoutVocationalTestsInput = {
-    create?: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
-    connectOrCreate?: UserCreateOrConnectWithoutVocationalTestsInput
+  export type UserCreateNestedOneWithoutFeedbackTicketsInput = {
+    create?: XOR<UserCreateWithoutFeedbackTicketsInput, UserUncheckedCreateWithoutFeedbackTicketsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedbackTicketsInput
     connect?: UserWhereUniqueInput
   }
 
@@ -45784,6 +47705,34 @@ export namespace Prisma {
     decrement?: number
     multiply?: number
     divide?: number
+  }
+
+  export type EnumFeedbackKindFieldUpdateOperationsInput = {
+    set?: $Enums.FeedbackKind
+  }
+
+  export type FloatFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneWithoutFeedbackTicketsNestedInput = {
+    create?: XOR<UserCreateWithoutFeedbackTicketsInput, UserUncheckedCreateWithoutFeedbackTicketsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutFeedbackTicketsInput
+    upsert?: UserUpsertWithoutFeedbackTicketsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutFeedbackTicketsInput, UserUpdateWithoutFeedbackTicketsInput>, UserUncheckedUpdateWithoutFeedbackTicketsInput>
+  }
+
+  export type UserCreateNestedOneWithoutVocationalTestsInput = {
+    create?: XOR<UserCreateWithoutVocationalTestsInput, UserUncheckedCreateWithoutVocationalTestsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVocationalTestsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -48192,6 +50141,13 @@ export namespace Prisma {
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
   }
 
+  export type NestedEnumUserRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleFilter<$PrismaModel> | $Enums.UserRole
+  }
+
   export type NestedDateTimeFilter<$PrismaModel = never> = {
     equals?: Date | string | DateTimeFieldRefInput<$PrismaModel>
     in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel>
@@ -48257,6 +50213,16 @@ export namespace Prisma {
     gt?: number | IntFieldRefInput<$PrismaModel>
     gte?: number | IntFieldRefInput<$PrismaModel>
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+
+  export type NestedEnumUserRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.UserRole | EnumUserRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.UserRole[] | ListEnumUserRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumUserRoleWithAggregatesFilter<$PrismaModel> | $Enums.UserRole
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumUserRoleFilter<$PrismaModel>
+    _max?: NestedEnumUserRoleFilter<$PrismaModel>
   }
 
   export type NestedDateTimeWithAggregatesFilter<$PrismaModel = never> = {
@@ -48325,9 +50291,22 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
-  export type NestedBoolFilter<$PrismaModel = never> = {
-    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
-    not?: NestedBoolFilter<$PrismaModel> | boolean
+  export type NestedEnumFeedbackKindFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedbackKind | EnumFeedbackKindFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedbackKindFilter<$PrismaModel> | $Enums.FeedbackKind
+  }
+
+  export type NestedFloatFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel>
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatFilter<$PrismaModel> | number
   }
 
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
@@ -48346,7 +50325,17 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type NestedFloatFilter<$PrismaModel = never> = {
+  export type NestedEnumFeedbackKindWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.FeedbackKind | EnumFeedbackKindFieldRefInput<$PrismaModel>
+    in?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    notIn?: $Enums.FeedbackKind[] | ListEnumFeedbackKindFieldRefInput<$PrismaModel>
+    not?: NestedEnumFeedbackKindWithAggregatesFilter<$PrismaModel> | $Enums.FeedbackKind
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumFeedbackKindFilter<$PrismaModel>
+    _max?: NestedEnumFeedbackKindFilter<$PrismaModel>
+  }
+
+  export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | FloatFieldRefInput<$PrismaModel>
     in?: number[] | ListFloatFieldRefInput<$PrismaModel>
     notIn?: number[] | ListFloatFieldRefInput<$PrismaModel>
@@ -48354,7 +50343,17 @@ export namespace Prisma {
     lte?: number | FloatFieldRefInput<$PrismaModel>
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatFilter<$PrismaModel> | number
+    not?: NestedFloatWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedFloatFilter<$PrismaModel>
+    _min?: NestedFloatFilter<$PrismaModel>
+    _max?: NestedFloatFilter<$PrismaModel>
+  }
+
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
   }
   export type NestedJsonFilter<$PrismaModel = never> = 
     | PatchUndefined<
@@ -48673,6 +50672,60 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type FeedbackTicketCreateWithoutReporterUserInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedbackTicketUncheckedCreateWithoutReporterUserInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type FeedbackTicketCreateOrConnectWithoutReporterUserInput = {
+    where: FeedbackTicketWhereUniqueInput
+    create: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput>
+  }
+
+  export type FeedbackTicketCreateManyReporterUserInputEnvelope = {
+    data: FeedbackTicketCreateManyReporterUserInput | FeedbackTicketCreateManyReporterUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProfileUpsertWithoutUserInput = {
     update: XOR<ProfileUpdateWithoutUserInput, ProfileUncheckedUpdateWithoutUserInput>
     create: XOR<ProfileCreateWithoutUserInput, ProfileUncheckedCreateWithoutUserInput>
@@ -48884,18 +50937,62 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"VocationalTestSession"> | Date | string
   }
 
+  export type FeedbackTicketUpsertWithWhereUniqueWithoutReporterUserInput = {
+    where: FeedbackTicketWhereUniqueInput
+    update: XOR<FeedbackTicketUpdateWithoutReporterUserInput, FeedbackTicketUncheckedUpdateWithoutReporterUserInput>
+    create: XOR<FeedbackTicketCreateWithoutReporterUserInput, FeedbackTicketUncheckedCreateWithoutReporterUserInput>
+  }
+
+  export type FeedbackTicketUpdateWithWhereUniqueWithoutReporterUserInput = {
+    where: FeedbackTicketWhereUniqueInput
+    data: XOR<FeedbackTicketUpdateWithoutReporterUserInput, FeedbackTicketUncheckedUpdateWithoutReporterUserInput>
+  }
+
+  export type FeedbackTicketUpdateManyWithWhereWithoutReporterUserInput = {
+    where: FeedbackTicketScalarWhereInput
+    data: XOR<FeedbackTicketUpdateManyMutationInput, FeedbackTicketUncheckedUpdateManyWithoutReporterUserInput>
+  }
+
+  export type FeedbackTicketScalarWhereInput = {
+    AND?: FeedbackTicketScalarWhereInput | FeedbackTicketScalarWhereInput[]
+    OR?: FeedbackTicketScalarWhereInput[]
+    NOT?: FeedbackTicketScalarWhereInput | FeedbackTicketScalarWhereInput[]
+    id?: StringFilter<"FeedbackTicket"> | string
+    number?: IntFilter<"FeedbackTicket"> | number
+    kind?: EnumFeedbackKindFilter<"FeedbackTicket"> | $Enums.FeedbackKind
+    message?: StringFilter<"FeedbackTicket"> | string
+    route?: StringFilter<"FeedbackTicket"> | string
+    url?: StringFilter<"FeedbackTicket"> | string
+    x?: IntFilter<"FeedbackTicket"> | number
+    y?: IntFilter<"FeedbackTicket"> | number
+    relativeX?: FloatFilter<"FeedbackTicket"> | number
+    relativeY?: FloatFilter<"FeedbackTicket"> | number
+    viewportWidth?: IntFilter<"FeedbackTicket"> | number
+    viewportHeight?: IntFilter<"FeedbackTicket"> | number
+    elementTag?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementClasses?: StringNullableFilter<"FeedbackTicket"> | string | null
+    elementText?: StringNullableFilter<"FeedbackTicket"> | string | null
+    reporterUserId?: StringNullableFilter<"FeedbackTicket"> | string | null
+    status?: StringFilter<"FeedbackTicket"> | string
+    createdAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+    updatedAt?: DateTimeFilter<"FeedbackTicket"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     email: string
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileCreateNestedOneWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -48904,12 +51001,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -48934,12 +51033,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -48948,12 +51049,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserCreateWithoutSessionsInput = {
@@ -48962,12 +51065,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -48976,12 +51081,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -49006,12 +51113,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -49020,12 +51129,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserCreateWithoutPasswordResetTokensInput = {
@@ -49034,12 +51145,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -49048,12 +51161,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -49078,12 +51193,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -49092,11 +51209,93 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
+  }
+
+  export type UserCreateWithoutFeedbackTicketsInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    username?: string | null
+    name?: string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: ProfileCreateNestedOneWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutFeedbackTicketsInput = {
+    id?: string
+    email: string
+    passwordHash?: string | null
+    username?: string | null
+    name?: string | null
+    role?: $Enums.UserRole
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+    passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutFeedbackTicketsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutFeedbackTicketsInput, UserUncheckedCreateWithoutFeedbackTicketsInput>
+  }
+
+  export type UserUpsertWithoutFeedbackTicketsInput = {
+    update: XOR<UserUpdateWithoutFeedbackTicketsInput, UserUncheckedUpdateWithoutFeedbackTicketsInput>
+    create: XOR<UserCreateWithoutFeedbackTicketsInput, UserUncheckedCreateWithoutFeedbackTicketsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutFeedbackTicketsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutFeedbackTicketsInput, UserUncheckedUpdateWithoutFeedbackTicketsInput>
+  }
+
+  export type UserUpdateWithoutFeedbackTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUpdateOneWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutFeedbackTicketsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
+    username?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+    passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49106,12 +51305,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileCreateNestedOneWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateWithoutVocationalTestsInput = {
@@ -49120,12 +51321,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     profile?: ProfileUncheckedCreateNestedOneWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserCreateOrConnectWithoutVocationalTestsInput = {
@@ -49150,12 +51353,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUpdateOneWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutVocationalTestsInput = {
@@ -49164,12 +51369,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     profile?: ProfileUncheckedUpdateOneWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserCreateWithoutProfileInput = {
@@ -49178,12 +51385,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserUncheckedCreateWithoutProfileInput = {
@@ -49192,12 +51401,14 @@ export namespace Prisma {
     passwordHash?: string | null
     username?: string | null
     name?: string | null
+    role?: $Enums.UserRole
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
     passwordResetTokens?: PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
     vocationalTests?: VocationalTestSessionUncheckedCreateNestedManyWithoutUserInput
+    feedbackTickets?: FeedbackTicketUncheckedCreateNestedManyWithoutReporterUserInput
   }
 
   export type UserCreateOrConnectWithoutProfileInput = {
@@ -49721,12 +51932,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUpdateManyWithoutReporterUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProfileInput = {
@@ -49735,12 +51948,14 @@ export namespace Prisma {
     passwordHash?: NullableStringFieldUpdateOperationsInput | string | null
     username?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
     passwordResetTokens?: PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
     vocationalTests?: VocationalTestSessionUncheckedUpdateManyWithoutUserNestedInput
+    feedbackTickets?: FeedbackTicketUncheckedUpdateManyWithoutReporterUserNestedInput
   }
 
   export type ExperienceUpsertWithWhereUniqueWithoutProfileInput = {
@@ -56464,6 +58679,28 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type FeedbackTicketCreateManyReporterUserInput = {
+    id?: string
+    number: number
+    kind: $Enums.FeedbackKind
+    message: string
+    route: string
+    url: string
+    x: number
+    y: number
+    relativeX: number
+    relativeY: number
+    viewportWidth: number
+    viewportHeight: number
+    elementTag?: string | null
+    elementId?: string | null
+    elementClasses?: string | null
+    elementText?: string | null
+    status?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type AccountUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
@@ -56604,6 +58841,72 @@ export namespace Prisma {
     publicInPortfolio?: BoolFieldUpdateOperationsInput | boolean
     publicInResume?: BoolFieldUpdateOperationsInput | boolean
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketUpdateWithoutReporterUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketUncheckedUpdateWithoutReporterUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type FeedbackTicketUncheckedUpdateManyWithoutReporterUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    number?: IntFieldUpdateOperationsInput | number
+    kind?: EnumFeedbackKindFieldUpdateOperationsInput | $Enums.FeedbackKind
+    message?: StringFieldUpdateOperationsInput | string
+    route?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    x?: IntFieldUpdateOperationsInput | number
+    y?: IntFieldUpdateOperationsInput | number
+    relativeX?: FloatFieldUpdateOperationsInput | number
+    relativeY?: FloatFieldUpdateOperationsInput | number
+    viewportWidth?: IntFieldUpdateOperationsInput | number
+    viewportHeight?: IntFieldUpdateOperationsInput | number
+    elementTag?: NullableStringFieldUpdateOperationsInput | string | null
+    elementId?: NullableStringFieldUpdateOperationsInput | string | null
+    elementClasses?: NullableStringFieldUpdateOperationsInput | string | null
+    elementText?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -58599,6 +60902,10 @@ export namespace Prisma {
      * @deprecated Use PasswordResetTokenDefaultArgs instead
      */
     export type PasswordResetTokenArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = PasswordResetTokenDefaultArgs<ExtArgs>
+    /**
+     * @deprecated Use FeedbackTicketDefaultArgs instead
+     */
+    export type FeedbackTicketArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = FeedbackTicketDefaultArgs<ExtArgs>
     /**
      * @deprecated Use VocationalTestSessionDefaultArgs instead
      */

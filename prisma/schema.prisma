@@ -29,12 +29,23 @@ enum AssetStatus {
   FAILED
 }
 
+enum UserRole {
+  USER
+  DEVELOPER
+}
+
+enum FeedbackKind {
+  IMPROVEMENT
+  CORRECTION
+}
+
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
   passwordHash String?
   username     String?  @unique
   name         String?
+  role         UserRole @default(USER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -43,6 +54,7 @@ model User {
   sessions            Session[]
   passwordResetTokens PasswordResetToken[]
   vocationalTests     VocationalTestSession[]
+  feedbackTickets     FeedbackTicket[]
 }
 
 model Account {
@@ -90,6 +102,34 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model FeedbackTicket {
+  id              String       @id @default(cuid())
+  number          Int          @unique
+  kind            FeedbackKind
+  message         String       @db.Text
+  route           String
+  url             String
+  x               Int
+  y               Int
+  relativeX       Float
+  relativeY       Float
+  viewportWidth   Int
+  viewportHeight  Int
+  elementTag      String?
+  elementId       String?
+  elementClasses  String?
+  elementText     String?
+  reporterUserId  String?
+  reporterUser    User?        @relation(fields: [reporterUserId], references: [id], onDelete: SetNull)
+  status          String       @default("OPEN")
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([route, createdAt])
+  @@index([reporterUserId, createdAt])
+  @@index([status, createdAt])
 }
 
 model VocationalTestSession {

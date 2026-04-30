@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { User, Lock, Globe } from "lucide-react";
 import { DeleteAccountCard } from "@/components/settings/DeleteAccountCard";
+import { DeveloperModeCard } from "@/components/settings/DeveloperModeCard";
 import { UsernameEditor } from "@/components/settings/UsernameEditor";
 import {
   Card,
@@ -22,6 +23,7 @@ export default async function SettingsPage() {
     select: {
       email: true,
       username: true,
+      role: true,
     },
   });
 
@@ -108,6 +110,8 @@ export default async function SettingsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {user.role === "DEVELOPER" ? <DeveloperModeCard /> : null}
 
       <DeleteAccountCard />
     </div>

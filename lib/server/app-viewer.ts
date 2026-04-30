@@ -27,6 +27,7 @@ export interface AppShellViewer {
     id: string;
     name: string | null;
     username: string | null;
+    role: "USER" | "DEVELOPER";
   };
 }
 
@@ -70,6 +71,7 @@ export const getAppShellViewer = cache(async (): Promise<AppShellViewer> => {
           id: true,
           name: true,
           username: true,
+          role: true,
         },
       },
     },
