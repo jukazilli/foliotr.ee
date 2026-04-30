@@ -1,20 +1,14 @@
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  BriefcaseBusiness,
-  Edit3,
-  MapPin,
-  Star,
-  UserRound,
-} from "lucide-react";
+import { BriefcaseBusiness, Edit3, MapPin, Star, UserRound } from "lucide-react";
 import { EditableProfileCover } from "@/components/public/EditableProfileCover";
 import { PublicPortfolioCarousel } from "@/components/public/PublicPortfolioCarousel";
+import { PublicReviewComposer } from "@/components/public/PublicReviewComposer";
 import PublicReviewsSection from "@/components/public/PublicReviewsSection";
+import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 import type { PublicReviewSummary } from "@/lib/server/domain/reviews";
 import type { PublicProfileHub } from "@/lib/server/domain/public-pages";
 import { readVersionProfileSnapshot } from "@/lib/server/domain/page-snapshots";
 import { selectBehavioralAnalysis } from "@/lib/vocational-test/public-analysis";
-import { BehavioralAnalysisSection } from "@/components/vocation/BehavioralAnalysisSection";
 
 const softSurfaceStyle = {
   borderColor: "#e5e7eb",
@@ -29,59 +23,57 @@ interface PublicProfileHubPageProps {
   embedded?: boolean;
 }
 
-function calculateAge(value: Date | string | null) {
-  if (!value) return null;
-  const birthDate = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(birthDate.getTime())) return null;
+type HubVersion = PublicProfileHubPageProps["hub"]["versions"][number];
+type HubPage = HubVersion["pages"][number];
 
-  const today = new Date();
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const monthDiff = today.getMonth() - birthDate.getMonth();
-
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-    age -= 1;
-  }
-
-  return age >= 0 ? age : null;
-}
-
-function getPortfolioTitle(
-  version: PublicProfileHubPageProps["hub"]["versions"][number],
-  page: PublicProfileHubPageProps["hub"]["versions"][number]["pages"][number]
-) {
+function getPortfolioTitle(version: HubVersion, page: HubPage) {
   return page.title || version.customHeadline || version.name;
 }
 
-function getPortfolioDescription(
-  version: PublicProfileHubPageProps["hub"]["versions"][number]
-) {
+function getPortfolioDescription(version: HubVersion) {
   return version.description || version.context || version.customBio || null;
 }
 
-function getPortfolioCover(
-  version: PublicProfileHubPageProps["hub"]["versions"][number]
-) {
+function getPortfolioCover(version: HubVersion) {
   return readVersionProfileSnapshot(version.profileSnapshot)?.bannerUrl ?? null;
 }
 
-function ProfileCard({
-  title,
-  children,
-  className = "",
-}: {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
-}) {
+function getPortfolioExperience(version: HubVersion) {
+  const snapshot = readVersionProfileSnapshot(version.profileSnapshot);
   return (
-    <section
-      className={`rounded-2xl border bg-white p-5 ${className}`}
-      style={softSurfaceStyle}
-    >
-      <h2 className="text-base font-extrabold text-neutral-950">{title}</h2>
-      <div className="mt-4">{children}</div>
-    </section>
+    snapshot?.experiences?.find((experience) => experience.current) ??
+    snapshot?.experiences?.[0] ??
+    null
   );
+}
+
+function getWorkLine(args: {
+  currentExperience?: { role: string | null; company: string | null } | null;
+  headline?: string | null;
+}) {
+  if (args.currentExperience?.role && args.currentExperience.company) {
+    return `Trabalhando na ${args.currentExperience.company} como ${args.currentExperience.role}`;
+  }
+
+  if (args.currentExperience?.role) {
+    return `Trabalhando como ${args.currentExperience.role}`;
+  }
+
+  return args.headline ?? null;
+}
+
+function getOpportunityLine(args: {
+  openToOpportunities: boolean;
+  showOpportunityMotivation: boolean;
+  opportunityMotivation?: string | null;
+}) {
+  if (!args.openToOpportunities) return null;
+
+  if (args.showOpportunityMotivation && args.opportunityMotivation) {
+    return `Aberto a oportunidades: ${args.opportunityMotivation}`;
+  }
+
+  return "Aberto a oportunidades";
 }
 
 export default function PublicProfileHubPage({
@@ -92,30 +84,36 @@ export default function PublicProfileHubPage({
   embedded = false,
 }: PublicProfileHubPageProps) {
   const displayName = hub.displayName || username;
-  const defaultPresentation =
-    hub.presentations.find((item) => item.id === hub.defaultPresentationId) ??
-    hub.presentations[0] ??
-    null;
-  const age = calculateAge(hub.birthDate);
-  const isWorking = hub.experiences.some((experience) => experience.current);
   const currentExperience = hub.experiences.find((experience) => experience.current);
+  const workLine = getWorkLine({
+    currentExperience,
+    headline: hub.headline,
+  });
+  const opportunityLine = getOpportunityLine({
+    openToOpportunities: hub.openToOpportunities,
+    showOpportunityMotivation: hub.showOpportunityMotivation,
+    opportunityMotivation: hub.opportunityMotivation,
+  });
   const publishedItems = hub.versions.flatMap((version) =>
-    version.pages.map((page) => ({
-      id: page.id,
-      href: `/${username}/${page.slug}`,
-      resumeHref:
-        version.resumeConfig?.publishState === "PUBLISHED"
-          ? `/${username}/${page.slug}/resume`
-          : null,
-      title: getPortfolioTitle(version, page),
-      description: getPortfolioDescription(version),
-      coverUrl: getPortfolioCover(version),
-      templateName: page.template.name,
-      isDefault: version.isDefault,
-    }))
+    version.pages.map((page) => {
+      const portfolioExperience = getPortfolioExperience(version);
+
+      return {
+        id: page.id,
+        href: `/${username}/${page.slug}`,
+        resumeHref:
+          version.resumeConfig?.publishState === "PUBLISHED"
+            ? `/${username}/${page.slug}/resume`
+            : null,
+        title: getPortfolioTitle(version, page),
+        description: getPortfolioDescription(version),
+        coverUrl: getPortfolioCover(version),
+        role: portfolioExperience?.role ?? version.customHeadline ?? page.title,
+        company: portfolioExperience?.company ?? null,
+        isDefault: version.isDefault,
+      };
+    })
   );
-  const primaryPortfolioItem =
-    publishedItems.find((item) => item.isDefault) ?? publishedItems[0] ?? null;
   const behavioralAnalysis = selectBehavioralAnalysis(
     hub.user.vocationalTests,
     "portfolio"
@@ -175,130 +173,112 @@ export default function PublicProfileHubPage({
           </div>
 
           <div className="relative z-10 bg-white px-5 pb-6 pt-6 sm:px-8 sm:pb-8 sm:pt-8">
-            <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                <div
-                  className="relative z-20 -mt-8 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 sm:-mt-12 sm:h-40 sm:w-40"
-                  style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
-                >
-                  {hub.avatarUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={hub.avatarUrl}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <UserRound className="h-12 w-12 text-neutral-500" aria-hidden />
-                  )}
-                </div>
-
-                <div className="sm:pt-2">
-                  <p className="text-sm font-bold text-neutral-500">@{username}</p>
-                  <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">
-                    {displayName}
-                  </h1>
-                  {hub.headline ? (
-                    <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-neutral-700">
-                      {hub.headline}
-                    </p>
-                  ) : null}
-                </div>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <div
+                className="relative z-20 -mt-8 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 sm:-mt-12 sm:h-40 sm:w-40"
+                style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
+              >
+                {hub.avatarUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={hub.avatarUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <UserRound className="h-12 w-12 text-neutral-500" aria-hidden />
+                )}
               </div>
 
-              {isOwner ? (
-                <Link
-                  href="/portfolios"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-neutral-950 px-4 text-sm font-bold text-white transition hover:bg-neutral-800"
-                >
-                  Gerenciar portfólios
-                  <ArrowUpRight className="h-4 w-4" aria-hidden />
-                </Link>
-              ) : null}
+              <div className="sm:pt-2">
+                <p className="text-sm font-bold text-neutral-500">@{username}</p>
+                <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">
+                  {displayName}
+                </h1>
+                {hub.headline ? (
+                  <p className="mt-2 max-w-2xl text-base font-semibold leading-7 text-neutral-700">
+                    {hub.headline}
+                  </p>
+                ) : null}
+              </div>
             </div>
           </div>
         </section>
 
         <section
-          className="grid gap-4 lg:col-span-full lg:grid-cols-[repeat(24,minmax(0,1fr))]"
-          aria-label="Resumo do perfil"
+          className="rounded-xl border border-[#dddfe2] bg-white p-4 shadow-[0_1px_2px_rgb(0_0_0/0.16)] lg:col-span-full"
+          aria-label="Meus Portfólios"
         >
-          <ProfileCard title="Sobre" className="lg:col-span-12">
-            <div className="space-y-3 text-sm font-semibold leading-6 text-neutral-700">
-              {defaultPresentation?.body || hub.bio ? (
-                <p className="whitespace-pre-line">
-                  {defaultPresentation?.body ?? hub.bio}
-                </p>
-              ) : (
-                <p>Perfil em construção.</p>
-              )}
+          <div className="mb-4 flex items-center justify-between gap-4">
+            <h2 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+              Meus Portfólios
+            </h2>
+            {behavioralAnalysis ? (
+              <span className="rounded-full bg-[#f0f2f5] px-3 py-1 text-xs font-bold text-[#65676b]">
+                teste público
+              </span>
+            ) : null}
+          </div>
+          <PublicPortfolioCarousel items={publishedItems} />
+        </section>
 
-              <div className="grid gap-2 pt-2">
-                {hub.location ? (
-                  <span className="inline-flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-neutral-500" aria-hidden />
-                    {hub.location}
-                  </span>
-                ) : null}
-                {age !== null ? <span>{age} anos</span> : null}
-                <span className="inline-flex items-center gap-2">
-                  <BriefcaseBusiness className="h-4 w-4 text-neutral-500" aria-hidden />
-                  {isWorking ? "Trabalhando no momento" : "Disponível no momento"}
-                </span>
-                {currentExperience ? (
-                  <span>
-                    Atualmente: {currentExperience.role}
-                    {currentExperience.company
-                      ? ` em ${currentExperience.company}`
-                      : ""}
-                  </span>
-                ) : null}
-              </div>
-
-              <div className="rounded-xl bg-neutral-50 p-3">
-                <p className="font-extrabold text-neutral-950">
-                  {hub.openToOpportunities
-                    ? "Aberto a oportunidades"
-                    : "Sem busca ativa"}
-                </p>
-                {hub.showOpportunityMotivation && hub.opportunityMotivation ? (
-                  <p className="mt-2 whitespace-pre-line">
-                    {hub.opportunityMotivation}
-                  </p>
-                ) : null}
-              </div>
+        <section
+          className="grid gap-4 lg:col-span-full lg:grid-cols-[minmax(320px,0.82fr)_minmax(360px,1.18fr)]"
+          aria-label="Resumo e review"
+        >
+          <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
+            <div className="flex items-start justify-between gap-4">
+              <h2 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+                Dados pessoais
+              </h2>
+              {isOwner ? (
+                <Link
+                  href="/profile"
+                  className="grid h-9 w-9 place-items-center rounded-full text-[#65676b] transition hover:bg-[#f0f2f5]"
+                  aria-label="Editar dados pessoais"
+                >
+                  <Edit3 className="h-5 w-5" aria-hidden />
+                </Link>
+              ) : null}
             </div>
-          </ProfileCard>
 
-          <ProfileCard
-            title={primaryPortfolioItem?.title ?? "Portfólio"}
-            className="lg:col-span-12"
-          >
-            <div className="space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-sm font-semibold text-neutral-600">
-                  {publishedItems.length} ativo
-                  {publishedItems.length === 1 ? "" : "s"}
+            <div className="mt-5 grid gap-4 text-[15px] font-semibold leading-6 text-[#050505]">
+              {hub.bio ? <p className="whitespace-pre-line">{hub.bio}</p> : null}
+              {hub.location ? (
+                <span className="inline-flex items-center gap-3">
+                  <MapPin className="h-6 w-6 text-[#65676b]" aria-hidden />
+                  {hub.location}
                 </span>
-                {behavioralAnalysis ? (
-                  <span className="rounded-full bg-lime-100 px-3 py-1 text-xs font-extrabold text-lime-900">
-                    teste público
-                  </span>
-                ) : null}
-              </div>
-              <PublicPortfolioCarousel items={publishedItems} />
+              ) : null}
+              {workLine ? (
+                <span className="inline-flex items-center gap-3">
+                  <BriefcaseBusiness
+                    className="h-6 w-6 text-[#65676b]"
+                    aria-hidden
+                  />
+                  {workLine}
+                </span>
+              ) : null}
+              {opportunityLine ? (
+                <div className="rounded-lg bg-[#f0f2f5] px-4 py-3">
+                  {opportunityLine}
+                </div>
+              ) : null}
             </div>
-          </ProfileCard>
+          </section>
 
+          {isOwner ? null : (
+            <PublicReviewComposer
+              username={username}
+              returnPath={`/${username}`}
+              avatarUrl={hub.avatarUrl}
+              displayName={displayName}
+            />
+          )}
         </section>
 
         <div id="reviews" className="lg:col-span-full">
-          <PublicReviewsSection
-            username={username}
-            returnPath={`/${username}`}
-            summary={reviewSummary}
-            canSubmit={!isOwner}
-          />
+          <PublicReviewsSection summary={reviewSummary} />
         </div>
 
         {behavioralAnalysis ? (
