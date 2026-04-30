@@ -10198,11 +10198,13 @@ export namespace Prisma {
   export type ProfileAvgAggregateOutputType = {
     bannerPositionX: number | null
     bannerPositionY: number | null
+    bannerScale: number | null
   }
 
   export type ProfileSumAggregateOutputType = {
     bannerPositionX: number | null
     bannerPositionY: number | null
+    bannerScale: number | null
   }
 
   export type ProfileMinAggregateOutputType = {
@@ -10215,6 +10217,7 @@ export namespace Prisma {
     bannerUrl: string | null
     bannerPositionX: number | null
     bannerPositionY: number | null
+    bannerScale: number | null
     location: string | null
     pronouns: string | null
     websiteUrl: string | null
@@ -10240,6 +10243,7 @@ export namespace Prisma {
     bannerUrl: string | null
     bannerPositionX: number | null
     bannerPositionY: number | null
+    bannerScale: number | null
     location: string | null
     pronouns: string | null
     websiteUrl: string | null
@@ -10265,6 +10269,7 @@ export namespace Prisma {
     bannerUrl: number
     bannerPositionX: number
     bannerPositionY: number
+    bannerScale: number
     location: number
     pronouns: number
     websiteUrl: number
@@ -10285,11 +10290,13 @@ export namespace Prisma {
   export type ProfileAvgAggregateInputType = {
     bannerPositionX?: true
     bannerPositionY?: true
+    bannerScale?: true
   }
 
   export type ProfileSumAggregateInputType = {
     bannerPositionX?: true
     bannerPositionY?: true
+    bannerScale?: true
   }
 
   export type ProfileMinAggregateInputType = {
@@ -10302,6 +10309,7 @@ export namespace Prisma {
     bannerUrl?: true
     bannerPositionX?: true
     bannerPositionY?: true
+    bannerScale?: true
     location?: true
     pronouns?: true
     websiteUrl?: true
@@ -10327,6 +10335,7 @@ export namespace Prisma {
     bannerUrl?: true
     bannerPositionX?: true
     bannerPositionY?: true
+    bannerScale?: true
     location?: true
     pronouns?: true
     websiteUrl?: true
@@ -10352,6 +10361,7 @@ export namespace Prisma {
     bannerUrl?: true
     bannerPositionX?: true
     bannerPositionY?: true
+    bannerScale?: true
     location?: true
     pronouns?: true
     websiteUrl?: true
@@ -10464,6 +10474,7 @@ export namespace Prisma {
     bannerUrl: string | null
     bannerPositionX: number
     bannerPositionY: number
+    bannerScale: number
     location: string | null
     pronouns: string | null
     websiteUrl: string | null
@@ -10508,6 +10519,7 @@ export namespace Prisma {
     bannerUrl?: boolean
     bannerPositionX?: boolean
     bannerPositionY?: boolean
+    bannerScale?: boolean
     location?: boolean
     pronouns?: boolean
     websiteUrl?: boolean
@@ -10547,6 +10559,7 @@ export namespace Prisma {
     bannerUrl?: boolean
     bannerPositionX?: boolean
     bannerPositionY?: boolean
+    bannerScale?: boolean
     location?: boolean
     pronouns?: boolean
     websiteUrl?: boolean
@@ -10574,6 +10587,7 @@ export namespace Prisma {
     bannerUrl?: boolean
     bannerPositionX?: boolean
     bannerPositionY?: boolean
+    bannerScale?: boolean
     location?: boolean
     pronouns?: boolean
     websiteUrl?: boolean
@@ -10637,6 +10651,7 @@ export namespace Prisma {
       bannerUrl: string | null
       bannerPositionX: number
       bannerPositionY: number
+      bannerScale: number
       location: string | null
       pronouns: string | null
       websiteUrl: string | null
@@ -11065,6 +11080,7 @@ export namespace Prisma {
     readonly bannerUrl: FieldRef<"Profile", 'String'>
     readonly bannerPositionX: FieldRef<"Profile", 'Int'>
     readonly bannerPositionY: FieldRef<"Profile", 'Int'>
+    readonly bannerScale: FieldRef<"Profile", 'Int'>
     readonly location: FieldRef<"Profile", 'String'>
     readonly pronouns: FieldRef<"Profile", 'String'>
     readonly websiteUrl: FieldRef<"Profile", 'String'>
@@ -37137,6 +37153,7 @@ export namespace Prisma {
     bannerUrl: 'bannerUrl',
     bannerPositionX: 'bannerPositionX',
     bannerPositionY: 'bannerPositionY',
+    bannerScale: 'bannerScale',
     location: 'location',
     pronouns: 'pronouns',
     websiteUrl: 'websiteUrl',
@@ -38160,6 +38177,7 @@ export namespace Prisma {
     bannerUrl?: StringNullableFilter<"Profile"> | string | null
     bannerPositionX?: IntFilter<"Profile"> | number
     bannerPositionY?: IntFilter<"Profile"> | number
+    bannerScale?: IntFilter<"Profile"> | number
     location?: StringNullableFilter<"Profile"> | string | null
     pronouns?: StringNullableFilter<"Profile"> | string | null
     websiteUrl?: StringNullableFilter<"Profile"> | string | null
@@ -38198,6 +38216,7 @@ export namespace Prisma {
     bannerUrl?: SortOrderInput | SortOrder
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
     location?: SortOrderInput | SortOrder
     pronouns?: SortOrderInput | SortOrder
     websiteUrl?: SortOrderInput | SortOrder
@@ -38239,6 +38258,7 @@ export namespace Prisma {
     bannerUrl?: StringNullableFilter<"Profile"> | string | null
     bannerPositionX?: IntFilter<"Profile"> | number
     bannerPositionY?: IntFilter<"Profile"> | number
+    bannerScale?: IntFilter<"Profile"> | number
     location?: StringNullableFilter<"Profile"> | string | null
     pronouns?: StringNullableFilter<"Profile"> | string | null
     websiteUrl?: StringNullableFilter<"Profile"> | string | null
@@ -38277,6 +38297,7 @@ export namespace Prisma {
     bannerUrl?: SortOrderInput | SortOrder
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
     location?: SortOrderInput | SortOrder
     pronouns?: SortOrderInput | SortOrder
     websiteUrl?: SortOrderInput | SortOrder
@@ -38310,6 +38331,7 @@ export namespace Prisma {
     bannerUrl?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     bannerPositionX?: IntWithAggregatesFilter<"Profile"> | number
     bannerPositionY?: IntWithAggregatesFilter<"Profile"> | number
+    bannerScale?: IntWithAggregatesFilter<"Profile"> | number
     location?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     pronouns?: StringNullableWithAggregatesFilter<"Profile"> | string | null
     websiteUrl?: StringNullableWithAggregatesFilter<"Profile"> | string | null
@@ -40911,6 +40933,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -40948,6 +40971,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -40983,6 +41007,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41020,6 +41045,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41056,6 +41082,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -41080,6 +41107,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -41104,6 +41132,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -44029,6 +44058,7 @@ export namespace Prisma {
     bannerUrl?: SortOrder
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
     location?: SortOrder
     pronouns?: SortOrder
     websiteUrl?: SortOrder
@@ -44047,6 +44077,7 @@ export namespace Prisma {
   export type ProfileAvgOrderByAggregateInput = {
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
   }
 
   export type ProfileMaxOrderByAggregateInput = {
@@ -44059,6 +44090,7 @@ export namespace Prisma {
     bannerUrl?: SortOrder
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
     location?: SortOrder
     pronouns?: SortOrder
     websiteUrl?: SortOrder
@@ -44084,6 +44116,7 @@ export namespace Prisma {
     bannerUrl?: SortOrder
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
     location?: SortOrder
     pronouns?: SortOrder
     websiteUrl?: SortOrder
@@ -44102,6 +44135,7 @@ export namespace Prisma {
   export type ProfileSumOrderByAggregateInput = {
     bannerPositionX?: SortOrder
     bannerPositionY?: SortOrder
+    bannerScale?: SortOrder
   }
 
   export type ProfileRelationFilter = {
@@ -48435,6 +48469,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -48470,6 +48505,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -48657,6 +48693,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -48692,6 +48729,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50125,6 +50163,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50161,6 +50200,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50200,6 +50240,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50236,6 +50277,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50351,6 +50393,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50387,6 +50430,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50441,6 +50485,7 @@ export namespace Prisma {
     bannerUrl?: StringNullableFilter<"Profile"> | string | null
     bannerPositionX?: IntFilter<"Profile"> | number
     bannerPositionY?: IntFilter<"Profile"> | number
+    bannerScale?: IntFilter<"Profile"> | number
     location?: StringNullableFilter<"Profile"> | string | null
     pronouns?: StringNullableFilter<"Profile"> | string | null
     websiteUrl?: StringNullableFilter<"Profile"> | string | null
@@ -50481,6 +50526,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50517,6 +50563,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50636,6 +50683,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50672,6 +50720,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50786,6 +50835,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50822,6 +50872,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -50892,6 +50943,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50928,6 +50980,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -50987,6 +51040,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51023,6 +51077,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51093,6 +51148,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51129,6 +51185,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51188,6 +51245,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51224,6 +51282,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51343,6 +51402,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51379,6 +51439,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51493,6 +51554,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51529,6 +51591,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51648,6 +51711,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51684,6 +51748,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51798,6 +51863,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51834,6 +51900,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -51904,6 +51971,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51940,6 +52008,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -51999,6 +52068,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52035,6 +52105,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52154,6 +52225,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52190,6 +52262,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52304,6 +52377,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52340,6 +52414,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52459,6 +52534,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52495,6 +52571,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52609,6 +52686,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52645,6 +52723,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -52915,6 +52994,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -52951,6 +53031,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -53065,6 +53146,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -53101,6 +53183,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -53419,6 +53502,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -53455,6 +53539,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57199,6 +57284,7 @@ export namespace Prisma {
     bannerUrl?: string | null
     bannerPositionX?: number
     bannerPositionY?: number
+    bannerScale?: number
     location?: string | null
     pronouns?: string | null
     websiteUrl?: string | null
@@ -57237,6 +57323,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57273,6 +57360,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null
@@ -57308,6 +57396,7 @@ export namespace Prisma {
     bannerUrl?: NullableStringFieldUpdateOperationsInput | string | null
     bannerPositionX?: IntFieldUpdateOperationsInput | number
     bannerPositionY?: IntFieldUpdateOperationsInput | number
+    bannerScale?: IntFieldUpdateOperationsInput | number
     location?: NullableStringFieldUpdateOperationsInput | string | null
     pronouns?: NullableStringFieldUpdateOperationsInput | string | null
     websiteUrl?: NullableStringFieldUpdateOperationsInput | string | null

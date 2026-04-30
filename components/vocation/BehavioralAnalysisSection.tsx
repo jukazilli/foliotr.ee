@@ -7,9 +7,11 @@ import { BehavioralRadar } from "./BehavioralRadar";
 
 export function BehavioralAnalysisSection({
   analysis,
+  showSummary = true,
 }: {
   analysis: BehavioralAnalysisSnapshot;
   compact?: boolean;
+  showSummary?: boolean;
 }) {
   const { result } = analysis;
   const report = analysis.aiReport || result.summary;
@@ -23,9 +25,11 @@ export function BehavioralAnalysisSection({
         <h2 className="mt-2 text-2xl font-bold tracking-[-0.02em] sm:text-3xl">
           Arquétipo {result.dominantArchetypeLabel}
         </h2>
-        <p className="mt-4 max-w-5xl whitespace-pre-line text-sm font-normal leading-6 text-[#050505] sm:text-base">
-          {report}
-        </p>
+        {showSummary ? (
+          <p className="mt-4 max-w-5xl whitespace-pre-line text-sm font-normal leading-6 text-[#050505] sm:text-base">
+            {report}
+          </p>
+        ) : null}
         <div className="mt-5 flex flex-wrap gap-2">
           <span className="rounded-full bg-[#f0f2f5] px-3 py-1 text-sm font-semibold text-[#050505]">
             RIASEC {result.riasecCode}

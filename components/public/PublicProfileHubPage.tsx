@@ -148,6 +148,7 @@ export default function PublicProfileHubPage({
               bannerUrl={hub.bannerUrl}
               bannerPositionX={hub.bannerPositionX}
               bannerPositionY={hub.bannerPositionY}
+              bannerScale={hub.bannerScale}
               isOwner={isOwner}
             />
             <div className="absolute left-4 top-4 inline-flex items-center gap-2 rounded-full border bg-white/90 px-3 py-2 text-xs font-bold text-neutral-900 backdrop-blur">
@@ -179,10 +180,10 @@ export default function PublicProfileHubPage({
             ) : null}
           </div>
 
-          <div className="relative z-10 bg-white px-5 pb-6 pt-6 sm:px-8 sm:pb-8 sm:pt-8">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className="relative z-10 -mt-24 bg-transparent px-5 pb-5 pt-0 sm:-mt-28 sm:px-8 sm:pb-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
               <div
-                className="relative z-20 -mt-8 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 sm:-mt-12 sm:h-40 sm:w-40"
+                className="relative z-20 flex h-36 w-36 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-neutral-100 sm:h-40 sm:w-40"
                 style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
               >
                 {hub.avatarUrl ? (
@@ -197,7 +198,7 @@ export default function PublicProfileHubPage({
                 )}
               </div>
 
-              <div className="sm:pt-2">
+              <div className="pb-2 sm:pb-3">
                 <p className="text-sm font-bold text-neutral-500">@{username}</p>
                 <h1 className="mt-1 text-3xl font-extrabold tracking-[-0.03em] sm:text-4xl">
                   {displayName}
@@ -213,11 +214,11 @@ export default function PublicProfileHubPage({
         </section>
 
         <section
-          className="rounded-xl border border-[#dddfe2] bg-white p-4 shadow-[0_1px_2px_rgb(0_0_0/0.16)] lg:col-span-full"
+          className="rounded-xl border border-[#dddfe2] bg-white p-3 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-4 lg:col-span-full"
           aria-label="Meus Portfólios"
         >
-          <div className="mb-4 flex items-center justify-between gap-4">
-            <h2 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+          <div className="mb-3 flex items-center justify-between gap-4">
+            <h2 className="text-xl font-bold tracking-[-0.02em] text-[#050505] sm:text-2xl">
               Meus Portfólios
             </h2>
             {behavioralAnalysis ? (
@@ -304,10 +305,6 @@ export default function PublicProfileHubPage({
           )}
         </section>
 
-        <div id="reviews" className="mt-3 lg:col-span-full lg:mt-4">
-          <PublicReviewsSection summary={reviewSummary} />
-        </div>
-
         {behavioralAnalysis ? (
           <section className="grid gap-3 lg:col-span-full">
             <div>
@@ -321,6 +318,10 @@ export default function PublicProfileHubPage({
             <BehavioralAnalysisSection analysis={behavioralAnalysis} compact />
           </section>
         ) : null}
+
+        <div id="reviews" className="mt-3 lg:col-span-full lg:mt-4">
+          <PublicReviewsSection summary={reviewSummary} />
+        </div>
       </main>
 
       {embedded ? null : (

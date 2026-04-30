@@ -5,18 +5,18 @@ import { Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap border-2 border-transparent text-sm font-extrabold uppercase transition-transform hover:-translate-y-0.5 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-transparent text-sm font-semibold transition-colors disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default: "border-line bg-pink text-ink hover:bg-pink/80",
-        primary: "border-line bg-pink text-ink hover:bg-pink/80",
+        default: "bg-blue text-white hover:bg-blue/90",
+        primary: "bg-blue text-white hover:bg-blue/90",
         outline: "border-line bg-white text-ink shadow-app hover:bg-cream",
         ghost: "bg-transparent text-ink hover:bg-cream",
-        destructive: "border-line bg-pink text-ink hover:bg-pink/80",
-        soft: "bg-pink text-ink hover:bg-pink/80",
+        destructive: "bg-rose text-white hover:bg-rose/90",
+        soft: "bg-pink text-blue hover:bg-blue-50",
         rest: "bg-cream text-ink hover:bg-cream/80",
-        accent: "border-line bg-pink text-ink hover:bg-pink/80",
+        accent: "bg-pink text-blue hover:bg-blue-50",
       },
       size: {
         sm: "h-9 px-3 text-xs",

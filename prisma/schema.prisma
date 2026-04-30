@@ -129,6 +129,7 @@ model Profile {
   bannerUrl      String?
   bannerPositionX Int     @default(50)
   bannerPositionY Int     @default(50)
+  bannerScale     Int     @default(100)
   location       String?
   pronouns       String?
   websiteUrl     String?

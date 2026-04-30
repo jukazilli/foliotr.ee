@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
+  ChevronUp,
   FileText,
   RotateCcw,
-  Save,
 } from "lucide-react";
 import { affinityScale, agreementScale } from "@/lib/vocational-test/scales";
 import { questions } from "@/lib/vocational-test/questions";
@@ -87,13 +88,12 @@ export function VocationalTestApp() {
   const [answers, setAnswers] = useState<Answers>({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [result, setResult] = useState<TestResult | null>(null);
-  const [aiReport, setAiReport] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasLoadedSession, setHasLoadedSession] = useState(false);
   const [completedSessions, setCompletedSessions] = useState<PersistedSession[]>([]);
+  const [expandedSessionIds, setExpandedSessionIds] = useState<string[]>([]);
 
   const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
   const progress = Math.round((answeredCount / questions.length) * 100);
@@ -131,6 +131,7 @@ export function VocationalTestApp() {
         if (!active) return;
 
         setCompletedSessions(sessions);
+        setExpandedSessionIds(sessions[0]?.id ? [sessions[0].id] : []);
 
         if (session) {
           setProfile(session.profile);
@@ -139,7 +140,6 @@ export function VocationalTestApp() {
             Math.min(Math.max(session.currentQuestionIndex, 0), questions.length - 1)
           );
           setResult(session.result ?? null);
-          setAiReport(session.aiReport ?? null);
           setStage(getInitialStage(session));
         }
       } catch (requestError) {
@@ -169,7 +169,6 @@ export function VocationalTestApp() {
     if (!hasLoadedSession || stage === "intro" || stage === "result") return;
 
     const timeout = window.setTimeout(async () => {
-      setSaving(true);
       setError(null);
 
       try {
@@ -194,8 +193,6 @@ export function VocationalTestApp() {
             ? requestError.message
             : "Erro ao salvar progresso."
         );
-      } finally {
-        setSaving(false);
       }
     }, 550);
 
@@ -214,7 +211,6 @@ export function VocationalTestApp() {
     setAnswers({});
     setCurrentQuestionIndex(0);
     setResult(null);
-    setAiReport(null);
     setStage("profile");
   }
 
@@ -258,7 +254,6 @@ export function VocationalTestApp() {
       }
 
       setResult(payload.session.result);
-      setAiReport(payload.session.aiReport ?? null);
       setCompletedSessions((previous) => [
         {
           id: payload.session?.id ?? `local-${Date.now()}`,
@@ -275,6 +270,9 @@ export function VocationalTestApp() {
         },
         ...previous.filter((item) => item.id !== payload.session?.id),
       ]);
+      if (payload.session?.id) {
+        setExpandedSessionIds([payload.session.id]);
+      }
       setStage("result");
     } catch (requestError) {
       setError(
@@ -283,6 +281,14 @@ export function VocationalTestApp() {
     } finally {
       setFinishing(false);
     }
+  }
+
+  function toggleSession(sessionId: string) {
+    setExpandedSessionIds((previous) =>
+      previous.includes(sessionId)
+        ? previous.filter((id) => id !== sessionId)
+        : [sessionId, ...previous]
+    );
   }
 
   async function updateVisibility(
@@ -331,7 +337,7 @@ export function VocationalTestApp() {
   if (loading) {
     return (
       <section className="mx-auto max-w-3xl rounded-xl border border-[#dddfe2] bg-white p-8 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
-        <p className="brand-eyebrow">Teste vocacional</p>
+        <p className="brand-eyebrow">Mapa de interesses</p>
         <h1 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-[#050505]">
           Carregando seu progresso
         </h1>
@@ -344,7 +350,7 @@ export function VocationalTestApp() {
       <header className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="brand-eyebrow">Teste vocacional</p>
+            <p className="brand-eyebrow">Mapa de interesses</p>
             <h1 className="mt-3 max-w-4xl text-3xl font-bold tracking-[-0.02em] text-[#050505] sm:text-4xl">
               Descubra caminhos com base em evidências do seu perfil.
             </h1>
@@ -352,10 +358,6 @@ export function VocationalTestApp() {
               Responda ao mapa de interesses, comportamento e motivação. O resultado fica
               salvo no seu perfil.
             </p>
-          </div>
-          <div className="flex items-center gap-2 rounded-full bg-[#f0f2f5] px-4 py-3 text-sm font-semibold text-[#050505]">
-            <Save className="h-4 w-4" aria-hidden="true" />
-            {saving ? "Salvando" : "Salvo automaticamente"}
           </div>
         </div>
       </header>
@@ -366,13 +368,43 @@ export function VocationalTestApp() {
         </div>
       ) : null}
 
+      {stage === "result" && result ? (
+        <section className="flex flex-col gap-3 rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="brand-eyebrow">Resultado atual</p>
+            <h2 className="mt-2 text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+              {profile.name
+                ? `${profile.name}, seu mapa de interesses está pronto`
+                : "Seu mapa de interesses está pronto"}
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              className="brand-button brand-button-pink gap-2"
+              onClick={restart}
+            >
+              <RotateCcw className="h-4 w-4" aria-hidden="true" />
+              Refazer mapa
+            </button>
+            <button
+              type="button"
+              className="brand-button brand-button-secondary"
+              onClick={() => window.print()}
+            >
+              Imprimir
+            </button>
+          </div>
+        </section>
+      ) : null}
+
       {completedSessions.length > 0 ? (
         <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-6">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="brand-eyebrow">Meus resultados</p>
               <h2 className="mt-2 text-2xl font-bold tracking-[-0.02em] text-[#050505]">
-                Histórico do teste vocacional
+                Histórico de mapas realizados
               </h2>
             </div>
             <p className="max-w-xl text-sm font-normal leading-6 text-[#65676b]">
@@ -382,70 +414,13 @@ export function VocationalTestApp() {
           </div>
           <div className="mt-5 grid gap-3">
             {completedSessions.map((session) => (
-              <article
+              <TestHistoryItem
                 key={session.id}
-                className="grid gap-4 rounded-xl border border-[#dddfe2] bg-[#f7f8fa] p-4 lg:grid-cols-[minmax(0,1fr)_auto]"
-              >
-                <div>
-                  <h3 className="font-semibold text-[#050505]">
-                    {session.result?.dominantArchetypeLabel
-                      ? `Arquétipo ${session.result.dominantArchetypeLabel}`
-                      : "Resultado vocacional"}
-                  </h3>
-                  <p className="mt-1 text-sm font-normal text-[#65676b]">
-                    RIASEC {session.result?.riasecCode ?? "-"} ·{" "}
-                    {session.completedAt
-                      ? new Intl.DateTimeFormat("pt-BR").format(
-                          new Date(session.completedAt)
-                        )
-                      : "sem data"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-[#050505]">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(session.publicInProfile)}
-                      onChange={(event) =>
-                        updateVisibility(
-                          session.id,
-                          "publicInProfile",
-                          event.target.checked
-                        )
-                      }
-                    />
-                    Perfil
-                  </label>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-[#050505]">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(session.publicInPortfolio)}
-                      onChange={(event) =>
-                        updateVisibility(
-                          session.id,
-                          "publicInPortfolio",
-                          event.target.checked
-                        )
-                      }
-                    />
-                    Portfólio
-                  </label>
-                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-[#050505]">
-                    <input
-                      type="checkbox"
-                      checked={Boolean(session.publicInResume)}
-                      onChange={(event) =>
-                        updateVisibility(
-                          session.id,
-                          "publicInResume",
-                          event.target.checked
-                        )
-                      }
-                    />
-                    Currículo
-                  </label>
-                </div>
-              </article>
+                session={session}
+                expanded={expandedSessionIds.includes(session.id)}
+                onToggle={() => toggleSession(session.id)}
+                onUpdateVisibility={updateVisibility}
+              />
             ))}
           </div>
         </section>
@@ -459,7 +434,7 @@ export function VocationalTestApp() {
               60 perguntas, três leituras e um relatório final.
             </h2>
             <p className="mt-4 text-base font-normal leading-7 text-[#65676b]">
-              O teste cruza RIASEC, Big Five e arquétipos de motivação para sugerir
+              O mapa cruza RIASEC, Big Five e arquétipos de motivação para sugerir
               forças, pontos de atenção e próximos passos práticos.
             </p>
             <button
@@ -647,7 +622,7 @@ export function VocationalTestApp() {
                   }}
                 >
                   {currentQuestionIndex >= questions.length - 1
-                    ? "Finalizar teste"
+                    ? "Finalizar mapa"
                     : "Próxima"}
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -657,94 +632,6 @@ export function VocationalTestApp() {
         </section>
       ) : null}
 
-      {stage === "result" && result ? (
-        <section className="grid gap-6">
-          <div className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-              <div>
-                <p className="brand-eyebrow">Relatório final</p>
-                <h2 className="mt-3 text-3xl font-bold tracking-[-0.02em] text-[#050505]">
-                  {profile.name
-                    ? `${profile.name}, seu mapa profissional está pronto`
-                    : "Seu mapa profissional está pronto"}
-                </h2>
-                <p className="mt-4 max-w-3xl text-base font-normal leading-7 text-[#050505]">
-                  {result.summary}
-                </p>
-              </div>
-              <div className="grid min-w-64 gap-3 rounded-xl bg-[#f0f2f5] p-5">
-                <ResultKpi label="RIASEC" value={result.riasecCode} />
-                <ResultKpi label="Arquétipo" value={result.dominantArchetypeLabel} />
-                <ResultKpi label="Clareza" value={`${result.confidence}/100`} />
-              </div>
-            </div>
-          </div>
-
-          <BehavioralAnalysisSection
-            analysis={{
-              id: "current-result",
-              completedAt: result.completedAt,
-              aiReport,
-              result,
-            }}
-          />
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            <InsightList
-              title="Forças principais"
-              items={result.strengths.map((item) => ({
-                title: item.title,
-                text: item.description,
-              }))}
-            />
-            <InsightList
-              title="Pontos de atenção"
-              items={result.attentionPoints.map((item) => ({
-                title: item.title,
-                text: `${item.risk} ${item.development}`,
-              }))}
-            />
-          </div>
-
-          <div className="rounded-xl border border-[#dddfe2] bg-white p-6 shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:p-8">
-            <div className="flex items-center gap-3">
-              <FileText className="h-6 w-6 text-orange" aria-hidden="true" />
-              <h3 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
-                Relatório Gemini
-              </h3>
-            </div>
-            {aiReport ? (
-              <div className="prose prose-sm mt-5 max-w-none whitespace-pre-wrap text-ink">
-                {aiReport}
-              </div>
-            ) : (
-              <p className="mt-5 text-sm font-normal leading-6 text-[#65676b]">
-                O resultado calculado já foi salvo. Para gerar o relatório narrativo por
-                IA, configure `GEMINI_API_KEY` no ambiente e refaça a finalização do
-                teste.
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              className="brand-button brand-button-pink gap-2"
-              onClick={restart}
-            >
-              <RotateCcw className="h-4 w-4" aria-hidden="true" />
-              Refazer teste
-            </button>
-            <button
-              type="button"
-              className="brand-button brand-button-secondary"
-              onClick={() => window.print()}
-            >
-              Imprimir
-            </button>
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }
@@ -755,6 +642,159 @@ function ResultKpi({ label, value }: { label: string; value: string }) {
       <span className="text-sm font-semibold uppercase text-[#65676b]">{label}</span>
       <strong className="text-lg font-bold text-[#050505]">{value}</strong>
     </div>
+  );
+}
+
+function formatCompletedAt(value?: string | null) {
+  return value
+    ? new Intl.DateTimeFormat("pt-BR").format(new Date(value))
+    : "sem data";
+}
+
+function TestHistoryItem({
+  session,
+  expanded,
+  onToggle,
+  onUpdateVisibility,
+}: {
+  session: PersistedSession;
+  expanded: boolean;
+  onToggle: () => void;
+  onUpdateVisibility: (
+    sessionId: string,
+    field: "publicInProfile" | "publicInPortfolio" | "publicInResume",
+    value: boolean
+  ) => void;
+}) {
+  const sessionResult = session.result;
+
+  return (
+    <article className="rounded-xl border border-[#dddfe2] bg-[#f7f8fa]">
+      <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+        <button
+          type="button"
+          className="flex min-w-0 items-start gap-3 text-left"
+          onClick={onToggle}
+          aria-expanded={expanded}
+        >
+          <span className="mt-1 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[#65676b]">
+            {expanded ? (
+              <ChevronUp className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <ChevronDown className="h-4 w-4" aria-hidden="true" />
+            )}
+          </span>
+          <span>
+            <span className="block font-semibold text-[#050505]">
+              {sessionResult?.dominantArchetypeLabel
+                ? `Arquétipo ${sessionResult.dominantArchetypeLabel}`
+                : "Resultado do mapa"}
+            </span>
+            <span className="mt-1 block text-sm font-normal text-[#65676b]">
+              RIASEC {sessionResult?.riasecCode ?? "-"} ·{" "}
+              {formatCompletedAt(session.completedAt)}
+            </span>
+          </span>
+        </button>
+
+        <div className="flex flex-wrap gap-2">
+          <VisibilityCheckbox
+            label="Perfil"
+            checked={Boolean(session.publicInProfile)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInProfile", checked)
+            }
+          />
+          <VisibilityCheckbox
+            label="Portfólio"
+            checked={Boolean(session.publicInPortfolio)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInPortfolio", checked)
+            }
+          />
+          <VisibilityCheckbox
+            label="Currículo"
+            checked={Boolean(session.publicInResume)}
+            onChange={(checked) =>
+              onUpdateVisibility(session.id, "publicInResume", checked)
+            }
+          />
+        </div>
+      </div>
+
+      {expanded && sessionResult ? (
+        <div className="grid gap-5 border-t border-[#dddfe2] bg-white p-4 sm:p-5">
+          <section className="rounded-xl bg-[#f0f2f5] p-5">
+            <div className="flex items-center gap-3">
+              <FileText className="h-5 w-5 text-orange" aria-hidden="true" />
+              <h3 className="text-xl font-bold tracking-[-0.02em] text-[#050505]">
+                Relatório do mapa
+              </h3>
+            </div>
+            <p className="mt-4 whitespace-pre-line text-sm font-normal leading-6 text-[#050505]">
+              {session.aiReport || sessionResult.summary}
+            </p>
+          </section>
+
+          <div className="grid gap-3 rounded-xl bg-[#f0f2f5] p-5 sm:grid-cols-3">
+            <ResultKpi label="RIASEC" value={sessionResult.riasecCode} />
+            <ResultKpi
+              label="Arquétipo"
+              value={sessionResult.dominantArchetypeLabel}
+            />
+            <ResultKpi label="Clareza" value={`${sessionResult.confidence}/100`} />
+          </div>
+
+          <BehavioralAnalysisSection
+            analysis={{
+              id: session.id,
+              completedAt: session.completedAt ?? sessionResult.completedAt,
+              aiReport: null,
+              result: sessionResult,
+            }}
+            showSummary={false}
+          />
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <InsightList
+              title="Forças principais"
+              items={sessionResult.strengths.map((item) => ({
+                title: item.title,
+                text: item.description,
+              }))}
+            />
+            <InsightList
+              title="Pontos de atenção"
+              items={sessionResult.attentionPoints.map((item) => ({
+                title: item.title,
+                text: `${item.risk} ${item.development}`,
+              }))}
+            />
+          </div>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function VisibilityCheckbox({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <label className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-3 py-2 text-sm font-semibold text-[#050505]">
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+      {label}
+    </label>
   );
 }
 

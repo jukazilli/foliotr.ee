@@ -10,32 +10,32 @@
   --font-ui: var(--font-primary);
   --font-data: var(--font-primary);
 
-  --paper: #f6f8f1;
+  --paper: #f2f4f7;
   --white: #ffffff;
-  --ink: #111827;
-  --muted: #4b5563;
-  --line: #111827;
+  --ink: #050505;
+  --muted: #65676b;
+  --line: #dddfe2;
   --orange: #ff4d00;
-  --lime: #dfff00;
-  --blue: #245fd6;
-  --blue-soft: #2f66d0;
+  --lime: #f0f2f5;
+  --blue: #0866ff;
+  --blue-soft: #e7f3ff;
   --rose: #8b0024;
-  --pink: #ffcce6;
-  --cream: #f6f8f1;
+  --pink: #e7f3ff;
+  --cream: #f7f8fa;
   --mint: #dcfce7;
-  --green: #6f7a47;
+  --green: #1f4f16;
   --cyan: #00d1ff;
-  --peach: #ffd1b3;
-  --shadow-hard: 10px 10px 0 0 var(--line);
-  --shadow-hard-sm: 6px 6px 0 0 var(--line);
-  --shadow-app: 4px 4px 0 0 rgba(17, 17, 17, 0.88);
+  --peach: #f0f2f5;
+  --shadow-hard: 0 1px 2px rgb(0 0 0 / 0.14);
+  --shadow-hard-sm: 0 1px 2px rgb(0 0 0 / 0.12);
+  --shadow-app: 0 1px 2px rgb(0 0 0 / 0.16);
   --radius-pill: 999px;
   --radius-card: 28px;
   --app-bg: var(--paper);
   --app-surface: var(--white);
   --app-surface-soft: var(--cream);
   --app-accent: var(--pink);
-  --app-cta: var(--ink);
+  --app-cta: var(--blue);
   --app-text: var(--ink);
   --app-muted: var(--muted);
   --app-line: var(--line);
@@ -132,114 +132,114 @@ a {
   }
 
   .brutal-border {
-    border: 2px solid var(--line);
+    border: 1px solid var(--line);
   }
 
   .brutal-shadow {
-    box-shadow: 4px 4px 0 0 var(--line);
+    box-shadow: var(--shadow-app);
   }
 
   .brutal-shadow-sm {
-    box-shadow: 2px 2px 0 0 var(--line);
+    box-shadow: var(--shadow-hard-sm);
   }
 
   .brutal-shadow:active,
   .brutal-shadow-sm:active {
-    box-shadow: 0 0 0 0 var(--line);
-    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-app);
+    transform: none;
   }
 
   .brand-shell {
-    border: 2px solid var(--line);
+    border: 1px solid var(--line);
+    border-radius: 12px;
     background: var(--white);
     box-shadow: var(--shadow-hard);
   }
 
   .brand-card {
-    border: 2px solid var(--line);
-    border-radius: 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
     background: var(--white);
     box-shadow: var(--shadow-app);
   }
 
   .brand-card-soft {
-    border: 2px solid var(--line);
-    border-radius: 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
     background: var(--cream);
     box-shadow: var(--shadow-app);
   }
 
   .brand-eyebrow {
-    font-size: 0.78rem;
-    font-weight: 800;
-    letter-spacing: 0.32em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink);
+    color: var(--muted);
   }
 
   .brand-title {
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.08;
     color: var(--ink);
   }
 
   .brand-copy {
     color: var(--muted);
-    font-weight: 500;
-    line-height: 1.5;
+    font-weight: 400;
+    line-height: 1.65;
   }
 
   .brand-button {
     display: inline-flex;
-    min-height: 48px;
+    min-height: 42px;
     align-items: center;
     justify-content: center;
     border: 0;
-    border-radius: 0;
-    padding: 0 28px;
-    background: var(--orange);
-    color: var(--white);
-    font-weight: 800;
-    text-transform: uppercase;
+    border-radius: 8px;
+    padding: 0 18px;
+    background: var(--pink);
+    color: var(--blue);
+    font-weight: 700;
+    text-transform: none;
     transition:
-      transform 180ms ease,
-      box-shadow 180ms ease,
       background 180ms ease;
   }
 
   .brand-button:hover {
-    transform: translateY(-2px);
+    background: #dbeafe;
   }
 
   .brand-button-secondary {
-    background: #f1f1ee;
+    background: var(--lime);
     color: var(--ink);
   }
 
   .brand-button-pink {
     background: var(--pink);
-    color: var(--ink);
+    color: var(--blue);
   }
 
   .brand-input {
-    min-height: 48px;
+    min-height: 44px;
     width: 100%;
-    border: 0;
-    border-radius: 14px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
     background: var(--white);
-    padding: 0 24px;
+    padding: 0 16px;
     color: var(--ink);
-    font-weight: 600;
+    font-weight: 400;
     outline: none;
   }
 
   .brand-input::placeholder {
-    color: #77776d;
+    color: var(--muted);
   }
 
   .brand-input:focus {
-    box-shadow: inset 0 0 0 3px var(--pink);
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
   }
 
   .soft-grid-bg,
@@ -247,7 +247,7 @@ a {
   .glass-nav,
   .liquid-button,
   .dense-surface {
-    border: 2px solid var(--line);
+    border: 1px solid var(--line);
     background: var(--white);
     box-shadow: var(--shadow-hard-sm);
     backdrop-filter: none;
@@ -299,15 +299,15 @@ a {
   }
 
   .app-panel {
-    border: 2px solid var(--line);
-    border-radius: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
     background: var(--white);
     box-shadow: var(--shadow-app);
   }
 
   .app-panel-soft {
-    border: 2px solid var(--line);
-    border-radius: 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
     background: var(--cream);
     box-shadow: var(--shadow-app);
   }
@@ -315,7 +315,7 @@ a {
   .app-copy {
     color: var(--muted);
     font-size: 0.925rem;
-    font-weight: 500;
+    font-weight: 400;
     line-height: 1.65;
   }
 
@@ -359,7 +359,7 @@ a {
 
 .app-shell :where(.bg-orange, .bg-rose, .bg-coral-50) {
   background-color: var(--pink) !important;
-  color: var(--ink) !important;
+  color: var(--blue) !important;
 }
 
 .app-shell
@@ -379,6 +379,7 @@ a {
 .app-shell
   :where(
     .border-neutral-200,
+    .border-line,
     .border-lime-100,
     .border-green-100,
     .border-green-200,
@@ -391,7 +392,24 @@ a {
   border-color: color-mix(in srgb, var(--line) 62%, transparent) !important;
 }
 
+.app-shell :where(.border-2, .border-4) {
+  border-width: 1px !important;
+}
+
+.app-shell :where(.rounded-\[28px\], .rounded-\[22px\], .rounded-\[20px\], .rounded-\[18px\]) {
+  border-radius: 12px !important;
+}
+
+.app-shell :where(.font-extrabold, .font-black) {
+  font-weight: 700 !important;
+}
+
+.app-shell :where(.font-bold) {
+  font-weight: 600 !important;
+}
+
 .app-shell [class*="shadow-hard"],
+.app-shell [class*="shadow-["],
 .app-shell [class*="shadow-xl"],
 .app-shell [class*="shadow-md"],
 .app-shell [class*="shadow-sm"] {

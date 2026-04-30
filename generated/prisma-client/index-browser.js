@@ -200,6 +200,7 @@ exports.Prisma.ProfileScalarFieldEnum = {
   bannerUrl: 'bannerUrl',
   bannerPositionX: 'bannerPositionX',
   bannerPositionY: 'bannerPositionY',
+  bannerScale: 'bannerScale',
   location: 'location',
   pronouns: 'pronouns',
   websiteUrl: 'websiteUrl',

@@ -30,17 +30,17 @@ export function PublicPortfolioCarousel({ items }: PublicPortfolioCarouselProps)
 
   return (
     <div
-      className="flex gap-3 overflow-x-auto pb-3"
+      className="flex gap-3 overflow-x-auto pb-2"
       role="region"
       aria-label="Meus portfólios"
     >
       {items.map((item) => (
         <article
           key={item.id}
-          className="w-[222px] shrink-0 overflow-hidden rounded-xl border border-[#dddfe2] bg-white shadow-[0_1px_2px_rgb(0_0_0/0.2)]"
+          className="w-[176px] shrink-0 overflow-hidden rounded-lg border border-[#dddfe2] bg-white shadow-[0_1px_2px_rgb(0_0_0/0.16)] sm:w-[188px]"
         >
           <Link href={item.href} className="block">
-            <div className="relative h-[222px] bg-[#f0f2f5]">
+            <div className="relative h-[150px] bg-[#f0f2f5] sm:h-[160px]">
               {item.coverUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -50,26 +50,26 @@ export function PublicPortfolioCarousel({ items }: PublicPortfolioCarouselProps)
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-[#e4e6eb] text-[#65676b]">
-                  <BriefcaseBusiness className="h-10 w-10" aria-hidden />
+                  <BriefcaseBusiness className="h-8 w-8" aria-hidden />
                 </div>
               )}
             </div>
           </Link>
 
-          <div className="grid min-h-[160px] content-between gap-3 p-3">
+          <div className="grid min-h-[112px] content-between gap-2 p-2.5">
             <div className="min-w-0">
               <Link
                 href={item.href}
-                className="line-clamp-2 text-[17px] font-bold leading-5 text-[#050505] hover:underline"
+                className="line-clamp-2 text-[15px] font-bold leading-5 text-[#050505] hover:underline"
               >
                 {item.role || item.title}
               </Link>
               {item.company ? (
-                <p className="mt-1 line-clamp-1 text-[15px] leading-5 text-[#65676b]">
+                <p className="mt-0.5 line-clamp-1 text-[13px] leading-5 text-[#65676b]">
                   {item.company}
                 </p>
               ) : item.description ? (
-                <p className="mt-1 line-clamp-1 text-[15px] leading-5 text-[#65676b]">
+                <p className="mt-0.5 line-clamp-1 text-[13px] leading-5 text-[#65676b]">
                   {item.description}
                 </p>
               ) : null}
@@ -77,10 +77,10 @@ export function PublicPortfolioCarousel({ items }: PublicPortfolioCarouselProps)
 
             <Link
               href={item.href}
-              className="inline-flex min-h-9 items-center justify-center gap-2 rounded-md bg-[#e7f3ff] px-3 text-[15px] font-bold text-[#0866ff] transition hover:bg-[#dbeafe]"
+              className="inline-flex min-h-8 items-center justify-center gap-2 rounded-md bg-[#e7f3ff] px-2.5 text-[13px] font-bold text-[#0866ff] transition hover:bg-[#dbeafe]"
             >
               Ver detalhes
-              <ArrowRight className="h-4 w-4" aria-hidden />
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
             </Link>
           </div>
         </article>
