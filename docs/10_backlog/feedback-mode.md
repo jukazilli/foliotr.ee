@@ -1,5 +1,11 @@
 # Modo Feedback
 
+## Status
+
+- Branch de implementacao: `feat/feedback-mode`.
+- Merge realizado na `main` em 30/04/2026.
+- Corte entregue com backend de tickets, envio via Resend, captura visual no app shell e modo desenvolvedor para visualizacao das marcacoes.
+
 ## Objetivo
 
 Criar um modo de feedback interno para usuarios logados reportarem melhorias ou correcoes de forma anonima, marcando visualmente o ponto da tela onde perceberam o problema. Cada envio gera um ticket sequencial e dispara notificacao por email para o endereco de feedback configurado.
