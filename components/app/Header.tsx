@@ -9,12 +9,12 @@ import {
   Images,
   LayoutTemplate,
   LogOut,
-  Search,
   Settings,
   Sparkles,
   UserRound,
 } from "lucide-react";
 import { signOutAction } from "@/components/app/actions";
+import { HeaderSearch } from "@/components/app/HeaderSearch";
 import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
 
 interface HeaderProps {
@@ -206,20 +206,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
               className="shrink-0 rounded-full bg-white p-1"
             />
 
-            <label
-              htmlFor="app-header-search"
-              className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full bg-[#f0f2f5] px-4"
-            >
-              <Search className="h-5 w-5 shrink-0 text-muted" aria-hidden="true" />
-              <input
-                id="app-header-search"
-                name="appHeaderSearch"
-                type="search"
-                placeholder="Buscar no LINKFOLIO"
-                className="min-w-0 flex-1 bg-transparent text-base font-semibold text-ink outline-none placeholder:text-muted"
-                aria-label="Buscar no LINKFOLIO"
-              />
-            </label>
+            <HeaderSearch />
           </div>
 
           <nav
