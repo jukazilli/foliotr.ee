@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BriefcaseBusiness,
+  Grid3X3,
   Home,
   Images,
   LayoutTemplate,
@@ -76,9 +77,9 @@ function AccountMenu({
 }) {
   return (
     <details className="group relative">
-      <summary className="flex cursor-pointer list-none items-center gap-2 rounded-full px-1 py-1 font-bold text-ink hover:bg-gray-100">
+      <summary className="flex h-12 cursor-pointer list-none items-center gap-2 rounded-full px-1 py-1 font-bold text-ink hover:bg-gray-100">
         <AccountAvatar userName={userName} userImage={userImage} />
-        <span className="hidden max-w-36 truncate text-sm sm:block">
+        <span className="hidden max-w-32 truncate text-sm 2xl:block">
           {userName ?? "Sua conta"}
         </span>
       </summary>
@@ -113,7 +114,33 @@ function AccountMenu({
   );
 }
 
-function NavIcon({ item, active }: { item: SocialNavItem; active: boolean }) {
+function NavIcon({
+  item,
+  active,
+  variant = "mobile",
+}: {
+  item: SocialNavItem;
+  active: boolean;
+  variant?: "desktop" | "mobile";
+}) {
+  if (variant === "desktop") {
+    return (
+      <Link
+        href={item.href}
+        aria-label={item.label}
+        title={item.label}
+        className={`relative flex h-14 min-w-20 flex-1 items-center justify-center rounded-lg transition hover:bg-gray-100 ${
+          active ? "text-[#2563eb]" : "text-muted hover:text-ink"
+        }`}
+      >
+        <item.icon className="h-7 w-7" aria-hidden="true" strokeWidth={2.2} />
+        {active ? (
+          <span className="absolute bottom-[-10px] h-1 w-full rounded-t-full bg-[#2563eb]" />
+        ) : null}
+      </Link>
+    );
+  }
+
   return (
     <Link
       href={item.href}
@@ -170,36 +197,70 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
 
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-40 hidden border-b-2 border-line bg-white px-3 py-2 md:block">
-        <div className="mx-auto grid max-w-[1560px] grid-cols-[auto_minmax(260px,520px)_minmax(340px,1fr)_auto] items-center gap-3">
-          <FolioTreeLogo
-            href={homeHref}
-            compact
-            className="shrink-0 rounded-full bg-white p-2"
-          />
-
-          <div className="flex h-10 min-w-0 items-center gap-2 rounded-full border-2 border-line bg-white px-4">
-            <Search className="h-4 w-4 text-muted" aria-hidden="true" />
-            <input
-              id="app-header-search"
-              name="appHeaderSearch"
-              type="search"
-              placeholder="Buscar no FolioTree"
-              className="min-w-0 flex-1 bg-transparent text-sm font-bold text-ink outline-none placeholder:text-muted"
-              aria-label="Buscar no FolioTree"
+      <header className="fixed left-0 right-0 top-0 z-40 hidden border-b border-line bg-white px-4 md:block">
+        <div className="mx-auto grid h-16 max-w-[1880px] grid-cols-[minmax(280px,440px)_minmax(360px,1fr)_auto] items-center gap-4">
+          <div className="flex min-w-0 items-center gap-3">
+            <FolioTreeLogo
+              href={homeHref}
+              compact
+              className="shrink-0 rounded-full bg-white p-1"
             />
+
+            <label
+              htmlFor="app-header-search"
+              className="flex h-12 min-w-0 flex-1 items-center gap-3 rounded-full bg-[#f0f2f5] px-4"
+            >
+              <Search className="h-5 w-5 shrink-0 text-muted" aria-hidden="true" />
+              <input
+                id="app-header-search"
+                name="appHeaderSearch"
+                type="search"
+                placeholder="Buscar no FolioTree"
+                className="min-w-0 flex-1 bg-transparent text-base font-semibold text-ink outline-none placeholder:text-muted"
+                aria-label="Buscar no FolioTree"
+              />
+            </label>
           </div>
 
           <nav
-            className="flex min-w-0 items-center justify-center gap-2 overflow-x-auto px-1"
+            className="mx-auto flex h-full w-full max-w-[720px] min-w-0 items-center justify-center gap-2 overflow-hidden px-2"
             aria-label="Navegação principal"
           >
             {navItems.map((item) => (
-              <NavIcon key={item.href} item={item} active={Boolean(isActive(item))} />
+              <NavIcon
+                key={item.href}
+                item={item}
+                active={Boolean(isActive(item))}
+                variant="desktop"
+              />
             ))}
           </nav>
 
-          <div className="flex shrink-0 items-center justify-end">
+          <div className="flex shrink-0 items-center justify-end gap-2">
+            <Link
+              href="/gallery"
+              aria-label="Galeria"
+              title="Galeria"
+              className="grid h-12 w-12 place-items-center rounded-full bg-[#e4e6eb] text-ink transition hover:bg-gray-300"
+            >
+              <Grid3X3 className="h-6 w-6" aria-hidden="true" />
+            </Link>
+            <Link
+              href="/settings"
+              aria-label="Configurações"
+              title="Configurações"
+              className="grid h-12 w-12 place-items-center rounded-full bg-[#e4e6eb] text-ink transition hover:bg-gray-300"
+            >
+              <Settings className="h-6 w-6" aria-hidden="true" />
+            </Link>
+            <Link
+              href="/teste-vocacional/app"
+              aria-label="Teste vocacional"
+              title="Teste vocacional"
+              className="grid h-12 w-12 place-items-center rounded-full bg-[#e4e6eb] text-ink transition hover:bg-gray-300"
+            >
+              <Sparkles className="h-6 w-6" aria-hidden="true" />
+            </Link>
             <AccountMenu userName={userName} userImage={userImage} />
           </div>
         </div>

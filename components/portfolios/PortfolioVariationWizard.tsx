@@ -224,7 +224,7 @@ export function PortfolioVariationWizard({
     const Chevron = isOpen ? ChevronUp : ChevronDown;
 
     return (
-      <section className="rounded-2xl border-2 border-line bg-cream p-4">
+      <section className="self-start rounded-2xl border-2 border-line bg-cream p-4">
         <button
           type="button"
           onClick={() => toggleSection(key)}
@@ -294,7 +294,7 @@ export function PortfolioVariationWizard({
     const Chevron = isOpen ? ChevronUp : ChevronDown;
 
     return (
-      <section className="rounded-2xl border-2 border-line bg-cream p-4">
+      <section className="self-start rounded-2xl border-2 border-line bg-cream p-4">
         <button
           type="button"
           onClick={() => toggleSection(key)}
@@ -591,16 +591,27 @@ export function PortfolioVariationWizard({
                 </h2>
               </div>
 
-              <div className="grid gap-4 lg:grid-cols-2">
-                {renderPresentationCollection()}
-                {renderCollection("Experiências", "experiences", "experienceIds")}
-                {renderCollection("Formação", "educations", "educationIds")}
-                {renderCollection("Projetos", "projects", "projectIds")}
-                {renderCollection("Reconhecimentos", "achievements", "achievementIds")}
-                {renderCollection("Skills", "skills", "skillIds")}
-                {renderCollection("Reviews", "proofs", "proofIds")}
-                {renderCollection("Destaques", "highlights", "highlightIds")}
-                {renderCollection("Links", "links", "linkIds")}
+              <div className="max-h-[58vh] overflow-y-auto pr-2">
+                <div className="grid gap-4 lg:grid-cols-2 lg:items-start">
+                  <div className="grid gap-4">
+                    {renderPresentationCollection()}
+                    {renderCollection("Formação", "educations", "educationIds")}
+                    {renderCollection(
+                      "Reconhecimentos",
+                      "achievements",
+                      "achievementIds"
+                    )}
+                    {renderCollection("Reviews", "proofs", "proofIds")}
+                    {renderCollection("Links", "links", "linkIds")}
+                  </div>
+
+                  <div className="grid gap-4">
+                    {renderCollection("Experiências", "experiences", "experienceIds")}
+                    {renderCollection("Projetos", "projects", "projectIds")}
+                    {renderCollection("Skills", "skills", "skillIds")}
+                    {renderCollection("Destaques", "highlights", "highlightIds")}
+                  </div>
+                </div>
               </div>
             </div>
           ) : null}
