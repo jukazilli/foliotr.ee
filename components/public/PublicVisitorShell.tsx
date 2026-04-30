@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-const THEME_STORAGE_KEY = "foliotree-theme";
+const THEME_STORAGE_KEY = "linkfolio-theme";
 
 function VisitorThemeToggle() {
   const [isNoirTheme, setIsNoirTheme] = useState(false);

@@ -330,7 +330,7 @@ export default function PublicProfileHubPage({
             href="/"
             className="text-xs text-neutral-500 transition-colors hover:text-neutral-800"
           >
-            Criado com <span className="font-semibold">FolioTree</span>
+            Criado com <span className="font-semibold">LINKFOLIO</span>
           </Link>
         </footer>
       )}

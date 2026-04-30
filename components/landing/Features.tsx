@@ -66,7 +66,7 @@ export default function Features() {
             </h2>
           </div>
           <p className="max-w-2xl text-base font-semibold leading-8 text-neutral-600">
-            FolioTree não tenta substituir sua carreira por um template. Ele organiza o
+            LINKFOLIO não tenta substituir sua carreira por um template. Ele organiza o
             que prova seu valor e transforma isso em saídas claras.
           </p>
         </div>

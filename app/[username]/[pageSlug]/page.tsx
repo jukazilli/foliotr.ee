@@ -18,7 +18,7 @@ export async function generateMetadata({
   const page = await getPublishedPageByUsernameAndSlug(username, pageSlug);
 
   if (!page) {
-    return { title: "Pagina nao encontrada - FolioTree" };
+    return { title: "Pagina nao encontrada - LINKFOLIO" };
   }
 
   const profile = getPublicProfile(page);
@@ -28,7 +28,7 @@ export async function generateMetadata({
 
   return {
     title: `${displayName} - ${page.title ?? page.version.name}`,
-    description: headline || `Veja a pagina publica de ${displayName} no FolioTree.`,
+    description: headline || `Veja a pagina publica de ${displayName} no LINKFOLIO.`,
   };
 }
 

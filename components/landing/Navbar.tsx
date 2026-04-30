@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
+import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -69,7 +69,7 @@ export default function Navbar() {
           !isDesktopMenuVisible && "md:pointer-events-none md:-translate-y-5 md:opacity-0"
         )}
       >
-        <FolioTreeLogo
+        <LinkfolioLogo
           href="/"
           className="text-neutral-900"
           wordmarkClassName="text-[1.95rem] font-[800] tracking-[-0.05em]"

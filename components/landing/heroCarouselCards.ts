@@ -39,7 +39,7 @@ export const heroCarouselCards: HeroCarouselCardItem[] = [
     eyebrow: "Por que existe",
     title: "Menos perfil generico. Mais evidencia entendivel.",
     subtitle:
-      "FolioTree nao tenta substituir sua carreira por um template. Ele organiza o que prova seu valor e transforma isso em saidas claras.",
+      "LINKFOLIO nao tenta substituir sua carreira por um template. Ele organiza o que prova seu valor e transforma isso em saidas claras.",
     video: "/landing-carousel/videos/video_12.mp4",
     stageBackground: "#11254b",
     stageGlow: "#d5f221",

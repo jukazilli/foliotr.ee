@@ -18,17 +18,17 @@ export async function generateMetadata({
   const hub = await getPublicProfileHub(username);
 
   if (!hub) {
-    return { title: "Pagina nao encontrada - FolioTree" };
+    return { title: "Pagina nao encontrada - LINKFOLIO" };
   }
 
   const displayName = hub.displayName ?? username;
   const headline = hub.headline ?? "";
 
   return {
-    title: `${displayName} - FolioTree`,
+    title: `${displayName} - LINKFOLIO`,
     description:
       headline ||
-      `Veja o perfil publico, portfolios e curriculos de ${displayName} no FolioTree.`,
+      `Veja o perfil publico, portfolios e curriculos de ${displayName} no LINKFOLIO.`,
   };
 }
 

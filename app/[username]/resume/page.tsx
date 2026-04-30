@@ -16,13 +16,13 @@ export async function generateMetadata({ params }: ResumePageProps): Promise<Met
   const page = await getPrimaryPublishedPage(username);
 
   if (!page || page.version.resumeConfig?.publishState !== "PUBLISHED") {
-    return { title: "Curriculo rapido nao encontrado - FolioTree" };
+    return { title: "Curriculo rapido nao encontrado - LINKFOLIO" };
   }
 
   const displayName = getPublicProfile(page).displayName ?? username;
 
   return {
-    title: `Curriculo rapido - ${displayName} | FolioTree`,
+    title: `Curriculo rapido - ${displayName} | LINKFOLIO`,
     description: `Leitura objetiva do portfolio profissional de ${displayName}.`,
   };
 }

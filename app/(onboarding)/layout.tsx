@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "FolioTree - Configuracao inicial",
+  title: "LINKFOLIO - Configuracao inicial",
 };
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export default function OnboardingLayout({ children }: { children: React.ReactNo
       <header className="border-b border-[rgba(15,17,21,0.08)] bg-white">
         <div className="mx-auto flex h-14 max-w-5xl items-center px-6">
           <span className="font-display text-xl font-bold text-neutral-900">
-            FolioTree
+            LINKFOLIO
           </span>
         </div>
       </header>

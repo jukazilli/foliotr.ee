@@ -48,14 +48,14 @@ function labelLines(label: string) {
 function labelPlacement(x: number, center: number) {
   if (x < center - 48) {
     return {
-      x: Math.max(36, x),
+      x: Math.max(26, x),
       textAnchor: "end" as const,
     };
   }
 
   if (x > center + 48) {
     return {
-      x: Math.min(204, x),
+      x: Math.min(214, x),
       textAnchor: "start" as const,
     };
   }
@@ -79,6 +79,7 @@ export function BehavioralRadar({
 }) {
   const center = 120;
   const radius = 82;
+  const labelRadius = 142;
   const rings = [25, 50, 75, 100];
 
   return (
@@ -87,7 +88,7 @@ export function BehavioralRadar({
         {title}
       </figcaption>
       <svg
-        viewBox="-18 0 276 270"
+        viewBox="-42 -12 324 288"
         role="img"
         aria-label={title}
         className="h-auto w-full"
@@ -110,7 +111,7 @@ export function BehavioralRadar({
           ))}
           {items.map((item, index) => {
             const edge = pointFor(index, items.length, 100, radius, center);
-            const label = pointFor(index, items.length, 126, radius, center);
+            const label = pointFor(index, items.length, labelRadius, radius, center);
             const placement = labelPlacement(label.x, center);
             const lines = labelLines(item.label);
 

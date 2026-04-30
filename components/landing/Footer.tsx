@@ -1,12 +1,12 @@
 import Link from "next/link";
-import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
+import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
 
 export default function Footer() {
   return (
     <footer className="border-t border-neutral-200 bg-white py-10">
       <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 md:flex-row md:items-center md:justify-between lg:px-8">
         <div>
-          <FolioTreeLogo />
+          <LinkfolioLogo />
           <p className="mt-3 max-w-sm text-sm font-medium leading-6 text-neutral-500">
             Evidência profissional viva, organizada para páginas, versões e currículos.
           </p>
@@ -23,7 +23,7 @@ export default function Footer() {
             Criar conta
           </Link>
           <span className="font-data text-xs uppercase text-neutral-400">
-            2026 FolioTree
+            2026 LINKFOLIO
           </span>
         </div>
       </div>

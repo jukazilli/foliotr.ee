@@ -5,7 +5,7 @@ import type { CSSProperties } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-const THEME_STORAGE_KEY = "foliotree-theme";
+const THEME_STORAGE_KEY = "linkfolio-theme";
 
 function normalizeUsername(value: string) {
   return value

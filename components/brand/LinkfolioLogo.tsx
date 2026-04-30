@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-interface FolioTreeLogoProps {
+interface LinkfolioLogoProps {
   href?: string;
   className?: string;
   markClassName?: string;
@@ -44,13 +44,13 @@ function LogoMark({ className }: { className?: string }) {
   );
 }
 
-export function FolioTreeLogo({
+export function LinkfolioLogo({
   href,
   className,
   markClassName,
   wordmarkClassName,
   compact = false,
-}: FolioTreeLogoProps) {
+}: LinkfolioLogoProps) {
   const content = (
     <>
       <LogoMark className={markClassName} />

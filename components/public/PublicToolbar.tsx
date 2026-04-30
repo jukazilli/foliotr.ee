@@ -26,7 +26,7 @@ export default function PublicToolbar({
             href="/"
             className="rounded-full px-3 py-2 text-neutral-950 transition hover:bg-white/24"
           >
-            FolioTree
+            LINKFOLIO
           </Link>
           <nav className="flex items-center gap-1 rounded-full bg-black/0">
             <Link

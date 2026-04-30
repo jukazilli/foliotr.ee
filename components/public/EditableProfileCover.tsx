@@ -287,7 +287,7 @@ export function EditableProfileCover({
       ) : (
         <div className="flex h-full w-full items-end p-5" style={coverFallbackStyle}>
           <span className="text-sm font-extrabold uppercase tracking-[0.18em] text-neutral-800/70">
-            FolioTree
+            LINKFOLIO
           </span>
         </div>
       )}

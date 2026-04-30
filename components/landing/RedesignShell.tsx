@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-const THEME_STORAGE_KEY = "foliotree-theme";
+const THEME_STORAGE_KEY = "linkfolio-theme";
 
 function ThemeToggle() {
   const [isNoirTheme, setIsNoirTheme] = useState(false);

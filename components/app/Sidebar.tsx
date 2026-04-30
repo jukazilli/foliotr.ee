@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Settings, type LucideIcon } from "lucide-react";
-import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
+import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
 import {
   getAppNavItem,
   libraryAppNavigation,
@@ -55,7 +55,7 @@ export function Sidebar() {
     <aside className="hidden w-72 shrink-0 lg:block xl:w-80">
       <div className="sticky top-3 flex h-[calc(100vh-1.5rem)] flex-col overflow-hidden rounded-[30px] border border-white/70 bg-white/88 px-4 py-5 shadow-sm backdrop-blur">
         <div className="px-2">
-          <FolioTreeLogo href="/" />
+          <LinkfolioLogo href="/" />
         </div>
 
         <div className="mt-8 min-h-0 flex-1 overflow-y-auto pr-1">

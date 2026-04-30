@@ -15,7 +15,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { signOutAction } from "@/components/app/actions";
-import { FolioTreeLogo } from "@/components/brand/FolioTreeLogo";
+import { LinkfolioLogo } from "@/components/brand/LinkfolioLogo";
 
 interface HeaderProps {
   userName?: string;
@@ -200,7 +200,7 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
       <header className="fixed left-0 right-0 top-0 z-40 hidden border-b border-line bg-white px-4 md:block">
         <div className="mx-auto grid h-16 max-w-[1880px] grid-cols-[minmax(280px,440px)_minmax(360px,1fr)_auto] items-center gap-4">
           <div className="flex min-w-0 items-center gap-3">
-            <FolioTreeLogo
+            <LinkfolioLogo
               href={homeHref}
               compact
               className="shrink-0 rounded-full bg-white p-1"
@@ -215,9 +215,9 @@ export function Header({ userName, userImage, userUsername }: HeaderProps) {
                 id="app-header-search"
                 name="appHeaderSearch"
                 type="search"
-                placeholder="Buscar no FolioTree"
+                placeholder="Buscar no LINKFOLIO"
                 className="min-w-0 flex-1 bg-transparent text-base font-semibold text-ink outline-none placeholder:text-muted"
-                aria-label="Buscar no FolioTree"
+                aria-label="Buscar no LINKFOLIO"
               />
             </label>
           </div>

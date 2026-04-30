@@ -291,7 +291,7 @@ export default async function PortfoliosPage({ searchParams }: PortfoliosPagePro
             <div className="col-span-1 text-center">Ações</div>
           </div>
 
-          <div className="divide-y divide-gray-100">
+          <div className="max-h-[min(58dvh,34rem)] divide-y divide-gray-100 overflow-y-auto overscroll-contain">
             {filteredRows.length > 0 ? (
               filteredRows.map(({ version, page }) => {
                 if (!page) return null;

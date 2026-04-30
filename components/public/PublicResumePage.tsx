@@ -60,7 +60,7 @@ export default function PublicResumePage({
           href="/"
           className="text-xs text-neutral-400 transition-colors hover:text-neutral-600"
         >
-          Criado com <span className="font-semibold">FolioTree</span>
+          Criado com <span className="font-semibold">LINKFOLIO</span>
         </Link>
       </div>
     </div>
