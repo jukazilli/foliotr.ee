@@ -4,6 +4,13 @@ Data: 30/04/2026
 Branch: `improve-security`  
 Modo: auditoria e plano de hardening, sem implementacao neste corte.
 
+Atualizacao de execucao: as slices 1 a 4 foram implementadas na branch `improve-security` apos esta investigacao:
+
+- Headers globais e CSP inicial.
+- Rate limit distribuido com Upstash Redis e fallback local.
+- Guard central contra mutacoes API cross-origin.
+- Validacao de assinatura real em uploads de imagem.
+
 ## Objetivo
 
 Investigar a protecao atual do LINKFOLIO contra ataques comuns em aplicacoes web e banco de dados, com foco em:
