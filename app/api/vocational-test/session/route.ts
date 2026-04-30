@@ -16,6 +16,7 @@ function serializeSession(session: {
   reportProvider: string | null;
   reportModel: string | null;
   reportGeneratedAt: Date | null;
+  publicInProfile: boolean;
   publicInPortfolio: boolean;
   publicInResume: boolean;
   completedAt: Date | null;
@@ -24,6 +25,7 @@ function serializeSession(session: {
   return {
     ...session,
     reportGeneratedAt: session.reportGeneratedAt?.toISOString() ?? null,
+    publicInProfile: session.publicInProfile,
     publicInPortfolio: session.publicInPortfolio,
     publicInResume: session.publicInResume,
     completedAt: session.completedAt?.toISOString() ?? null,

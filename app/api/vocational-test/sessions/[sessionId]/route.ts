@@ -6,6 +6,7 @@ import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import { METHOD_VERSION } from "@/lib/vocational-test/validation";
 
 const visibilitySchema = z.object({
+  publicInProfile: z.boolean().optional(),
   publicInPortfolio: z.boolean().optional(),
   publicInResume: z.boolean().optional(),
 });
@@ -39,19 +40,51 @@ export async function PATCH(request: NextRequest, { params }: RouteProps) {
       return jsonError("NOT_FOUND", 404);
     }
 
-    const updated = await prisma.vocationalTestSession.update({
-      where: {
-        id: existing.id,
-      },
-      data: {
-        publicInPortfolio: input.publicInPortfolio,
-        publicInResume: input.publicInResume,
-      },
-      select: {
-        id: true,
-        publicInPortfolio: true,
-        publicInResume: true,
-      },
+    const visibilityData = {
+      publicInProfile: input.publicInProfile,
+      publicInPortfolio: input.publicInPortfolio,
+      publicInResume: input.publicInResume,
+    };
+
+    const updated = await prisma.$transaction(async (tx) => {
+      const fields = [
+        "publicInProfile",
+        "publicInPortfolio",
+        "publicInResume",
+      ] as const;
+
+      await Promise.all(
+        fields
+          .filter((field) => input[field] === true)
+          .map((field) =>
+            tx.vocationalTestSession.updateMany({
+              where: {
+                userId: session.user.id,
+                methodVersion: METHOD_VERSION,
+                status: "completed",
+                id: {
+                  not: existing.id,
+                },
+              },
+              data: {
+                [field]: false,
+              },
+            })
+          )
+      );
+
+      return tx.vocationalTestSession.update({
+        where: {
+          id: existing.id,
+        },
+        data: visibilityData,
+        select: {
+          id: true,
+          publicInProfile: true,
+          publicInPortfolio: true,
+          publicInResume: true,
+        },
+      });
     });
 
     return jsonOk({ session: updated });

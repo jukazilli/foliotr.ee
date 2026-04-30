@@ -5,6 +5,11 @@ type RadarItem = {
   value: number;
 };
 
+type RadarLegendItem = {
+  label: string;
+  description: string;
+};
+
 function pointFor(
   index: number,
   total: number,
@@ -34,10 +39,12 @@ export function BehavioralRadar({
   title,
   items,
   color = "#245fd6",
+  legend,
 }: {
   title: string;
   items: RadarItem[];
   color?: string;
+  legend?: RadarLegendItem[];
 }) {
   const center = 120;
   const radius = 82;
@@ -45,7 +52,7 @@ export function BehavioralRadar({
 
   return (
     <figure className="min-w-0 rounded-[24px] border-2 border-line bg-white p-4 shadow-hard-sm">
-      <figcaption className="mb-3 text-sm font-extrabold uppercase text-ink">
+      <figcaption className="mb-3 text-sm font-semibold uppercase text-ink">
         {title}
       </figcaption>
       <svg
@@ -66,8 +73,8 @@ export function BehavioralRadar({
                 .join(" ")}
               fill="none"
               stroke="#111111"
-              strokeOpacity={ring === 100 ? 0.35 : 0.16}
-              strokeWidth={ring === 100 ? 2 : 1.5}
+              strokeOpacity={ring === 100 ? 0.22 : 0.09}
+              strokeWidth={ring === 100 ? 1.15 : 0.75}
             />
           ))}
           {items.map((item, index) => {
@@ -82,15 +89,15 @@ export function BehavioralRadar({
                   x2={edge.x}
                   y2={edge.y}
                   stroke="#111111"
-                  strokeOpacity="0.12"
-                  strokeWidth="1"
+                  strokeOpacity="0.07"
+                  strokeWidth="0.75"
                 />
                 <text
                   x={label.x}
                   y={label.y}
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  className="fill-ink text-[10px] font-extrabold"
+                  className="fill-ink text-[8px] font-semibold"
                 >
                   {item.label}
                 </text>
@@ -100,21 +107,22 @@ export function BehavioralRadar({
           <polygon
             points={polygonPoints(items, radius, center)}
             fill={color}
-            fillOpacity="0.18"
+            fillOpacity="0.1"
             stroke={color}
-            strokeWidth="4"
+            strokeWidth="1.8"
             strokeLinejoin="round"
           />
           {items.map((item, index) => {
             const point = pointFor(index, items.length, item.value, radius, center);
             return (
               <g key={`${item.label}-${item.value}`}>
-                <circle cx={point.x} cy={point.y} r="6" fill={color} />
+                <circle cx={point.x} cy={point.y} r="6.5" fill={color} />
                 <text
                   x={point.x}
-                  y={point.y + 18}
+                  y={point.y}
                   textAnchor="middle"
-                  className="fill-muted text-[9px] font-bold"
+                  dominantBaseline="central"
+                  className="fill-white text-[5px] font-semibold"
                 >
                   {item.value}
                 </text>
@@ -123,6 +131,16 @@ export function BehavioralRadar({
           })}
         </g>
       </svg>
+      {legend?.length ? (
+        <dl className="mt-2 grid gap-1.5 text-[10px] leading-4 text-muted">
+          {legend.map((item) => (
+            <div key={item.label} className="min-w-0">
+              <dt className="inline font-medium text-ink">{item.label}</dt>
+              <dd className="inline">: {item.description}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : null}
     </figure>
   );
 }

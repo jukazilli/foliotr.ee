@@ -26,6 +26,7 @@ type PersistedSession = {
   answers: Answers;
   result?: TestResult | null;
   aiReport?: string | null;
+  publicInProfile?: boolean;
   publicInPortfolio?: boolean;
   publicInResume?: boolean;
   completedAt?: string | null;
@@ -74,6 +75,7 @@ function normalizeSession(input: unknown): PersistedSession | null {
     answers: session.answers ?? {},
     result: session.result ?? null,
     aiReport: session.aiReport ?? null,
+    publicInProfile: Boolean(session.publicInProfile),
     publicInPortfolio: Boolean(session.publicInPortfolio),
     publicInResume: Boolean(session.publicInResume),
     completedAt: session.completedAt ?? null,
@@ -245,6 +247,7 @@ export function VocationalTestApp() {
           status?: string;
           result?: TestResult;
           aiReport?: string | null;
+          publicInProfile?: boolean;
           publicInPortfolio?: boolean;
           publicInResume?: boolean;
           completedAt?: string | null;
@@ -266,6 +269,7 @@ export function VocationalTestApp() {
           answers,
           result: payload.session?.result ?? null,
           aiReport: payload.session?.aiReport ?? null,
+          publicInProfile: Boolean(payload.session?.publicInProfile),
           publicInPortfolio: Boolean(payload.session?.publicInPortfolio),
           publicInResume: Boolean(payload.session?.publicInResume),
           completedAt: payload.session?.completedAt ?? new Date().toISOString(),
@@ -284,12 +288,18 @@ export function VocationalTestApp() {
 
   async function updateVisibility(
     sessionId: string,
-    field: "publicInPortfolio" | "publicInResume",
+    field: "publicInProfile" | "publicInPortfolio" | "publicInResume",
     value: boolean
   ) {
+    const previousSessions = completedSessions;
+
     setCompletedSessions((previous) =>
       previous.map((session) =>
-        session.id === sessionId ? { ...session, [field]: value } : session
+        session.id === sessionId
+          ? { ...session, [field]: value }
+          : value
+            ? { ...session, [field]: false }
+            : session
       )
     );
 
@@ -312,8 +322,8 @@ export function VocationalTestApp() {
           : "Erro ao atualizar publicação."
       );
       setCompletedSessions((previous) =>
-        previous.map((session) =>
-          session.id === sessionId ? { ...session, [field]: !value } : session
+        previous.map(
+          (session) => previousSessions.find((item) => item.id === session.id) ?? session
         )
       );
     }
@@ -365,7 +375,7 @@ export function VocationalTestApp() {
               </h2>
             </div>
             <p className="max-w-xl text-sm font-semibold text-muted">
-              Você controla se cada resultado aparece no portfólio ou no currículo
+              Você controla qual resultado aparece no perfil, portfólio ou currículo
               público.
             </p>
           </div>
@@ -391,6 +401,20 @@ export function VocationalTestApp() {
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-line bg-white px-3 py-2 text-sm font-extrabold">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(session.publicInProfile)}
+                      onChange={(event) =>
+                        updateVisibility(
+                          session.id,
+                          "publicInProfile",
+                          event.target.checked
+                        )
+                      }
+                    />
+                    Perfil
+                  </label>
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border-2 border-line bg-white px-3 py-2 text-sm font-extrabold">
                     <input
                       type="checkbox"

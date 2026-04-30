@@ -70,7 +70,11 @@ function getOpportunityLine(args: {
   if (!args.openToOpportunities) return null;
 
   if (args.showOpportunityMotivation && args.opportunityMotivation) {
-    return `Aberto a oportunidades: ${args.opportunityMotivation}`;
+    const motivation = args.opportunityMotivation
+      .trim()
+      .replace(/^uma oportunidade\s+(na\s+[áa]rea\s+de\s+)/i, "$1");
+
+    return `Aberto a oportunidades ${motivation}`;
   }
 
   return "Aberto a oportunidades";
@@ -94,6 +98,9 @@ export default function PublicProfileHubPage({
     showOpportunityMotivation: hub.showOpportunityMotivation,
     opportunityMotivation: hub.opportunityMotivation,
   });
+  const hasBio = Boolean(hub.bio);
+  const showBioInPersonalData = !isOwner && hasBio;
+  const showOwnerBioCard = isOwner;
   const publishedItems = hub.versions.flatMap((version) =>
     version.pages.map((page) => {
       const portfolioExperience = getPortfolioExperience(version);
@@ -116,7 +123,7 @@ export default function PublicProfileHubPage({
   );
   const behavioralAnalysis = selectBehavioralAnalysis(
     hub.user.vocationalTests,
-    "portfolio"
+    "profile"
   );
 
   return (
@@ -128,8 +135,8 @@ export default function PublicProfileHubPage({
       <main
         className={
           embedded
-            ? "mx-auto grid w-full max-w-[1680px] gap-5 lg:grid-cols-[repeat(24,minmax(0,1fr))]"
-            : "mx-auto grid w-full max-w-[1680px] gap-5 px-4 py-5 sm:px-6 lg:grid-cols-[repeat(24,minmax(0,1fr))] lg:px-8"
+            ? "mx-auto grid w-full max-w-[1680px] gap-x-5 gap-y-6 sm:gap-y-7 lg:grid-cols-[repeat(24,minmax(0,1fr))]"
+            : "mx-auto grid w-full max-w-[1680px] gap-x-5 gap-y-6 px-4 py-5 sm:gap-y-7 sm:px-6 lg:grid-cols-[repeat(24,minmax(0,1fr))] lg:px-8"
         }
       >
         <section
@@ -223,7 +230,7 @@ export default function PublicProfileHubPage({
         </section>
 
         <section
-          className="grid gap-4 lg:col-span-full lg:grid-cols-[minmax(320px,0.82fr)_minmax(360px,1.18fr)]"
+          className="mt-3 grid gap-5 lg:col-span-full lg:mt-4 lg:grid-cols-[minmax(320px,0.82fr)_minmax(360px,1.18fr)] lg:gap-6"
           aria-label="Resumo e review"
         >
           <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
@@ -242,8 +249,10 @@ export default function PublicProfileHubPage({
               ) : null}
             </div>
 
-            <div className="mt-5 grid gap-4 text-[15px] font-semibold leading-6 text-[#050505]">
-              {hub.bio ? <p className="whitespace-pre-line">{hub.bio}</p> : null}
+            <div className="mt-5 grid gap-4 text-[15px] font-normal leading-6 text-[#050505]">
+              {showBioInPersonalData ? (
+                <p className="whitespace-pre-line">{hub.bio}</p>
+              ) : null}
               {hub.location ? (
                 <span className="inline-flex items-center gap-3">
                   <MapPin className="h-6 w-6 text-[#65676b]" aria-hidden />
@@ -267,7 +276,25 @@ export default function PublicProfileHubPage({
             </div>
           </section>
 
-          {isOwner ? null : (
+          {showOwnerBioCard ? (
+            <section className="rounded-xl border border-[#dddfe2] bg-white p-5 shadow-[0_1px_2px_rgb(0_0_0/0.16)]">
+              <div className="flex items-start justify-between gap-4">
+                <h2 className="text-2xl font-bold tracking-[-0.02em] text-[#050505]">
+                  Bio
+                </h2>
+                <Link
+                  href="/profile"
+                  className="grid h-9 w-9 place-items-center rounded-full text-[#65676b] transition hover:bg-[#f0f2f5]"
+                  aria-label="Editar bio"
+                >
+                  <Edit3 className="h-5 w-5" aria-hidden />
+                </Link>
+              </div>
+              <p className="mt-5 whitespace-pre-line text-[15px] font-normal leading-6 text-[#050505]">
+                {hub.bio || "Adicione uma bio curta em Dados pessoais."}
+              </p>
+            </section>
+          ) : isOwner ? null : (
             <PublicReviewComposer
               username={username}
               returnPath={`/${username}`}
@@ -277,7 +304,7 @@ export default function PublicProfileHubPage({
           )}
         </section>
 
-        <div id="reviews" className="lg:col-span-full">
+        <div id="reviews" className="mt-3 lg:col-span-full lg:mt-4">
           <PublicReviewsSection summary={reviewSummary} />
         </div>
 

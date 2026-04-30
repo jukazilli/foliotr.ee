@@ -182,6 +182,7 @@ exports.Prisma.VocationalTestSessionScalarFieldEnum = {
   reportProvider: 'reportProvider',
   reportModel: 'reportModel',
   reportGeneratedAt: 'reportGeneratedAt',
+  publicInProfile: 'publicInProfile',
   publicInPortfolio: 'publicInPortfolio',
   publicInResume: 'publicInResume',
   completedAt: 'completedAt',

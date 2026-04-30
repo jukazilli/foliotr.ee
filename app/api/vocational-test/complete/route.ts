@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
         aiReport: saved.aiReport,
         reportProvider: saved.reportProvider,
         reportModel: saved.reportModel,
+        publicInProfile: saved.publicInProfile,
         publicInPortfolio: saved.publicInPortfolio,
         publicInResume: saved.publicInResume,
         reportGeneratedAt: saved.reportGeneratedAt?.toISOString() ?? null,
