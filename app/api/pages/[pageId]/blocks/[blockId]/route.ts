@@ -6,6 +6,8 @@ import {
   removeOwnedPageBlock,
   updateOwnedPageBlock,
 } from "@/lib/server/domain/templates";
+import { rateLimitResponse } from "@/lib/security/api-rate-limit";
+import { APP_MUTATION_RATE_LIMIT } from "@/lib/security/rate-limit";
 import { pageBlockUpdateSchema } from "@/lib/validations";
 
 interface RouteContext {
@@ -19,6 +21,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "pages:blocks:update",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const { pageId, blockId } = await context.params;
     const body = await request.json();
@@ -37,13 +47,21 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "pages:blocks:delete",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const { pageId, blockId } = await context.params;
     const block = await removeOwnedPageBlock(prisma, session.user.id, pageId, blockId);

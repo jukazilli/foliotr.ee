@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { createOwnedVersion, listOwnedVersions } from "@/lib/server/domain/versions";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import { rateLimitResponse } from "@/lib/security/api-rate-limit";
+import { APP_MUTATION_RATE_LIMIT } from "@/lib/security/rate-limit";
 import { versionSchema } from "@/lib/validations";
 
 export async function GET() {
@@ -27,6 +29,14 @@ export async function POST(request: NextRequest) {
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "versions:create",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const body = await request.json();
     const input = versionSchema.parse(body);

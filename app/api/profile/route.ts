@@ -6,6 +6,8 @@ import {
   updateOwnedProfileFields,
 } from "@/lib/server/domain/profile-base";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import { rateLimitResponse } from "@/lib/security/api-rate-limit";
+import { APP_MUTATION_RATE_LIMIT } from "@/lib/security/rate-limit";
 import { profileBaseSchema, profileSchema } from "@/lib/validations";
 
 const collectionPayloadKeys = [
@@ -50,6 +52,14 @@ export async function PATCH(request: NextRequest) {
       return jsonError("UNAUTHORIZED", 401);
     }
 
+    const limited = await rateLimitResponse(
+      request,
+      "profile:patch",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
+
     const body = await request.json();
     const input = profileSchema.parse(body);
     const profile = await updateOwnedProfileFields(prisma, session.user.id, input);
@@ -67,6 +77,14 @@ export async function PUT(request: NextRequest) {
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "profile:put",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const body = await request.json();
     const input = profileBaseSchema.parse(body);

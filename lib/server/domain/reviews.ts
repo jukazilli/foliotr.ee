@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { PUBLIC_REVIEW_RATE_LIMIT, checkRateLimit } from "@/lib/security/rate-limit";
+import {
+  PUBLIC_REVIEW_RATE_LIMIT,
+  checkRateLimitAsync,
+} from "@/lib/security/rate-limit";
 import { publicReviewSchema } from "@/lib/validations";
 
 export type PublicReviewSummary = Awaited<ReturnType<typeof getPublicReviewSummary>>;
@@ -93,7 +96,7 @@ export async function createPublicReview(
   }
 
   const clientIp = options.clientIp?.trim() || "unknown";
-  const rateLimit = checkRateLimit(
+  const rateLimit = await checkRateLimitAsync(
     `reviews:public:${clientIp}:${input.username}`,
     PUBLIC_REVIEW_RATE_LIMIT,
     options.now
@@ -107,7 +110,7 @@ export async function createPublicReview(
   }
 
   if (input.reviewerEmail) {
-    const emailRateLimit = checkRateLimit(
+    const emailRateLimit = await checkRateLimitAsync(
       `reviews:public-email:${normalizeIdentity(input.reviewerEmail)}:${input.username}`,
       PUBLIC_REVIEW_RATE_LIMIT,
       options.now

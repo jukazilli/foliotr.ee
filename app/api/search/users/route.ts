@@ -2,6 +2,12 @@ import { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import {
+  SEARCH_RATE_LIMIT,
+  checkRateLimitAsync,
+  getRateLimitKey,
+  rateLimitHeaders,
+} from "@/lib/security/rate-limit";
 import { normalizeUsernameInput } from "@/lib/usernames";
 
 function readSearchQuery(value: string | null) {
@@ -19,6 +25,17 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
+    }
+
+    const rateLimit = await checkRateLimitAsync(
+      getRateLimitKey(request, "search:users", session.user.id),
+      SEARCH_RATE_LIMIT
+    );
+
+    if (!rateLimit.allowed) {
+      return jsonError("RATE_LIMITED", 429, undefined, {
+        headers: rateLimitHeaders(rateLimit),
+      });
     }
 
     const query = readSearchQuery(request.nextUrl.searchParams.get("q"));

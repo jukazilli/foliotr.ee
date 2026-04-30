@@ -14,7 +14,11 @@ import {
   jsonOk,
   jsonValidationError,
 } from "@/lib/server/api";
-import { checkRateLimit, getRateLimitKey } from "@/lib/security/rate-limit";
+import {
+  checkRateLimitAsync,
+  getRateLimitKey,
+  rateLimitHeaders,
+} from "@/lib/security/rate-limit";
 
 const FEEDBACK_RATE_LIMIT = {
   windowMs: 10 * 60_000,
@@ -55,13 +59,15 @@ export async function POST(request: NextRequest) {
       return jsonError("UNAUTHORIZED", 401);
     }
 
-    const rateLimit = checkRateLimit(
+    const rateLimit = await checkRateLimitAsync(
       getRateLimitKey(request, "feedback:create", session.user.id),
       FEEDBACK_RATE_LIMIT
     );
 
     if (!rateLimit.allowed) {
-      return jsonError("RATE_LIMITED", 429);
+      return jsonError("RATE_LIMITED", 429, undefined, {
+        headers: rateLimitHeaders(rateLimit),
+      });
     }
 
     const body = await request.json();

@@ -16,8 +16,9 @@ import {
 } from "@/lib/server/api";
 import {
   AUTH_MUTATION_RATE_LIMIT,
-  checkRateLimit,
+  checkRateLimitAsync,
   getRateLimitKey,
+  rateLimitHeaders,
 } from "@/lib/security/rate-limit";
 
 const GENERIC_RESET_RESPONSE = {
@@ -46,13 +47,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const data = forgotPasswordSchema.parse(body);
 
-    const rateLimit = checkRateLimit(
+    const rateLimit = await checkRateLimitAsync(
       getRateLimitKey(request, "auth:forgot-password", data.email),
       AUTH_MUTATION_RATE_LIMIT
     );
 
     if (!rateLimit.allowed) {
-      return jsonError("RATE_LIMITED", 429);
+      return jsonError("RATE_LIMITED", 429, undefined, {
+        headers: rateLimitHeaders(rateLimit),
+      });
     }
 
     const user = await prisma.user.findUnique({

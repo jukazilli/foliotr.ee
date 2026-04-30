@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { deleteOwnedAsset, updateOwnedAsset } from "@/lib/server/domain/assets";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import { rateLimitResponse } from "@/lib/security/api-rate-limit";
+import { APP_MUTATION_RATE_LIMIT } from "@/lib/security/rate-limit";
 import { assetInputSchema } from "@/lib/validations";
 
 interface RouteContext {
@@ -17,6 +19,14 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       return jsonError("UNAUTHORIZED", 401);
     }
 
+    const limited = await rateLimitResponse(
+      request,
+      "assets:update",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
+
     const { assetId } = await context.params;
     const body = await request.json();
     const input = assetInputSchema.parse(body);
@@ -28,13 +38,21 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: NextRequest, context: RouteContext) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
     const session = await auth();
 
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "assets:delete",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const { assetId } = await context.params;
     const result = await deleteOwnedAsset(prisma, session.user.id, assetId);

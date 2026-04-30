@@ -50,6 +50,8 @@ export const serverEnvSchema = z
     FEEDBACK_EMAIL_TO: z.string().trim().email().optional().or(z.literal("")),
     FEEDBACK_EMAIL_FROM: z.string().trim().email().optional().or(z.literal("")),
     RESEND_API_KEY: z.string().trim().optional(),
+    UPSTASH_REDIS_REST_URL: optionalUrlSchema,
+    UPSTASH_REDIS_REST_TOKEN: z.string().trim().optional(),
   })
   .superRefine((env, ctx) => {
     if (env.STORAGE_PROVIDER !== "s3") return;

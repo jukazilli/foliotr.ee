@@ -40,7 +40,8 @@ export function jsonOk<T>(data: T, init?: ResponseInit): Response {
 export function jsonError(
   code: ApiErrorCode,
   status: number,
-  details?: unknown
+  details?: unknown,
+  init?: Omit<ResponseInit, "status">
 ): Response {
   return Response.json(
     {
@@ -50,7 +51,7 @@ export function jsonError(
         details,
       },
     },
-    { status }
+    { ...init, status }
   );
 }
 

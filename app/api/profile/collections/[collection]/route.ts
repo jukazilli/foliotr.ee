@@ -7,6 +7,8 @@ import {
   updateOwnedProfileCollection,
 } from "@/lib/server/domain/profile-base";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
+import { rateLimitResponse } from "@/lib/security/api-rate-limit";
+import { APP_MUTATION_RATE_LIMIT } from "@/lib/security/rate-limit";
 import {
   achievementSchema,
   educationSchema,
@@ -45,6 +47,14 @@ export async function PUT(
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
     }
+
+    const limited = await rateLimitResponse(
+      request,
+      "profile:collections:update",
+      session.user.id,
+      APP_MUTATION_RATE_LIMIT
+    );
+    if (limited) return limited;
 
     const { collection } = await context.params;
 

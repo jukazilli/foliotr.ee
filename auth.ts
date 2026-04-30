@@ -6,7 +6,7 @@ import { getEnv } from "@/lib/env";
 import { passwordSchema } from "@/lib/validations";
 import {
   AUTH_LOGIN_RATE_LIMIT,
-  checkRateLimit,
+  checkRateLimitAsync,
   getRateLimitKey,
 } from "@/lib/security/rate-limit";
 import { normalizeUsernameInput } from "@/lib/usernames";
@@ -32,7 +32,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!parsed.success) return null;
 
         const identifier = parsed.data.email.toLowerCase();
-        const rateLimit = checkRateLimit(
+        const rateLimit = await checkRateLimitAsync(
           getRateLimitKey(request, "auth:login", identifier),
           AUTH_LOGIN_RATE_LIMIT
         );

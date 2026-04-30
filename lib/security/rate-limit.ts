@@ -1,3 +1,6 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
 export interface RateLimitOptions {
   windowMs: number;
   max: number;
@@ -16,6 +19,8 @@ interface Bucket {
 }
 
 const buckets = new Map<string, Bucket>();
+const distributedLimiters = new Map<string, Ratelimit>();
+let redisClient: Redis | null | undefined;
 
 export const AUTH_LOGIN_RATE_LIMIT: RateLimitOptions = {
   windowMs: 60_000,
@@ -31,6 +36,56 @@ export const PUBLIC_REVIEW_RATE_LIMIT: RateLimitOptions = {
   windowMs: 10 * 60_000,
   max: 3,
 };
+
+export const SEARCH_RATE_LIMIT: RateLimitOptions = {
+  windowMs: 60_000,
+  max: 30,
+};
+
+export const UPLOAD_RATE_LIMIT: RateLimitOptions = {
+  windowMs: 10 * 60_000,
+  max: 20,
+};
+
+export const APP_MUTATION_RATE_LIMIT: RateLimitOptions = {
+  windowMs: 60_000,
+  max: 60,
+};
+
+function getRedisClient(): Redis | null {
+  if (redisClient !== undefined) return redisClient;
+
+  const url = process.env.UPSTASH_REDIS_REST_URL?.trim();
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN?.trim();
+
+  if (!url || !token) {
+    redisClient = null;
+    return redisClient;
+  }
+
+  redisClient = new Redis({ url, token });
+  return redisClient;
+}
+
+function getDistributedLimiter(options: RateLimitOptions): Ratelimit | null {
+  const redis = getRedisClient();
+  if (!redis) return null;
+
+  const key = `${options.windowMs}:${options.max}`;
+  const existing = distributedLimiters.get(key);
+  if (existing) return existing;
+
+  const limiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(
+      options.max,
+      `${Math.max(1, Math.ceil(options.windowMs / 1000))} s`
+    ),
+    prefix: "linkfolio:ratelimit",
+  });
+  distributedLimiters.set(key, limiter);
+  return limiter;
+}
 
 export function checkRateLimit(
   key: string,
@@ -67,6 +122,39 @@ export function checkRateLimit(
   };
 }
 
+export async function checkRateLimitAsync(
+  key: string,
+  options: RateLimitOptions,
+  now = Date.now()
+): Promise<RateLimitResult> {
+  const limiter = getDistributedLimiter(options);
+
+  if (!limiter) {
+    return checkRateLimit(key, options, now);
+  }
+
+  const result = await limiter.limit(key);
+  return {
+    allowed: result.success,
+    remaining: result.remaining,
+    retryAfterMs: Math.max(0, result.reset - now),
+    resetAt: result.reset,
+  };
+}
+
+export function rateLimitHeaders(result: RateLimitResult): HeadersInit {
+  const headers: Record<string, string> = {
+    "X-RateLimit-Remaining": String(result.remaining),
+    "X-RateLimit-Reset": String(Math.ceil(result.resetAt / 1000)),
+  };
+
+  if (!result.allowed) {
+    headers["Retry-After"] = String(Math.ceil(result.retryAfterMs / 1000));
+  }
+
+  return headers;
+}
+
 export function getClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
   const forwardedIp = forwardedFor?.split(",")[0]?.trim();
@@ -85,4 +173,6 @@ export function getRateLimitKey(
 
 export function resetRateLimitStore(): void {
   buckets.clear();
+  distributedLimiters.clear();
+  redisClient = undefined;
 }

@@ -11,8 +11,9 @@ import {
 } from "@/lib/server/api";
 import {
   AUTH_MUTATION_RATE_LIMIT,
-  checkRateLimit,
+  checkRateLimitAsync,
   getRateLimitKey,
+  rateLimitHeaders,
 } from "@/lib/security/rate-limit";
 import { normalizeUsernameInput } from "@/lib/usernames";
 import {
@@ -85,13 +86,15 @@ export async function POST(request: NextRequest) {
     const email = data.email.toLowerCase();
     const username = data.username ? normalizeUsernameInput(data.username) : null;
 
-    const rateLimit = checkRateLimit(
+    const rateLimit = await checkRateLimitAsync(
       getRateLimitKey(request, "auth:register", email),
       AUTH_MUTATION_RATE_LIMIT
     );
 
     if (!rateLimit.allowed) {
-      return jsonError("RATE_LIMITED", 429);
+      return jsonError("RATE_LIMITED", 429, undefined, {
+        headers: rateLimitHeaders(rateLimit),
+      });
     }
 
     const existingUser = await prisma.user.findUnique({

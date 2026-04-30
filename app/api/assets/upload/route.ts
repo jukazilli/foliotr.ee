@@ -3,6 +3,12 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
 import { getOwnedProfileBase } from "@/lib/server/domain/profile-base";
+import {
+  UPLOAD_RATE_LIMIT,
+  checkRateLimitAsync,
+  getRateLimitKey,
+  rateLimitHeaders,
+} from "@/lib/security/rate-limit";
 import { uploadImageToLocal } from "@/lib/storage/local";
 import { getImageAssetPolicy, validateImageAssetCandidate } from "@/lib/storage/policy";
 import { uploadImageToS3 } from "@/lib/storage/s3";
@@ -33,6 +39,17 @@ export async function POST(request: Request) {
 
     if (!session?.user?.id) {
       return jsonError("UNAUTHORIZED", 401);
+    }
+
+    const rateLimit = await checkRateLimitAsync(
+      getRateLimitKey(request, "assets:upload", session.user.id),
+      UPLOAD_RATE_LIMIT
+    );
+
+    if (!rateLimit.allowed) {
+      return jsonError("RATE_LIMITED", 429, undefined, {
+        headers: rateLimitHeaders(rateLimit),
+      });
     }
 
     const formData = await request.formData();
