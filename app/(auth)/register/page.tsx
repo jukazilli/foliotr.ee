@@ -42,7 +42,7 @@ type AvailabilityStatus = "idle" | "checking" | "available" | "taken" | "error";
 
 function getSafeRedirect(value: string | null): string {
   if (!value || !value.startsWith("/") || value.startsWith("//")) {
-    return "/dashboard";
+    return "/onboarding";
   }
 
   return value;
@@ -156,20 +156,14 @@ function RegisterContent() {
 
   function validateCurrentStep() {
     if (step === 1) {
-      if (!form.username || !form.name || !form.email || !form.birthDate) {
+      if (!form.username || !form.name || !form.email) {
         return "Preencha os dados principais para continuar.";
       }
     }
 
-    if (step === 2) {
-      if (!form.country || !form.city || !form.state) {
-        return "Preencha sua localização para continuar.";
-      }
-    }
-
     if (step === 3) {
-      if (!form.profession || !form.education || !form.password || !form.confirmPassword) {
-        return "Preencha o perfil profissional e a senha para finalizar.";
+      if (!form.password || !form.confirmPassword) {
+        return "Crie sua senha para finalizar.";
       }
 
       if (form.password.length < 8) {
@@ -234,7 +228,9 @@ function RegisterContent() {
 
     if (availability?.username && !availability.username.available) {
       setUsernameStatus("taken");
-      setUsernameMessage(availability.username.message ?? "Esse username já está em uso.");
+      setUsernameMessage(
+        availability.username.message ?? "Esse username já está em uso."
+      );
       setUsernameSuggestions(availability.username.suggestions ?? []);
       return availability.username.message ?? "Esse username já está em uso.";
     }
@@ -328,7 +324,9 @@ function RegisterContent() {
     }
 
     setSuccess(true);
-    router.push(getSafeRedirect(searchParams.get("redirect") ?? searchParams.get("callbackUrl")));
+    router.push(
+      getSafeRedirect(searchParams.get("redirect") ?? searchParams.get("callbackUrl"))
+    );
   }
 
   return (
@@ -336,8 +334,8 @@ function RegisterContent() {
       <div className="signup-panel">
         <div className="login-copy signup-copy">
           <p className="eyebrow">Criar conta grátis</p>
-          <h1 id="signup-title">Vamos montar seu Linkfolio</h1>
-          <p>Preencha os dados básicos para reservar seu usuário e abrir seu editor.</p>
+          <h1 id="signup-title">Reserve seu perfil</h1>
+          <p>Crie sua conta agora. Depois disso, guiamos voce pelo perfil publico.</p>
         </div>
 
         <form
@@ -352,7 +350,9 @@ function RegisterContent() {
             {[1, 2, 3].map((item) => (
               <span
                 key={item}
-                className={step === item ? "is-active" : step > item ? "is-complete" : undefined}
+                className={
+                  step === item ? "is-active" : step > item ? "is-complete" : undefined
+                }
                 data-step-dot={item}
               >
                 {item}
@@ -360,23 +360,31 @@ function RegisterContent() {
             ))}
           </div>
 
-          <fieldset className={`signup-step${step === 1 ? " is-active" : ""}`} data-signup-step="1" hidden={step !== 1}>
+          <fieldset
+            className={`signup-step${step === 1 ? " is-active" : ""}`}
+            data-signup-step="1"
+            hidden={step !== 1}
+          >
             <legend>Dados principais</legend>
 
             <label htmlFor="signup-username">Usuário</label>
             <div className="signup-username-field">
               <span>linkfolio.co/@</span>
               <input
-              id="signup-username"
+                id="signup-username"
                 name="username"
                 type="text"
                 placeholder="ana"
                 autoComplete="username"
                 value={form.username}
-                onChange={(event) => updateField("username", normalizeUsernameInput(event.target.value))}
+                onChange={(event) =>
+                  updateField("username", normalizeUsernameInput(event.target.value))
+                }
                 disabled={step !== 1 || isSubmitting}
                 aria-invalid={usernameStatus === "taken"}
-                aria-describedby={usernameMessage ? "signup-username-status" : undefined}
+                aria-describedby={
+                  usernameMessage ? "signup-username-status" : undefined
+                }
                 required
               />
             </div>
@@ -384,13 +392,20 @@ function RegisterContent() {
               <p
                 className="signup-success"
                 id="signup-username-status"
-                role={usernameStatus === "taken" || usernameStatus === "error" ? "alert" : "status"}
+                role={
+                  usernameStatus === "taken" || usernameStatus === "error"
+                    ? "alert"
+                    : "status"
+                }
               >
                 {usernameMessage}
               </p>
             ) : null}
             {usernameSuggestions.length > 0 ? (
-              <div className="signup-success" aria-label="Sugestões de username disponíveis">
+              <div
+                className="signup-success"
+                aria-label="Sugestões de username disponíveis"
+              >
                 {usernameSuggestions.map((suggestion) => (
                   <button
                     className="button signup-back"
@@ -417,7 +432,10 @@ function RegisterContent() {
               required
             />
             {emailMessage ? (
-              <p className="signup-success" role={emailMessage.includes("uso") ? "alert" : "status"}>
+              <p
+                className="signup-success"
+                role={emailMessage.includes("uso") ? "alert" : "status"}
+              >
                 {emailMessage}
               </p>
             ) : null}
@@ -443,11 +461,14 @@ function RegisterContent() {
               value={form.birthDate}
               onChange={(event) => updateField("birthDate", event.target.value)}
               disabled={step !== 1 || isSubmitting}
-              required
             />
           </fieldset>
 
-          <fieldset className={`signup-step${step === 2 ? " is-active" : ""}`} data-signup-step="2" hidden={step !== 2}>
+          <fieldset
+            className={`signup-step${step === 2 ? " is-active" : ""}`}
+            data-signup-step="2"
+            hidden={step !== 2}
+          >
             <legend>Localização</legend>
 
             <label htmlFor="signup-country">País</label>
@@ -460,7 +481,6 @@ function RegisterContent() {
               value={form.country}
               onChange={(event) => updateField("country", event.target.value)}
               disabled={step !== 2 || isSubmitting}
-              required
             />
 
             <label htmlFor="signup-city">Cidade</label>
@@ -473,7 +493,6 @@ function RegisterContent() {
               value={form.city}
               onChange={(event) => updateField("city", event.target.value)}
               disabled={step !== 2 || isSubmitting}
-              required
             />
 
             <label htmlFor="signup-state">Estado</label>
@@ -486,11 +505,14 @@ function RegisterContent() {
               value={form.state}
               onChange={(event) => updateField("state", event.target.value)}
               disabled={step !== 2 || isSubmitting}
-              required
             />
           </fieldset>
 
-          <fieldset className={`signup-step${step === 3 ? " is-active" : ""}`} data-signup-step="3" hidden={step !== 3}>
+          <fieldset
+            className={`signup-step${step === 3 ? " is-active" : ""}`}
+            data-signup-step="3"
+            hidden={step !== 3}
+          >
             <legend>Perfil profissional</legend>
 
             <label htmlFor="signup-profession">Profissão</label>
@@ -502,7 +524,6 @@ function RegisterContent() {
               value={form.profession}
               onChange={(event) => updateField("profession", event.target.value)}
               disabled={step !== 3 || isSubmitting}
-              required
             />
 
             <label htmlFor="signup-education">Grau de escolaridade</label>
@@ -512,7 +533,6 @@ function RegisterContent() {
               value={form.education}
               onChange={(event) => updateField("education", event.target.value)}
               disabled={step !== 3 || isSubmitting}
-              required
             >
               <option value="">Selecione</option>
               {educationOptions.map((option) => (
@@ -555,7 +575,12 @@ function RegisterContent() {
             </p>
           ) : null}
 
-          <p className="signup-success" role="status" aria-live="polite" hidden={!success}>
+          <p
+            className="signup-success"
+            role="status"
+            aria-live="polite"
+            hidden={!success}
+          >
             Conta criada. Seu Linkfolio já está reservado.
           </p>
 
@@ -573,9 +598,13 @@ function RegisterContent() {
               className="button signup-next"
               type="submit"
               data-signup-next
-              disabled={isSubmitting || (step === 1 && (usernameStatus === "checking" || usernameStatus === "taken"))}
+              disabled={
+                isSubmitting ||
+                (step === 1 &&
+                  (usernameStatus === "checking" || usernameStatus === "taken"))
+              }
             >
-              {isSubmitting ? "Finalizando..." : step === 3 ? "Finalizar" : "Avançar"}
+              {isSubmitting ? "Finalizando..." : step === 3 ? "Criar conta" : "Avançar"}
             </button>
           </div>
 

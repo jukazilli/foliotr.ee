@@ -81,7 +81,7 @@ export default async function TemplatesPage({
             Escolha um modelo para o portfolio
           </h1>
           <p className="mt-1 text-sm font-semibold leading-6 text-neutral-600">
-            O modelo cria a pagina tecnica e abre o editor do portfolio selecionado.
+            Aplique uma linguagem visual ao seu portfolio usando os dados do perfil.
           </p>
         </div>
 
@@ -195,9 +195,7 @@ export default async function TemplatesPage({
                   <div className="grid grid-cols-2 gap-2">
                     {appliedPage ? (
                       <Button asChild>
-                        <Link href={`/pages/${appliedPage.id}/editor`}>
-                          Editar portfolio
-                        </Link>
+                        <Link href="/portfolios">Ver portfolio</Link>
                       </Button>
                     ) : (
                       <form action={useAction}>
@@ -211,7 +209,7 @@ export default async function TemplatesPage({
                           disabled={editDisabled}
                           className="w-full"
                         >
-                          Usar modelo
+                          Aplicar modelo
                         </Button>
                       </form>
                     )}
@@ -223,7 +221,7 @@ export default async function TemplatesPage({
                         rel="noopener noreferrer"
                       >
                         <ExternalLink className="h-4 w-4" aria-hidden="true" />
-                        Abrir exemplo
+                        Ver exemplo
                       </Link>
                     </Button>
                   </div>

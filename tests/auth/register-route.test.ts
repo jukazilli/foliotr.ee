@@ -95,7 +95,7 @@ describe("register API route", () => {
         location: null,
         birthDate: null,
         bio: null,
-        onboardingDone: true,
+        onboardingDone: false,
       },
     });
     expect(mocks.tx.version.create).toHaveBeenCalledWith({

@@ -25,8 +25,12 @@ export async function GET(request: NextRequest) {
       return jsonError("UNAUTHORIZED", 401);
     }
 
-    const username = parseUsernameInput(new URL(request.url).searchParams.get("username"));
-    return jsonOk(await getUsernameAvailability(username, session.user.id), { status: 200 });
+    const username = parseUsernameInput(
+      new URL(request.url).searchParams.get("username")
+    );
+    return jsonOk(await getUsernameAvailability(username, session.user.id), {
+      status: 200,
+    });
   } catch (error) {
     if (error instanceof ZodError) {
       return jsonValidationError(error);
@@ -52,7 +56,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (await usernameExists(data.username, userId)) {
-      return jsonError("CONFLICT", 409, await usernameConflictDetails(data.username, userId));
+      return jsonError(
+        "CONFLICT",
+        409,
+        await usernameConflictDetails(data.username, userId)
+      );
     }
 
     try {
@@ -65,14 +73,56 @@ export async function POST(request: NextRequest) {
         await tx.profile.update({
           where: { userId },
           data: {
+            displayName: data.displayName,
             headline: data.headline,
+            bio: data.bio || null,
+            location: data.location || null,
+            openToOpportunities: data.openToOpportunities,
+            opportunityMotivation: data.opportunityMotivation || null,
+            showOpportunityMotivation: Boolean(data.opportunityMotivation),
             onboardingDone: true,
           },
         });
+
+        if (data.currentCompany && data.currentRole) {
+          const existingCurrentExperience = await tx.experience.findFirst({
+            where: {
+              profile: { userId },
+              current: true,
+            },
+            select: { id: true },
+          });
+
+          if (existingCurrentExperience) {
+            await tx.experience.update({
+              where: { id: existingCurrentExperience.id },
+              data: {
+                company: data.currentCompany,
+                role: data.currentRole,
+                location: data.location || null,
+              },
+            });
+          } else {
+            await tx.experience.create({
+              data: {
+                profile: { connect: { userId } },
+                company: data.currentCompany,
+                role: data.currentRole,
+                location: data.location || null,
+                current: true,
+                startDate: new Date(),
+              },
+            });
+          }
+        }
       });
     } catch (error) {
       if (isUniqueUsernameError(error)) {
-        return jsonError("CONFLICT", 409, await usernameConflictDetails(data.username, userId));
+        return jsonError(
+          "CONFLICT",
+          409,
+          await usernameConflictDetails(data.username, userId)
+        );
       }
 
       throw error;

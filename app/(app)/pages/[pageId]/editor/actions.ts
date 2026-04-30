@@ -67,7 +67,7 @@ export async function setPagePublishStateAction(
     });
   }
 
-  revalidatePath(`/pages/${pageId}/editor`);
+  revalidatePath("/portfolios");
   revalidatePublicPaths(session.user.username, page.slug);
 }
 
@@ -76,7 +76,7 @@ export async function syncPageSnapshotAction(pageId: string) {
 
   await syncOwnedPageSnapshot(prisma, session.user.id, pageId);
 
-  revalidatePath(`/pages/${pageId}/editor`);
+  revalidatePath("/portfolios");
   revalidatePath(`/pages/${pageId}/resume`);
 }
 
@@ -101,6 +101,6 @@ export async function setResumePublishStateAction(
     publishState: nextState,
   });
 
-  revalidatePath(`/pages/${pageId}/editor`);
+  revalidatePath("/portfolios");
   revalidatePublicPaths(session.user.username, page.slug);
 }

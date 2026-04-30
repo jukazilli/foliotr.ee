@@ -23,6 +23,14 @@ function buildDb({ pendingReviews = 0 }: { pendingReviews?: number } = {}) {
     profile: {
       findFirst: vi.fn().mockResolvedValue({
         id: "profile_1",
+        displayName: "Juliano Zilli",
+        publicEmail: "juliano.public@example.com",
+        user: {
+          id: "user_1",
+          email: "owner@example.com",
+          username: "juliano-zilli",
+          name: "Juliano Zilli",
+        },
         _count: { proofs: 4 },
       }),
     },
@@ -88,7 +96,39 @@ describe("reviews domain", () => {
     });
 
     expect(result.ok).toBe(false);
-    expect(result.message).toContain("aguardando aprovacao");
+    expect(result.message).toContain("aguardando aprovação");
+    expect(db.proof.create).not.toHaveBeenCalled();
+  });
+
+  it("blocks authenticated owners from reviewing their own profile", async () => {
+    const db = buildDb();
+    const { createPublicReview } = await import("@/lib/server/domain/reviews");
+
+    const result = await createPublicReview(buildReviewForm(), {
+      clientIp: "203.0.113.10",
+      db: db as never,
+      viewer: { id: "user_1", email: "owner@example.com", username: "juliano-zilli" },
+    });
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("próprio perfil");
+    expect(db.proof.create).not.toHaveBeenCalled();
+  });
+
+  it("blocks reviews using the profile owner email", async () => {
+    const db = buildDb();
+    const { createPublicReview } = await import("@/lib/server/domain/reviews");
+
+    const result = await createPublicReview(
+      buildReviewForm({ reviewerEmail: "owner@example.com" }),
+      {
+        clientIp: "203.0.113.10",
+        db: db as never,
+      }
+    );
+
+    expect(result.ok).toBe(false);
+    expect(result.message).toContain("reputação");
     expect(db.proof.create).not.toHaveBeenCalled();
   });
 
@@ -113,5 +153,36 @@ describe("reviews domain", () => {
 
     expect(blocked.ok).toBe(false);
     expect(blocked.message).toContain("Muitas reviews");
+  });
+
+  it("rate limits public reviews by reviewer email and username", async () => {
+    const { createPublicReview } = await import("@/lib/server/domain/reviews");
+
+    for (let index = 0; index < 3; index += 1) {
+      const db = buildDb();
+      const result = await createPublicReview(
+        buildReviewForm({ reviewerEmail: "repeat@example.com" }),
+        {
+          clientIp: `203.0.113.${index}`,
+          db: db as never,
+          now: 0,
+        }
+      );
+      expect(result.ok).toBe(true);
+    }
+
+    const db = buildDb();
+    const blocked = await createPublicReview(
+      buildReviewForm({ reviewerEmail: "repeat@example.com" }),
+      {
+        clientIp: "203.0.113.100",
+        db: db as never,
+        now: 0,
+      }
+    );
+
+    expect(blocked.ok).toBe(false);
+    expect(blocked.message).toContain("Muitas reviews");
+    expect(db.profile.findFirst).not.toHaveBeenCalled();
   });
 });

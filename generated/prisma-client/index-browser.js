@@ -197,6 +197,8 @@ exports.Prisma.ProfileScalarFieldEnum = {
   bio: 'bio',
   avatarUrl: 'avatarUrl',
   bannerUrl: 'bannerUrl',
+  bannerPositionX: 'bannerPositionX',
+  bannerPositionY: 'bannerPositionY',
   location: 'location',
   pronouns: 'pronouns',
   websiteUrl: 'websiteUrl',
@@ -371,6 +373,7 @@ exports.Prisma.VersionScalarFieldEnum = {
   customHeadline: 'customHeadline',
   customBio: 'customBio',
   presentationId: 'presentationId',
+  profileSnapshot: 'profileSnapshot',
   isDefault: 'isDefault',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

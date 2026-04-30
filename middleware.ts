@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export const PROTECTED_PREFIXES = [
+  "/home",
   "/dashboard",
   "/profile",
   "/gallery",

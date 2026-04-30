@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@/generated/prisma-client";
+import type { TemplateProfile } from "@/components/templates/types";
 import { ApiRouteError } from "@/lib/server/api";
 import {
   versionAggregateInclude,
@@ -103,7 +104,10 @@ function collectAssetIdsFromPayload(value: unknown): string[] {
   const record = value as Record<string, unknown>;
   const assetIds = typeof record.assetId === "string" ? [record.assetId] : [];
 
-  return [...assetIds, ...Object.values(record).flatMap((item) => collectAssetIdsFromPayload(item))];
+  return [
+    ...assetIds,
+    ...Object.values(record).flatMap((item) => collectAssetIdsFromPayload(item)),
+  ];
 }
 
 async function assertOwnedAssetIds(tx: TxClient, userId: string, assetIds: string[]) {
@@ -126,10 +130,7 @@ async function assertOwnedAssetIds(tx: TxClient, userId: string, assetIds: strin
   }
 }
 
-function sanitizeBlockAssets(
-  assetFields: unknown,
-  assets: unknown
-) {
+function sanitizeBlockAssets(assetFields: unknown, assets: unknown) {
   const editableAssetFields = Array.isArray(assetFields) ? assetFields : [];
 
   if (editableAssetFields.length === 0) {
@@ -150,9 +151,7 @@ function sanitizeBlockAssets(
   );
 }
 
-export async function listActiveTemplates(
-  db: DbClient
-): Promise<TemplateListItem[]> {
+export async function listActiveTemplates(db: DbClient): Promise<TemplateListItem[]> {
   return db.template.findMany({
     where: { isActive: true },
     orderBy: [{ slug: "asc" }],
@@ -165,7 +164,7 @@ export async function seedPageBlocksFromTemplate(
   pageId: string,
   templateId: string,
   options?: {
-    profile?: ProfileAggregate;
+    profile?: ProfileAggregate | TemplateProfile;
     version?: VersionAggregate;
     replaceExisting?: boolean;
   }
@@ -407,7 +406,9 @@ export async function updateOwnedPageBlock(
     );
 
     const configInput =
-      input.config === undefined && input.props === undefined && input.assets === undefined
+      input.config === undefined &&
+      input.props === undefined &&
+      input.assets === undefined
         ? block.config
         : mergeBlockPayload({
             config: input.config ?? block.config,
@@ -428,7 +429,9 @@ export async function updateOwnedPageBlock(
         visible: input.visible ?? block.visible,
         parentId: input.parentId === undefined ? block.parentId : input.parentId,
         config: asJsonValue(config),
-        props: asJsonValue(currentProps.semantic ? { semantic: currentProps.semantic } : {}),
+        props: asJsonValue(
+          currentProps.semantic ? { semantic: currentProps.semantic } : {}
+        ),
         assets: asJsonValue(assets),
       },
       include: {
@@ -532,7 +535,9 @@ export async function replaceOwnedPageBlocks(
 
     const blockDefById = new Map(blockDefs.map((blockDef) => [blockDef.id, blockDef]));
     const payloadIds = new Set(input.blocks.map((block) => block.id));
-    const assetIds = input.blocks.flatMap((block) => collectAssetIdsFromPayload(block.assets));
+    const assetIds = input.blocks.flatMap((block) =>
+      collectAssetIdsFromPayload(block.assets)
+    );
     await assertOwnedAssetIds(tx, userId, assetIds);
 
     for (const item of input.blocks) {
@@ -577,12 +582,16 @@ export async function replaceOwnedPageBlocks(
         data: {
           pageId: page.id,
           templateBlockDefId: blockDef.id,
-          parentId: item.parentId ? persistedBySourceId.get(item.parentId) ?? null : null,
+          parentId: item.parentId
+            ? (persistedBySourceId.get(item.parentId) ?? null)
+            : null,
           key: item.key,
           blockType: blockDef.blockType,
           order: item.order,
           visible: item.visible,
-          config: asJsonValue(validateAllowedBlockConfig(blockDef.blockType, item.config)),
+          config: asJsonValue(
+            validateAllowedBlockConfig(blockDef.blockType, item.config)
+          ),
           props: asJsonValue(item.props ?? {}),
           assets: asJsonValue(assets),
         },

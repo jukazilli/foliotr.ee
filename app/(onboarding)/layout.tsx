@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "FolioTree — Configuração inicial",
+  title: "FolioTree - Configuracao inicial",
 };
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {

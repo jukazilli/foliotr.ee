@@ -132,10 +132,46 @@ export const resetPasswordSchema = z
 
 export const onboardingSchema = z.object({
   username: usernameSchema,
+  displayName: z
+    .string()
+    .trim()
+    .min(2, "Nome deve ter pelo menos 2 caracteres")
+    .max(120),
   headline: z
     .string()
     .min(5, "Titulo profissional deve ter pelo menos 5 caracteres")
     .max(120, "Titulo profissional deve ter no maximo 120 caracteres"),
+  bio: z
+    .string()
+    .trim()
+    .max(500, "Bio deve ter no maximo 500 caracteres")
+    .optional()
+    .or(z.literal("")),
+  location: z
+    .string()
+    .trim()
+    .max(120, "Localizacao muito longa")
+    .optional()
+    .or(z.literal("")),
+  currentCompany: z
+    .string()
+    .trim()
+    .max(120, "Empresa muito longa")
+    .optional()
+    .or(z.literal("")),
+  currentRole: z
+    .string()
+    .trim()
+    .max(120, "Cargo muito longo")
+    .optional()
+    .or(z.literal("")),
+  openToOpportunities: z.boolean().default(false),
+  opportunityMotivation: z
+    .string()
+    .trim()
+    .max(500, "Resposta deve ter no maximo 500 caracteres")
+    .optional()
+    .or(z.literal("")),
   focus: z
     .enum(["developer", "designer", "product", "marketing", "freelancer", "other"], {
       errorMap: () => ({ message: "Selecione uma area de atuacao valida" }),
@@ -146,6 +182,9 @@ export const onboardingSchema = z.object({
 export const profileSchema = z.object({
   displayName: z.string().max(120, "Nome muito longo").optional(),
   avatarUrl: nullableAssetUrlSchema,
+  bannerUrl: nullableAssetUrlSchema,
+  bannerPositionX: z.coerce.number().int().min(0).max(100).optional(),
+  bannerPositionY: z.coerce.number().int().min(0).max(100).optional(),
   headline: z.string().max(120, "Titulo deve ter no maximo 120 caracteres").optional(),
   bio: z.string().max(500, "Bio deve ter no maximo 500 caracteres").optional(),
   location: z.string().max(120, "Localizacao muito longa").optional(),

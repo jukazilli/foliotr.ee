@@ -6,18 +6,18 @@ Contrato base: `docs/02_contratos/contrato-remaster-social-ui.md`
 
 ## Slice 0 - Referencia e contrato visual
 
-Status: ATUAL
+Status: FECHADO em 2026-04-29
 
 Dependencias:
 
 - Contrato documental inicial.
-- Acesso Playwright parado na tela de login do Facebook para autenticacao manual do usuario, se a referencia externa for usada.
+- Acesso Playwright parado na tela de login do Facebook para autenticacao manual do usuário, se a referencia externa for usada.
 
 Escopo dentro:
 
-- Capturar padroes de top bar, perfil, about, cards e navegacao.
-- Documentar o que sera adaptado e o que nao sera copiado.
-- Fechar decisao de `/dashboard`, card 2 do perfil publico e estrategia inicial de editor/template.
+- Capturar padroes de top bar, perfil, about, cards e navegação.
+- Documentar o que sera adaptado e o que não sera copiado.
+- Fechar decisão de `/dashboard`, card 2 do perfil público e estratégia inicial de editor/template.
 
 Escopo fora:
 
@@ -25,51 +25,65 @@ Escopo fora:
 - Alterar rotas.
 - Migrar templates.
 
-Evidencia:
+Evidência:
 
-- Documento de referencia visual ou decisao explicita de seguir sem ela.
+- Documento de referencia visual ou decisão explicita de seguir sem ela.
 - `slice-atual.md` atualizado com lacunas e criterios.
+- Encerrado por supersessão documental em 2026-04-29: os slices 1 a 8 foram executados e fechados usando a decisão prática de seguir sem captura autenticada do Facebook, preservando apenas o contrato visual próprio do FolioTree.
 
-## Slice 1 - Onboarding de conta para perfil publico
+## Slice 1 - Onboarding de conta para perfil público
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
 - Slice 0.
-- Decisao sobre campos minimos de perfil publico.
+- Decisão sobre campos mínimos de perfil público.
 
 Escopo:
 
 - Ajustar cadastro para criar conta e levar ao onboarding real.
 - Reativar `/onboarding` como wizard progressivo.
 - Marcar `onboardingDone` apenas apos completar minimo contratado.
-- Redirecionar pos-login para o perfil do usuario ou onboarding pendente.
+- Redirecionar pos-login para o perfil do usuário ou onboarding pendente.
 
-Evidencia:
+Evidência:
 
-- Criacao de conta validada em browser.
-- Usuario novo cai no onboarding, nao no dashboard.
-- Perfil publico minimo fica acessivel apos concluir.
+- Cadastro cria conta com `onboardingDone = false`.
+- `/onboarding` renderiza wizard real de perfil minimo.
+- Conclusao do onboarding atualiza perfil, experiência atual opcional e redireciona para `/{username}`.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
 ## Slice 2 - Top bar social e descontinuidade de dashboard
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
 - Slice 0.
-- Decisao de compatibilidade para `/dashboard`.
+- Decisão de compatibilidade para `/dashboard`.
 
 Escopo:
 
 - Substituir sidebar por top bar responsiva.
 - Home aponta para `/{username}`.
-- Ajustar `AppShell`, `Header` e navegacao.
-- Redirecionar ou remover dashboard conforme decisao.
+- Ajustar `AppShell`, `Header` e navegação.
+- Redirecionar ou remover dashboard conforme decisão.
 
-Evidencia:
+Evidência:
 
-- Rotas autenticadas navegam pela top bar em desktop e mobile.
-- `/dashboard` nao e mais destino primario.
+- `AppShell` deixou de reservar espaco para sidebar.
+- `Header` foi substituido por top bar responsiva com busca, logo, ícones e menu da conta.
+- Home da top bar aponta para `/{username}` quando ha username.
+- `/dashboard` passou a redirecionar para `/{username}` ou `/profile`.
+- Links internos de voltar/revalidar deixaram de usar `/dashboard`, salvo aliases de compatibilidade.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
-## Slice 3 - Perfil publico com capa e paridade do dono
+## Slice 3 - Perfil público com capa e paridade do dono
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -78,18 +92,24 @@ Dependencias:
 
 Escopo:
 
-- Expor `bannerUrl` em queries e edicao.
+- Expor `bannerUrl` em queries e edição.
 - Recriar `/{username}` com capa, avatar, nome, headline e cards.
 - Mostrar controles discretos apenas para dono logado.
-- Preservar portfolios/curriculos em slides.
+- Preservar portfólios/currículos em slides.
 
-Evidencia:
+Evidência:
 
-- Visitante anonimo ve perfil sem controles privados.
-- Dono logado ve mesma pagina com affordances de edicao.
-- Reviews e portfolio continuam acessiveis.
+- Query publica expoe `bannerUrl` e `user.id`.
+- `/{username}` detecta dono logado via `auth()`.
+- Hub público renderiza capa, avatar, nome, headline, cards de sobre/portfólio/reviews e controles discretos para dono.
+- Portfólios/currículos publicados continuam renderizados como links para as rotas públicas existentes.
+- Reviews continuam acessíveis no mesmo formulário público.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
 ## Slice 4 - Perfil/About editor
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -98,16 +118,22 @@ Dependencias:
 
 Escopo:
 
-- Reorganizar `ProfileEditor` em lista de secoes + formulario contextual.
+- Reorganizar `ProfileEditor` em lista de secoes + formulário contextual.
 - Reduzir densidade de abas.
 - Integrar capa/avatar e dados base.
 
-Evidencia:
+Evidência:
 
-- Edicoes persistem e aparecem no perfil publico.
-- Navegacao por secoes funciona sem perder rascunho.
+- `ProfileTabs` foi reorganizado para lista lateral + painel contextual.
+- `bannerUrl` entrou no contrato de validacao, persistência e carregamento do editor.
+- `ProfileEditor` permite adicionar, trocar e remover capa publica a partir da galeria.
+- Persistencia usa o endpoint existente de perfil, sem novo contrato paralelo.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
-## Slice 5 - Portfolios em grade com acoes iconicas
+## Slice 5 - Portfólios em grade com acoes iconicas
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -116,15 +142,21 @@ Dependencias:
 Escopo:
 
 - Recriar `/portfolios` como grid de cards.
-- Converter acoes principais para icones com tooltip/aria-label.
+- Converter acoes principais para ícones com tooltip/aria-label.
 - Preservar publicacao, duplicacao, visualizacao e ownership.
 
-Evidencia:
+Evidência:
 
-- Cards nao quebram layout com titulos longos.
-- Acoes funcionam em desktop e mobile.
+- `/portfolios` foi recriado como grid responsivo de cards.
+- Ações de publicar portfólio, publicar currículo, criar variação, editar e ver público usam ícones com `aria-label` e `title`.
+- Server actions existentes foram preservadas.
+- Estados sem portfólio e variações sem página continuam visíveis.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
 ## Slice 6 - Templates sem dependencia de editor
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -135,15 +167,22 @@ Escopo:
 
 - Reformular `/templates` como galeria de aplicacao visual.
 - Adaptar `portfolio-community` para o modelo atual de perfil/portfolio.
-- Remover CTAs que mandam o usuario ao editor.
+- Remover CTAs que mandam o usuário ao editor.
 - Manter compatibilidade de dados existentes.
 
-Evidencia:
+Evidência:
 
-- Aplicar template altera apresentacao esperada sem exigir editor.
-- Rotas publicas continuam renderizando portfolios existentes.
+- Aplicação de template redireciona para `/portfolios`, não para `/pages/{pageId}/editor`.
+- Galeria `/templates` usa copy de linguagem visual e CTA `Aplicar modelo`.
+- Template aplicado mostra CTA para ver portfólio, não editar no editor técnico.
+- Detalhe `/templates/{slug}` descreve composição/tipografia/ritmo visual, não edição de blocos.
+- Busca por `editor`, `Editar portfólio`, `abre o editor`, `Abrir exemplo`, `Usar modelo` e `/pages/.*/editor` em `app/(app)/templates` não retornou ocorrências.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
-## Slice 7 - Depreciacao controlada do editor tecnico
+## Slice 7 - Depreciação controlada do editor técnico
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -152,16 +191,24 @@ Dependencias:
 
 Escopo:
 
-- Remover entradas de navegacao para editor.
+- Remover entradas de navegação para editor.
 - Definir redirect/404/legado interno para rotas tecnicas.
 - Atualizar copy e docs.
 
-Evidencia:
+Evidência:
 
-- `rg "/editor"` mostra apenas legado controlado ou compatibilidade documentada.
-- Usuario comum nao encontra editor tecnico no fluxo principal.
+- `/pages` redireciona para `/portfolios?legacy=pages`.
+- `/pages/{pageId}/editor` redireciona para `/portfolios?legacy=editor`.
+- Links comuns para editar portfólio foram trocados por `/profile` ou `/portfolios`.
+- `versionPortfolioAction` redireciona para `/portfolios?created=1`.
+- Actions legadas do editor não revalidam mais `/pages/{pageId}/editor`.
+- `rg` por `/pages/.*editor`, `/editor`, `Editar portfólio` e `Voltar ao portfólio` em `app`, `components` e `lib` não retornou ocorrências fora dos componentes técnicos excluídos.
+- `npm run typecheck` executado sem erro.
+- Busca de mojibake nos arquivos tocados executada sem ocorrências.
 
 ## Slice 8 - QA integrado e fechamento
+
+Status: FECHADO em 2026-04-28
 
 Dependencias:
 
@@ -169,11 +216,99 @@ Dependencias:
 
 Escopo:
 
-- Validar jornada novo usuario -> onboarding -> perfil publico -> portfolio -> template.
+- Validar jornada novo usuário -> onboarding -> perfil público -> portfólio -> template.
 - Validar dono logado e visitante anonimo.
 - Executar typecheck, lint/testes possiveis, busca de mojibake e Playwright.
 
-Evidencia:
+Evidência:
 
-- Matriz promessa versus evidencia.
-- Status de fechamento por item.
+- `npm run typecheck` executado sem erro.
+- `npm run lint` executado sem erro.
+- `npm run test` executado sem erro apos atualizar testes de cadastro/onboarding para o novo contrato.
+- `npx prettier --check --ignore-unknown` executado nos arquivos tocados sem erro.
+- Playwright carregou `http://127.0.0.1:3000/juliano-zilli` com titulo `Juliano Zilli - FolioTree`.
+- Screenshot de verificacao publica capturado em `social-ui-remaster-public-profile.png`.
+- Dev server temporario encerrado apos a verificacao.
+
+## Slice 9 - Refinamento UX do editor de perfil
+
+Status: FECHADO em 2026-04-29
+
+Dependencias:
+
+- Slice 4 - Perfil/About editor.
+- Slice 2 - Top bar social.
+- Contrato atual do usuário em 2026-04-29 para reduzir explicação da UI e controlar rolagem interna.
+
+Escopo dentro:
+
+- Remover cabeçalho redundante do painel ativo (`Editando`, nome da seção).
+- Fazer apenas o painel ativo do perfil rolar no desktop, mantendo navegação lateral e shell estáveis.
+- Corrigir o reset de aba ao adicionar itens em coleções.
+- Centralizar melhor os ícones da top bar autenticada.
+- Corrigir textos visíveis tocados com acentuação quebrada.
+- Adicionar colapso/expansão em listas de formações, experiências, projetos, links, reviews e grupos compactos.
+- Limitar listas abertas a uma área com rolagem interna depois de aproximadamente 3 itens.
+
+Escopo fora:
+
+- Recriar todo o editor de perfil.
+- Alterar modelo de dados, APIs ou regras de persistência.
+- Criar busca funcional na top bar.
+- Redesenhar as telas públicas.
+
+Evidência esperada:
+
+- `/profile` não exibe mais o cabeçalho redundante do painel ativo.
+- Clicar em adicionar experiência/formação/projeto permanece na seção atual.
+- Lista com vários itens usa colapso e rolagem interna.
+- `npm run typecheck` e `npm run lint` sem regressão.
+- Busca de mojibake nos arquivos tocados sem ocorrências.
+
+Evidência de fechamento:
+
+- Playwright em `/profile`: `hasEditando=false`, painel ativo com `overflowY=auto`, top bar centralizada e item novo de experiência aberto sem trocar a aba ativa.
+- `npm run typecheck`: sem erro.
+- `npm run lint`: sem erro.
+- `git diff --check`: sem erro.
+
+## Slice 10 - Reviews sem autoavaliação
+
+Status: FECHADO em 2026-04-29
+
+Dependências:
+
+- Domínio de reviews públicas em `lib/server/domain/reviews.ts`.
+- Action pública `app/[username]/review-actions.ts`.
+- Proteções existentes: honeypot, rate limit por IP e limite de reviews pendentes.
+
+Escopo dentro:
+
+- Bloquear review quando o usuário autenticado for dono do perfil avaliado.
+- Ocultar ou substituir o formulário de review para o dono logado nas telas públicas.
+- Bloquear tentativas óbvias de autoavaliação anônima quando o email informado bater com email da conta ou email público do perfil.
+- Adicionar rate limit também por email informado + perfil, quando houver email.
+- Cobrir regra no teste de domínio de reviews.
+
+Escopo fora:
+
+- Verificação forte de identidade de visitante.
+- Captcha, convite assinado, login obrigatório para reviewer ou reputação de reviewer.
+- Migrar `Proof` para `Review`.
+- Store durável de rate limit.
+
+Evidência esperada:
+
+- Testes de domínio cobrem bloqueio do dono autenticado e email do dono.
+- `npm run test -- tests/domain/reviews-domain.test.ts`.
+- `npm run typecheck`.
+- Busca de mojibake nos arquivos tocados.
+
+Evidência de fechamento:
+
+- `tests/domain/reviews-domain.test.ts` cobre bloqueio do dono autenticado, bloqueio por email do dono e rate limit por email.
+- Playwright em `http://localhost:3000/perf-audit` logado como dono: formulário de envio oculto e mensagem de moderação visível.
+- `npm run test -- tests/domain/reviews-domain.test.ts`: 7 testes passando.
+- `npm run typecheck`: sem erro.
+- `npm run lint`: sem erro.
+- `git diff --check`: sem erro.

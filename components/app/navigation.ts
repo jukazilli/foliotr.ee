@@ -1,11 +1,10 @@
 import type { LucideIcon } from "lucide-react";
 import {
+  BriefcaseBusiness,
   Images,
-  LayoutDashboard,
-  Layers3,
   Library,
-  Sparkles,
   Settings,
+  Sparkles,
   UserRound,
 } from "lucide-react";
 
@@ -20,12 +19,12 @@ export interface AppNavItem {
 
 export const appNavigation: AppNavItem[] = [
   {
-    href: "/dashboard",
-    label: "Area inicial",
-    shortLabel: "Inicio",
-    icon: LayoutDashboard,
+    href: "/portfolios",
+    label: "Portfolios",
+    shortLabel: "Portfolios",
+    icon: BriefcaseBusiness,
     section: "principal",
-    description: "Veja o que fazer agora.",
+    description: "Publique versoes do seu trabalho.",
   },
   {
     href: "/profile",
@@ -34,14 +33,6 @@ export const appNavigation: AppNavItem[] = [
     icon: UserRound,
     section: "principal",
     description: "Complete suas informacoes.",
-  },
-  {
-    href: "/portfolios",
-    label: "Portfolios",
-    shortLabel: "Portfolios",
-    icon: Layers3,
-    section: "principal",
-    description: "Publique versoes do seu trabalho.",
   },
   {
     href: "/gallery",
@@ -57,7 +48,7 @@ export const appNavigation: AppNavItem[] = [
     shortLabel: "Teste",
     icon: Sparkles,
     section: "principal",
-    description: "Entenda forças e caminhos.",
+    description: "Entenda forcas e caminhos.",
   },
   {
     href: "/templates",
@@ -86,6 +77,7 @@ export const libraryAppNavigation = appNavigation.filter(
 );
 
 const TECHNICAL_ROUTE_NAV_ALIASES: Record<string, string> = {
+  "/dashboard": "/profile",
   "/pages": "/portfolios",
   "/versions": "/portfolios",
   "/resumes": "/portfolios",

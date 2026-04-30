@@ -7,6 +7,7 @@ import {
   UserRound,
 } from "lucide-react";
 import { submitPublicReviewAction } from "@/app/[username]/review-actions";
+import { PublicReviewRatingInput } from "@/components/public/PublicReviewRatingInput";
 import type {
   RenderablePageBlock,
   TemplateProfile,
@@ -57,6 +58,7 @@ interface PublicPortfolioTabsPageProps {
   templateSourcePackage?: unknown;
   reviewSummary: PublicReviewSummary;
   behavioralAnalysis?: BehavioralAnalysisSnapshot | null;
+  profileHrefOverride?: string;
 }
 
 function readSourcePackage(value: unknown): PortfolioCommunitySourcePackage {
@@ -123,6 +125,7 @@ export default function PublicPortfolioTabsPage({
   templateSourcePackage,
   reviewSummary,
   behavioralAnalysis,
+  profileHrefOverride,
 }: PublicPortfolioTabsPageProps) {
   const sourcePackage = readSourcePackage(templateSourcePackage);
   const blockState = buildPortfolioCommunityBlockStateFromBlocks(blocks);
@@ -134,7 +137,8 @@ export default function PublicPortfolioTabsPage({
     sourcePackage,
   });
   const returnPath = pageSlug ? `/${username}/${pageSlug}` : `/${username}`;
-  const profileHref = `/${username}`;
+  const profileHref = profileHrefOverride ?? `/${username}`;
+  const canSubmitReview = !profileHrefOverride;
   const hasPortfolio = semantics.work.items.length > 0;
   const hasResume =
     semantics.experience.items.length > 0 ||
@@ -415,69 +419,65 @@ export default function PublicPortfolioTabsPage({
               </div>
             </div>
 
-            <form
-              action={submitPublicReviewAction}
-              className="grid min-h-0 gap-3 overflow-hidden rounded-[2rem] border-2 border-[#03045E] bg-[#F5EE84] p-5 shadow-[8px_8px_0_#03045E]"
-            >
-              <input type="hidden" name="username" value={username} />
-              <input type="hidden" name="returnPath" value={returnPath} />
-              <div className="hidden" aria-hidden="true">
-                <label>
-                  Site
-                  <input name="website" tabIndex={-1} autoComplete="off" />
-                </label>
-              </div>
-              <h2 className="text-2xl font-extrabold tracking-[-0.04em]">
-                Deixe uma review
-              </h2>
-              <div className="grid gap-3 sm:grid-cols-2">
+            {canSubmitReview ? (
+              <form
+                action={submitPublicReviewAction}
+                className="grid min-h-0 gap-3 overflow-hidden rounded-[2rem] border-2 border-[#03045E] bg-[#F5EE84] p-5 shadow-[8px_8px_0_#03045E]"
+              >
+                <input type="hidden" name="username" value={username} />
+                <input type="hidden" name="returnPath" value={returnPath} />
+                <div className="hidden" aria-hidden="true">
+                  <label>
+                    Site
+                    <input name="website" tabIndex={-1} autoComplete="off" />
+                  </label>
+                </div>
+                <h2 className="text-2xl font-extrabold tracking-[-0.04em]">
+                  Deixe uma review
+                </h2>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <input
+                    name="reviewerName"
+                    required
+                    minLength={2}
+                    maxLength={120}
+                    placeholder="Seu nome"
+                    className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
+                  />
+                  <input
+                    name="reviewerRole"
+                    maxLength={140}
+                    placeholder="Cargo ou contexto"
+                    className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
+                  />
+                </div>
                 <input
-                  name="reviewerName"
+                  name="reviewerEmail"
+                  type="email"
+                  placeholder="Email opcional"
+                  className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
+                />
+                <PublicReviewRatingInput defaultValue={5} compact />
+                <textarea
+                  name="description"
                   required
-                  minLength={2}
-                  maxLength={120}
-                  placeholder="Seu nome"
-                  className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
+                  minLength={10}
+                  maxLength={500}
+                  placeholder="Como foi trabalhar com essa pessoa?"
+                  className="min-h-0 flex-1 rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold leading-6 outline-none"
                 />
-                <input
-                  name="reviewerRole"
-                  maxLength={140}
-                  placeholder="Cargo ou contexto"
-                  className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
-                />
+                <button
+                  type="submit"
+                  className="h-11 rounded-full border-2 border-[#03045E] bg-white px-5 text-sm font-extrabold text-[#03045E] shadow-[4px_4px_0_#03045E]"
+                >
+                  Enviar review
+                </button>
+              </form>
+            ) : (
+              <div className="rounded-[2rem] border-2 border-[#03045E] bg-[#F5EE84] p-5 text-sm font-extrabold text-[#03045E] shadow-[8px_8px_0_#03045E]">
+                Reviews do seu perfil aparecem aqui para moderação.
               </div>
-              <input
-                name="reviewerEmail"
-                type="email"
-                placeholder="Email opcional"
-                className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
-              />
-              <select
-                name="rating"
-                defaultValue="5"
-                className="rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold outline-none"
-              >
-                <option value="5">5 estrelas</option>
-                <option value="4">4 estrelas</option>
-                <option value="3">3 estrelas</option>
-                <option value="2">2 estrelas</option>
-                <option value="1">1 estrela</option>
-              </select>
-              <textarea
-                name="description"
-                required
-                minLength={10}
-                maxLength={500}
-                placeholder="Como foi trabalhar com essa pessoa?"
-                className="min-h-0 flex-1 rounded-xl border-2 border-[#03045E] bg-white px-3 py-2 text-sm font-bold leading-6 outline-none"
-              />
-              <button
-                type="submit"
-                className="h-11 rounded-full border-2 border-[#03045E] bg-white px-5 text-sm font-extrabold text-[#03045E] shadow-[4px_4px_0_#03045E]"
-              >
-                Enviar review
-              </button>
-            </form>
+            )}
           </div>
         </section>
       </div>

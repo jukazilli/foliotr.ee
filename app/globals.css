@@ -1,25 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --font-primary: "Poppins";
-  --font-display: var(--font-primary);
+  --font-primary: "Inter";
+  --font-display: "Outfit";
   --font-ui: var(--font-primary);
   --font-data: var(--font-primary);
 
-  --paper: #faf9f6;
+  --paper: #f6f8f1;
   --white: #ffffff;
-  --ink: #1f2b16;
-  --muted: #42503a;
-  --line: #111111;
+  --ink: #111827;
+  --muted: #4b5563;
+  --line: #111827;
   --orange: #ff4d00;
   --lime: #dfff00;
   --blue: #245fd6;
   --blue-soft: #2f66d0;
   --rose: #8b0024;
-  --pink: #ffd7f3;
-  --cream: #eff4dc;
+  --pink: #ffcce6;
+  --cream: #f6f8f1;
+  --mint: #dcfce7;
   --green: #6f7a47;
   --cyan: #00d1ff;
   --peach: #ffd1b3;
@@ -70,7 +73,7 @@ body {
   overflow-x: hidden;
   background: var(--paper);
   color: var(--ink);
-  font-family: var(--font-primary), Poppins, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-primary), Inter, ui-sans-serif, system-ui, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
 }
@@ -119,10 +122,31 @@ a {
 
 @layer components {
   .font-display,
-  .display,
+  .display {
+    font-family: var(--font-display), Outfit, ui-sans-serif, system-ui, sans-serif;
+  }
+
   .font-data,
   .mono {
-    font-family: var(--font-primary), Poppins, ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-primary), Inter, ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .brutal-border {
+    border: 2px solid var(--line);
+  }
+
+  .brutal-shadow {
+    box-shadow: 4px 4px 0 0 var(--line);
+  }
+
+  .brutal-shadow-sm {
+    box-shadow: 2px 2px 0 0 var(--line);
+  }
+
+  .brutal-shadow:active,
+  .brutal-shadow-sm:active {
+    box-shadow: 0 0 0 0 var(--line);
+    transform: translate(2px, 2px);
   }
 
   .brand-shell {
@@ -239,11 +263,19 @@ a {
     margin-inline: auto;
   }
 
-  .app-grid-18 {
+  .app-grid-18,
+  .app-grid-24 {
     display: grid;
-    grid-template-columns: repeat(18, minmax(0, 1fr));
     gap: var(--app-grid-gap);
     align-items: start;
+  }
+
+  .app-grid-18 {
+    grid-template-columns: repeat(18, minmax(0, 1fr));
+  }
+
+  .app-grid-24 {
+    grid-template-columns: repeat(24, minmax(0, 1fr));
   }
 
   .app-col-full {
@@ -256,13 +288,13 @@ a {
 
   @media (min-width: 1280px) {
     .app-col-main {
-      grid-column: 3 / span 14;
+      grid-column: 4 / span 18;
     }
   }
 
   @media (min-width: 1536px) {
     .app-col-main {
-      grid-column: 4 / span 12;
+      grid-column: 5 / span 16;
     }
   }
 

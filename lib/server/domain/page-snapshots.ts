@@ -11,6 +11,41 @@ import {
   type VersionAggregate,
 } from "@/lib/server/domain/includes";
 
+type ProfileSnapshotSource = Pick<
+  ProfileAggregate,
+  | "id"
+  | "userId"
+  | "displayName"
+  | "headline"
+  | "bio"
+  | "avatarUrl"
+  | "bannerUrl"
+  | "bannerPositionX"
+  | "bannerPositionY"
+  | "location"
+  | "pronouns"
+  | "websiteUrl"
+  | "publicEmail"
+  | "phone"
+  | "birthDate"
+  | "defaultPresentationId"
+  | "openToOpportunities"
+  | "opportunityMotivation"
+  | "showOpportunityMotivation"
+  | "onboardingDone"
+  | "createdAt"
+  | "updatedAt"
+  | "user"
+  | "experiences"
+  | "educations"
+  | "skills"
+  | "projects"
+  | "achievements"
+  | "links"
+  | "proofs"
+  | "presentations"
+>;
+
 export interface PageEditorSnapshot {
   profile: TemplateProfile;
   version: VersionForBlocks;
@@ -42,54 +77,84 @@ export function asInputJsonValue<T>(value: T): Prisma.InputJsonValue {
   return toSerializable(value) as Prisma.InputJsonValue;
 }
 
+export function buildVersionProfileSnapshot(
+  profile: ProfileSnapshotSource
+): TemplateProfile {
+  return toSerializable({
+    id: profile.id,
+    userId: profile.userId,
+    displayName: profile.displayName,
+    headline: profile.headline,
+    bio: profile.bio,
+    avatarUrl: profile.avatarUrl,
+    bannerUrl: profile.bannerUrl,
+    bannerPositionX: profile.bannerPositionX,
+    bannerPositionY: profile.bannerPositionY,
+    location: profile.location,
+    pronouns: profile.pronouns,
+    websiteUrl: profile.websiteUrl,
+    publicEmail: profile.publicEmail,
+    phone: profile.phone,
+    birthDate: profile.birthDate,
+    defaultPresentationId: profile.defaultPresentationId,
+    openToOpportunities: profile.openToOpportunities,
+    opportunityMotivation: profile.opportunityMotivation,
+    showOpportunityMotivation: profile.showOpportunityMotivation,
+    onboardingDone: profile.onboardingDone,
+    createdAt: profile.createdAt,
+    updatedAt: profile.updatedAt,
+    user: profile.user
+      ? {
+          name: profile.user.name,
+          username: profile.user.username,
+        }
+      : null,
+    experiences: profile.experiences,
+    educations: profile.educations,
+    skills: profile.skills,
+    projects: profile.projects,
+    achievements: profile.achievements,
+    links: profile.links,
+    proofs: profile.proofs,
+    presentations: profile.presentations,
+  }) as TemplateProfile;
+}
+
+export function readVersionProfileSnapshot(value: unknown): TemplateProfile | null {
+  if (
+    !isRecord(value) ||
+    !Array.isArray(value.experiences) ||
+    !Array.isArray(value.educations) ||
+    !Array.isArray(value.skills) ||
+    !Array.isArray(value.projects) ||
+    !Array.isArray(value.achievements) ||
+    !Array.isArray(value.links) ||
+    !Array.isArray(value.proofs) ||
+    !Array.isArray(value.presentations)
+  ) {
+    return null;
+  }
+
+  return value as unknown as TemplateProfile;
+}
+
 export function buildEditorSnapshot(
   profile: ProfileAggregate,
   version: VersionAggregate
 ): PageEditorSnapshot {
+  const profileSnapshot =
+    readVersionProfileSnapshot(version.profileSnapshot) ??
+    buildVersionProfileSnapshot(profile);
+
   return {
-    profile: toSerializable({
-      id: profile.id,
-      userId: profile.userId,
-      displayName: profile.displayName,
-      headline: profile.headline,
-      bio: profile.bio,
-      avatarUrl: profile.avatarUrl,
-      bannerUrl: profile.bannerUrl,
-      location: profile.location,
-      pronouns: profile.pronouns,
-      websiteUrl: profile.websiteUrl,
-      publicEmail: profile.publicEmail,
-      phone: profile.phone,
-      birthDate: profile.birthDate,
-      defaultPresentationId: profile.defaultPresentationId,
-      openToOpportunities: profile.openToOpportunities,
-      opportunityMotivation: profile.opportunityMotivation,
-      showOpportunityMotivation: profile.showOpportunityMotivation,
-      onboardingDone: profile.onboardingDone,
-      createdAt: profile.createdAt,
-      updatedAt: profile.updatedAt,
-      user: profile.user
-        ? {
-            name: profile.user.name,
-            username: profile.user.username,
-          }
-        : null,
-      experiences: profile.experiences,
-      educations: profile.educations,
-      skills: profile.skills,
-      projects: profile.projects,
-      achievements: profile.achievements,
-      links: profile.links,
-      proofs: profile.proofs,
-      presentations: profile.presentations,
-    }) as TemplateProfile,
-    version: {
+    profile: toSerializable(profileSnapshot),
+    version: toSerializable({
       customHeadline: version.customHeadline,
       customBio: version.customBio,
       presentationId: version.presentationId,
       presentation: version.presentation,
       ...getVersionSelectionIds(version),
-    },
+    }),
   };
 }
 

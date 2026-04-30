@@ -22,6 +22,8 @@ const publicPageInclude = Prisma.validator<Prisma.PageInclude>()({
         select: {
           user: {
             select: {
+              id: true,
+              username: true,
               vocationalTests: {
                 where: {
                   status: "completed",
@@ -99,6 +101,9 @@ export async function getPublicProfileHub(username: string) {
       id: true,
       displayName: true,
       avatarUrl: true,
+      bannerUrl: true,
+      bannerPositionX: true,
+      bannerPositionY: true,
       headline: true,
       bio: true,
       defaultPresentationId: true,
@@ -127,6 +132,7 @@ export async function getPublicProfileHub(username: string) {
       },
       user: {
         select: {
+          id: true,
           username: true,
           vocationalTests: {
             where: {
@@ -149,6 +155,7 @@ export async function getPublicProfileHub(username: string) {
           context: true,
           customHeadline: true,
           customBio: true,
+          profileSnapshot: true,
           isDefault: true,
           resumeConfig: {
             select: {
