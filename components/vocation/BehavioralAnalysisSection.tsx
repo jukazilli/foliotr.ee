@@ -86,6 +86,38 @@ export function BehavioralAnalysisSection({
             value: item.value,
           }))}
           color="#ff4d00"
+          legend={[
+            {
+              label: "Realista",
+              description:
+                "Prefere atividades práticas, manuais e lidar com objetos ou ferramentas.",
+            },
+            {
+              label: "Investigativo",
+              description:
+                "Prefere observar, aprender e resolver problemas teóricos ou científicos.",
+            },
+            {
+              label: "Artístico",
+              description:
+                "Prefere atividades criativas, originais e sem rotinas rígidas.",
+            },
+            {
+              label: "Social",
+              description:
+                "Prefere ajudar, ensinar, curar e interagir com outras pessoas.",
+            },
+            {
+              label: "Empreendedor",
+              description:
+                "Prefere liderar, influenciar e gerir projetos ou negócios.",
+            },
+            {
+              label: "Convencional",
+              description:
+                "Prefere organização, dados, regras claras e tarefas sistemáticas.",
+            },
+          ]}
         />
       </div>
     </section>

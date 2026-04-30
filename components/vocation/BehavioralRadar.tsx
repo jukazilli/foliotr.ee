@@ -110,7 +110,7 @@ export function BehavioralRadar({
           ))}
           {items.map((item, index) => {
             const edge = pointFor(index, items.length, 100, radius, center);
-            const label = pointFor(index, items.length, 121, radius, center);
+            const label = pointFor(index, items.length, 126, radius, center);
             const placement = labelPlacement(label.x, center);
             const lines = labelLines(item.label);
 
