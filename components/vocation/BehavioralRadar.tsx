@@ -35,6 +35,37 @@ function polygonPoints(items: RadarItem[], radius: number, center: number) {
     .join(" ");
 }
 
+function labelLines(label: string) {
+  if (label === "Estabilidade emocional") return ["Estabilidade", "emocional"];
+  if (label.length <= 14) return [label];
+
+  const words = label.split(" ");
+  if (words.length > 1) return words;
+
+  return [label];
+}
+
+function labelPlacement(x: number, center: number) {
+  if (x < center - 48) {
+    return {
+      x: Math.max(36, x),
+      textAnchor: "end" as const,
+    };
+  }
+
+  if (x > center + 48) {
+    return {
+      x: Math.min(204, x),
+      textAnchor: "start" as const,
+    };
+  }
+
+  return {
+    x,
+    textAnchor: "middle" as const,
+  };
+}
+
 export function BehavioralRadar({
   title,
   items,
@@ -56,7 +87,7 @@ export function BehavioralRadar({
         {title}
       </figcaption>
       <svg
-        viewBox="0 0 240 270"
+        viewBox="-18 0 276 270"
         role="img"
         aria-label={title}
         className="h-auto w-full"
@@ -79,7 +110,9 @@ export function BehavioralRadar({
           ))}
           {items.map((item, index) => {
             const edge = pointFor(index, items.length, 100, radius, center);
-            const label = pointFor(index, items.length, 118, radius, center);
+            const label = pointFor(index, items.length, 121, radius, center);
+            const placement = labelPlacement(label.x, center);
+            const lines = labelLines(item.label);
 
             return (
               <g key={item.label}>
@@ -93,13 +126,21 @@ export function BehavioralRadar({
                   strokeWidth="0.75"
                 />
                 <text
-                  x={label.x}
+                  x={placement.x}
                   y={label.y}
-                  textAnchor="middle"
+                  textAnchor={placement.textAnchor}
                   dominantBaseline="middle"
-                  className="fill-ink text-[8px] font-semibold"
+                  className="fill-ink text-[6px] font-semibold"
                 >
-                  {item.label}
+                  {lines.map((line, lineIndex) => (
+                    <tspan
+                      key={line}
+                      x={placement.x}
+                      dy={lineIndex === 0 ? `${(1 - lines.length) * 3}px` : "6px"}
+                    >
+                      {line}
+                    </tspan>
+                  ))}
                 </text>
               </g>
             );
