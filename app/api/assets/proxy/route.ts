@@ -32,6 +32,8 @@ export async function GET(request: Request) {
       status: 200,
       headers: {
         "Content-Type": object.ContentType ?? "application/octet-stream",
+        "Content-Disposition": "inline; filename=\"asset\"",
+        "X-Content-Type-Options": "nosniff",
         "Cache-Control": "public, max-age=3600",
       },
     });

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { fileTypeFromBuffer } from "file-type";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { handleRouteError, jsonError, jsonOk } from "@/lib/server/api";
@@ -76,7 +77,21 @@ export async function POST(request: Request) {
     }
 
     const profile = await getOwnedProfileBase(prisma, session.user.id);
-    const extension = MIME_EXTENSIONS[file.type] ?? "bin";
+    const body = Buffer.from(await file.arrayBuffer());
+    const detectedType = await fileTypeFromBuffer(body);
+
+    if (
+      !detectedType ||
+      detectedType.mime !== file.type ||
+      !policy.allowedMimeTypes.includes(detectedType.mime)
+    ) {
+      return jsonError("BAD_REQUEST", 400, {
+        reason: "SIGNATURE",
+        message: "Assinatura do arquivo nao confere com o tipo de imagem informado.",
+      });
+    }
+
+    const extension = MIME_EXTENSIONS[detectedType.mime] ?? detectedType.ext;
     const filename = `${randomUUID()}.${extension}`;
     const purpose = String(formData.get("purpose") ?? "asset").replace(
       /[^a-z0-9_-]/gi,
@@ -84,7 +99,6 @@ export async function POST(request: Request) {
     );
     const storageKey = `uploads/${session.user.id}/${purpose || "asset"}/${filename}`;
     let uploadErrorMessage = "";
-    const body = Buffer.from(await file.arrayBuffer());
     const uploaded = await (
       policy.provider === "local"
         ? uploadImageToLocal({
@@ -94,7 +108,7 @@ export async function POST(request: Request) {
         : uploadImageToS3({
             key: storageKey,
             body,
-            contentType: file.type,
+            contentType: detectedType.mime,
           })
     ).catch((error: unknown) => {
       uploadErrorMessage =
@@ -117,7 +131,7 @@ export async function POST(request: Request) {
         url: assetUrl,
         storageKey,
         name: file.name,
-        mimeType: file.type,
+        mimeType: detectedType.mime,
         size: file.size,
         metadata: {
           provider: uploaded.provider,
