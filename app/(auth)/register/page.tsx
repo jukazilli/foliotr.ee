@@ -159,6 +159,12 @@ function RegisterContent() {
       if (!form.username || !form.name || !form.email) {
         return "Preencha os dados principais para continuar.";
       }
+
+      const username = normalizeUsernameInput(form.username);
+
+      if (username.length < 3) {
+        return "Username deve ter pelo menos 3 caracteres.";
+      }
     }
 
     if (step === 3) {
