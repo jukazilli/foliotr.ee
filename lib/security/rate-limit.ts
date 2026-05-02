@@ -21,6 +21,7 @@ interface Bucket {
 const buckets = new Map<string, Bucket>();
 const distributedLimiters = new Map<string, Ratelimit>();
 let redisClient: Redis | null | undefined;
+let distributedRateLimitDisabled = false;
 
 export const AUTH_LOGIN_RATE_LIMIT: RateLimitOptions = {
   windowMs: 60_000,
@@ -68,6 +69,8 @@ function getRedisClient(): Redis | null {
 }
 
 function getDistributedLimiter(options: RateLimitOptions): Ratelimit | null {
+  if (distributedRateLimitDisabled) return null;
+
   const redis = getRedisClient();
   if (!redis) return null;
 
@@ -133,13 +136,22 @@ export async function checkRateLimitAsync(
     return checkRateLimit(key, options, now);
   }
 
-  const result = await limiter.limit(key);
-  return {
-    allowed: result.success,
-    remaining: result.remaining,
-    retryAfterMs: Math.max(0, result.reset - now),
-    resetAt: result.reset,
-  };
+  try {
+    const result = await limiter.limit(key);
+    return {
+      allowed: result.success,
+      remaining: result.remaining,
+      retryAfterMs: Math.max(0, result.reset - now),
+      resetAt: result.reset,
+    };
+  } catch (error) {
+    distributedRateLimitDisabled = true;
+    distributedLimiters.clear();
+    console.error("[rate-limit] Distributed limiter failed; using in-memory fallback.", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return checkRateLimit(key, options, now);
+  }
 }
 
 export function rateLimitHeaders(result: RateLimitResult): HeadersInit {
@@ -175,4 +187,5 @@ export function resetRateLimitStore(): void {
   buckets.clear();
   distributedLimiters.clear();
   redisClient = undefined;
+  distributedRateLimitDisabled = false;
 }
